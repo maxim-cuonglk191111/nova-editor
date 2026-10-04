@@ -20,6 +20,7 @@ const PROMPT =
 type StepLog = { step: string; ok: boolean; notes: string[]; consoleErrors: string[]; failedRequests: string[]; screenshots: string[] };
 const report: StepLog[] = [];
 let current: StepLog | null = null;
+let failPage: Page | null = null;
 let n = 0;
 
 async function shot(page: Page, name: string, fullPage = false) {
@@ -41,6 +42,7 @@ async function step(name: string, fn: () => Promise<void>) {
   } catch (err) {
     current.ok = false;
     note(`FAILED: ${(err as Error).message.split("\n")[0]}`);
+    if (failPage) await shot(failPage, `FAIL-${name.split(" ")[0]}`);
   }
 }
 const visible = (loc: Locator, timeout = 5_000) => loc.isVisible({ timeout }).catch(() => false);
@@ -48,6 +50,7 @@ const rel = (url: string) => url.replace(/^https?:\/\/[^/]+/, "");
 
 test("QA cloud journey", async ({ page, context, baseURL }) => {
   page.setDefaultTimeout(20_000);
+  failPage = page;
   page.setDefaultNavigationTimeout(90_000);
   context.on("console", (m) => { if (m.type() === "error") current?.consoleErrors.push(m.text().slice(0, 300)); });
   context.on("response", (r) => {
@@ -285,14 +288,30 @@ test("QA cloud journey", async ({ page, context, baseURL }) => {
   });
 
   await step("07f Breakpoint switch (mobile)", async () => {
-    const pills = await page.getByRole("button", { name: /^(desktop|tablet|mobile)$/i }).allTextContents();
+    const pills = await page.getByRole("button", { name: /^(desktop|tablet|mobile( [lp])?)$/i }).allTextContents();
     note(`breakpoint pills: ${JSON.stringify(pills)}`);
-    await page.getByRole("button", { name: /^mobile$/i }).last().click({ timeout: 5_000 });
+    await page.getByRole("button", { name: /^mobile( p)?$/i }).last().click({ timeout: 5_000 });
     await page.waitForTimeout(1_200);
     const w = (await page.locator('iframe[title="Canvas"]').boundingBox())?.width ?? 0;
     const overflow = await page.frames().find((f) => f.url().includes("/canvas"))
       ?.evaluate(() => document.documentElement.scrollWidth > window.innerWidth + 2);
     note(`canvas width on mobile: ${Math.round(w)}, horizontal overflow: ${overflow}`);
+    if (overflow) {
+      // Name the widest offenders so the responsive pass can be fixed precisely.
+      const offenders = await page.frames().find((f) => f.url().includes("/canvas"))?.evaluate(() => {
+        const vw = window.innerWidth;
+        return Array.from(document.querySelectorAll<HTMLElement>("body *"))
+          .filter((el) => el.getBoundingClientRect().right > vw + 2 && !el.closest("script, style"))
+          .filter((el) => !Array.from(el.children).some((c) => (c as HTMLElement).getBoundingClientRect().right > vw + 2))
+          .slice(0, 6)
+          .map((el) => {
+            const cs = getComputedStyle(el);
+            return `${el.tagName.toLowerCase()} w=${Math.round(el.getBoundingClientRect().width)} right=${Math.round(el.getBoundingClientRect().right)} ` +
+              `width=${cs.width} minW=${cs.minWidth} maxW=${cs.maxWidth} flex=${cs.flex} pad=${cs.padding} text="${(el.textContent ?? "").trim().slice(0, 24)}"`;
+          });
+      });
+      note(`overflow offenders (vw=${Math.round(w)}): ${JSON.stringify(offenders, null, 1)}`);
+    }
     await shot(page, "breakpoint-mobile");
     await page.getByRole("button", { name: /^desktop$/i }).first().click().catch(() => {});
     if (w > 700) throw new Error("canvas did not narrow");

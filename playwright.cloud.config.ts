@@ -4,7 +4,7 @@ import { defineConfig } from "@playwright/test";
 // the local dev server: BASE_URL=https://<alias>-nova-editor.<acct>.workers.dev
 export default defineConfig({
   testDir: "./e2e",
-  timeout: 600_000,
+  timeout: 900_000,
   retries: 0,
   workers: 1,
   reporter: [["list"]],
