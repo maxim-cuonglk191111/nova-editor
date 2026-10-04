@@ -1,8 +1,9 @@
 // packages/ai/src/providers/groq.ts
 // Groq LPU adapter — OpenAI-compatible, free tier (no credit card required).
 // Docs: https://console.groq.com/docs/openai
-import OpenAI from "openai";
+import OpenAI, { type ClientOptions } from "openai";
 import type { AIProvider, AIMessage, CompleteOptions } from "./base.js";
+import { platformFetch, requireApiKey, resolveModel } from "./runtime.js";
 
 // Groq model IDs (as of 2025). Updated via: https://console.groq.com/docs/models
 const MODELS = {
@@ -25,7 +26,8 @@ export class GroqProvider implements AIProvider {
     if (!this._client) {
       this._client = new OpenAI({
         baseURL: "https://api.groq.com/openai/v1",
-        apiKey: this._apiKey,
+        apiKey: requireApiKey(this._apiKey, "GROQ_API_KEY", this.name),
+        fetch: platformFetch as ClientOptions["fetch"],
       });
     }
     return this._client;
@@ -40,7 +42,7 @@ export class GroqProvider implements AIProvider {
     ];
 
     const response = await this.client.chat.completions.create({
-      model: MODELS[opts.tier],
+      model: resolveModel(this.id, opts.tier, MODELS),
       max_tokens: opts.maxTokens,
       messages: allMessages,
     });

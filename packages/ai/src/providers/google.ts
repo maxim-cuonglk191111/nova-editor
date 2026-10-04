@@ -2,10 +2,13 @@
 // Google Gemini adapter (ADR-011)
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import type { AIProvider, AIMessage, CompleteOptions } from "./base.js";
+import { requireApiKey, resolveModel } from "./runtime.js";
 
+// "-latest" aliases track Google's current GA models; pinned IDs (gemini-2.x) get
+// retired for new API keys.
 const MODELS = {
-  planner: "gemini-2.0-flash",
-  patcher: "gemini-2.0-flash",
+  planner: "gemini-flash-latest",
+  patcher: "gemini-flash-latest",
 } as const;
 
 export class GoogleProvider implements AIProvider {
@@ -21,14 +24,17 @@ export class GoogleProvider implements AIProvider {
 
   private get genAI(): GoogleGenerativeAI {
     if (!this._genAI) {
-      this._genAI = new GoogleGenerativeAI(this._apiKey);
+      this._genAI = new GoogleGenerativeAI(
+        requireApiKey(this._apiKey, "GOOGLE_GENERATIVE_AI_API_KEY", this.name)
+      );
     }
     return this._genAI;
   }
 
   async complete(messages: AIMessage[], opts: CompleteOptions): Promise<string> {
     const model = this.genAI.getGenerativeModel({
-      model: MODELS[opts.tier],
+      model: resolveModel(this.id, opts.tier, MODELS),
+      generationConfig: { maxOutputTokens: opts.maxTokens },
       // Inject system prompt via systemInstruction
       ...(opts.system ? { systemInstruction: { role: "system", parts: [{ text: opts.system }] } } : {}),
     });

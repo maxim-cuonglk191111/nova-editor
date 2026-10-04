@@ -1,7 +1,8 @@
 // packages/ai/src/providers/openai.ts
 // OpenAI GPT adapter (ADR-011)
-import OpenAI from "openai";
+import OpenAI, { type ClientOptions } from "openai";
 import type { AIProvider, AIMessage, CompleteOptions } from "./base.js";
+import { platformFetch, requireApiKey, resolveModel } from "./runtime.js";
 
 const MODELS = {
   planner: "gpt-4o-mini",
@@ -21,7 +22,10 @@ export class OpenAIProvider implements AIProvider {
 
   private get client(): OpenAI {
     if (!this._client) {
-      this._client = new OpenAI({ apiKey: this._apiKey });
+      this._client = new OpenAI({
+        apiKey: requireApiKey(this._apiKey, "OPENAI_API_KEY", this.name),
+        fetch: platformFetch as ClientOptions["fetch"],
+      });
     }
     return this._client;
   }
@@ -39,7 +43,7 @@ export class OpenAIProvider implements AIProvider {
     ];
 
     const response = await this.client.chat.completions.create({
-      model: MODELS[opts.tier],
+      model: resolveModel(this.id, opts.tier, MODELS),
       max_tokens: opts.maxTokens,
       messages: allMessages,
     });

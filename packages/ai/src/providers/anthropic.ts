@@ -1,10 +1,11 @@
 // packages/ai/src/providers/anthropic.ts
 // Anthropic Claude adapter — default provider (ADR-011)
-import Anthropic from "@anthropic-ai/sdk";
+import Anthropic, { type ClientOptions } from "@anthropic-ai/sdk";
 import type { AIProvider, AIMessage, CompleteOptions } from "./base.js";
+import { platformFetch, requireApiKey, resolveModel } from "./runtime.js";
 
 const MODELS = {
-  planner: "claude-haiku-4-5-20251001",
+  planner: "claude-haiku-4-5",
   patcher: "claude-sonnet-4-6",
 } as const;
 
@@ -21,7 +22,10 @@ export class AnthropicProvider implements AIProvider {
 
   private get client(): Anthropic {
     if (!this._client) {
-      this._client = new Anthropic({ apiKey: this._apiKey });
+      this._client = new Anthropic({
+        apiKey: requireApiKey(this._apiKey, "ANTHROPIC_API_KEY", this.name),
+        fetch: platformFetch as ClientOptions["fetch"],
+      });
     }
     return this._client;
   }
@@ -34,7 +38,7 @@ export class AnthropicProvider implements AIProvider {
       .map((m) => ({ role: m.role as "user" | "assistant", content: m.content }));
 
     const response = await this.client.messages.create({
-      model: MODELS[opts.tier],
+      model: resolveModel(this.id, opts.tier, MODELS),
       max_tokens: opts.maxTokens,
       ...(systemMsg ? { system: systemMsg } : {}),
       messages: chatMessages,
