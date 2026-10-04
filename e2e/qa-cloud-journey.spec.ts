@@ -8,7 +8,7 @@
  * Output: qa-screenshots/cloud/NN-*.png + report.json
  */
 import { test, type Page, type Locator } from "@playwright/test";
-import { mkdirSync, writeFileSync } from "fs";
+import { mkdirSync, readFileSync, writeFileSync } from "fs";
 
 const OUT = process.env.QA_OUT ?? "qa-screenshots/cloud";
 mkdirSync(OUT, { recursive: true });
@@ -65,6 +65,12 @@ test("QA cloud journey", async ({ page, context, baseURL }) => {
     } catch { /* storage blocked */ }
   }, locale);
   await context.addCookies([{ name: "nova_locale", value: locale, url: baseURL! }]);
+  // QA_MOCK_AI=<saved /api/ai response JSON> replays a real composition so the
+  // post-generation steps can run on a dev server without AI provider keys.
+  if (process.env.QA_MOCK_AI) {
+    const recorded = readFileSync(process.env.QA_MOCK_AI, "utf8");
+    await context.route("**/api/ai", (route) => route.fulfill({ status: 200, contentType: "application/json", body: recorded }));
+  }
 
   const email = `qa.cloud.${Date.now()}@testqa.dev`;
   const password = "QaCloud!2026";
@@ -132,6 +138,12 @@ test("QA cloud journey", async ({ page, context, baseURL }) => {
     await apply.click();
     await page.waitForTimeout(2_500);
     await shot(page, "ai-applied");
+    // First-run tour appears once the AI panel closes — a new user would skip it.
+    const skipTour = page.getByRole("button", { name: /^(skip|bỏ qua)$/i });
+    if (await visible(skipTour, 3_000)) {
+      note("onboarding tour shown after apply — skipping");
+      await skipTour.click();
+    }
   });
 
   await step("06 Generated template quality checks", async () => {
