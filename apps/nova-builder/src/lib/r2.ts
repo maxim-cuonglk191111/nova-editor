@@ -1,4 +1,6 @@
-import { S3Client, PutObjectCommand, DeleteObjectCommand } from "@aws-sdk/client-s3";
+// R2 via its S3-compatible API, signed with aws4fetch (a few KB) instead of
+// @aws-sdk/client-s3 (~3 MB in the Worker bundle for two calls).
+import { AwsClient } from "aws4fetch";
 
 export type NovaAsset = {
   id: string;
@@ -22,20 +24,30 @@ export type NovaAsset = {
   imagekitFileId?: string;
 };
 
-function getR2Client(): S3Client {
+function getR2(): { client: AwsClient; objectUrl: (key: string) => string } {
   const accountId = process.env.R2_ACCOUNT_ID;
   const accessKeyId = process.env.R2_ACCESS_KEY_ID;
   const secretAccessKey = process.env.R2_SECRET_ACCESS_KEY;
-  if (!accountId || !accessKeyId || !secretAccessKey) {
+  const bucket = process.env.R2_BUCKET_NAME;
+  if (!accountId || !accessKeyId || !secretAccessKey || !bucket) {
     throw new Error(
       "R2 not configured — set R2_ACCOUNT_ID, R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY, R2_BUCKET_NAME"
     );
   }
-  return new S3Client({
-    region: "auto",
-    endpoint: `https://${accountId}.r2.cloudflarestorage.com`,
-    credentials: { accessKeyId, secretAccessKey },
+  return {
+    client: new AwsClient({ accessKeyId, secretAccessKey, service: "s3", region: "auto" }),
+    objectUrl: (key) =>
+      `https://${accountId}.r2.cloudflarestorage.com/${bucket}/${key.split("/").map(encodeURIComponent).join("/")}`,
+  };
+}
+
+async function r2Request(method: "PUT" | "DELETE", key: string, init?: { body: Buffer; contentType: string }): Promise<void> {
+  const { client, objectUrl } = getR2();
+  const res = await client.fetch(objectUrl(key), {
+    method,
+    ...(init ? { body: init.body, headers: { "Content-Type": init.contentType } } : {}),
   });
+  if (!res.ok) throw new Error(`R2 ${method} ${res.status}: ${(await res.text()).slice(0, 200)}`);
 }
 
 export function makeAssetKey(projectId: string, assetId: string, filename: string): string {
@@ -48,23 +60,9 @@ export function assetPublicUrl(key: string): string {
 }
 
 export async function uploadToR2(key: string, data: Buffer, contentType: string): Promise<void> {
-  const client = getR2Client();
-  await client.send(
-    new PutObjectCommand({
-      Bucket: process.env.R2_BUCKET_NAME!,
-      Key: key,
-      Body: data,
-      ContentType: contentType,
-    })
-  );
+  await r2Request("PUT", key, { body: data, contentType });
 }
 
 export async function deleteFromR2(key: string): Promise<void> {
-  const client = getR2Client();
-  await client.send(
-    new DeleteObjectCommand({
-      Bucket: process.env.R2_BUCKET_NAME!,
-      Key: key,
-    })
-  );
+  await r2Request("DELETE", key);
 }

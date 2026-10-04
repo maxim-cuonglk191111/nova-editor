@@ -1,6 +1,6 @@
 "use client";
-// Root error boundary — reports React render crashes to Sentry (when DSN set).
-import * as Sentry from "@sentry/nextjs";
+// Root error boundary for React render crashes. Server-side errors are captured
+// by Cloudflare Workers Observability (wrangler.toml [observability]).
 import { useEffect } from "react";
 
 export default function GlobalError({
@@ -11,7 +11,7 @@ export default function GlobalError({
   reset: () => void;
 }) {
   useEffect(() => {
-    Sentry.captureException(error);
+    console.error("[global-error]", error);
   }, [error]);
 
   return (
