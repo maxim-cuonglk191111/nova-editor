@@ -6,12 +6,14 @@ import OpenAI, { type ClientOptions } from "openai";
 import type { AIProvider, AIMessage, CompleteOptions } from "./base.js";
 import { platformFetch, requireApiKey, resolveModel } from "./runtime.js";
 
-// openrouter/auto — smart router that picks from available free models automatically.
-// This avoids hard-coding slugs that go in/out of the free tier.
-// See: https://openrouter.ai/models?q=:free for manually-pinned alternatives.
+// Pinned models: openrouter/auto picked a different model per request, so the
+// same prompt produced anything from a full landing page to a page missing its
+// navbar and hero. Gemini via OpenRouter is also not region-blocked from the
+// Worker's colo the way the direct Google API is. Override with
+// AI_MODEL_OPENROUTER_<TIER> when a model is retired.
 const MODELS = {
-  planner: "openrouter/auto",  // Auto-route to best available free model
-  patcher: "openrouter/auto",  // Auto-route to best available free model
+  planner: "google/gemini-2.5-flash-lite",
+  patcher: "google/gemini-2.5-flash",
 } as const;
 
 export class OpenRouterProvider implements AIProvider {

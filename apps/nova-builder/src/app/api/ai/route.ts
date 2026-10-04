@@ -185,6 +185,9 @@ export async function POST(req: Request) {
       creditCost: usedCost,
       creditsRemaining: user.credits_remaining + user.topup_credits_remaining - usedCost,
       conversationId,
+      // Providers skipped before this one succeeded — surfaces a missing key or
+      // retired model without needing Worker logs.
+      fallbacks: failures.map((f) => ({ provider: f.provider, error: f.error.slice(0, 200) })),
     });
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : "AI compose failed";

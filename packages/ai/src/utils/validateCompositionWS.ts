@@ -10,6 +10,8 @@
 //   5. Creates StyleDecl records per style property
 //   6. Creates StyleSourceSelection per instance
 //   7. Creates Prop records for component props and text content
+//   8. Rewrites fixed desktop sizes into fluid ones (makeResponsive)
+import { makeResponsive } from "./responsiveStyles.js";
 
 // ─── WS type shapes (inline to avoid a runtime dep on ws-sdk in this package) ─
 
@@ -159,6 +161,31 @@ type AINode = {
   children?: unknown;
 };
 
+// A page needs exactly one h1 (SEO + accessibility). Models sometimes emit only
+// h2s; promote the first Heading in document order when no h1 exists.
+function ensureSingleH1(instances: WSInstance[], props: WSProp[], rootIds: string[]): void {
+  const headingIds = new Set(instances.filter((i) => i.component === "Heading").map((i) => i.id));
+  const tagOf = (id: string) => props.find((p) => p.instanceId === id && p.name === "tag");
+  if ([...headingIds].some((id) => tagOf(id)?.value === "h1")) return;
+
+  const byId = new Map(instances.map((i) => [i.id, i]));
+  const stack = [...rootIds].reverse();
+  while (stack.length > 0) {
+    const id = stack.pop()!;
+    if (headingIds.has(id)) {
+      const tag = tagOf(id);
+      if (tag) tag.value = "h1";
+      else props.push({ id: genId("prop_"), instanceId: id, name: "tag", type: "string", value: "h1" });
+      return;
+    }
+    const children = byId.get(id)?.children ?? [];
+    for (let i = children.length - 1; i >= 0; i--) {
+      const child = children[i]!;
+      if (child.type === "id") stack.push(child.value);
+    }
+  }
+}
+
 export function validateCompositionWS(raw: unknown): WSCompositionResult {
   const instances: WSInstance[] = [];
   const props: WSProp[] = [];
@@ -235,10 +262,11 @@ export function validateCompositionWS(raw: unknown): WSCompositionResult {
       }
 
       // Styles → StyleSource + StyleDecl + StyleSourceSelection
-      const styleProps =
+      const styleProps = makeResponsive(
         n.styles && typeof n.styles === "object" && !Array.isArray(n.styles)
           ? (n.styles as Record<string, unknown>)
-          : {};
+          : {}
+      );
 
       const styleEntries = Object.entries(styleProps).filter(([, v]) => v !== null && v !== undefined && v !== "");
 
@@ -273,6 +301,7 @@ export function validateCompositionWS(raw: unknown): WSCompositionResult {
   allocateIds(tree);
   const topIds = walk(tree);
   rootIds.push(...topIds);
+  ensureSingleH1(instances, props, rootIds);
 
   return {
     instances,

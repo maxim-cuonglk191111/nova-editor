@@ -91,7 +91,7 @@ export function LeftSidebar() {
   const tabs: TabItem[] = [
     { id: "components", label: t.builder.components, short: "Add", icon: "⊞" },
     // { id: "symbols",    label: t.builder.symbols,    short: "Sym",    icon: "◆" },
-    // { id: "pages",      label: t.builder.pages,      short: "Pages",  icon: "☰" },
+    { id: "pages", label: t.builder.pages, short: "Pages", icon: "☰" },
     { id: "navigator", label: t.builder.navigator, short: "Layers", icon: "◫" },
     { id: "assets", label: t.builder.assets, short: "Assets", icon: "⊡" },
     { id: "styles", label: t.builder.cssVars, short: "Tokens", icon: "§" },
