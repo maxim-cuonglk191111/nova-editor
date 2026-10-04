@@ -34,6 +34,7 @@ export async function POST(req: Request) {
     await sendVerificationEmail(user.id, email);
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
+    console.error("[auth/register] failed:", msg);
     if (msg.includes("duplicate") || msg.includes("unique") || msg.includes("23505")) {
       return Response.json({ error: "An account with this email already exists." }, { status: 409 });
     }
