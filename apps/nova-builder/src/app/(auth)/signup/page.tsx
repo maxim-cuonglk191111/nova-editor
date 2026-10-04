@@ -11,7 +11,7 @@ import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 function SignupForm() {
   const { t } = useI18n();
   const searchParams = useSearchParams();
-  const callbackUrl = searchParams.get("callbackUrl") ?? "/";
+  const callbackUrl = searchParams.get("callbackUrl") ?? "/projects";
   const backHref = callbackUrl.startsWith("/builder/") ? callbackUrl : "/";
 
   const [name, setName] = useState("");
@@ -41,8 +41,20 @@ function SignupForm() {
       return;
     }
 
+    // Sign the new account straight in; only fall back to the login form if that fails.
+    const login = await signIn("credentials", {
+      email: email.trim().toLowerCase(),
+      password,
+      callbackUrl,
+      redirect: false,
+    });
     setBusy(false);
-    window.location.href = `/login?registered=true&callbackUrl=${encodeURIComponent(callbackUrl)}`;
+    // Navigate to the relative callbackUrl rather than login.url, which NextAuth
+    // builds from NEXTAUTH_URL and would leave preview/custom hosts.
+    const sameHost = callbackUrl.startsWith("/") && !callbackUrl.startsWith("//");
+    window.location.href = login?.ok && !login.error
+      ? (sameHost ? callbackUrl : "/projects")
+      : `/login?registered=true&callbackUrl=${encodeURIComponent(callbackUrl)}`;
   }
 
   return (
