@@ -361,6 +361,32 @@ export interface I18nPanelsDictionary {
   loading: string;
 }
 
+export interface I18nAssetsDictionary {
+  searchPlaceholder: string;
+  upload: string;
+  uploading: string;
+  tabImages: string;
+  tabFolders: string;
+  all: string;
+  folder: string;
+  emptyFolder: string;
+  empty: string;
+  insertHint: string;
+  organizeTitle: string;
+  organizeDesc: string;
+  createFolder: string;
+  createNewFolder: string;
+  folderName: string;
+  folderPlaceholder: string;
+  cancel: string;
+  create: string;
+  deleteTitle: string;
+  /** "{count}" is replaced with the number of instances using the asset. */
+  deleteInUse: string;
+  deleteWarning: string;
+  delete: string;
+}
+
 export interface I18nDictionary {
   nav: I18nNavDictionary;
   auth: I18nAuthDictionary;
@@ -375,6 +401,7 @@ export interface I18nDictionary {
   welcome: I18nWelcomeDictionary;
   coachmarks: I18nCoachmarksDictionary;
   panels: I18nPanelsDictionary;
+  assets: I18nAssetsDictionary;
 }
 
 export interface ILanguageDetector {

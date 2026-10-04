@@ -12,7 +12,7 @@ type AIState =
   | { type: "idle" }
   | { type: "loading" }
   | { type: "success"; composition: WSCompositionResult }
-  | { type: "error"; message: string };
+  | { type: "error"; message: string; needsAccount?: boolean };
 
 export function AIPanel() {
   const isOpen = useStore($aiPanelOpen);
@@ -70,6 +70,10 @@ export function AIPanel() {
         composition?: WSCompositionResult;
         error?: string;
       };
+      if (res.status === 401) {
+        setState({ type: "error", message: "Create a free account to generate pages with AI.", needsAccount: true });
+        return;
+      }
       if (!res.ok) {
         setState({ type: "error", message: json.error ?? `Something went wrong (HTTP ${res.status})` });
         return;
@@ -188,12 +192,21 @@ export function AIPanel() {
         {state.type === "error" && (
           <div style={{ padding: "11px 14px", borderRadius: 9, background: "rgba(239,68,68,0.07)", border: "1px solid rgba(239,68,68,0.2)", color: "#fca5a5", fontSize: 12, display: "flex", alignItems: "center", gap: 10 }}>
             <span style={{ flex: 1 }}>{state.message}</span>
+            {state.needsAccount ? (
+              <a
+                href="/signup?callbackUrl=%2Fprojects"
+                style={{ background: C.accent, borderRadius: 5, color: "#fff", fontSize: 13, fontFamily: C.font, padding: "4px 10px", whiteSpace: "nowrap", textDecoration: "none", fontWeight: 600 }}
+              >
+                Sign up free
+              </a>
+            ) : (
             <button
               onClick={() => setState({ type: "idle" })}
               style={{ background: "rgba(239,68,68,0.15)", border: "1px solid rgba(239,68,68,0.25)", borderRadius: 5, color: "#fca5a5", fontSize: 13, fontFamily: C.font, cursor: "pointer", padding: "3px 8px", whiteSpace: "nowrap" }}
             >
               Try again
             </button>
+            )}
           </div>
         )}
 
