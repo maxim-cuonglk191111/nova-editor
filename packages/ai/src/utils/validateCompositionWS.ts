@@ -196,21 +196,10 @@ export function validateCompositionWS(raw: unknown): WSCompositionResult {
   const droppedComponents = new Set<string>();
   const rootIds: string[] = [];
 
-  // Map: aiId → new inst_<8> ID (built in first pass)
-  const idMap = new Map<string, string>();
-
-  // First pass: allocate real IDs for every node in the tree
-  function allocateIds(nodes: unknown[]): void {
-    for (const node of nodes) {
-      if (!node || typeof node !== "object" || Array.isArray(node)) continue;
-      const n = node as AINode;
-      const aiId = typeof n.id === "string" ? n.id : genId("tmp");
-      idMap.set(aiId, genId("inst_"));
-      if (Array.isArray(n.children)) allocateIds(n.children);
-    }
-  }
-
-  // Second pass: build the output records
+  // Every node in the tree gets its own fresh ID. The AI's IDs are ignored
+  // entirely: models reuse IDs across nodes, and mapping by AI ID made one
+  // instance appear under several parents (forms/footers rendered inside the
+  // hero, even parent cycles).
   function walk(nodes: unknown[]): string[] {
     const childIds: string[] = [];
     for (const node of nodes) {
@@ -223,8 +212,7 @@ export function validateCompositionWS(raw: unknown): WSCompositionResult {
       }
       const component = COMPONENT_MAPPING[rawComponent]!;
 
-      const aiId = typeof n.id === "string" ? n.id : "";
-      const instanceId = idMap.get(aiId) ?? genId("inst_");
+      const instanceId = genId("inst_");
       usedComponents.add(component);
 
       // Recurse children first to get child IDs
@@ -298,7 +286,6 @@ export function validateCompositionWS(raw: unknown): WSCompositionResult {
       ? ((raw as Record<string, unknown>).tree as unknown[])
       : [];
 
-  allocateIds(tree);
   const topIds = walk(tree);
   rootIds.push(...topIds);
   ensureSingleH1(instances, props, rootIds);

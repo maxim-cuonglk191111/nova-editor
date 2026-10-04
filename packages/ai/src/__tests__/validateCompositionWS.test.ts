@@ -13,6 +13,24 @@ function h1Texts(raw: unknown): string[] {
     .map((i) => (i.children.find((c) => c.type === "text")?.value as string) ?? "");
 }
 
+describe("validateCompositionWS — ids", () => {
+  it("gives nodes that share an AI id distinct instances, each with exactly one parent", () => {
+    const input = { id: "dup00001", component: "Paragraph", label: "Field", props: {}, styles: {}, text: "x", children: [] };
+    const raw = {
+      tree: [
+        { id: "hero0001", component: "Box", label: "Hero", props: {}, styles: {}, children: [{ ...input }] },
+        { id: "form0001", component: "Box", label: "Form", props: {}, styles: {}, children: [{ ...input }] },
+      ],
+    };
+    const r = validateCompositionWS(raw);
+    const ids = r.instances.map((i) => i.id);
+    expect(new Set(ids).size).toBe(ids.length);
+    const parentCount = new Map<string, number>();
+    for (const i of r.instances) for (const c of i.children) if (c.type === "id") parentCount.set(c.value, (parentCount.get(c.value) ?? 0) + 1);
+    expect([...parentCount.values()].every((n) => n === 1)).toBe(true);
+  });
+});
+
 describe("validateCompositionWS — h1 guarantee", () => {
   it("promotes the first heading in document order when the page has no h1", () => {
     const raw = {
