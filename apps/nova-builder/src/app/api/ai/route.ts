@@ -16,9 +16,8 @@ import {
   supabase,
 } from "@/lib/supabase-server";
 import {
-  getProvider,
-  composerAgentWS,
-  validateCompositionWS,
+  composeWithFallback,
+  providerChain,
   PROVIDER_CREDIT_COST,
 } from "@studio/ai";
 import type { ProviderName } from "@studio/ai";
@@ -28,16 +27,14 @@ const isDev = process.env.NODE_ENV === "development";
 
 /** Run AI compose without any auth/credit checks. Used as dev fallback. */
 async function composeWithoutAuth(
-  providerName: ProviderName,
+  chain: ProviderName[],
   userMessage: string
 ): Promise<Response> {
-  const provider = getProvider(providerName);
   try {
-    const rawOutput = await composerAgentWS(provider, userMessage);
-    const composition = validateCompositionWS(rawOutput);
+    const { composition, provider } = await composeWithFallback(chain, userMessage);
     return Response.json({
       composition,
-      provider: provider.id,
+      provider,
       creditCost: 0,
       creditsRemaining: 999,
       conversationId: null,
@@ -58,10 +55,13 @@ export async function POST(req: Request) {
   };
   const { userMessage, projectId, conversationId: clientConversationId, provider: clientProvider } = body;
 
-  const providerName: ProviderName =
-    clientProvider ?? (process.env["AI_PROVIDER"] as ProviderName | undefined) ?? "anthropic";
-  const provider = getProvider(providerName);
-  const creditCost = PROVIDER_CREDIT_COST[providerName] ?? 1;
+  // Requested provider first, then AI_PROVIDER, then the AI_FALLBACK_PROVIDERS
+  // order — so one provider's outage or missing key never blocks generation.
+  const chain = providerChain(
+    [clientProvider, process.env["AI_PROVIDER"]],
+    process.env["AI_FALLBACK_PROVIDERS"]
+  );
+  const creditCost = PROVIDER_CREDIT_COST[chain[0]!] ?? 1;
 
   // ── 1. Auth ────────────────────────────────────────────────────────────────
   const token = await getToken({ req: req as Parameters<typeof getToken>[0]["req"] });
@@ -69,7 +69,7 @@ export async function POST(req: Request) {
     // In dev, allow unauthenticated AI calls (no login required)
     if (isDev) {
       console.log("[ai/route] DEV FALLBACK — no auth token, running AI without auth");
-      return composeWithoutAuth(providerName, userMessage);
+      return composeWithoutAuth(chain, userMessage);
     }
     return Response.json({ error: "Unauthorized" }, { status: 401 });
   }
@@ -83,7 +83,7 @@ export async function POST(req: Request) {
     // fall back to AI-only mode instead of returning 404.
     if (isDev) {
       console.warn("[ai/route] DEV FALLBACK — Supabase unreachable, skipping auth/credits:", String(err));
-      return composeWithoutAuth(providerName, userMessage);
+      return composeWithoutAuth(chain, userMessage);
     }
     return Response.json({ error: "User not found" }, { status: 404 });
   }
@@ -155,13 +155,15 @@ export async function POST(req: Request) {
 
   // ── 7. Compose → validate ─────────────────────────────────────────────────
   try {
-    const rawOutput = await composerAgentWS(provider, userMessage);
-    const composition = validateCompositionWS(rawOutput);
-
-    // ADR-006: deduct ONLY after we have a valid composition (never for empty/invalid)
-    if (composition.instances.length > 0) {
-      await deductCredit(user.id, projectId ?? null, creditCost, decision.source === "topup");
+    const { composition, provider: usedProvider, failures } = await composeWithFallback(chain, userMessage);
+    if (failures.length > 0) {
+      console.warn("[ai/route] provider fallback:", failures.map((f) => `${f.provider}: ${f.error.slice(0, 200)}`).join(" | "));
     }
+    // Charge what the serving provider costs, never more than the amount checked above.
+    const usedCost = Math.min(PROVIDER_CREDIT_COST[usedProvider] ?? 1, creditCost);
+
+    // ADR-006: deduct ONLY after we have a valid composition (composeWithFallback never returns an empty one)
+    await deductCredit(user.id, projectId ?? null, usedCost, decision.source === "topup");
 
     // Save assistant response
     const responseText = `Composed ${composition.instances.length} instance(s) using: ${composition.usedComponents.join(", ") || "none"}.`;
@@ -172,21 +174,25 @@ export async function POST(req: Request) {
         userId: user.id,
         role: "assistant",
         content: responseText,
-        provider: provider.id,
-        creditsUsed: composition.instances.length > 0 ? creditCost : 0,
+        provider: usedProvider,
+        creditsUsed: usedCost,
       }).catch(() => { /* non-fatal */ });
     }
 
     return Response.json({
       composition,
-      provider: provider.id,
-      creditCost: composition.instances.length > 0 ? creditCost : 0,
-      creditsRemaining: user.credits_remaining + user.topup_credits_remaining - creditCost,
+      provider: usedProvider,
+      creditCost: usedCost,
+      creditsRemaining: user.credits_remaining + user.topup_credits_remaining - usedCost,
       conversationId,
     });
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : "AI compose failed";
-    return Response.json({ error: message }, { status: 500 });
+    console.error("[ai/route] AI compose error:", message);
+    return Response.json(
+      { error: "AI generation is temporarily unavailable. Please try again in a minute.", detail: message },
+      { status: 502 }
+    );
   }
 }
 

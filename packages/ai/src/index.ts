@@ -12,6 +12,8 @@ export { getProvider, PROVIDER_NAMES } from "./providers/registry.js";
 export type { PlanStep } from "./agents/plannerAgent.js";
 export { plannerAgent }  from "./agents/plannerAgent.js";
 export { composerAgentWS } from "./agents/composerAgentWS.js";
+export { composeWithFallback, providerChain, DEFAULT_FALLBACK_ORDER } from "./agents/composeWithFallback.js";
+export type { FallbackResult } from "./agents/composeWithFallback.js";
 export { buildComposePromptWS } from "./prompts/compose-ws.prompt.js";
 export { validateCompositionWS } from "./utils/validateCompositionWS.js";
 export type { WSCompositionResult } from "./utils/validateCompositionWS.js";
