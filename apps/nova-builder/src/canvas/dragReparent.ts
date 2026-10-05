@@ -360,7 +360,10 @@ export function initDragReparent(): () => void {
 
   const finish = (activeCtx: DragCtx | null = ctx) => {
     const ov = overlayEl();
-    if (ov) ov.style.pointerEvents = "";
+    // Restore the overlay's own value. Clearing it ("") dropped React's inline
+    // `pointer-events: none`, leaving a full-viewport, max-z-index layer that
+    // swallowed every canvas click after the first drag.
+    if (ov) ov.style.pointerEvents = "none";
     document.body.style.cursor = "";
     clearIndicator();
 

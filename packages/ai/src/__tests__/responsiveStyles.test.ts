@@ -17,6 +17,11 @@ describe("makeResponsive", () => {
     expect(makeResponsive({ flex: "1" }).flex).toBe("1 1 280px");
   });
 
+  it("makes max-width-only elements track their container", () => {
+    expect(makeResponsive({ maxWidth: "600px" })).toEqual({ maxWidth: "600px", width: "100%" });
+    expect(makeResponsive({ maxWidth: "600px", width: "auto" }).width).toBe("auto");
+  });
+
   it("caps wide fixed widths and grids to the viewport", () => {
     expect(makeResponsive({ width: "560px" }).maxWidth).toBe("100%");
     expect(makeResponsive({ minWidth: "400px" }).minWidth).toBe("min(400px, 100%)");

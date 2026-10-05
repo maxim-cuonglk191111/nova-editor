@@ -38,6 +38,12 @@ export function makeResponsive(styles: Styles): Styles {
   const width = px(out.width);
   if (width !== null && width > 320 && out.maxWidth === undefined) out.maxWidth = "100%";
 
+  // Inside a column flex container with align-items:center, an item with only
+  // max-width is sized to its content (up to max-width), not to the container —
+  // so a 600px max-width paragraph stays 600px on a 390px phone. width:100%
+  // makes it track the container while max-width still caps it on desktop.
+  if (out.width === undefined && px(out.maxWidth) !== null) out.width = "100%";
+
   const minWidth = px(out.minWidth);
   if (minWidth !== null && minWidth > 320) out.minWidth = `min(${minWidth}px, 100%)`;
 
