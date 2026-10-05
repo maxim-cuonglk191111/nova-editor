@@ -5,7 +5,7 @@ import type { NextAuthOptions } from "next-auth";
 import GitHubProvider from "next-auth/providers/github";
 import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
-import bcrypt from "bcryptjs";
+import { hashPassword, verifyPassword } from "@/lib/password";
 import { getAppUrl } from "@/lib/appUrl";
 
 function buildProviders() {
@@ -129,8 +129,12 @@ function buildProviders() {
           password_hash: string | null;
         } | null;
         if (!row?.password_hash) return null;
-        const valid = await bcrypt.compare(credentials.password, row.password_hash);
+        const { valid, needsRehash } = await verifyPassword(credentials.password, row.password_hash);
         if (!valid) return null;
+        if (needsRehash) {
+          // Upgrade legacy bcrypt hashes so later logins use the cheap native path.
+          await db.from("users").update({ password_hash: await hashPassword(credentials.password) }).eq("id", row.id);
+        }
         return { id: row.id, email: row.email, name: row.display_name ?? row.email };
       },
     })

@@ -1,4 +1,5 @@
 "use client";
+import { ClientOnly } from "@/components/ClientOnly";
 
 // Builder page — 3-column CSS Grid layout mirroring Webstudio's chrome.
 //
@@ -71,7 +72,7 @@ import { ThemeProvider, $builderTheme } from "@/builder/ThemeProvider";
 import { SafeModeBanner } from "@/builder/SafeModeBanner";
 import { NestingToast } from "@/builder/NestingToast";
 
-export default function BuilderPage() {
+function BuilderPage() {
   const params = useParams<{ projectId: string }>();
   const projectId = params.projectId;
   const isDemo = projectId === "demo";
@@ -746,5 +747,14 @@ export default function BuilderPage() {
       {/* Content-model warning toast (M5) */}
       <NestingToast />
     </ThemeProvider>
+  );
+}
+
+// Client-only: skip server rendering (Worker CPU, Error 1102).
+export default function Page() {
+  return (
+    <ClientOnly>
+      <BuilderPage />
+    </ClientOnly>
   );
 }

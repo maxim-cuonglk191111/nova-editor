@@ -1,4 +1,5 @@
 "use client";
+import { ClientOnly } from "@/components/ClientOnly";
 // Read-only canvas preview — no builder chrome.
 // Loads project from public /api/preview/:id, seeds atoms, injects emitter into canvas iframe.
 // Accessible without auth so share links work in incognito.
@@ -101,7 +102,7 @@ function CookieBanner({ config }: { config: CookieConsent }) {
   );
 }
 
-export default function PreviewPage() {
+function PreviewPage() {
   const params = useParams<{ projectId: string }>();
   const projectId = params.projectId;
 
@@ -386,5 +387,14 @@ export default function PreviewPage() {
       {/* Cookie consent banner (P67) — rendered over the preview */}
       {state === "ready" && cookieConsent && <CookieBanner config={cookieConsent} />}
     </div>
+  );
+}
+
+// Client-only: skip server rendering (Worker CPU, Error 1102).
+export default function Page() {
+  return (
+    <ClientOnly>
+      <PreviewPage />
+    </ClientOnly>
   );
 }

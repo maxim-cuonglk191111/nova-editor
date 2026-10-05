@@ -1,7 +1,7 @@
 // POST: create a new email+password account.
 // Validates input, hashes the password, inserts into users, grants initial credits.
 // Called from the /signup page before auto-signing-in via CredentialsProvider.
-import bcrypt from "bcryptjs";
+import { hashPassword } from "@/lib/password";
 import { createEmailUser } from "@/lib/supabase-server";
 import { sendVerificationEmail } from "@/lib/emailVerification";
 
@@ -26,7 +26,7 @@ export async function POST(req: Request) {
     return Response.json({ error: "Password must be at least 8 characters." }, { status: 400 });
   }
 
-  const passwordHash = await bcrypt.hash(password, 12);
+  const passwordHash = await hashPassword(password);
 
   try {
     const user = await createEmailUser({ email, passwordHash, displayName: name });

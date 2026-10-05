@@ -1,4 +1,5 @@
 "use client";
+import { ClientOnly } from "@/components/ClientOnly";
 // /canvas — public iframe page; no auth redirect.
 // Loaded as the iframe src from /builder/[projectId].
 // Data arrives via __webstudioSharedSyncEmitter__ injected by the builder.
@@ -110,7 +111,7 @@ function DiagnosticsOverlay() {
   );
 }
 
-export default function CanvasPage() {
+function CanvasPage() {
   const isPreview = useStore($isPreviewMode);
   const [theme, setTheme] = useState("dark");
 
@@ -137,5 +138,14 @@ export default function CanvasPage() {
         {!isPreview && <DiagnosticsOverlay />}
       </div>
     </>
+  );
+}
+
+// Client-only: skip server rendering (Worker CPU, Error 1102).
+export default function Page() {
+  return (
+    <ClientOnly>
+      <CanvasPage />
+    </ClientOnly>
   );
 }
