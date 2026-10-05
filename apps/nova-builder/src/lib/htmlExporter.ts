@@ -20,6 +20,10 @@ import { resolveProps } from "./publish/expressionGen";
 const idAttribute = "data-ws-id";
 const componentAttribute = "data-ws-component";
 
+// Allow-lists for the `tag` prop — it is user/AI-controlled and lands in markup.
+const HEADING_TAGS = new Set(["h1", "h2", "h3", "h4", "h5", "h6"]);
+const BOX_TAGS = new Set(["div", "section", "header", "footer", "nav", "main", "article", "aside", "ul", "ol", "li"]);
+
 const TAG: Record<string, string> = {
   Box: "div", Body: "div", Section: "section", Article: "article",
   Aside: "aside", Header: "header", Footer: "footer", Main: "main",
@@ -233,6 +237,23 @@ export interface ExportOptions {
   page?: Page;
 }
 
+// shadcn renderers emit their default look as an inline style, and inline styles
+// beat the instance's own CSS from generateCss — so a brown CTA exported black.
+// Move each shadcn root's inline style into a zero-specificity :where() rule so
+// it only fills in what the instance does not set itself.
+function demoteShadcnInlineDefaults(html: string): { html: string; css: string } {
+  const rules: string[] = [];
+  const out = html.replace(
+    /(<\w+ data-ws-id="([^"]+)" data-ws-component="shadcn:[^"]+"[^>]*?) style="([^"]*)"/g,
+    (_m, head: string, id: string, style: string) => {
+      const decls = style.replace(/&quot;/g, '"').replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&amp;/g, "&");
+      rules.push(`:where([${idAttribute}="${id}"]){${decls}}`);
+      return head;
+    }
+  );
+  return { html: out, css: rules.join("\n") };
+}
+
 // Serialize one instance subtree to HTML, emitting data-ws-* so generated CSS matches.
 function renderInstance(
   data: WebstudioData,
@@ -304,8 +325,10 @@ function renderInstance(
   // ── Standard component rendering ──────────────────────────────────────────
   let tag = TAG[inst.component] ?? "div";
   if (inst.component === "Heading") {
-    const level = ip["level"] ?? 2;
-    tag = `h${level}`;
+    // Webstudio stores the level as `tag` ("h1"); `level` is the legacy prop.
+    tag = HEADING_TAGS.has(String(ip["tag"])) ? String(ip["tag"]) : `h${ip["level"] ?? 2}`;
+  } else if (inst.component === "Box" && BOX_TAGS.has(String(ip["tag"]))) {
+    tag = String(ip["tag"]);
   }
 
   const attrs: string[] = [
@@ -450,7 +473,7 @@ export function exportPageToHtml(data: WebstudioData, page: Page, opts: ExportOp
   const css = generateCss(data, opts.metas ?? new Map(), opts.assetBaseUrl ?? "");
 
   const rootInst = data.instances.get(page.rootInstanceId);
-  const bodyHtml = rootInst
+  const renderedBody = rootInst
     ? rootInst.children
       .map((c) =>
         c.type === "id"
@@ -461,6 +484,7 @@ export function exportPageToHtml(data: WebstudioData, page: Page, opts: ExportOp
       )
       .join("")
     : "";
+  const { html: bodyHtml, css: shadcnDefaults } = demoteShadcnInlineDefaults(renderedBody);
 
   const poweredBy = opts.hidePoweredBy ? "" : `<!-- Built with ${opts.brandingName || "Nova"} -->`;
   const customCssBlock = opts.customCss?.trim()
@@ -482,6 +506,7 @@ export function exportPageToHtml(data: WebstudioData, page: Page, opts: ExportOp
     "    @keyframes nova-spin { to { transform: rotate(360deg); } }",
     css.fonts,
     css.presets,
+    shadcnDefaults,
     css.user,
     "  </style>",
     customCssBlock,

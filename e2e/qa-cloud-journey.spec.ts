@@ -41,7 +41,9 @@ async function step(name: string, fn: () => Promise<void>) {
     await fn();
   } catch (err) {
     current.ok = false;
-    note(`FAILED: ${(err as Error).message.split("\n")[0]}`);
+    const lines = (err as Error).message.split("\n");
+    const detail = lines.filter((l) => /waiting for|intercepts pointer|not visible|not stable|outside of the viewport/.test(l)).slice(0, 3).map((l) => l.trim());
+    note(`FAILED: ${lines[0]}${detail.length ? ` | ${detail.join(" | ")}` : ""}`);
     if (failPage) await shot(failPage, `FAIL-${name.split(" ")[0]}`);
   }
 }
