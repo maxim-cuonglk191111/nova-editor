@@ -484,7 +484,13 @@ export function exportPageToHtml(data: WebstudioData, page: Page, opts: ExportOp
       )
       .join("")
     : "";
-  const { html: bodyHtml, css: shadcnDefaults } = demoteShadcnInlineDefaults(renderedBody);
+  const demoted = demoteShadcnInlineDefaults(renderedBody);
+  const shadcnDefaults = demoted.css;
+  // The normalize preset sets `white-space-collapse: preserve` on <html>, so the
+  // newline+indent we emit between tags rendered as blank lines (white bands
+  // between sections, tall list items). Drop formatting-only whitespace; a run
+  // without a newline (a real space between inline elements) is kept.
+  const bodyHtml = demoted.html.replace(/>[ \t]*\r?\n\s*</g, "><");
 
   const poweredBy = opts.hidePoweredBy ? "" : `<!-- Built with ${opts.brandingName || "Nova"} -->`;
   const customCssBlock = opts.customCss?.trim()

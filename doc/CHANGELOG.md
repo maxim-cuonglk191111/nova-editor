@@ -15,6 +15,11 @@
 - **Editor**: new projects get Tablet / Mobile L / Mobile P breakpoints; Pages tab re-enabled; Assets panel localized (EN/VI).
 - **Export**: heading/section tags honored; shadcn defaults no longer override instance colors.
 - **Landing**: "Build everything" heading no longer overlaps its copy.
+- **Canvas/preview on phones**: `body { min-width: 0 }` — Webstudio's `1fr` html grid sized body to its widest content (1012 px on a 479 px canvas).
+- **Shortcuts on canvas focus**: canvas forwards Delete / ⌘D / ⌘Z… to the builder; `isEditableTarget` no longer throws on window targets.
+- **Assets**: uploads go to Supabase Storage (public `assets` bucket), falling back to R2 when configured.
+- **Builder load**: project fetch retries transient 5xx (Workers Free CPU limit, Error 1102).
+- **Export**: formatting whitespace no longer renders as blank bands (normalize uses `white-space-collapse: preserve`).
 - **Bundle**: removed `@sentry/nextjs` and `@aws-sdk/client-s3` (server bundle 56.7 → 38.8 MB); Workers Observability enabled (ADR-NB-027).
 - **QA**: `e2e/qa-cloud-journey.spec.ts` + `playwright.cloud.config.ts` run the golden path against a deployed preview (`BASE_URL`).
 

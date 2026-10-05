@@ -55,7 +55,9 @@ List      — ul/ol list.       props: ordered (boolean).
 ListItem  — li list item.     props: none.
 
 ═══════════════════════════════════════
-CURATED IMAGES (MUST use these exact Unsplash URLs for any Image or Avatar src):
+CURATED IMAGES (MUST use these exact Unsplash URLs for any Image or Avatar src).
+Only use an image whose subject fits the section; if none fits, leave the Image out
+rather than using an unrelated one:
 ═══════════════════════════════════════
 For SaaS Dashboard Mockups / App Previews:
 - Dashboard: https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1000&q=80
