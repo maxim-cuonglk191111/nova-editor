@@ -24,6 +24,13 @@ export type NovaAsset = {
   imagekitFileId?: string;
 };
 
+export function isR2Configured(): boolean {
+  return Boolean(
+    process.env.R2_ACCOUNT_ID && process.env.R2_ACCESS_KEY_ID &&
+    process.env.R2_SECRET_ACCESS_KEY && process.env.R2_BUCKET_NAME
+  );
+}
+
 function getR2(): { client: AwsClient; objectUrl: (key: string) => string } {
   const accountId = process.env.R2_ACCOUNT_ID;
   const accessKeyId = process.env.R2_ACCESS_KEY_ID;
