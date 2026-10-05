@@ -236,8 +236,9 @@ export function duplicateMultipleInstances(
 }
 
 function isEditableTarget(e: KeyboardEvent): boolean {
-  const t = e.target as HTMLElement | null;
-  if (!t) return false;
+  const t = e.target;
+  // Shortcuts replayed from the canvas are dispatched on window, which is not an Element.
+  if (!(t instanceof HTMLElement)) return false;
   return (
     t instanceof HTMLInputElement ||
     t instanceof HTMLTextAreaElement ||

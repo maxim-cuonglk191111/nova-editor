@@ -252,6 +252,10 @@ export const Canvas = () => {
   // Expose canvas API.
   useEffect(() => {
     initCanvasApi();
+    // Webstudio's normalize makes <html> a 1fr grid; 1fr = minmax(auto, 1fr), so
+    // <body> could never be narrower than its widest content and every
+    // width:100% resolved against that — pages overflowed on phone breakpoints.
+    injectStyleEl("nova-canvas-base", "body { min-width: 0; }");
   }, []);
 
   // Drag-reparent (FA-007): press-drag the selected element to move it.

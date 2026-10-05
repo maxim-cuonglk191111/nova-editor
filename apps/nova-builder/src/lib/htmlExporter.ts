@@ -502,7 +502,9 @@ export function exportPageToHtml(data: WebstudioData, page: Page, opts: ExportOp
     '  <script src="https://cdn.tailwindcss.com"></script>',
     "  <style>",
     "    *, *::before, *::after { box-sizing: border-box; }",
-    "    body { margin: 0; }",
+    // min-width:0 — the normalize preset makes <html> a 1fr grid, which would
+    // otherwise size <body> to its widest content on narrow screens.
+    "    body { margin: 0; min-width: 0; }",
     "    @keyframes nova-spin { to { transform: rotate(360deg); } }",
     css.fonts,
     css.presets,
