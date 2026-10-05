@@ -32,14 +32,24 @@ describe("validateCompositionWS — ids", () => {
 });
 
 describe("validateCompositionWS — h1 guarantee", () => {
-  it("promotes the first heading in document order when the page has no h1", () => {
+  it("promotes the first heading outside the navbar when the page has no h1", () => {
     const raw = {
       tree: [
         { id: "nav00001", component: "Box", label: "Nav", props: {}, styles: {}, children: [heading("brand001", "h3", "Brand")] },
         { id: "sec00001", component: "Box", label: "Hero", props: {}, styles: {}, children: [heading("hero0001", "h2", "Hero title")] },
       ],
     };
-    expect(h1Texts(raw)).toEqual(["Brand"]);
+    expect(h1Texts(raw)).toEqual(["Hero title"]);
+  });
+
+  it("keeps the hero h1 and demotes a navbar logo h1", () => {
+    const raw = {
+      tree: [
+        { id: "nav00001", component: "Box", label: "Navbar", props: { tag: "header" }, styles: {}, children: [heading("logo0001", "h1", "Brand")] },
+        { id: "hero0001", component: "Box", label: "Hero", props: { tag: "section" }, styles: {}, children: [heading("titl0001", "h1", "Hero title")] },
+      ],
+    };
+    expect(h1Texts(raw)).toEqual(["Hero title"]);
   });
 
   it("leaves an existing h1 untouched", () => {

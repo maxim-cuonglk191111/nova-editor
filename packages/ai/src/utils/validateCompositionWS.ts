@@ -161,29 +161,44 @@ type AINode = {
   children?: unknown;
 };
 
-// A page needs exactly one h1 (SEO + accessibility). Models sometimes emit only
-// h2s; promote the first Heading in document order when no h1 exists.
+// A page needs exactly one h1 (SEO + accessibility). Models emit none (only h2s)
+// or several (a logo h1 in the navbar plus the hero title). Keep the first h1
+// outside the navbar — else the first h1, else promote the first heading — and
+// demote every other h1 to h2.
 function ensureSingleH1(instances: WSInstance[], props: WSProp[], rootIds: string[]): void {
-  const headingIds = new Set(instances.filter((i) => i.component === "Heading").map((i) => i.id));
-  const tagOf = (id: string) => props.find((p) => p.instanceId === id && p.name === "tag");
-  if ([...headingIds].some((id) => tagOf(id)?.value === "h1")) return;
-
   const byId = new Map(instances.map((i) => [i.id, i]));
-  const stack = [...rootIds].reverse();
-  while (stack.length > 0) {
-    const id = stack.pop()!;
-    if (headingIds.has(id)) {
-      const tag = tagOf(id);
-      if (tag) tag.value = "h1";
-      else props.push({ id: genId("prop_"), instanceId: id, name: "tag", type: "string", value: "h1" });
-      return;
-    }
-    const children = byId.get(id)?.children ?? [];
-    for (let i = children.length - 1; i >= 0; i--) {
-      const child = children[i]!;
-      if (child.type === "id") stack.push(child.value);
+  const tagOf = (id: string) => props.find((p) => p.instanceId === id && p.name === "tag");
+  const setTag = (id: string, value: string) => {
+    const tag = tagOf(id);
+    if (tag) tag.value = value;
+    else props.push({ id: genId("prop_"), instanceId: id, name: "tag", type: "string", value });
+  };
+
+  // Headings in document order, each with the top-level section it sits in.
+  const headings: { id: string; section: string }[] = [];
+  for (const section of rootIds) {
+    const stack = [section];
+    while (stack.length > 0) {
+      const id = stack.pop()!;
+      if (byId.get(id)?.component === "Heading") headings.push({ id, section });
+      const children = byId.get(id)?.children ?? [];
+      for (let i = children.length - 1; i >= 0; i--) {
+        const child = children[i]!;
+        if (child.type === "id") stack.push(child.value);
+      }
     }
   }
+  if (headings.length === 0) return;
+
+  const isNavbar = (sectionId: string) => {
+    const tag = tagOf(sectionId)?.value;
+    return tag === "header" || tag === "nav" || /nav|header/i.test(byId.get(sectionId)?.label ?? "");
+  };
+  const h1s = headings.filter((h) => tagOf(h.id)?.value === "h1");
+  const keep = h1s.find((h) => !isNavbar(h.section)) ?? h1s[0] ?? headings.find((h) => !isNavbar(h.section)) ?? headings[0]!;
+
+  setTag(keep.id, "h1");
+  for (const h of h1s) if (h.id !== keep.id) setTag(h.id, "h2");
 }
 
 export function validateCompositionWS(raw: unknown): WSCompositionResult {
