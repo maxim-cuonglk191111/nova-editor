@@ -19,6 +19,7 @@ import { useStore } from "@nanostores/react";
 import { useParams } from "next/navigation";
 import { nanoid } from "nanoid";
 import { getRegistry } from "@/builder/left-sidebar/components/ComponentRegistry";
+import { SHORTCUT_MESSAGE, type ForwardedShortcut } from "@/canvas/forwardShortcuts";
 import { useSession } from "next-auth/react";
 import {
   $instances,
@@ -240,6 +241,13 @@ export default function BuilderPage() {
       if (e.data?.type === "nova:select") {
         const { selector } = e.data as { selector: string[] | undefined };
         $selectedInstanceSelector.set(selector);
+        return;
+      }
+      // Shortcut pressed while focus was inside the canvas iframe — replay it on
+      // this window so useBuilderKeyboard / the command registry handle it.
+      if (e.data?.type === SHORTCUT_MESSAGE && e.origin === window.location.origin) {
+        const { key, code, ctrlKey, metaKey, shiftKey, altKey } = e.data as ForwardedShortcut;
+        window.dispatchEvent(new KeyboardEvent("keydown", { key, code, ctrlKey, metaKey, shiftKey, altKey, bubbles: true, cancelable: true }));
         return;
       }
       if (e.data?.type === "nova:editingStart") {
