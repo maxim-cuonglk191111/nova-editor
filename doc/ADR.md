@@ -11,6 +11,20 @@
 
 ## Nova-builder decisions (ADR-NB-001 → …)
 
+### ADR-NB-027 — Workers Observability replaces Sentry; no Node-only SDKs in the Worker bundle
+**Status:** ✅ Active since v25.4.0
+
+**Decision:** Remove `@sentry/nextjs` (and `instrumentation*.ts`) and `@aws-sdk/client-s3`. Server errors and logs go to Cloudflare Workers Observability (`[observability] enabled = true` in `wrangler.toml`); `global-error.tsx` logs via `console.error`. R2 calls are signed with `aws4fetch`. SDKs that call HTTP APIs from the Worker (`openai`, `@anthropic-ai/sdk`) are given the platform `fetch` explicitly (`platformFetch`, `packages/ai/src/providers/runtime.ts`).
+
+**Why:** The Sentry Node SDK pulled ~5 MB of OpenTelemetry into the Worker yet cannot instrument the Workers runtime, and the browser SDK was never enabled (its DSN is a build var that was not set). The AWS SDK added ~3 MB for two calls. Together they took the server bundle from 38.8 MB to 56.7 MB. Under `nodejs_compat` the openai/anthropic SDKs detect "Node" and fall back to node-fetch, which fails on Workers with "Connection error" — that is why every AI provider failed in production.
+
+### ADR-NB-026 — AI generation falls back across providers; models are pinned and overridable
+**Status:** ✅ Active since v25.4.0
+
+**Decision:** `/api/ai` builds a provider chain — requested provider, then `AI_PROVIDER`, then `AI_FALLBACK_PROVIDERS` (default `openrouter, groq, mistral, anthropic, openai, google`) — and `composeWithFallback` returns the first non-empty valid composition. The composer retries only malformed JSON, never a provider error. Credits are charged at the serving provider's cost, capped at the amount checked up front. Model IDs are pinned per provider and overridable with `AI_MODEL_<PROVIDER>_<TIER>`. `validateCompositionWS` never trusts AI node ids, guarantees exactly one h1, and rewrites desktop sizes into fluid ones (`makeResponsive`).
+
+**Why:** A single provider made generation fragile: in one audit every provider failed for a different reason (empty key, retired model, region block from the Worker's colo, rate limit, SDK runtime bug). `openrouter/auto` picked a different model per request, so quality swung from a full landing page to one missing its navbar and hero. Models reuse node ids, which cross-linked sections when ids were mapped; and the composer only writes base (desktop) styles, so pages overflowed on phones.
+
 ### ADR-NB-025 — Realtime co-editing = immerhin transaction patches broadcast over Supabase Realtime (no Yjs, no relay)
 **Status:** ✅ Accepted 2026-07-13 (v25.0.0, M12) — final Tier P phase; **completes** the ADR-NB-019 plan (point 4) and extends ADR-NB-009
 
