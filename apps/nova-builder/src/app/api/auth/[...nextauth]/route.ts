@@ -32,8 +32,11 @@ const handler = NextAuth({
         }
       }
 
-      // On Google OAuth sign-in, upsert the user into Supabase
-      if (account && profile && account.provider === "google" && result.email) {
+      // On Google OAuth sign-in, upsert the user into Supabase — unless the jwt
+      // callback already linked the login to an existing row with the same email
+      // (keeps that account's projects and credits).
+      const linked = typeof result.id === "string" && /^[0-9a-f]{8}-[0-9a-f]{4}-/i.test(result.id);
+      if (account && profile && account.provider === "google" && result.email && !linked) {
         try {
           const dbUser = await upsertEmailUser({
             email: result.email as string,
