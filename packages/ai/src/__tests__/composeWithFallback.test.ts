@@ -27,7 +27,7 @@ describe("providerChain", () => {
   });
 
   it("uses the default order when no fallback list is set", () => {
-    expect(providerChain([], undefined)[0]).toBe("openrouter");
+    expect(providerChain([], undefined)[0]).toBe("google");
   });
 });
 

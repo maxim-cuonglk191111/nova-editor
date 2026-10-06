@@ -6,8 +6,10 @@ import { getProvider } from "../providers/registry.js";
 import { composerAgentWS } from "./composerAgentWS.js";
 import { validateCompositionWS, type WSCompositionResult } from "../utils/validateCompositionWS.js";
 
+// Free tiers first. OpenRouter stays out of the default chain (it is prepaid);
+// list it in AI_FALLBACK_PROVIDERS to use it.
 export const DEFAULT_FALLBACK_ORDER: ProviderName[] = [
-  "openrouter", "groq", "mistral", "anthropic", "openai", "google",
+  "google", "mistral", "groq", "anthropic", "openai",
 ];
 
 export type FallbackResult = {
@@ -17,7 +19,7 @@ export type FallbackResult = {
 };
 
 export function providerChain(preferred: (string | undefined | null)[], fallbacks: string | undefined): ProviderName[] {
-  const known = new Set<string>(DEFAULT_FALLBACK_ORDER);
+  const known = new Set<string>([...DEFAULT_FALLBACK_ORDER, "openrouter"]);
   const order = fallbacks?.trim()
     ? fallbacks.split(",").map((s) => s.trim())
     : DEFAULT_FALLBACK_ORDER;

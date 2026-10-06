@@ -7,7 +7,8 @@
 ### Production fixes: Google sign-in, AI free-tier limits (Patch)
 
 - **Google sign-in on Workers**: fixed endpoints + `fetch()` token exchange/userinfo; OIDC discovery via openid-client failed with `[unenv] https.request is not implemented`.
-- **AI on free tiers**: Groq composer → `meta-llama/llama-4-scout-17b-16e-instruct` (gpt-oss-120b hit the 8k TPM limit, 413); Groq/OpenRouter output capped at 8 000 tokens (`AI_MAX_TOKENS_<PROVIDER>` overrides) so OpenRouter fits the remaining credit (402); a provider is retried once after 429/503 before falling back.
+- **AI on free tiers**: Gemini first (`AI_PROVIDER=google`), falling back across `gemini-flash-latest` → `gemini-2.5-flash` → `gemini-flash-lite-latest` on 503/429; default chain google → mistral → groq (OpenRouter is prepaid and left out unless listed in `AI_FALLBACK_PROVIDERS`); Groq output capped at 5 000 tokens to stay under its 8k TPM limit (413), OpenRouter at 8 000 (`AI_MAX_TOKENS_<PROVIDER>` overrides); a provider is retried once after 429/503.
+- **"User not found" for new Google accounts**: AI routes resolve the user by the session's id first (sign-in links a Google login to an existing row with the same email); Google user creation no longer uses `ON CONFLICT (provider,email)`, which the partial unique index rejects.
 - **AI language**: generated page text follows the language of the request (a Vietnamese prompt produced an English page).
 
 ## [25.4.0] — 2026-10-05
