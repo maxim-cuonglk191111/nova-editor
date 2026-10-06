@@ -22,6 +22,8 @@ proof that the feature works.
 | G7 | Assets upload | journey 07h | ✅ |
 | G8 | Save, reload, edits persisted | journey 08, 09 | ✅ |
 | G9 | Preview (desktop + mobile), Export HTML | journey 10, 11 | ✅ |
+| G10 | Payments — VietQR via SePay (banking apps, MoMo, ZaloPay, ShopeePay) | payment probe: create order → decode QR (NAPAS GUID, BIN, account, amount, description, CRC) → signed SePay webhook → plan/credits granted once → history | ✅ 19/19 checks on production 2026-10-06; a real scan with each wallet is a manual check |
+| G10b | Payments — cards, Google Pay, Apple Pay, PayPal via Lemon Squeezy | not testable yet | ⛔ store not configured (needs store id, variant ids, webhook secret) |
 
 Infra checks per deploy: `load-1102` probe (0/150 failures on 2026-10-06), Worker log tail during the run.
 
@@ -51,7 +53,6 @@ If an item fails and the fix is not small, it moves to Tier C.
 
 | Feature | Reason | State |
 |---------|--------|-------|
-| Payments: paid plans, top-up, PayOS, Lemon Squeezy, billing info, transaction history | Out of scope (no payments); history API returns 500 | Pages exist; only "Upgrade" / subscription page is linked. Keep the AI credit counter; propose hiding upgrade buttons |
 | Teams, real-time collaboration, comments, activity log, presence | Out of scope (no collaboration) | Builder tabs commented out; `/settings/teams` not linked |
 | Custom domains | Needs Cloudflare for SaaS; not workable on Workers Free | `/settings/domains/*` not linked |
 | White-label branding, API keys, notification preferences | Paid-plan / developer extras; no email sending wired for notifications | Pages not linked |

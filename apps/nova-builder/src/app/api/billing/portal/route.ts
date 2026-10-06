@@ -9,6 +9,8 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { createHmac } from "crypto";
+// One VND price list for every checkout path (it had drifted: 290k here vs 500k in checkout).
+import { PAYOS_PRICES_VND } from "@/lib/billing/payos";
 
 // Plan → Lemon Squeezy variant id (configured per store).
 const LS_VARIANTS: Record<string, string | undefined> = {
@@ -16,13 +18,6 @@ const LS_VARIANTS: Record<string, string | undefined> = {
   team: process.env.LEMONSQUEEZY_VARIANT_TEAM,
 };
 
-// Plan → one-time VND price for PayOS (annual purchase / top-up pack).
-const PAYOS_PRICES_VND: Record<string, number> = {
-  pro: 290_000,
-  max: 690_000,
-  team: 1_190_000,
-  credits: 99_000, // 500-credit top-up pack
-};
 
 export async function GET(req: Request) {
   const session = await getServerSession(authOptions);
