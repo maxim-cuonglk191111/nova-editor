@@ -8,12 +8,12 @@ import { capTokens, platformFetch, requireApiKey, resolveModel } from "./runtime
 // Groq model IDs (as of 2025). Updated via: https://console.groq.com/docs/models
 const MODELS = {
   planner: "llama-3.1-8b-instant",      // Fast 8B — ideal for short planning prompts
-  // gpt-oss-120b's free tier (8k TPM) rejects a full-page request with 413;
-  // Llama 4 Scout allows 30k TPM and up to 8k completion tokens.
-  patcher: "meta-llama/llama-4-scout-17b-16e-instruct",
+  patcher: "openai/gpt-oss-120b",       // llama-3.3-70b-versatile was retired; strongest free JSON model
 } as const;
 
-const MAX_TOKENS = 8000;
+// The free tier allows 8k tokens per minute and counts max_tokens against it
+// (12k → 413), so prompt + output must stay under that.
+const MAX_TOKENS = 5000;
 
 export class GroqProvider implements AIProvider {
   readonly name = "Groq (Llama 3)";

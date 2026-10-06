@@ -123,25 +123,23 @@ export async function upsertEmailUser(args: {
   provider: "google" | "email";
   displayName?: string | null;
 }) {
-  const initialCredits = 200;
+  // Select-then-insert: the (provider, email) unique index is partial
+  // (WHERE github_id IS NULL), so ON CONFLICT (provider,email) is rejected by Postgres.
+  const { data: existing } = await supabase
+    .from("users")
+    .select("*")
+    .eq("provider", args.provider)
+    .eq("email", args.email)
+    .maybeSingle();
+  if (existing) return existing as UserRow;
 
   const { data, error } = await supabase
     .from("users")
-    .upsert(
-      {
-        email: args.email,
-        provider: args.provider,
-        display_name: args.displayName ?? null,
-      },
-      { onConflict: "provider,email", ignoreDuplicates: false }
-    )
+    .insert({ email: args.email, provider: args.provider, display_name: args.displayName ?? null })
     .select()
     .single();
-
-  if (!error && data) {
-    await grantInitialCredits((data as { id: string }).id, initialCredits);
-  }
   if (error) throw new Error(`upsertEmailUser failed: ${error.message}`);
+  await grantInitialCredits((data as { id: string }).id, 200);
   return data as UserRow;
 }
 
@@ -180,6 +178,7 @@ export async function getMonthlySpentToday(userId: string): Promise<number> {
 }
 
 export interface ProvisionableToken {
+  id?: unknown;
   provider?: unknown;
   githubId?: unknown;
   githubLogin?: unknown;
@@ -189,7 +188,16 @@ export interface ProvisionableToken {
   displayName?: unknown;
 }
 
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
 export async function getOrProvisionUser(token: ProvisionableToken): Promise<UserRow> {
+  // The session's user id is authoritative: sign-in links an OAuth login to an
+  // existing row with the same email, which may belong to another provider.
+  if (typeof token.id === "string" && UUID_RE.test(token.id)) {
+    const { data } = await supabase.from("users").select("*").eq("id", token.id).maybeSingle();
+    if (data) return data as UserRow;
+  }
+
   const provider = (token.provider as string) ?? "github";
 
   if (provider === "github") {

@@ -7,9 +7,14 @@ import { requireApiKey, resolveModel } from "./runtime.js";
 // "-latest" aliases track Google's current GA models; pinned IDs (gemini-2.x) get
 // retired for new API keys.
 const MODELS = {
-  planner: "gemini-flash-latest",
+  planner: "gemini-flash-lite-latest",
   patcher: "gemini-flash-latest",
 } as const;
+
+// Free-tier Gemini models are often "overloaded" (503) or rate limited (429)
+// one at a time; the next model in the list usually answers.
+const BACKUP_MODELS = ["gemini-2.5-flash", "gemini-flash-lite-latest"];
+const RETRYABLE = /\b(429|500|503|404)\b|overloaded|unavailable|not found/i;
 
 export class GoogleProvider implements AIProvider {
   readonly name = "Gemini (Google)";
@@ -32,8 +37,23 @@ export class GoogleProvider implements AIProvider {
   }
 
   async complete(messages: AIMessage[], opts: CompleteOptions): Promise<string> {
+    const primary = resolveModel(this.id, opts.tier, MODELS);
+    const models = [primary, ...BACKUP_MODELS.filter((m) => m !== primary)];
+    let lastErr: unknown;
+    for (const model of models) {
+      try {
+        return await this.completeWith(model, messages, opts);
+      } catch (err) {
+        lastErr = err;
+        if (!RETRYABLE.test(err instanceof Error ? err.message : String(err))) throw err;
+      }
+    }
+    throw lastErr;
+  }
+
+  private async completeWith(modelId: string, messages: AIMessage[], opts: CompleteOptions): Promise<string> {
     const model = this.genAI.getGenerativeModel({
-      model: resolveModel(this.id, opts.tier, MODELS),
+      model: modelId,
       generationConfig: { maxOutputTokens: opts.maxTokens },
       // Inject system prompt via systemInstruction
       ...(opts.system ? { systemInstruction: { role: "system", parts: [{ text: opts.system }] } } : {}),
