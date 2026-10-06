@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { cookies } from "next/headers";
 import { Inter, DM_Serif_Display, Roboto_Mono } from "next/font/google";
 import "./globals.css";
 import { Providers } from "./providers";
@@ -26,21 +25,16 @@ const robotoMono = Roboto_Mono({
   variable: "--font-roboto-mono",
 });
 
-async function localeFromCookie(): Promise<Locale> {
-  const cookie = (await cookies()).get("nova_locale")?.value;
-  return cookie === "vi" ? "vi" : "en";
-}
+// ADR-NB-028 (supersedes ADR-NB-016): the layout no longer reads the locale
+// cookie. cookies() forced every route to render per request on the Worker,
+// which on Workers Free (10 ms CPU/request) caused intermittent Error 1102.
+// Pages are now prerenderable; I18nProvider sets <html lang> on the client.
+const DEFAULT_LOCALE: Locale = "en";
+const { meta } = getDictionary(DEFAULT_LOCALE);
+export const metadata: Metadata = { title: meta.title, description: meta.description };
 
-// FA-I05: localized <title>/<description> that track the chosen locale (SEO).
-export async function generateMetadata(): Promise<Metadata> {
-  const { meta } = getDictionary(await localeFromCookie());
-  return { title: meta.title, description: meta.description };
-}
-
-export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  // FA-I03: <html lang> must track the chosen locale (a11y/SEO), read from the
-  // same `nova_locale` cookie the client-side detector writes.
-  const lang = await localeFromCookie();
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  const lang = DEFAULT_LOCALE;
 
   return (
     // suppressHydrationWarning: browser extensions (e.g. Katalon) may inject

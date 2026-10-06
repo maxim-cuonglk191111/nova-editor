@@ -58,6 +58,12 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
     };
   }, []);
 
+  // <html lang> tracks the active locale (a11y/SEO). The root layout is static
+  // and always renders "en" (ADR-NB-028), so the client keeps it in sync.
+  useEffect(() => {
+    document.documentElement.lang = locale;
+  }, [locale]);
+
   const handleSetLocale = (newLocale: Locale) => {
     setLocaleState(newLocale);
     languageDetector.storePreferences(newLocale, autoDetectByIp);

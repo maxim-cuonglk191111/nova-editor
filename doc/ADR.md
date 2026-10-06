@@ -11,6 +11,13 @@
 
 ## Nova-builder decisions (ADR-NB-001 → …)
 
+### ADR-NB-028 — Keep per-request Worker CPU low: static layout, client-only app shells, native password hashing
+**Status:** ✅ Active since v25.4.0 — **supersedes ADR-NB-016**
+
+**Decision:** (1) The root layout no longer reads the `nova_locale` cookie; it renders `lang="en"` and static metadata, and `I18nProvider` sets `document.documentElement.lang` on the client. Pages can be prerendered and are served from Workers static assets via OpenNext's `staticAssetsIncrementalCache` (+ `enableCacheInterception`). (2) Builder, canvas, projects and preview pages render through `ClientOnly`, so the server returns an empty shell. (3) Passwords are hashed with WebCrypto PBKDF2-SHA256 (`pbkdf2_sha256$iter$salt$hash`); legacy bcrypt hashes verify and are rehashed on login.
+
+**Why:** The project runs on Workers Free (10 ms CPU per request) by choice. A load probe of 150 requests to render-heavy routes returned 30 Error 1102s (20%), in bursts; per-request SSR of whole client apps, a cookie-forced dynamic layout, and bcryptjs cost 12 (~440 ms CPU per login) were the CPU sinks. After (2)+(3) the rate fell to 11%. Trade-off of (1): crawlers see `lang="en"` and the English title even for Vietnamese visitors; acceptable versus a site that intermittently fails.
+
 ### ADR-NB-027 — Workers Observability replaces Sentry; no Node-only SDKs in the Worker bundle
 **Status:** ✅ Active since v25.4.0
 

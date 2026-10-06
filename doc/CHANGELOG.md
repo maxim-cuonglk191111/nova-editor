@@ -19,7 +19,8 @@
 - **Shortcuts on canvas focus**: canvas forwards Delete / ⌘D / ⌘Z… to the builder; `isEditableTarget` no longer throws on window targets.
 - **Assets**: uploads go to Supabase Storage (public `assets` bucket), falling back to R2 when configured.
 - **Builder load**: project fetch retries transient 5xx (Workers Free CPU limit, Error 1102).
-- **Export**: formatting whitespace no longer renders as blank bands (normalize uses `white-space-collapse: preserve`).
+- **Export**: formatting whitespace no longer renders as blank bands or indented text (normalize uses `white-space-collapse: preserve`).
+- **Error 1102 on Workers Free** (ADR-NB-028): builder/canvas/projects/preview render client-only; password hashing moved from bcryptjs to WebCrypto PBKDF2 (legacy hashes rehashed on login); static root layout + OpenNext static-assets incremental cache so public pages are served prerendered. Load probe: 20% → 11% failures after the first two steps.
 - **Bundle**: removed `@sentry/nextjs` and `@aws-sdk/client-s3` (server bundle 56.7 → 38.8 MB); Workers Observability enabled (ADR-NB-027).
 - **QA**: `e2e/qa-cloud-journey.spec.ts` + `playwright.cloud.config.ts` run the golden path against a deployed preview (`BASE_URL`).
 
