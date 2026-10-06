@@ -48,6 +48,22 @@ describe("composeWithFallback", () => {
     expect(result.provider).toBe("mistral");
   });
 
+  it("retries a provider once on a transient error", async () => {
+    let calls = 0;
+    outputs.mistral = () => (++calls === 1 ? Promise.reject(new Error("429 status code (no body)")) : Promise.resolve(page));
+    const result = await composeWithFallback(["mistral"], "a page", 0);
+    expect(result.provider).toBe("mistral");
+    expect(calls).toBe(2);
+  });
+
+  it("does not retry a non-transient error", async () => {
+    let calls = 0;
+    outputs.openai = () => { calls++; return Promise.reject(new Error("OPENAI_API_KEY is not configured")); };
+    outputs.openrouter = () => Promise.resolve(page);
+    await composeWithFallback(["openai", "openrouter"], "a page", 0);
+    expect(calls).toBe(1);
+  });
+
   it("throws with every provider's error when all fail", async () => {
     await expect(composeWithFallback(["google"], "a page")).rejects.toThrow(/google: no key/);
   });

@@ -4,7 +4,7 @@
 // Free model list: https://openrouter.ai/models?q=:free
 import OpenAI, { type ClientOptions } from "openai";
 import type { AIProvider, AIMessage, CompleteOptions } from "./base.js";
-import { platformFetch, requireApiKey, resolveModel } from "./runtime.js";
+import { capTokens, platformFetch, requireApiKey, resolveModel } from "./runtime.js";
 
 // Pinned models: openrouter/auto picked a different model per request, so the
 // same prompt produced anything from a full landing page to a page missing its
@@ -53,7 +53,8 @@ export class OpenRouterProvider implements AIProvider {
 
     const response = await this.client.chat.completions.create({
       model: resolveModel(this.id, opts.tier, MODELS),
-      max_tokens: opts.maxTokens,
+      // Paid per token: max_tokens must fit the remaining credit or the call is refused (402).
+      max_tokens: capTokens(this.id, opts.maxTokens, 8000),
       messages: allMessages,
     });
 
