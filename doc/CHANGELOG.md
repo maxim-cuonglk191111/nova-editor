@@ -2,6 +2,13 @@
 
 ---
 
+## [25.4.1] — 2026-10-06
+
+### Production fixes: Google sign-in, AI free-tier limits (Patch)
+
+- **Google sign-in on Workers**: fixed endpoints + `fetch()` token exchange/userinfo; OIDC discovery via openid-client failed with `[unenv] https.request is not implemented`.
+- **AI on free tiers**: Groq composer → `meta-llama/llama-4-scout-17b-16e-instruct` (gpt-oss-120b hit the 8k TPM limit, 413); Groq/OpenRouter output capped at 8 000 tokens (`AI_MAX_TOKENS_<PROVIDER>` overrides) so OpenRouter fits the remaining credit (402); a provider is retried once after 429/503 before falling back.
+
 ## [25.4.0] — 2026-10-05
 
 ### Golden-path repair: AI generation, auth, persistence, export, bundle size (Minor)

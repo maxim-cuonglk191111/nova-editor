@@ -3,13 +3,17 @@
 // Docs: https://console.groq.com/docs/openai
 import OpenAI, { type ClientOptions } from "openai";
 import type { AIProvider, AIMessage, CompleteOptions } from "./base.js";
-import { platformFetch, requireApiKey, resolveModel } from "./runtime.js";
+import { capTokens, platformFetch, requireApiKey, resolveModel } from "./runtime.js";
 
 // Groq model IDs (as of 2025). Updated via: https://console.groq.com/docs/models
 const MODELS = {
   planner: "llama-3.1-8b-instant",      // Fast 8B — ideal for short planning prompts
-  patcher: "openai/gpt-oss-120b",       // llama-3.3-70b-versatile was retired; strongest free JSON model
+  // gpt-oss-120b's free tier (8k TPM) rejects a full-page request with 413;
+  // Llama 4 Scout allows 30k TPM and up to 8k completion tokens.
+  patcher: "meta-llama/llama-4-scout-17b-16e-instruct",
 } as const;
+
+const MAX_TOKENS = 8000;
 
 export class GroqProvider implements AIProvider {
   readonly name = "Groq (Llama 3)";
@@ -43,7 +47,7 @@ export class GroqProvider implements AIProvider {
 
     const response = await this.client.chat.completions.create({
       model: resolveModel(this.id, opts.tier, MODELS),
-      max_tokens: opts.maxTokens,
+      max_tokens: capTokens(this.id, opts.maxTokens, MAX_TOKENS),
       messages: allMessages,
     });
 

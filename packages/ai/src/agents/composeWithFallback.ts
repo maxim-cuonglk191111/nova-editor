@@ -28,11 +28,29 @@ export function providerChain(preferred: (string | undefined | null)[], fallback
   return chain;
 }
 
-export async function composeWithFallback(chain: ProviderName[], userPrompt: string): Promise<FallbackResult> {
+// Rate limits and "model overloaded" usually clear within seconds; one retry
+// per provider is cheaper than giving up on the whole chain.
+const TRANSIENT = /\b(429|503)\b|overloaded|rate.?limit|unavailable/i;
+
+async function composeOnce(name: ProviderName, userPrompt: string, retryDelayMs: number) {
+  try {
+    return await composerAgentWS(getProvider(name), userPrompt);
+  } catch (err) {
+    if (!TRANSIENT.test(err instanceof Error ? err.message : String(err))) throw err;
+    await new Promise((r) => setTimeout(r, retryDelayMs));
+    return composerAgentWS(getProvider(name), userPrompt);
+  }
+}
+
+export async function composeWithFallback(
+  chain: ProviderName[],
+  userPrompt: string,
+  retryDelayMs = 2000
+): Promise<FallbackResult> {
   const failures: FallbackResult["failures"] = [];
   for (const name of chain) {
     try {
-      const raw = await composerAgentWS(getProvider(name), userPrompt);
+      const raw = await composeOnce(name, userPrompt, retryDelayMs);
       const composition = validateCompositionWS(raw);
       if (composition.instances.length > 0) return { composition, provider: name, failures };
       failures.push({ provider: name, error: "empty composition" });

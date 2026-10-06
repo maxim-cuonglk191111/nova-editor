@@ -18,6 +18,14 @@ export function resolveModel(
   return override || defaults[tier];
 }
 
+// Free tiers bound output size (Groq: tokens-per-minute counts max_tokens;
+// OpenRouter: max_tokens must fit the remaining credit). AI_MAX_TOKENS_<PROVIDER>
+// overrides the default cap.
+export function capTokens(provider: string, requested: number, defaultCap: number): number {
+  const override = Number(process.env[`AI_MAX_TOKENS_${provider.toUpperCase()}`]);
+  return Math.min(requested, override > 0 ? override : defaultCap);
+}
+
 export function requireApiKey(value: string | undefined, envName: string, providerName: string): string {
   const key = value?.trim();
   if (!key) throw new Error(`${providerName}: ${envName} is not configured`);
