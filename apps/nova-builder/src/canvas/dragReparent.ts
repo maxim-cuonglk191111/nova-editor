@@ -17,7 +17,7 @@ import {
   getLocalChildrenOrientation,
 } from "@webstudio-is/design-system";
 
-const THRESHOLD = 4; // px before a press becomes a drag (so clicks still select)
+const THRESHOLD = 8; // px before a press becomes a drag (so clicks and small nudges still select)
 const ACCENT = "#7c3aed";
 
 type DragCtx = {
@@ -33,6 +33,8 @@ type DragCtx = {
   insertIndex?: number | null;
   targetRowId?: string | null;
   originalStyle?: string | null;
+  // Where the dragged element sat when the drag began; releasing inside it is a no-op.
+  originRect?: DOMRect;
 };
 
 function instanceIdOf(el: Element | null): string | null {
@@ -254,6 +256,12 @@ export function initDragReparent(): () => void {
     ctx.insertIndex = null;
     ctx.targetRowId = null;
 
+    const origin = ctx.originRect;
+    if (origin && clientX >= origin.left && clientX <= origin.right && clientY >= origin.top && clientY <= origin.bottom) {
+      clearIndicator();
+      return;
+    }
+
     const under = document.elementFromPoint(clientX, clientY);
     const targetId = instanceIdOf(under);
     const instances = $instances.get();
@@ -334,9 +342,11 @@ export function initDragReparent(): () => void {
       const draggedEl = elementForInstance(ctx.draggedId);
       if (draggedEl) {
         ctx.originalStyle = draggedEl.getAttribute("style");
-        draggedEl.style.transition = "opacity 0.12s ease, transform 0.12s ease";
+        ctx.originRect = draggedEl.getBoundingClientRect();
+        // Opacity only: shrinking the element exposed its parent under the
+        // pointer, so a tiny nudge dropped it into the parent's last slot.
+        draggedEl.style.transition = "opacity 0.12s ease";
         draggedEl.style.opacity = "0.4";
-        draggedEl.style.transform = "scale(0.98)";
       }
 
       // Auto-enable grid guides when dragging starts!

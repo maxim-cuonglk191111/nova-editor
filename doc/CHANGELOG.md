@@ -9,6 +9,8 @@
 - **Google sign-in on Workers**: fixed endpoints + `fetch()` token exchange/userinfo; OIDC discovery via openid-client failed with `[unenv] https.request is not implemented`.
 - **AI on free tiers**: Gemini first (`AI_PROVIDER=google`), falling back across `gemini-flash-latest` → `gemini-2.5-flash` → `gemini-flash-lite-latest` on 503/429; default chain google → mistral → groq (OpenRouter is prepaid and left out unless listed in `AI_FALLBACK_PROVIDERS`); Groq output capped at 5 000 tokens to stay under its 8k TPM limit (413), OpenRouter at 8 000 (`AI_MAX_TOKENS_<PROVIDER>` overrides); a provider is retried once after 429/503.
 - **"User not found" for new Google accounts**: AI routes resolve the user by the session's id first (sign-in links a Google login to an existing row with the same email); Google user creation no longer uses `ON CONFLICT (provider,email)`, which the partial unique index rejects.
+- **Inline text editing**: double-click opens the editor with the element's text, typography and alignment, and hides the original (the editor was a plain contentEditable never attached to Lexical, so it opened empty over the old text); Enter commits.
+- **Canvas drag**: releasing within the element's own box is a no-op, the drag starts after 8 px, and the dragged element no longer shrinks — a small nudge used to drop it into its parent's last slot. Regression spec `e2e/canvas-edit-nudge.spec.ts` (runs on an AI-generated project).
 - **AI language**: generated page text follows the language of the request (a Vietnamese prompt produced an English page).
 
 ## [25.4.0] — 2026-10-05

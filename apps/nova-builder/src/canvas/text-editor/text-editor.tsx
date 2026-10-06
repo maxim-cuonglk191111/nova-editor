@@ -17,6 +17,10 @@ import {
   type InitialConfigType,
 } from "@lexical/react/LexicalComposer";
 import { RichTextPlugin } from "@lexical/react/LexicalRichTextPlugin";
+// Must be Lexical's ContentEditable: it registers the root element with the
+// editor. A plain contentEditable div was never attached, so the editor opened
+// empty and typed text never reached Lexical's state.
+import { ContentEditable } from "@lexical/react/LexicalContentEditable";
 import { LexicalErrorBoundary } from "@lexical/react/LexicalErrorBoundary";
 import { HistoryPlugin } from "@lexical/react/LexicalHistoryPlugin";
 import { LinkPlugin } from "@lexical/react/LexicalLinkPlugin";
@@ -32,6 +36,7 @@ import {
   KEY_ENTER_COMMAND,
   BLUR_COMMAND,
   COMMAND_PRIORITY_EDITOR,
+  COMMAND_PRIORITY_HIGH,
 } from "lexical";
 import type { Instance } from "@webstudio-is/sdk";
 import { type Refs, $convertToUpdates, plainTextFromChildren } from "./interop";
@@ -81,7 +86,7 @@ function EditorCommands({
     return editor.registerCommand(
       KEY_ESCAPE_COMMAND,
       () => { onCancel(); return true; },
-      COMMAND_PRIORITY_EDITOR
+      COMMAND_PRIORITY_HIGH
     );
   }, [editor, onCancel]);
 
@@ -96,7 +101,7 @@ function EditorCommands({
         }
         return false;
       },
-      COMMAND_PRIORITY_EDITOR
+      COMMAND_PRIORITY_HIGH
     );
   }, [editor, commit]);
 
@@ -203,6 +208,7 @@ const editorConfig: InitialConfigType = {
     console.error("[nova-text-editor]", error);
   },
   theme: {
+    paragraph: "nova-text-p",
     text: {
       bold: "nova-text-bold",
       italic: "nova-text-italic",
@@ -211,19 +217,26 @@ const editorConfig: InitialConfigType = {
   },
 };
 
+const EDITOR_CSS = `
+.nova-text-p { margin: 0; }
+.nova-text-bold { font-weight: bold; }
+.nova-text-italic { font-style: italic; }
+.nova-text-underline { text-decoration: underline; }
+`;
+
 export function TextEditor({ instanceId, initialChildren, onCommit, onCancel, style }: TextEditorProps) {
   const initialText = plainTextFromChildren(initialChildren);
 
   const config: InitialConfigType = {
     ...editorConfig,
-    editorState(editor) {
-      editor.update(() => {
-        const root = $getRoot();
-        root.clear();
-        const para = $createParagraphNode();
-        para.append($createTextNode(initialText));
-        root.append(para);
-      });
+    // Lexical already runs this inside its initial update; a nested
+    // editor.update() here left the editor empty.
+    editorState() {
+      const root = $getRoot();
+      root.clear();
+      const para = $createParagraphNode();
+      para.append($createTextNode(initialText));
+      root.append(para);
     },
   };
 
@@ -236,14 +249,9 @@ export function TextEditor({ instanceId, initialChildren, onCommit, onCancel, st
           ...style,
         }}
       >
+        <style>{EDITOR_CSS}</style>
         <RichTextPlugin
-          contentEditable={
-            <div
-              contentEditable
-              suppressContentEditableWarning
-              style={{ outline: "none", minHeight: "1em" }}
-            />
-          }
+          contentEditable={<ContentEditable style={{ outline: "none", minHeight: "1em" }} />}
           placeholder={null}
           ErrorBoundary={LexicalErrorBoundary}
         />
