@@ -83,10 +83,10 @@ export function CanvasContextMenu({ instanceId, x, y, onClose }: Props) {
 
   function handleCut() {
     $clipboard.set({ instances: new Map($instances.get()), rootId: instanceId });
-    const { updated, deleted } = deleteInstance(instanceId, $instances.get());
+    const { updated, deleted, nextSelectedId } = deleteInstance(instanceId, $instances.get());
     if (deleted) {
       updateData(({ instances }) => replaceMap(instances, updated));
-      $selectedInstanceSelector.set(undefined);
+      $selectedInstanceSelector.set(nextSelectedId ? [nextSelectedId] : undefined);
     }
     onClose();
   }
@@ -165,10 +165,10 @@ export function CanvasContextMenu({ instanceId, x, y, onClose }: Props) {
   }
 
   function handleDelete() {
-    const { updated, deleted } = deleteInstance(instanceId, $instances.get());
+    const { updated, deleted, nextSelectedId } = deleteInstance(instanceId, $instances.get());
     if (deleted) {
       updateData(({ instances }) => replaceMap(instances, updated));
-      $selectedInstanceSelector.set(undefined);
+      $selectedInstanceSelector.set(nextSelectedId ? [nextSelectedId] : undefined);
     }
     onClose();
   }

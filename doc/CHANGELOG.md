@@ -11,6 +11,8 @@
 - **"User not found" for new Google accounts**: AI routes resolve the user by the session's id first (sign-in links a Google login to an existing row with the same email); Google user creation no longer uses `ON CONFLICT (provider,email)`, which the partial unique index rejects.
 - **Inline text editing**: double-click opens the editor with the element's text, typography and alignment, and hides the original (the editor was a plain contentEditable never attached to Lexical, so it opened empty over the old text); Enter commits.
 - **Canvas drag**: releasing within the element's own box is a no-op, the drag starts after 8 px, and the dragged element no longer shrinks — a small nudge used to drop it into its parent's last slot. Regression spec `e2e/canvas-edit-nudge.spec.ts` (runs on an AI-generated project).
+- **Selection indicator**: deleting an element selects its next sibling (else previous, else parent) instead of clearing the selection; undo/redo drop a selection whose instance no longer exists. Regression spec `e2e/canvas-selection.spec.ts`.
+- **AI images**: 31 curated Unsplash photos across food, business, retail, services and travel (each checked to show what its label says); bare photo ids are expanded to full URLs; footer copyright uses the current year.
 - **AI language**: generated page text follows the language of the request (a Vietnamese prompt produced an English page).
 
 ## [25.4.0] — 2026-10-05

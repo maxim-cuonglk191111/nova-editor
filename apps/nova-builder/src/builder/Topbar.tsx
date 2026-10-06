@@ -61,10 +61,10 @@ export function Topbar({ isDemo }: { isDemo?: boolean }) {
 
   const handleDelete = useCallback(() => {
     if (!selectedId) return;
-    const { updated, deleted } = deleteInstance(selectedId, $instances.get());
+    const { updated, deleted, nextSelectedId } = deleteInstance(selectedId, $instances.get());
     if (deleted) {
       updateData(({ instances }) => replaceMap(instances, updated));
-      $selectedInstanceSelector.set(undefined);
+      $selectedInstanceSelector.set(nextSelectedId ? [nextSelectedId] : undefined);
     }
   }, [selectedId]);
 

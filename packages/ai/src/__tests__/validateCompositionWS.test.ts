@@ -1,5 +1,19 @@
 import { describe, it, expect } from "vitest";
-import { validateCompositionWS } from "../utils/validateCompositionWS.js";
+import { validateCompositionWS, expandImageSrc } from "../utils/validateCompositionWS.js";
+
+describe("expandImageSrc", () => {
+  it("expands a bare curated Unsplash id to a full URL", () => {
+    expect(expandImageSrc("photo-1509440159596-0249088772ff")).toBe(
+      "https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&w=1000&q=80"
+    );
+  });
+
+  it("leaves full URLs and other values alone", () => {
+    const url = "https://images.unsplash.com/photo-1?w=800";
+    expect(expandImageSrc(url)).toBe(url);
+    expect(expandImageSrc(42)).toBe(42);
+  });
+});
 
 const heading = (id: string, tag: string, text: string) => ({
   id, component: "Heading", label: text, props: { tag }, styles: {}, text, children: [],

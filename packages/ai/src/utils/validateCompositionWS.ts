@@ -201,6 +201,16 @@ function ensureSingleH1(instances: WSInstance[], props: WSProp[], rootIds: strin
   for (const h of h1s) if (h.id !== keep.id) setTag(h.id, "h2");
 }
 
+// The prompt lists curated images by Unsplash id; models sometimes return the
+// bare id instead of the full URL.
+export function expandImageSrc(src: unknown): unknown {
+  if (typeof src !== "string") return src;
+  const id = src.trim();
+  return /^photo-[\w-]+$/.test(id)
+    ? `https://images.unsplash.com/${id}?auto=format&fit=crop&w=1000&q=80`
+    : src;
+}
+
 export function validateCompositionWS(raw: unknown): WSCompositionResult {
   const instances: WSInstance[] = [];
   const props: WSProp[] = [];
@@ -252,8 +262,9 @@ export function validateCompositionWS(raw: unknown): WSCompositionResult {
 
       // Props
       if (n.props && typeof n.props === "object" && !Array.isArray(n.props)) {
-        for (const [key, val] of Object.entries(n.props as Record<string, unknown>)) {
-          if (val === null || val === undefined) continue;
+        for (const [key, rawVal] of Object.entries(n.props as Record<string, unknown>)) {
+          if (rawVal === null || rawVal === undefined) continue;
+          const val = key === "src" ? expandImageSrc(rawVal) : rawVal;
           props.push({
             id: genId("prop_"),
             instanceId,
