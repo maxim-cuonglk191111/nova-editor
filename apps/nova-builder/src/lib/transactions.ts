@@ -29,6 +29,7 @@ import type {
   StyleSourceSelections,
 } from "@webstudio-is/sdk";
 import { serverSyncStore } from "./sync-stores";
+import { $selectedInstanceSelector } from "./nano-states";
 import {
   $pages,
   $instances,
@@ -129,12 +130,21 @@ export const replaceMap = <K, V>(draft: Map<K, V>, next: Map<K, V>) => {
   }
 };
 
+// Undo/redo can remove the selected instance (e.g. undoing an insert); drop a
+// selection that no longer points at anything.
+const dropStaleSelection = () => {
+  const selectedId = $selectedInstanceSelector.get()?.[0];
+  if (selectedId && !$instances.get().has(selectedId)) $selectedInstanceSelector.set(undefined);
+};
+
 export const undo = () => {
   serverSyncStore.undo();
   syncHistoryFlags();
+  dropStaleSelection();
 };
 
 export const redo = () => {
   serverSyncStore.redo();
   syncHistoryFlags();
+  dropStaleSelection();
 };

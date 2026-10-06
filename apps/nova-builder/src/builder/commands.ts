@@ -124,10 +124,10 @@ const deleteCommand = () => {
   }
   const selectedId = $selectedInstanceId.get();
   if (!selectedId) return;
-  const { updated, deleted } = deleteInstance(selectedId, $instances.get());
+  const { updated, deleted, nextSelectedId } = deleteInstance(selectedId, $instances.get());
   if (deleted) {
     updateData(({ instances }) => replaceMap(instances, updated));
-    $selectedInstanceSelector.set(undefined);
+    $selectedInstanceSelector.set(nextSelectedId ? [nextSelectedId] : undefined);
   }
 };
 

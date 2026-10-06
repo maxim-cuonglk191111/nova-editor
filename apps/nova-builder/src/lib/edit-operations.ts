@@ -80,15 +80,21 @@ export function cloneFragmentProps(
 
 // Delete an instance and remove it from its parent's children list.
 // Returns { updated, deleted: false } unchanged if instanceId has no parent (root cannot be deleted).
+// `nextSelectedId` is what to select afterwards (next sibling, else previous, else
+// parent) so the selection indicator stays on the canvas instead of vanishing.
 export function deleteInstance(
   instanceId: string,
   instances: Instances
-): { updated: Instances; deleted: boolean } {
+): { updated: Instances; deleted: boolean; nextSelectedId?: string } {
   const parentMap = buildParentMap(instances);
   const parentId = parentMap.get(instanceId);
   if (!parentId) return { updated: instances, deleted: false };
   const parent = instances.get(parentId);
   if (!parent) return { updated: instances, deleted: false };
+
+  const siblings = parent.children.flatMap((c) => (c.type === "id" ? [c.value] : []));
+  const index = siblings.indexOf(instanceId);
+  const nextSelectedId = siblings[index + 1] ?? siblings[index - 1] ?? parentId;
 
   const updated = new Map(instances);
   updated.set(parentId, {
@@ -98,7 +104,7 @@ export function deleteInstance(
     ),
   });
   updated.delete(instanceId);
-  return { updated, deleted: true };
+  return { updated, deleted: true, nextSelectedId };
 }
 
 // Duplicate: clone subtree with new IDs and insert the clone immediately after the original.

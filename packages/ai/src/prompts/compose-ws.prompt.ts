@@ -60,17 +60,48 @@ ListItem  — li list item.     props: none.
 
 ═══════════════════════════════════════
 CURATED IMAGES (MUST use these exact Unsplash URLs for any Image or Avatar src).
-Only use an image whose subject fits the section; if none fits, leave the Image out
-rather than using an unrelated one:
+Each URL shows exactly what its label says. Only use an image whose subject
+matches the business and the section (a bakery gets bread/pastries, never coffee
+cups or an office); if none fits, leave the Image out. Never reuse one image twice.
+Base URL: https://images.unsplash.com/<id>?auto=format&fit=crop&w=1000&q=80
 ═══════════════════════════════════════
-For SaaS Dashboard Mockups / App Previews:
-- Dashboard: https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1000&q=80
-- App Analytics UI: https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1000&q=80
-For General Features / Illustrations:
-- Coffee & Cafe: https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&w=800&q=80
-- Modern Coworking: https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=800&q=80
-- Desktop Setup: https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=800&q=80
-- Abstract 3D Shapes: https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=800&q=80
+Food & drink:
+- Bakery counter with pastries: photo-1517433670267-08bbd4be890f
+- Rustic bread loaves: photo-1509440159596-0249088772ff
+- Croissants: photo-1555507036-ab1f4038808a
+- Chocolate cake: photo-1578985545062-69928b1d9587
+- Latte art coffee cups: photo-1509042239860-f550ce710b93
+- Cafe interior: photo-1554118811-1e0d58224f24
+- Restaurant dining room: photo-1517248135467-4c7edcad34c4
+- Plated food dishes: photo-1504674900247-0877df9cc836
+Business & tech:
+- Analytics dashboard on laptop: photo-1551288049-bebda4e38f71
+- Charts on a screen: photo-1460925895917-afdab827c52f
+- Team working at laptops: photo-1522071820081-009f0129c71c
+- Laptop with code on a desk: photo-1498050108023-c5249f4df085
+- Empty office corridor: photo-1497366216548-37526070297c
+- Design swatches and sketches: photo-1561070791-2526d30994b5
+- Abstract gradient shapes: photo-1618005182384-a83a8bd57fbe
+Shopping & products:
+- Clothing store interior: photo-1441986300917-64674bd600d8
+- Clothes on a rack: photo-1445205170230-053b83016050
+- Headphones (product shot): photo-1505740420928-5e560c06d30e
+Lifestyle & services:
+- Gym equipment: photo-1534438327276-14e5300c3a48
+- Yoga at sunset: photo-1544367567-0f2fcb009e0b
+- Clinic reception: photo-1519494026892-80bbd2d6fd0d
+- School books and apple: photo-1503676260728-1c00da094a0b
+- Wedding bouquet: photo-1519741497674-611481863552
+- Camera and printed photos: photo-1452587925148-ce544e77e70d
+- Gardening tools and soil: photo-1416879595882-3373a0480b5b
+- Cat and dog: photo-1450778869180-41d0601e046e
+Travel & places:
+- Beach at sunrise: photo-1507525428034-b723cf961d3e
+- Resort hotel with pool: photo-1566073771259-6a8506099945
+- Mountain landscape: photo-1464822759023-fed622ff2c3b
+- Modern house with pool: photo-1564013799919-ab600027ffc6
+- Modern architecture: photo-1487958449943-2429e8be8625
+- Sports car on a road: photo-1503376780353-7e6692767b70
 For User Avatars (Avatar src):
 - Avatar 1 (Woman): https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80
 - Avatar 2 (Man): https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&q=80
@@ -113,7 +144,7 @@ HOW TO BUILD A GOOD PAGE:
      Paragraph, a primary CTA Button and, where it fits, an Image.
   3. Then EVERY section the user asked for, in the order they listed it — do not
      skip any (e.g. a "menu with prices" needs item names AND prices).
-  4. Footer — a Box with tag "footer".
+  4. Footer — a Box with tag "footer". A copyright line uses the current year, ${new Date().getFullYear()}.
 - Each section is a top-level node of "tree"; never nest one section inside another.
 - Write real, specific copy (not "Lorem ipsum", not "Your headline here").
 - Use real semantic structure: wrap nav links in a Box with tag "nav", use

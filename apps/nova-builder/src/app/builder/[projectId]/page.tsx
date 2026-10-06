@@ -309,10 +309,10 @@ function BuilderPage() {
       // Drag-to-delete: remove instance when dragged out of canvas.
       if (e.data?.type === "nova:deleteInstance") {
         const { instanceId } = e.data as { instanceId: string };
-        const { updated, deleted } = deleteInstance(instanceId, $instances.get());
+        const { updated, deleted, nextSelectedId } = deleteInstance(instanceId, $instances.get());
         if (deleted) {
           updateData(({ instances }) => replaceMap(instances, updated));
-          $selectedInstanceSelector.set(undefined);
+          $selectedInstanceSelector.set(nextSelectedId ? [nextSelectedId] : undefined);
         }
         return;
       }
