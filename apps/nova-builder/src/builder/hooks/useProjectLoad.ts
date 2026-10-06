@@ -37,6 +37,20 @@ type ProjectApiResponse = {
 
 export type LoadState = "loading" | "ready" | "error";
 
+// The Worker occasionally answers 503 (cold start / resource limit); one blip
+// must not strand the user on "Loading project…". Retry 5xx and network errors.
+async function fetchWithRetry(url: string, signal: AbortSignal, attempts = 3): Promise<Response> {
+  for (let i = 1; ; i++) {
+    try {
+      const res = await fetch(url, { signal });
+      if (res.status < 500 || i >= attempts) return res;
+    } catch (err) {
+      if (signal.aborted || i >= attempts) throw err;
+    }
+    await new Promise((r) => setTimeout(r, 600 * i));
+  }
+}
+
 export function useProjectLoad(projectId: string, isDemo: boolean) {
   const [loadState, setLoadState] = useState<LoadState>("loading");
   const [errorMessage, setErrorMessage] = useState("");
@@ -50,9 +64,7 @@ export function useProjectLoad(projectId: string, isDemo: boolean) {
 
     (async () => {
       try {
-        const res = await fetch(`/api/projects/${projectId}`, {
-          signal: controller.signal,
-        });
+        const res = await fetchWithRetry(`/api/projects/${projectId}`, controller.signal);
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const json: ProjectApiResponse = await res.json();
 

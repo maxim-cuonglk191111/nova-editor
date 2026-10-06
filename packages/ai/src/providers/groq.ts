@@ -1,13 +1,14 @@
 // packages/ai/src/providers/groq.ts
 // Groq LPU adapter — OpenAI-compatible, free tier (no credit card required).
 // Docs: https://console.groq.com/docs/openai
-import OpenAI from "openai";
+import OpenAI, { type ClientOptions } from "openai";
 import type { AIProvider, AIMessage, CompleteOptions } from "./base.js";
+import { platformFetch, requireApiKey, resolveModel } from "./runtime.js";
 
 // Groq model IDs (as of 2025). Updated via: https://console.groq.com/docs/models
 const MODELS = {
   planner: "llama-3.1-8b-instant",      // Fast 8B — ideal for short planning prompts
-  patcher: "llama-3.3-70b-versatile",   // Best free Groq model — strong JSON generation
+  patcher: "openai/gpt-oss-120b",       // llama-3.3-70b-versatile was retired; strongest free JSON model
 } as const;
 
 export class GroqProvider implements AIProvider {
@@ -25,7 +26,8 @@ export class GroqProvider implements AIProvider {
     if (!this._client) {
       this._client = new OpenAI({
         baseURL: "https://api.groq.com/openai/v1",
-        apiKey: this._apiKey,
+        apiKey: requireApiKey(this._apiKey, "GROQ_API_KEY", this.name),
+        fetch: platformFetch as ClientOptions["fetch"],
       });
     }
     return this._client;
@@ -40,7 +42,7 @@ export class GroqProvider implements AIProvider {
     ];
 
     const response = await this.client.chat.completions.create({
-      model: MODELS[opts.tier],
+      model: resolveModel(this.id, opts.tier, MODELS),
       max_tokens: opts.maxTokens,
       messages: allMessages,
     });

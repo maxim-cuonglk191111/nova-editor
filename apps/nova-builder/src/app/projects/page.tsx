@@ -1,4 +1,5 @@
 "use client";
+import { ClientOnly } from "@/components/ClientOnly";
 
 import { useEffect, useState, useRef, useCallback } from "react";
 import { useRouter } from "next/navigation";
@@ -280,7 +281,7 @@ function DeleteConfirmModal({ siteName, onConfirm, onClose }: { siteName: string
   );
 }
 
-export default function SitesPage() {
+function SitesPage() {
   const router = useRouter();
   const { t } = useI18n();
   const EXAMPLES = t.landing.examples;
@@ -580,5 +581,14 @@ export default function SitesPage() {
         />
       )}
     </div>
+  );
+}
+
+// Client-only: skip server rendering (Worker CPU, Error 1102).
+export default function Page() {
+  return (
+    <ClientOnly>
+      <SitesPage />
+    </ClientOnly>
   );
 }

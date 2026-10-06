@@ -11,7 +11,7 @@ import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 function AuthForm() {
   const { t } = useI18n();
   const searchParams = useSearchParams();
-  const callbackUrl = searchParams.get("callbackUrl") ?? "/";
+  const callbackUrl = searchParams.get("callbackUrl") ?? "/projects";
   const authError = searchParams.get("error");
   const registered = searchParams.get("registered") === "true";
   const backHref = callbackUrl.startsWith("/builder/") ? callbackUrl : "/";
@@ -42,8 +42,10 @@ function AuthForm() {
     setBusy(false);
     if (result?.error) {
       setLocalError("Invalid email or password.");
-    } else if (result?.url) {
-      window.location.href = result.url;
+    } else if (result?.ok) {
+      // result.url is built from NEXTAUTH_URL; stay on the current host instead.
+      const sameHost = callbackUrl.startsWith("/") && !callbackUrl.startsWith("//");
+      window.location.href = sameHost ? callbackUrl : "/projects";
     }
   }
 

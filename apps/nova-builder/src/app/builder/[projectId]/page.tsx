@@ -1,4 +1,5 @@
 "use client";
+import { ClientOnly } from "@/components/ClientOnly";
 
 // Builder page — 3-column CSS Grid layout mirroring Webstudio's chrome.
 //
@@ -19,6 +20,7 @@ import { useStore } from "@nanostores/react";
 import { useParams } from "next/navigation";
 import { nanoid } from "nanoid";
 import { getRegistry } from "@/builder/left-sidebar/components/ComponentRegistry";
+import { SHORTCUT_MESSAGE, type ForwardedShortcut } from "@/canvas/forwardShortcuts";
 import { useSession } from "next-auth/react";
 import {
   $instances,
@@ -70,7 +72,7 @@ import { ThemeProvider, $builderTheme } from "@/builder/ThemeProvider";
 import { SafeModeBanner } from "@/builder/SafeModeBanner";
 import { NestingToast } from "@/builder/NestingToast";
 
-export default function BuilderPage() {
+function BuilderPage() {
   const params = useParams<{ projectId: string }>();
   const projectId = params.projectId;
   const isDemo = projectId === "demo";
@@ -240,6 +242,13 @@ export default function BuilderPage() {
       if (e.data?.type === "nova:select") {
         const { selector } = e.data as { selector: string[] | undefined };
         $selectedInstanceSelector.set(selector);
+        return;
+      }
+      // Shortcut pressed while focus was inside the canvas iframe — replay it on
+      // this window so useBuilderKeyboard / the command registry handle it.
+      if (e.data?.type === SHORTCUT_MESSAGE && e.origin === window.location.origin) {
+        const { key, code, ctrlKey, metaKey, shiftKey, altKey } = e.data as ForwardedShortcut;
+        window.dispatchEvent(new KeyboardEvent("keydown", { key, code, ctrlKey, metaKey, shiftKey, altKey, bubbles: true, cancelable: true }));
         return;
       }
       if (e.data?.type === "nova:editingStart") {
@@ -738,5 +747,14 @@ export default function BuilderPage() {
       {/* Content-model warning toast (M5) */}
       <NestingToast />
     </ThemeProvider>
+  );
+}
+
+// Client-only: skip server rendering (Worker CPU, Error 1102).
+export default function Page() {
+  return (
+    <ClientOnly>
+      <BuilderPage />
+    </ClientOnly>
   );
 }

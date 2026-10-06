@@ -2,7 +2,8 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { nanoid } from "nanoid";
-import { uploadToR2, makeAssetKey, assetPublicUrl, type NovaAsset } from "@/lib/r2";
+import { uploadToR2, makeAssetKey, assetPublicUrl, isR2Configured, type NovaAsset } from "@/lib/r2";
+import { uploadToSupabaseStorage } from "@/lib/supabaseStorage";
 import { uploadToImageKit, projectFolder, isImageKitConfigured } from "@/lib/imagekit";
 import { getFolder } from "@/lib/db-folders";
 
@@ -166,14 +167,24 @@ export async function POST(req: Request) {
       ...fontMeta,
     };
   } else {
-    // ── R2 fallback path (original behavior, unchanged) ─────────────────────
+    // ── Supabase Storage, falling back to R2 when it is configured ──────────
     const key = makeAssetKey(projectId, assetId, safeName);
 
+    let url: string;
     try {
-      await uploadToR2(key, data, file.type);
-    } catch (err) {
-      console.error("[api/assets] R2 upload failed:", err);
-      return NextResponse.json({ error: "Upload to R2 failed" }, { status: 500 });
+      url = await uploadToSupabaseStorage(key, data, file.type);
+    } catch (supabaseErr) {
+      if (!isR2Configured()) {
+        console.error("[api/assets] upload failed:", supabaseErr);
+        return NextResponse.json({ error: "Upload failed. Please try again." }, { status: 500 });
+      }
+      try {
+        await uploadToR2(key, data, file.type);
+        url = assetPublicUrl(key);
+      } catch (r2Err) {
+        console.error("[api/assets] upload failed (Supabase, then R2):", supabaseErr, r2Err);
+        return NextResponse.json({ error: "Upload failed. Please try again." }, { status: 500 });
+      }
     }
 
     asset = {
@@ -182,7 +193,7 @@ export async function POST(req: Request) {
       type: assetType,
       format,
       size: file.size,
-      url: assetPublicUrl(key),
+      url,
       key,
       createdAt: new Date().toISOString(),
       folderId,

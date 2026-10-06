@@ -2091,3 +2091,17 @@ Full parity audit vs `reference/webstudio` @ `65d8a16`: [`doc/WS-PARITY-AUDIT.md
 | Pro AI metering contradiction (tiers.ts unlimited vs policy/DB 4000) | ✅ resolved | **TD-026 RESOLVED in v4.1.0 (ADR-038):** all tiers metered in `tiers.ts` (Pro 4000, Free 200); `/api/ai` deducts for all; logic unit-tested. Runtime enforcement = v4.1.0 🟡 rows above. · 2026-06-17 |
 
 > **Next action to convert 🟡 → ✅:** run the step-by-step **[QA-PHASE5.md](QA-PHASE5.md)** checklist on a real project, flip confirmed rows here (dated), and file any failure as 🔴 + a TD.
+
+## v25.4.0 — Golden path (automated: `e2e/qa-cloud-journey.spec.ts` on the Workers preview)
+| ID | Behavior | Status |
+|----|----------|--------|
+| GP-1 | Signup signs in and lands on /projects; logout → login lists the project | 🟡 |
+| GP-2 | New Site → Build with AI → page generated (~20 s) with navbar, hero h1, every requested section | 🟡 |
+| GP-3 | Apply to page shows the generated page immediately (no reload); tour does not block Apply | 🟡 |
+| GP-4 | Edit text (Props) and style on canvas; undo/redo | 🟡 |
+| GP-5 | Add component, duplicate, delete; navigator drag reorders sections | 🟡 |
+| GP-6 | Breakpoints Desktop/Tablet/Mobile L/Mobile P; generated page does not overflow at 479 px | 🟡 |
+| GP-7 | Pages tab: add /about | 🟡 |
+| GP-8 | Autosave; reopening the project keeps edits | 🟡 |
+| GP-9 | Preview desktop + mobile; export HTML keeps h1/section tags and instance colors | 🟡 |
+| GP-10 | Asset upload | 🔴 no storage backend configured (R2/ImageKit unset) — decision pending |

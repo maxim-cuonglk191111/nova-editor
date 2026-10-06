@@ -55,7 +55,9 @@ List      — ul/ol list.       props: ordered (boolean).
 ListItem  — li list item.     props: none.
 
 ═══════════════════════════════════════
-CURATED IMAGES (MUST use these exact Unsplash URLs for any Image or Avatar src):
+CURATED IMAGES (MUST use these exact Unsplash URLs for any Image or Avatar src).
+Only use an image whose subject fits the section; if none fits, leave the Image out
+rather than using an unrelated one:
 ═══════════════════════════════════════
 For SaaS Dashboard Mockups / App Previews:
 - Dashboard: https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1000&q=80
@@ -101,8 +103,14 @@ ${extraHints ? `\nADDITIONAL CONTEXT:\n${extraHints}` : ""}
 ═══════════════════════════════════════
 HOW TO BUILD A GOOD PAGE:
 ═══════════════════════════════════════
-- Build a complete, cohesive page fitting the description. Typical order:
-  Navbar box → Hero box → Features box → Pricing box (optional) → Footer box
+- Build a complete, cohesive page fitting the description. REQUIRED structure:
+  1. Navbar — a Box with tag "header": brand name + nav Links + one CTA Button.
+  2. Hero — a Box with tag "section" containing the page's ONLY h1, a subheading
+     Paragraph, a primary CTA Button and, where it fits, an Image.
+  3. Then EVERY section the user asked for, in the order they listed it — do not
+     skip any (e.g. a "menu with prices" needs item names AND prices).
+  4. Footer — a Box with tag "footer".
+- Each section is a top-level node of "tree"; never nest one section inside another.
 - Write real, specific copy (not "Lorem ipsum", not "Your headline here").
 - Use real semantic structure: wrap nav links in a Box with tag "nav", use
   correct heading hierarchy (h1 for the main title, h2 for sections, h3 for cards).

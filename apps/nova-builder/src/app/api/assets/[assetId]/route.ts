@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
-import { deleteFromR2 } from "@/lib/r2";
+import { deleteFromR2, isR2Configured } from "@/lib/r2";
+import { deleteFromSupabaseStorage } from "@/lib/supabaseStorage";
 import { deleteFromImageKit, isImageKitConfigured } from "@/lib/imagekit";
 
 export async function DELETE(
@@ -47,15 +48,15 @@ export async function DELETE(
         // Non-fatal — asset record is still removed from builder
       }
     } else {
-      // R2 path — verify the key belongs to this project and assetId
+      // Supabase Storage / R2 path — verify the key belongs to this project and assetId
       const expectedSegment = `assets/${projectId}/${assetId}/`;
       if (!key.startsWith(expectedSegment)) {
         return NextResponse.json({ error: "Forbidden" }, { status: 403 });
       }
-      try {
-        await deleteFromR2(key);
-      } catch (err) {
-        console.error("[api/assets] R2 delete failed:", err);
+      // The file lives in Supabase Storage unless that upload fell back to R2.
+      const deletions = [deleteFromSupabaseStorage(key), ...(isR2Configured() ? [deleteFromR2(key)] : [])];
+      for (const result of await Promise.allSettled(deletions)) {
+        if (result.status === "rejected") console.error("[api/assets] storage delete failed:", result.reason);
       }
     }
   }

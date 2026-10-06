@@ -145,10 +145,10 @@ Breadcrumb of ancestor chain → click to select ancestor. ↩/↪ undo/redo but
 
 ### AI generation
 1. Topbar "AI" → `$aiPanelOpen.set(true)` → `AIPanel.tsx` renders
-2. Type prompt → `POST /api/ai` `{ userMessage, projectId }`
-3. API calls `composerAgentWS` → returns `WSCompositionResult`
-4. `validateCompositionWS(result)` passes → deduct 1 credit (ADR-NB-005)
-5. Click "Apply" → `applyWSComposition(result.composition)` merges instances/props/styles into atoms → canvas re-renders
+2. Type prompt → `POST /api/ai` `{ userMessage, projectId }` (a new site from "Build with AI" auto-submits its prompt)
+3. API runs `composeWithFallback` over the provider chain (ADR-NB-026) → first valid `WSCompositionResult`; response includes `fallbacks` (providers skipped)
+4. `validateCompositionWS` → fresh ids, one h1, fluid styles; deduct the serving provider's credits (ADR-NB-005)
+5. Click "Apply" → `applyWSComposition(result.composition)` swaps the page root and remounts the canvas iframe. The first-run tour waits until the AI panel closes
 
 ### Share / Preview
 - Topbar "Share ↗" → copies `/preview/[projectId]` to clipboard

@@ -14,6 +14,7 @@ import { useMemo, useLayoutEffect, useEffect, useState, useRef } from "react";
 import { flushSync } from "react-dom";
 import { useStore } from "@nanostores/react";
 import { ReactSdkContext, selectorIdAttribute } from "@webstudio-is/react-sdk";
+import { useForwardShortcutsToBuilder } from "./forwardShortcuts";
 import { wsImageLoader } from "@webstudio-is/image";
 import { compareMedia } from "@webstudio-is/css-engine";
 import { coreMetas, type Breakpoint } from "@webstudio-is/sdk";
@@ -251,10 +252,18 @@ export const Canvas = () => {
   // Expose canvas API.
   useEffect(() => {
     initCanvasApi();
+    // Webstudio's normalize makes <html> a 1fr grid; 1fr = minmax(auto, 1fr), so
+    // <body> could never be narrower than its widest content and every
+    // width:100% resolved against that — pages overflowed on phone breakpoints.
+    injectStyleEl("nova-canvas-base", "body { min-width: 0; }");
   }, []);
 
   // Drag-reparent (FA-007): press-drag the selected element to move it.
   useEffect(() => initDragReparent(), []);
+
+  // Builder shortcuts must work while focus is inside the canvas iframe.
+  const previewMode = useStore($isPreviewMode);
+  useForwardShortcutsToBuilder(!previewMode);
 
   // Grid keyboard shortcuts (Alt+←/→ = move colStart; Alt+Shift+←/→ = resize span).
   // Only fires when $isPreviewMode is false and an instance is selected.

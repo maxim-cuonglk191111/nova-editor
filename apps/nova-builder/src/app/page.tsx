@@ -512,7 +512,8 @@ export default function Home() {
 
         .origin-hero__sub-wrapper {
           max-width: 420px;
-          margin: 0 auto 24px;
+          /* the 0.95 line-height heading's descenders overlap without a top gap */
+          margin: 20px auto 24px;
         }
 
         .origin-site-wrapper {

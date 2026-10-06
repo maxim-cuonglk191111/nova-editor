@@ -10,6 +10,8 @@
 //   5. Creates StyleDecl records per style property
 //   6. Creates StyleSourceSelection per instance
 //   7. Creates Prop records for component props and text content
+//   8. Rewrites fixed desktop sizes into fluid ones (makeResponsive)
+import { makeResponsive } from "./responsiveStyles.js";
 
 // ─── WS type shapes (inline to avoid a runtime dep on ws-sdk in this package) ─
 
@@ -159,6 +161,46 @@ type AINode = {
   children?: unknown;
 };
 
+// A page needs exactly one h1 (SEO + accessibility). Models emit none (only h2s)
+// or several (a logo h1 in the navbar plus the hero title). Keep the first h1
+// outside the navbar — else the first h1, else promote the first heading — and
+// demote every other h1 to h2.
+function ensureSingleH1(instances: WSInstance[], props: WSProp[], rootIds: string[]): void {
+  const byId = new Map(instances.map((i) => [i.id, i]));
+  const tagOf = (id: string) => props.find((p) => p.instanceId === id && p.name === "tag");
+  const setTag = (id: string, value: string) => {
+    const tag = tagOf(id);
+    if (tag) tag.value = value;
+    else props.push({ id: genId("prop_"), instanceId: id, name: "tag", type: "string", value });
+  };
+
+  // Headings in document order, each with the top-level section it sits in.
+  const headings: { id: string; section: string }[] = [];
+  for (const section of rootIds) {
+    const stack = [section];
+    while (stack.length > 0) {
+      const id = stack.pop()!;
+      if (byId.get(id)?.component === "Heading") headings.push({ id, section });
+      const children = byId.get(id)?.children ?? [];
+      for (let i = children.length - 1; i >= 0; i--) {
+        const child = children[i]!;
+        if (child.type === "id") stack.push(child.value);
+      }
+    }
+  }
+  if (headings.length === 0) return;
+
+  const isNavbar = (sectionId: string) => {
+    const tag = tagOf(sectionId)?.value;
+    return tag === "header" || tag === "nav" || /nav|header/i.test(byId.get(sectionId)?.label ?? "");
+  };
+  const h1s = headings.filter((h) => tagOf(h.id)?.value === "h1");
+  const keep = h1s.find((h) => !isNavbar(h.section)) ?? h1s[0] ?? headings.find((h) => !isNavbar(h.section)) ?? headings[0]!;
+
+  setTag(keep.id, "h1");
+  for (const h of h1s) if (h.id !== keep.id) setTag(h.id, "h2");
+}
+
 export function validateCompositionWS(raw: unknown): WSCompositionResult {
   const instances: WSInstance[] = [];
   const props: WSProp[] = [];
@@ -169,21 +211,10 @@ export function validateCompositionWS(raw: unknown): WSCompositionResult {
   const droppedComponents = new Set<string>();
   const rootIds: string[] = [];
 
-  // Map: aiId → new inst_<8> ID (built in first pass)
-  const idMap = new Map<string, string>();
-
-  // First pass: allocate real IDs for every node in the tree
-  function allocateIds(nodes: unknown[]): void {
-    for (const node of nodes) {
-      if (!node || typeof node !== "object" || Array.isArray(node)) continue;
-      const n = node as AINode;
-      const aiId = typeof n.id === "string" ? n.id : genId("tmp");
-      idMap.set(aiId, genId("inst_"));
-      if (Array.isArray(n.children)) allocateIds(n.children);
-    }
-  }
-
-  // Second pass: build the output records
+  // Every node in the tree gets its own fresh ID. The AI's IDs are ignored
+  // entirely: models reuse IDs across nodes, and mapping by AI ID made one
+  // instance appear under several parents (forms/footers rendered inside the
+  // hero, even parent cycles).
   function walk(nodes: unknown[]): string[] {
     const childIds: string[] = [];
     for (const node of nodes) {
@@ -196,8 +227,7 @@ export function validateCompositionWS(raw: unknown): WSCompositionResult {
       }
       const component = COMPONENT_MAPPING[rawComponent]!;
 
-      const aiId = typeof n.id === "string" ? n.id : "";
-      const instanceId = idMap.get(aiId) ?? genId("inst_");
+      const instanceId = genId("inst_");
       usedComponents.add(component);
 
       // Recurse children first to get child IDs
@@ -235,10 +265,11 @@ export function validateCompositionWS(raw: unknown): WSCompositionResult {
       }
 
       // Styles → StyleSource + StyleDecl + StyleSourceSelection
-      const styleProps =
+      const styleProps = makeResponsive(
         n.styles && typeof n.styles === "object" && !Array.isArray(n.styles)
           ? (n.styles as Record<string, unknown>)
-          : {};
+          : {}
+      );
 
       const styleEntries = Object.entries(styleProps).filter(([, v]) => v !== null && v !== undefined && v !== "");
 
@@ -270,9 +301,9 @@ export function validateCompositionWS(raw: unknown): WSCompositionResult {
       ? ((raw as Record<string, unknown>).tree as unknown[])
       : [];
 
-  allocateIds(tree);
   const topIds = walk(tree);
   rootIds.push(...topIds);
+  ensureSingleH1(instances, props, rootIds);
 
   return {
     instances,

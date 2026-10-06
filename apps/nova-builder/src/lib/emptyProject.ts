@@ -1,5 +1,7 @@
 // Returns a serialized NovaProjectJson (schemaVersion "5.0") representing an empty project.
-// Used when creating a new project — seeded with one page, one Body instance, one Base breakpoint.
+// Used when creating a new project — seeded with one page, one Body instance, and
+// Webstudio's default desktop-first breakpoints (Base + Tablet + two Mobile sizes)
+// so responsive editing works out of the box.
 
 import { uid } from "./uid";
 
@@ -7,7 +9,12 @@ export function emptyProjectSchema(name: string, now: string): Record<string, un
   const pageId = uid("page_");
   const folderId = uid("fold_");
   const rootInstanceId = uid("inst_");
-  const breakpointId = uid("bp_");
+  const breakpoints = [
+    { id: uid("bp_"), label: "Base" },
+    { id: uid("bp_"), label: "Tablet", maxWidth: 991 },
+    { id: uid("bp_"), label: "Mobile landscape", maxWidth: 767 },
+    { id: uid("bp_"), label: "Mobile portrait", maxWidth: 479 },
+  ];
 
   return {
     schemaVersion: "5.0",
@@ -30,9 +37,7 @@ export function emptyProjectSchema(name: string, now: string): Record<string, un
       styles: [],
       styleSources: [],
       styleSourceSelections: [],
-      breakpoints: [
-        [breakpointId, { id: breakpointId, label: "Base" }],
-      ],
+      breakpoints: breakpoints.map((bp) => [bp.id, bp]),
       assets: [],
       dataSources: [],
       resources: [],

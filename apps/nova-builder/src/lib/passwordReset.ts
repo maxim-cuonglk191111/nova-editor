@@ -2,7 +2,7 @@
 // The raw token is returned once (to be emailed) and never stored; only its
 // SHA-256 hash is persisted, so the DB alone cannot reset an account.
 import { randomBytes, createHash } from "crypto";
-import bcrypt from "bcryptjs";
+import { hashPassword } from "@/lib/password";
 import { getSupabaseAdmin } from "@/lib/supabaseAdmin";
 
 const TOKEN_TTL_MS = 60 * 60 * 1000; // 1 hour
@@ -61,7 +61,7 @@ export async function resetPasswordWithToken(rawToken: string, newPassword: stri
     return "expired";
   }
 
-  const passwordHash = await bcrypt.hash(newPassword, 12);
+  const passwordHash = await hashPassword(newPassword);
   await supabase.from("users").update({ password_hash: passwordHash }).eq("id", token.user_id);
   await supabase.from("password_reset_tokens").delete().eq("user_id", token.user_id);
 

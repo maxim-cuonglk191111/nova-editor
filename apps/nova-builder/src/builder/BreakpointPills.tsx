@@ -7,7 +7,12 @@ export function bpFriendlyName(bp: Breakpoint): string {
   if (!bp.maxWidth && !bp.minWidth) return "Desktop";
   if (bp.label) {
     const lower = bp.label.toLowerCase();
-    if (lower.includes("mobile") || lower.includes("phone")) return "Mobile";
+    if (lower.includes("mobile") || lower.includes("phone")) {
+      // Two default mobile breakpoints exist; keep them distinguishable.
+      if (lower.includes("landscape")) return "Mobile L";
+      if (lower.includes("portrait")) return "Mobile P";
+      return "Mobile";
+    }
     if (lower.includes("tablet")) return "Tablet";
     if (lower.includes("desktop") || lower.includes("wide") || lower.includes("xl")) return "Desktop";
     return bp.label;

@@ -94,16 +94,19 @@ export async function composerAgentWS(
             },
           ];
 
-    try {
-      const text = await provider.complete(messages, {
-        tier: "patcher",
-        // 12 000 tokens to avoid mid-string truncation on large page compositions.
-        // The compose prompt is ~400 tokens; a full page JSON is typically 2 000–6 000
-        // output tokens — 12 k gives 2× headroom for complex requests.
-        maxTokens: 12000,
-        system,
-      });
+    // Provider failures (bad key, retired model, rate limit) are not fixed by
+    // re-asking the same provider — let them propagate so the caller can fall
+    // back. Only malformed output is retried below.
+    const text = await provider.complete(messages, {
+      tier: "patcher",
+      // 12 000 tokens to avoid mid-string truncation on large page compositions.
+      // The compose prompt is ~400 tokens; a full page JSON is typically 2 000–6 000
+      // output tokens — 12 k gives 2× headroom for complex requests.
+      maxTokens: 12000,
+      system,
+    });
 
+    try {
       // extractJsonPatch returns the outermost JSON array or object.
       // It auto-repairs truncated JSON before parsing.
       const parsed = extractJsonPatch(text);

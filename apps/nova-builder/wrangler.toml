@@ -12,3 +12,9 @@ compatibility_flags = ["nodejs_compat"]
 [assets]
 directory = ".open-next/assets"
 binding = "ASSETS"
+
+# Built-in Workers logs + exceptions (Dashboard → Workers → nova-editor → Logs).
+# Replaces @sentry/nextjs, whose Node SDK pulled ~5 MB of OpenTelemetry into the
+# bundle and cannot instrument the Workers runtime anyway.
+[observability]
+enabled = true

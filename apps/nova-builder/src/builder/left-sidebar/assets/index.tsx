@@ -7,6 +7,7 @@ import { $selectedInstanceId } from "@/lib/nano-states";
 import { updateData } from "@/lib/transactions";
 import type { NovaAsset } from "@/lib/r2";
 import type { AssetFolder } from "@/lib/db-folders";
+import { useI18n } from "@/lib/i18n";
 
 const CHUNK_SIZE = 4 * 1024 * 1024;
 
@@ -300,6 +301,8 @@ function AssetCard({
 // ── AssetsPanel (main) ────────────────────────────────────────────────────────
 
 export function AssetsPanel() {
+  const { t } = useI18n();
+  const L = t.assets;
   const assets = useStore($assets);
   const instances = useStore($instances);
   const selectedInstanceId = useStore($selectedInstanceId);
@@ -488,7 +491,7 @@ export function AssetsPanel() {
           <input
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="Tim kiem theo tu khoa, the, mau"
+            placeholder={L.searchPlaceholder}
             style={{
               width: "100%", boxSizing: "border-box" as const,
               padding: "9px 10px 9px 34px",
@@ -515,7 +518,7 @@ export function AssetsPanel() {
           }}
         >
           <UploadIcon />
-          {uploading ? "Đang tải..." : "Tải lên tệp"}
+          {uploading ? L.uploading : L.upload}
         </button>
         <input ref={fileInputRef} type="file" accept="image/*,font/woff,font/woff2,application/font-woff,application/font-woff2" style={{ display: "none" }} onChange={handleFileChange} />
       </div>
@@ -544,14 +547,14 @@ export function AssetsPanel() {
       {/* Insert hint */}
       {isImageSelected && (
         <div style={{ margin: "0 12px 6px", padding: "6px 10px", background: "rgba(124,58,237,0.06)", border: `1px solid ${T.accentBorder}`, borderRadius: 8, fontSize: 11, color: T.accent }}>
-          Click an image to set it as src
+          {L.insertHint}
         </div>
       )}
 
-      {/* Tabs: Hinh anh | Thu muc */}
+      {/* Tabs: images | folders */}
       <div style={{ padding: "0 12px", borderBottom: `1.5px solid ${T.border}`, display: "flex", gap: 24 }}>
         {(["images", "folders"] as const).map((tab) => {
-          const label = tab === "images" ? "Hình ảnh" : "Thư mục";
+          const label = tab === "images" ? L.tabImages : L.tabFolders;
           const active = activeTab === tab;
           return (
             <button
@@ -581,10 +584,10 @@ export function AssetsPanel() {
             {/* Folder breadcrumb when filtering by folder */}
             {activeFolderId && (
               <div style={{ marginBottom: 10, display: "flex", alignItems: "center", gap: 6, fontSize: 12, color: T.textMuted }}>
-                <span style={{ cursor: "pointer", color: T.accent }} onClick={() => setActiveFolderId(null)}>Tat ca</span>
+                <span style={{ cursor: "pointer", color: T.accent }} onClick={() => setActiveFolderId(null)}>{L.all}</span>
                 <span>&rsaquo;</span>
                 <span style={{ color: T.text, fontWeight: 600 }}>
-                  {folders.find((f) => f.id === activeFolderId)?.name ?? "Thu muc"}
+                  {folders.find((f) => f.id === activeFolderId)?.name ?? L.folder}
                 </span>
                 <button onClick={() => setActiveFolderId(null)} style={{ marginLeft: "auto", background: "none", border: "none", cursor: "pointer", color: T.textMuted, display: "flex" }}>
                   <XIcon size={9} />
@@ -596,7 +599,7 @@ export function AssetsPanel() {
               <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "40px 20px", gap: 8, textAlign: "center" }}>
                 <ImagePlaceholderIcon />
                 <div style={{ fontSize: 13, color: T.textMuted }}>
-                  {activeFolderId ? "Không có hình ảnh trong thư mục này." : "Chưa có hình ảnh."}
+                  {activeFolderId ? L.emptyFolder : L.empty}
                 </div>
               </div>
             ) : (
@@ -623,10 +626,10 @@ export function AssetsPanel() {
               }}>
                 <FolderIllustration />
                 <div style={{ fontSize: 15, fontWeight: 700, color: T.text, marginTop: 8 }}>
-                  Sap xep noi dung tai len
+                  {L.organizeTitle}
                 </div>
                 <div style={{ fontSize: 13, color: T.textMuted, lineHeight: 1.55, maxWidth: 220 }}>
-                  Sap xep noi dung tai len that gon gang bang cach di chuyen vao cac thu muc.
+                  {L.organizeDesc}
                 </div>
                 <button
                   onClick={() => setCreatingFolder(true)}
@@ -643,7 +646,7 @@ export function AssetsPanel() {
                   onMouseLeave={(e) => { e.currentTarget.style.borderColor = T.border; e.currentTarget.style.color = T.text; }}
                 >
                   <FolderPlusIcon />
-                  Tao thu muc
+                  {L.createFolder}
                 </button>
               </div>
             ) : (
@@ -673,7 +676,7 @@ export function AssetsPanel() {
                   onMouseLeave={(e) => { e.currentTarget.style.borderColor = T.borderDash; e.currentTarget.style.color = T.textMuted; }}
                 >
                   <FolderPlusIcon />
-                  Tao thu muc moi
+                  {L.createNewFolder}
                 </button>
               </div>
             )}
@@ -681,7 +684,7 @@ export function AssetsPanel() {
             {/* Create folder inline input */}
             {creatingFolder && (
               <div style={{ marginTop: folders.length > 0 ? 8 : 0, padding: "12px 14px", background: T.cardBg, border: `1.5px solid ${T.accentBorder}`, borderRadius: 10 }}>
-                <div style={{ fontSize: 12, fontWeight: 600, color: T.text, marginBottom: 8 }}>Ten thu muc</div>
+                <div style={{ fontSize: 12, fontWeight: 600, color: T.text, marginBottom: 8 }}>{L.folderName}</div>
                 <input
                   autoFocus
                   value={newFolderName}
@@ -690,7 +693,7 @@ export function AssetsPanel() {
                     if (e.key === "Enter") void handleCreateFolder();
                     if (e.key === "Escape") { setCreatingFolder(false); setNewFolderName(""); }
                   }}
-                  placeholder="VD: Anh baner, Logo..."
+                  placeholder={L.folderPlaceholder}
                   style={{
                     width: "100%", boxSizing: "border-box" as const,
                     padding: "8px 10px", background: T.bg,
@@ -703,7 +706,7 @@ export function AssetsPanel() {
                     onClick={() => { setCreatingFolder(false); setNewFolderName(""); }}
                     style={{ padding: "6px 14px", borderRadius: 7, border: `1px solid ${T.border}`, background: "transparent", color: T.textSub, fontSize: 12, cursor: "pointer" }}
                   >
-                    Huy
+                    {L.cancel}
                   </button>
                   <button
                     onClick={() => void handleCreateFolder()}
@@ -715,7 +718,7 @@ export function AssetsPanel() {
                       cursor: newFolderName.trim() ? "pointer" : "not-allowed",
                     }}
                   >
-                    Tao
+                    {L.create}
                   </button>
                 </div>
               </div>
@@ -728,14 +731,13 @@ export function AssetsPanel() {
       {deleteConfirm && (
         <div style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.6)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 200 }}>
           <div style={{ background: T.bg, borderRadius: 16, padding: "20px 22px", width: 280, boxShadow: "0 20px 60px rgba(0,0,0,0.25)" }}>
-            <div style={{ fontSize: 15, fontWeight: 700, color: T.text, marginBottom: 8 }}>Xoa asset?</div>
+            <div style={{ fontSize: 15, fontWeight: 700, color: T.text, marginBottom: 8 }}>{L.deleteTitle}</div>
             <div style={{ fontSize: 12, color: T.textSub, lineHeight: 1.6, marginBottom: 16 }}>
-              <strong style={{ color: T.error }}>{deleteConfirm.refCount}</strong> instance dang su dung asset nay.
-              Xoa se khien cac tham chieu do bi hong.
+              {L.deleteInUse.replace("{count}", String(deleteConfirm.refCount))} {L.deleteWarning}
             </div>
             <div style={{ display: "flex", gap: 8, justifyContent: "flex-end" }}>
-              <button onClick={() => setDeleteConfirm(null)} style={{ padding: "7px 16px", borderRadius: 8, border: `1px solid ${T.border}`, background: "transparent", color: T.textSub, fontSize: 12, cursor: "pointer" }}>Huy</button>
-              <button onClick={() => void doDelete(deleteConfirm.asset)} style={{ padding: "7px 16px", borderRadius: 8, border: "none", background: T.error, color: "#fff", fontSize: 12, fontWeight: 700, cursor: "pointer" }}>Xoa</button>
+              <button onClick={() => setDeleteConfirm(null)} style={{ padding: "7px 16px", borderRadius: 8, border: `1px solid ${T.border}`, background: "transparent", color: T.textSub, fontSize: 12, cursor: "pointer" }}>{L.cancel}</button>
+              <button onClick={() => void doDelete(deleteConfirm.asset)} style={{ padding: "7px 16px", borderRadius: 8, border: "none", background: T.error, color: "#fff", fontSize: 12, fontWeight: 700, cursor: "pointer" }}>{L.delete}</button>
             </div>
           </div>
         </div>

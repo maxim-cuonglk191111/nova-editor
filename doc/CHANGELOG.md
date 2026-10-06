@@ -2,6 +2,28 @@
 
 ---
 
+## [25.4.0] — 2026-10-05
+
+### Golden-path repair: AI generation, auth, persistence, export, bundle size (Minor)
+
+- **AI works on Workers**: SDKs get the platform fetch (fixes "Connection error"); retired models replaced (Gemini, Mistral, Groq); OpenRouter pinned to `google/gemini-2.5-flash`; provider fallback chain with `fallbacks` in the response (ADR-NB-026).
+- **AI template quality**: fresh id per node (duplicated AI ids cross-linked sections); exactly one h1; fluid styles for phones (`makeResponsive`); prompt requires navbar → hero → every requested section → footer.
+- **Apply flow**: first-run tour no longer covers "Apply to page"; canvas remounts so the generated page shows immediately.
+- **Canvas**: clicks no longer blocked after a drag (selection overlay kept `pointer-events: none`).
+- **Auth**: signup signs the new account in and lands on `/projects`; login/signup redirects stay on the current host.
+- **Server**: `getSupabaseAdmin()` accepts the Worker's `SUPABASE_URL` / `SUPABASE_SERVICE_KEY` (~50 routes 500'd); register logs the underlying error; migration `0022_asset_folders`.
+- **Editor**: new projects get Tablet / Mobile L / Mobile P breakpoints; Pages tab re-enabled; Assets panel localized (EN/VI).
+- **Export**: heading/section tags honored; shadcn defaults no longer override instance colors.
+- **Landing**: "Build everything" heading no longer overlaps its copy.
+- **Canvas/preview on phones**: `body { min-width: 0 }` — Webstudio's `1fr` html grid sized body to its widest content (1012 px on a 479 px canvas).
+- **Shortcuts on canvas focus**: canvas forwards Delete / ⌘D / ⌘Z… to the builder; `isEditableTarget` no longer throws on window targets.
+- **Assets**: uploads go to Supabase Storage (public `assets` bucket), falling back to R2 when configured.
+- **Builder load**: project fetch retries transient 5xx (Workers Free CPU limit, Error 1102).
+- **Export**: formatting whitespace no longer renders as blank bands or indented text (normalize uses `white-space-collapse: preserve`).
+- **Error 1102 on Workers Free** (ADR-NB-028): builder/canvas/projects/preview render client-only; password hashing moved from bcryptjs to WebCrypto PBKDF2 (legacy hashes rehashed on login); static root layout + OpenNext static-assets incremental cache so public pages are served prerendered. Load probe: 20% → 11% failures after the first two steps.
+- **Bundle**: removed `@sentry/nextjs` and `@aws-sdk/client-s3` (server bundle 56.7 → 38.8 MB); Workers Observability enabled (ADR-NB-027).
+- **QA**: `e2e/qa-cloud-journey.spec.ts` + `playwright.cloud.config.ts` run the golden path against a deployed preview (`BASE_URL`).
+
 ## [25.3.0] — 2026-07-18
 
 ### Feature: Save Project (Create / Update / Save As) (Minor/Gemini 3.5 Flash (Medium))

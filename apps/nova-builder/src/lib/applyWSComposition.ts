@@ -11,7 +11,7 @@
 import type { WSCompositionResult } from "@studio/ai";
 import type { Instance } from "@webstudio-is/sdk";
 import { compareMedia } from "@webstudio-is/css-engine";
-import { $selectedPage, $nestingWarning } from "./nano-states";
+import { $selectedPage, $nestingWarning, $importKey } from "./nano-states";
 import { $breakpoints } from "./data-stores";
 import { updateData } from "./transactions";
 import { checkDirectNesting } from "./nestingGuard";
@@ -95,4 +95,9 @@ export function applyWSComposition(result: WSCompositionResult): void {
       pages.pages.set(page.id, { ...current, rootInstanceId: rootId });
     }
   });
+
+  // Swapping the page root does not re-render the live canvas iframe (it keeps
+  // drawing the old, empty root until a reload). Remount it the same way a
+  // project import does, so the generated page appears immediately.
+  $importKey.set($importKey.get() + 1);
 }

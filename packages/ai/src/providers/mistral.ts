@@ -1,13 +1,14 @@
 // packages/ai/src/providers/mistral.ts
 // Mistral AI adapter — open-weight models are free, no billing required.
 // Docs: https://docs.mistral.ai/api/
-// Free models: open-mistral-7b, open-mixtral-8x7b, open-mixtral-8x22b
-import OpenAI from "openai";
+// The free "Experiment" tier serves the "-latest" aliases; the open-mixtral models are retired.
+import OpenAI, { type ClientOptions } from "openai";
 import type { AIProvider, AIMessage, CompleteOptions } from "./base.js";
+import { platformFetch, requireApiKey, resolveModel } from "./runtime.js";
 
 const MODELS = {
-  planner: "open-mistral-7b",     // Mistral 7B — fast, free, solid for planning prompts
-  patcher: "open-mixtral-8x7b",  // Mixtral 8×7B MoE — stronger reasoning, still free
+  planner: "mistral-small-latest",
+  patcher: "mistral-medium-latest",
 } as const;
 
 export class MistralProvider implements AIProvider {
@@ -25,7 +26,8 @@ export class MistralProvider implements AIProvider {
     if (!this._client) {
       this._client = new OpenAI({
         baseURL: "https://api.mistral.ai/v1",
-        apiKey: this._apiKey,
+        apiKey: requireApiKey(this._apiKey, "MISTRAL_API_KEY", this.name),
+        fetch: platformFetch as ClientOptions["fetch"],
       });
     }
     return this._client;
@@ -40,7 +42,7 @@ export class MistralProvider implements AIProvider {
     ];
 
     const response = await this.client.chat.completions.create({
-      model: MODELS[opts.tier],
+      model: resolveModel(this.id, opts.tier, MODELS),
       max_tokens: opts.maxTokens,
       messages: allMessages,
     });

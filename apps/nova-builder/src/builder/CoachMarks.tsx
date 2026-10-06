@@ -1,7 +1,9 @@
 "use client";
 import { useEffect, useState } from "react";
+import { useStore } from "@nanostores/react";
 import { UI_VARS as C } from "@/lib/uiTheme";
 import { useI18n } from "@/lib/i18n";
+import { $aiPanelOpen } from "@/lib/nano-states";
 
 const STORAGE_KEY = "nova-coachmarks-seen";
 
@@ -11,6 +13,9 @@ export function CoachMarks({ visible }: Props) {
   const { t } = useI18n();
   const [step, setStep] = useState(0);
   const [dismissed, setDismissed] = useState(false);
+  // New sites open straight into AI generation; the tour's click-blocking
+  // backdrop must not cover the AI panel's Apply button, so wait until it closes.
+  const aiPanelOpen = useStore($aiPanelOpen);
 
   const MARKS = [
     {
@@ -50,7 +55,7 @@ export function CoachMarks({ visible }: Props) {
     setDismissed(true);
   }
 
-  if (!visible || dismissed) return null;
+  if (!visible || dismissed || aiPanelOpen) return null;
 
   const mark = MARKS[step];
 

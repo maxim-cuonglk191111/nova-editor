@@ -2,15 +2,18 @@
 // OpenRouter adapter — aggregates many providers, free models available with ":free" suffix.
 // Docs: https://openrouter.ai/docs
 // Free model list: https://openrouter.ai/models?q=:free
-import OpenAI from "openai";
+import OpenAI, { type ClientOptions } from "openai";
 import type { AIProvider, AIMessage, CompleteOptions } from "./base.js";
+import { platformFetch, requireApiKey, resolveModel } from "./runtime.js";
 
-// openrouter/auto — smart router that picks from available free models automatically.
-// This avoids hard-coding slugs that go in/out of the free tier.
-// See: https://openrouter.ai/models?q=:free for manually-pinned alternatives.
+// Pinned models: openrouter/auto picked a different model per request, so the
+// same prompt produced anything from a full landing page to a page missing its
+// navbar and hero. Gemini via OpenRouter is also not region-blocked from the
+// Worker's colo the way the direct Google API is. Override with
+// AI_MODEL_OPENROUTER_<TIER> when a model is retired.
 const MODELS = {
-  planner: "openrouter/auto",  // Auto-route to best available free model
-  patcher: "openrouter/auto",  // Auto-route to best available free model
+  planner: "google/gemini-2.5-flash-lite",
+  patcher: "google/gemini-2.5-flash",
 } as const;
 
 export class OpenRouterProvider implements AIProvider {
@@ -28,7 +31,8 @@ export class OpenRouterProvider implements AIProvider {
     if (!this._client) {
       this._client = new OpenAI({
         baseURL: "https://openrouter.ai/api/v1",
-        apiKey: this._apiKey,
+        apiKey: requireApiKey(this._apiKey, "OPENROUTER_API_KEY", this.name),
+        fetch: platformFetch as ClientOptions["fetch"],
         // OpenRouter asks for these headers for proper attribution + dashboard tracking.
         defaultHeaders: {
           "HTTP-Referer": "https://nova-editor.app",
@@ -48,7 +52,7 @@ export class OpenRouterProvider implements AIProvider {
     ];
 
     const response = await this.client.chat.completions.create({
-      model: MODELS[opts.tier],
+      model: resolveModel(this.id, opts.tier, MODELS),
       max_tokens: opts.maxTokens,
       messages: allMessages,
     });
