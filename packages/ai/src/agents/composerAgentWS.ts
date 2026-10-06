@@ -70,6 +70,17 @@ function extractJsonPatch(text: string): unknown {
   }
 }
 
+// Models guess the page language from context (and guessed Vietnamese for an
+// English prompt), so state it explicitly. Vietnamese is detected by its
+// diacritics; anything else follows the request's own language.
+const VIETNAMESE = /[ăâđêôơưạảấầẩẫậắằẳẵặẹẻẽếềểễệỉịọỏốồổỗộớờởỡợụủứừửữựỳỵỷỹ]/i;
+
+export function languageInstruction(userPrompt: string): string {
+  return VIETNAMESE.test(userPrompt)
+    ? "Write every visible text (headings, copy, buttons, prices, form labels) in Vietnamese."
+    : "Write every visible text in the same language as the description above (English if it is in English).";
+}
+
 export async function composerAgentWS(
   provider: AIProvider,
   userPrompt: string,
@@ -77,7 +88,7 @@ export async function composerAgentWS(
   onRetry?: (attempt: number, error: string) => void
 ): Promise<unknown> {
   const system = buildComposePromptWS(extraHints);
-  const userContent = `Compose a page for this description:\n\n${userPrompt}\n\nOutput the JSON object with a "tree" key now.`;
+  const userContent = `Compose a page for this description:\n\n${userPrompt}\n\n${languageInstruction(userPrompt)}\nOutput the JSON object with a "tree" key now.`;
 
   let lastError = "";
 

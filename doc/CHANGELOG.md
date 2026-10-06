@@ -13,7 +13,8 @@
 - **Canvas drag**: releasing within the element's own box is a no-op, the drag starts after 8 px, and the dragged element no longer shrinks — a small nudge used to drop it into its parent's last slot. Regression spec `e2e/canvas-edit-nudge.spec.ts` (runs on an AI-generated project).
 - **Selection indicator**: deleting an element selects its next sibling (else previous, else parent) instead of clearing the selection; undo/redo drop a selection whose instance no longer exists. Regression spec `e2e/canvas-selection.spec.ts`.
 - **AI images**: 31 curated Unsplash photos across food, business, retail, services and travel (each checked to show what its label says); bare photo ids are expanded to full URLs; footer copyright uses the current year.
-- **AI language**: generated page text follows the language of the request (a Vietnamese prompt produced an English page).
+- **AI language**: generated page text follows the language of the request; the language is detected server-side (Vietnamese diacritics) and stated explicitly to the model — prompt examples alone made Gemini answer an English prompt in Vietnamese.
+- **QA**: `doc/TEST-ROADMAP.md` (keep / test / cut decisions for every user-visible feature); `e2e/feature-smoke.spec.ts` opens every page and builder panel with screenshots.
 
 ## [25.4.0] — 2026-10-05
 
