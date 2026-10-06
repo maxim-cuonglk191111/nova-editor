@@ -95,11 +95,50 @@ function buildProviders() {
       GoogleProvider({
         clientId: process.env.GOOGLE_CLIENT_ID,
         clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+        // Fixed endpoints + fetch instead of OIDC discovery and openid-client's
+        // Node http client, which fails silently on the Workers runtime.
+        wellKnown: undefined,
+        idToken: false,
+        issuer: "https://accounts.google.com",
         authorization: {
+          url: "https://accounts.google.com/o/oauth2/v2/auth",
           params: {
-            prompt: "select_account"
-          }
-        }
+            scope: "openid email profile",
+            prompt: "select_account",
+          },
+        },
+        token: {
+          url: "https://oauth2.googleapis.com/token",
+          async request({ provider, params, checks }) {
+            const response = await fetch("https://oauth2.googleapis.com/token", {
+              method: "POST",
+              headers: { "Content-Type": "application/x-www-form-urlencoded", Accept: "application/json" },
+              body: new URLSearchParams({
+                client_id: provider.clientId as string,
+                client_secret: provider.clientSecret as string,
+                code: params.code as string,
+                redirect_uri: provider.callbackUrl,
+                grant_type: "authorization_code",
+                ...(checks.code_verifier ? { code_verifier: checks.code_verifier } : {}),
+              }),
+            });
+            const tokens = await response.json();
+            if (tokens.error || !tokens.access_token) {
+              throw new Error(`Google token exchange failed: ${tokens.error_description || tokens.error || "no access token"}`);
+            }
+            return { tokens };
+          },
+        },
+        userinfo: {
+          url: "https://openidconnect.googleapis.com/v1/userinfo",
+          async request({ tokens }) {
+            const res = await fetch("https://openidconnect.googleapis.com/v1/userinfo", {
+              headers: { Authorization: `Bearer ${tokens.access_token}` },
+            });
+            if (!res.ok) throw new Error(`Google userinfo fetch failed (status ${res.status})`);
+            return res.json();
+          },
+        },
       })
     );
   }
