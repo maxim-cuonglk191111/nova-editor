@@ -32,6 +32,10 @@ HARD RULES — violating any makes your output invalid:
 
 6. If you cannot compose anything sensible, output: {"tree":[]}
 
+7. Write every visible "text" in the SAME LANGUAGE as the user's request
+   (a Vietnamese request gets Vietnamese headings, copy, buttons and FAQ).
+   Only "label" and "id" stay in English.
+
 ═══════════════════════════════════════
 AVAILABLE COMPONENTS:
 ═══════════════════════════════════════
