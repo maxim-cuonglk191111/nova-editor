@@ -41,6 +41,8 @@ test("selection indicator follows the selection through edits", async ({ page })
   await canvas.locator("p").nth(1).dblclick();
   await canvas.locator("h2").first().click();
   await expectIndicator("inline edit, then click elsewhere");
+  const headings = canvas.locator('[data-ws-component="Heading"]');
+  const headingCount = await headings.count();
   await canvas.locator("h2").first().click();
   await page.keyboard.press("ControlOrMeta+d");
   await expectIndicator("duplicate");
@@ -48,6 +50,9 @@ test("selection indicator follows the selection through edits", async ({ page })
   await expectIndicator("delete selects a neighbour");
   await page.keyboard.press("ControlOrMeta+z");
   await expectIndicator("undo");
+  // Undo the duplicate too, so the project is left as it was.
+  await page.keyboard.press("ControlOrMeta+z");
+  await expect(headings).toHaveCount(headingCount);
   await page.getByRole("button", { name: /^mobile p$/i }).click();
   await expectIndicator("switch to mobile breakpoint");
   await page.getByRole("button", { name: /^desktop$/i }).click();
