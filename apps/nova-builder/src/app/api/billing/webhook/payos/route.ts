@@ -9,9 +9,7 @@
 import { NextResponse } from "next/server";
 import { createHmac, timingSafeEqual } from "crypto";
 import { getSupabaseAdmin } from "@/lib/supabaseAdmin";
-
-
-const CREDIT_PACK = 500;
+import { applyPurchase } from "@/lib/billing/grant";
 
 type PayOSWebhook = {
   code?: string;
@@ -63,36 +61,18 @@ export async function POST(req: Request) {
   const [tag, plan, userId, teamId] = itemName.split(":");
   if (tag !== "nova" || !plan) return NextResponse.json({ ok: true, ignored: true });
 
-  const supabase = getSupabaseAdmin();
-
-  // FA-003: idempotency. Claim this orderCode first; a replayed webhook collides
-  // on the primary key and we skip the grant (credits are granted at most once).
+  // FA-003: idempotency lives in applyPurchase (order code is the primary key).
   const orderCode = body.data.orderCode;
   if (orderCode === undefined || orderCode === null) {
     return NextResponse.json({ error: "Missing orderCode" }, { status: 400 });
   }
-  const { error: claimError } = await supabase.from("processed_payments").insert({
-    order_code: String(orderCode),
+  const result = await applyPurchase(getSupabaseAdmin(), {
+    orderCode: String(orderCode),
     provider: "payos",
-    kind: plan === "credits" ? "credits" : "plan",
-    user_id: userId || null,
-    amount: body.data?.amount || 10000,
-    plan: plan,
-    status: "success"
+    plan,
+    userId: userId || null,
+    teamId: teamId || null,
+    amount: body.data.amount ?? 0,
   });
-  if (claimError) {
-    // Unique-violation (23505) = already processed → safe no-op replay.
-    return NextResponse.json({ ok: true, alreadyProcessed: true });
-  }
-
-  if (plan === "credits" && userId) {
-    const { data: user } = await supabase.from("users").select("credits_remaining").eq("id", userId).single();
-    await supabase.from("users").update({ credits_remaining: (user?.credits_remaining ?? 0) + CREDIT_PACK }).eq("id", userId);
-  } else if (teamId) {
-    await supabase.from("teams").update({ plan: plan === "team" ? "team" : plan === "max" ? "max" : "pro" }).eq("id", teamId);
-  } else if (userId) {
-    await supabase.from("users").update({ tier: plan === "team" ? "team" : plan === "max" ? "max" : "pro" }).eq("id", userId);
-  }
-
-  return NextResponse.json({ ok: true });
+  return NextResponse.json({ ok: true, alreadyProcessed: result === "duplicate" });
 }

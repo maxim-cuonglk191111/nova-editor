@@ -3,6 +3,8 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { createHmac } from "crypto";
 import { PAYOS_PRICES_VND, buildPayosSignData } from "@/lib/billing/payos";
+import { sepayConfig, paymentCode } from "@/lib/billing/sepay";
+import { getSupabaseAdmin } from "@/lib/supabaseAdmin";
 
 export async function POST(req: Request) {
   const session = await getServerSession(authOptions);
@@ -31,12 +33,42 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: `Invalid plan: ${plan}` }, { status: 400 });
   }
 
-  const isMock = !clientId || clientId.includes("your_") || !apiKey || !checksumKey;
   const orderCode = Number(`${Date.now()}`.slice(-10));
+
+  // SePay: plain VietQR transfer to our own account, confirmed from the bank feed.
+  const sepay = sepayConfig();
+  if (sepay) {
+    const { error } = await getSupabaseAdmin().from("payment_orders").insert({
+      order_code: String(orderCode),
+      provider: "sepay",
+      user_id: userId,
+      team_id: teamId || null,
+      plan,
+      amount,
+    });
+    if (error) return NextResponse.json({ error: `Could not create the order: ${error.message}` }, { status: 500 });
+    return NextResponse.json({
+      provider: "sepay",
+      qrCode: "",
+      amount,
+      orderCode,
+      accountNumber: sepay.accountNumber,
+      accountName: sepay.accountName,
+      bin: sepay.bankCode,
+      description: paymentCode(orderCode),
+    });
+  }
+
+  const isMock = !clientId || clientId.includes("your_") || !apiKey || !checksumKey;
 
   const customAccountNumber = process.env.PAYOS_CUSTOM_ACCOUNT_NUMBER;
   const customAccountName = process.env.PAYOS_CUSTOM_ACCOUNT_NAME;
   const customBin = process.env.PAYOS_CUSTOM_BIN;
+
+  // A mock QR points at a made-up account: never show it outside local development.
+  if (isMock && process.env.NODE_ENV !== "development") {
+    return NextResponse.json({ error: "Payments are not configured yet. Please contact support." }, { status: 503 });
+  }
 
   if (isMock) {
     return NextResponse.json({
