@@ -6,7 +6,6 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { FormField } from "@/components/public/FormField";
 import { useI18n } from "@/lib/i18n";
-import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 
 function AuthForm() {
   const { t } = useI18n();
@@ -58,7 +57,6 @@ function AuthForm() {
           {t.auth.back}
         </Link>
         <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-          <LanguageSwitcher />
           <Link href="/" style={{ display: "flex", alignItems: "center", gap: 8, textDecoration: "none" }}>
             <LogoIcon width={28} height={28} />
             <span style={{ fontSize: 16, fontWeight: 800, color: "#6d28d9" }}>Nova</span>

@@ -293,34 +293,34 @@ export const viDictionary: I18nDictionary = {
   },
   pricing: {
     title: "Giá đơn giản, minh bạch",
-    subtitle: "Bắt đầu miễn phí. Nâng cấp khi bạn cần thêm sức mạnh AI, tên miền riêng hoặc xuất mã nguồn.",
+    subtitle: "Bắt đầu miễn phí. Nâng cấp khi bạn cần thêm dự án hoặc thêm AI credits.",
     mostPopular: "Phổ biến nhất",
     faqTitle: "Câu hỏi thường gặp",
     faq: [
-      { q: "Tôi có thể hủy bất cứ lúc nào không?", a: "Có. Hủy trong phần cài đặt tài khoản. Không ràng buộc." },
-      { q: "Điều gì xảy ra với các trang của tôi nếu hạ gói?", a: "Các trang của bạn vẫn được xuất bản. Bạn vẫn dùng được trình chỉnh sửa trong giới hạn gói Miễn phí." },
-      { q: "Bạn có hoàn tiền không?", a: "Có — hoàn tiền đầy đủ trong vòng 14 ngày kể từ lần mua đầu tiên. Gửi email tới support@nova.build." },
-      { q: "Có giảm giá theo năm không?", a: "Có — gói Pro theo năm là $190/năm (miễn phí 2 tháng). Chọn khi thanh toán." },
+      { q: "Thanh toán bằng cách nào?", a: "Quét mã VietQR bằng ứng dụng ngân hàng bất kỳ, MoMo, ZaloPay hoặc ShopeePay. Gói được nâng cấp ngay khi nhận được tiền." },
+      { q: "Có tự động gia hạn không?", a: "Không. Không có khoản trừ tiền tự động nào — mỗi lần thanh toán đều do bạn tự chuyển khoản." },
+      { q: "AI credits là gì?", a: "Mỗi lần dùng AI để tạo trang hoặc viết lại nội dung sẽ tốn credits. Credits nạp thêm không hết hạn." },
+      { q: "Dự án của tôi ra sao khi dùng gói Miễn phí?", a: "Dự án vẫn nằm trong tài khoản và bạn vẫn chỉnh sửa được trong giới hạn của gói Miễn phí." },
     ],
     planCopy: {
       free: {
         label: "Miễn phí",
-        features: ["3 dự án đang hoạt động", "200 tín dụng AI / tháng", "Trình chỉnh sửa trực quan (mọi khối)", "Liên kết xem trước", "Có thương hiệu Nova"],
+        features: ["3 dự án", "200 AI credits / tháng (tối đa 40 / ngày)", "Trình chỉnh sửa trực quan với mọi khối", "Giao diện mẫu và lịch sử phiên bản", "Link xem trước và xuất HTML", "Thống kê lượt xem và form liên hệ"],
         cta: "Bắt đầu miễn phí",
       },
       pro: {
         label: "Pro",
-        features: ["Dự án không giới hạn", "4.000 tín dụng AI / tháng", "Xuất mã React (.tsx)", "Tự động triển khai Vercel", "1 tên miền riêng", "Giao diện mẫu cao cấp", "Hỗ trợ qua email"],
+        features: ["Mọi tính năng của gói Miễn phí", "Không giới hạn dự án", "4.000 AI credits / tháng", "Không giới hạn AI theo ngày"],
         cta: "Nâng cấp lên Pro",
       },
       max: {
         label: "Max",
-        features: ["Mọi tính năng của Pro", "15.000 tín dụng AI / tháng", "5 tên miền riêng", "Xóa thương hiệu (white-label)", "Hỗ trợ email ưu tiên (48 giờ)"],
+        features: ["Mọi tính năng của Pro", "15.000 AI credits / tháng"],
         cta: "Nâng cấp lên Max",
       },
       team: {
         label: "Team",
-        features: ["5+ chỗ ngồi (tối thiểu 3)", "5.000 tín dụng / chỗ (dùng chung)", "Cộng tác thời gian thực", "Bảng điều khiển quản trị", "Hỗ trợ ưu tiên + hướng dẫn khởi đầu"],
+        features: ["Mọi tính năng của Pro", "5.000 AI credits / tháng"],
         cta: "Nâng cấp lên Team",
       },
     },

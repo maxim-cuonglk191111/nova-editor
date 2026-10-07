@@ -16,7 +16,9 @@ export interface PlanCard {
   cta: string;
 }
 
-export const PLAN_CARDS: PlanCard[] = [
+// Team is not offered: its seats/collaboration features are cut (TEST-ROADMAP Tier C),
+// so it would sell nothing beyond Pro. The tier itself stays for existing data.
+const ALL_PLAN_CARDS: PlanCard[] = [
   {
     tier: "free",
     label: TIER_ENTITLEMENTS.free.label,
@@ -80,3 +82,5 @@ export const PLAN_CARDS: PlanCard[] = [
     cta: "Upgrade to Team",
   },
 ];
+
+export const PLAN_CARDS: PlanCard[] = ALL_PLAN_CARDS.filter((p) => p.tier !== "team");

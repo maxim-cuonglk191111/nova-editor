@@ -1,5 +1,6 @@
-// B4 — language toggle EN <-> VI: /settings/language and the builder top-bar pill.
-// UI strings must switch and the choice must survive a reload and a new page.
+// B4 — UI language: English by default (no IP guess), no toggle on the pages
+// themselves; changed only in Settings → Display Language (account menu). The choice
+// must switch UI strings and survive a reload, a new page and the builder.
 // No pinLocale(): its init script would rewrite nova_locale on every load and mask persistence.
 import { test, expect, type Page } from "@playwright/test";
 import { mkdirSync } from "node:fs";
@@ -20,12 +21,13 @@ test("B4 language toggle EN <-> VI persists", async ({ page, context }) => {
   expect((await page.request.post("/api/auth/register", { data: { ...acc, name: "QA b4" } })).ok()).toBe(true);
   await page.goto("/login");
   await page.evaluate(() => {
-    localStorage.setItem("nova_locale", "en");
-    localStorage.setItem("nova_auto_detect_ip", "false");
     localStorage.setItem("nova-tour-done", "1");
     localStorage.setItem("nova-coachmarks-seen", "1");
   });
   await page.reload();
+  // Fresh visitor: English, and no language switcher on the page
+  await expect(page.locator('input[type="email"]')).toBeVisible();
+  expect(await page.getByRole("button", { name: /^(us|vn)?\s*(EN|VI)$/ }).count()).toBe(0);
   await page.locator('input[type="email"]').fill(acc.email);
   await page.locator('input[type="password"]').fill(acc.password);
   await page.locator('button[type="submit"]').click();
@@ -37,8 +39,10 @@ test("B4 language toggle EN <-> VI persists", async ({ page, context }) => {
   await expect(search(page)).toHaveAttribute("placeholder", "Search sites…");
   await page.screenshot({ path: `${OUT}/b4-01-dashboard-en.png` });
 
-  // Settings page -> Vietnamese
-  await page.goto("/settings/language");
+  // Account menu → Display Language → Vietnamese
+  await page.locator('button[aria-haspopup="menu"]').first().click();
+  await page.getByRole("link", { name: "Display Language" }).click();
+  await page.waitForURL(/\/settings\/language/);
   await expect(page.getByRole("heading", { name: "Language & Localization" })).toBeVisible();
   await page.getByRole("button", { name: /Tiếng Việt/ }).click();
   await expect(page.getByRole("heading", { name: "Ngôn ngữ & Vùng miền" })).toBeVisible();
@@ -64,26 +68,13 @@ test("B4 language toggle EN <-> VI persists", async ({ page, context }) => {
   await expect(page.getByText("Giao diện CSS").first()).toBeVisible();
   await page.screenshot({ path: `${OUT}/b4-04-builder-vi.png` });
 
-  // Builder pill -> EN, must persist across reload
-  await page.getByRole("button", { name: /EN$/ }).click();
+  // No language switcher in the builder; back to English only through Settings
+  expect(await page.getByRole("button", { name: /^(us|vn)?\s*(EN|VI)$/ }).count()).toBe(0);
+  await page.goto("/settings/language");
+  await page.getByRole("button", { name: /English/ }).click();
+  expect(await stored(page)).toBe("en");
+  await page.goto(`/builder/${projectId}`);
+  await canvasReady(page);
   await expect(page.getByText("Tools ▾")).toBeVisible();
-  await expect(page.getByText("Style", { exact: true }).first()).toBeVisible();
   await page.screenshot({ path: `${OUT}/b4-05-builder-en.png` });
-  expect.soft(await stored(page), "builder EN choice stored").toBe("en");
-  await page.reload();
-  await canvasReady(page);
-  await expect.soft(page.getByText("Tools ▾"), "EN survives reload").toBeVisible();
-  await page.screenshot({ path: `${OUT}/b4-06-builder-en-reloaded.png` });
-
-  // Builder pill -> VI, persists into a new page (dashboard)
-  await page.getByRole("button", { name: /VI$/ }).click();
-  await expect(page.getByText("Công cụ ▾")).toBeVisible();
-  expect.soft(await stored(page), "builder VI choice stored").toBe("vi");
-  await page.reload();
-  await canvasReady(page);
-  await expect(page.getByText("Công cụ ▾")).toBeVisible();
-  const fresh2 = await context.newPage();
-  await fresh2.goto("/projects");
-  await expect(search(fresh2)).toHaveAttribute("placeholder", "Tìm kiếm trang…");
-  await fresh2.screenshot({ path: `${OUT}/b4-07-new-page-vi.png` });
 });

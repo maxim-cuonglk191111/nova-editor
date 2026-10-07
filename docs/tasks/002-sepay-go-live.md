@@ -9,6 +9,9 @@
 Payment probe 19/19: SePay order created, VietQR decodes as NAPAS standard (GUID A000000727, MB BIN 970422, account, amount, `NOVA<order>` description, valid CRC), signed webhook grants once, replay ignored, history lists it, SePay API token accepted. Test data cleaned (QA credits back to 197).
 Probe script: `scripts/payment-probe.mjs` (needs `npm i --no-save jsqr`; it grants 500 credits to the QA account — reset afterwards with SQL: delete the QA user's rows in `processed_payments` and `payment_orders`, set `credits_remaining` back).
 
+## Owner answer (2026-10-07)
+The configured SePay account is a **test account** for now; the real account comes later. Until then real customer payments must not be taken.
+
 ## Blocking questions for the owner
 1. `SEPAY_ACCOUNT_NUMBER` looks like a placeholder (`01…6789`, 10 digits, name "NOVA STUDIO"). Confirm or set the real account + `SEPAY_ACCOUNT_NAME` + `SEPAY_BANK_CODE` as Worker secrets.
 2. In my.sepay.vn add the webhook: URL `https://nova-editor.maximi.workers.dev/api/billing/webhook/sepay`, auth "API Key", key = Worker secret `SEPAY_WEBHOOK_KEY` (value saved locally by Claude in the session scratchpad `sepay-webhook-key.txt`; if lost, generate a new one and `wrangler secret put SEPAY_WEBHOOK_KEY`).

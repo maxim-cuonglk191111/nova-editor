@@ -49,3 +49,11 @@ reference/
 friction-log.md
 
 apps/nova-builder/scripts/check-supabase.js
+
+# Test output (screenshots are evidence for a run, not source)
+test-results/
+playwright-report/
+qa-screenshots/
+
+# TypeScript incremental build state
+*.tsbuildinfo

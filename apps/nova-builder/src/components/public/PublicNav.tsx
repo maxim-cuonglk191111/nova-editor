@@ -5,7 +5,6 @@ import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { LogoIcon } from "@/components/LogoIcon";
 import { useI18n } from "@/lib/i18n";
-import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { UserDropdown } from "@/components/UserDropdown";
 
 interface PublicNavProps {
@@ -35,7 +34,6 @@ export function PublicNav({ theme = "light" }: PublicNavProps) {
           <span style={{ fontSize: 17, fontWeight: 800, color: "#6d28d9", letterSpacing: "-0.01em" }}>Nova</span>
         </Link>
         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-          <LanguageSwitcher theme={theme} />
           {isLoggedIn ? (
             <>
               <Link href="/projects" style={{ padding: "0 16px", height: 44, display: "flex", alignItems: "center", fontSize: 15, color: "#475569", fontWeight: 500, textDecoration: "none", borderRadius: 8 }}>{t.nav.projects}</Link>
@@ -86,7 +84,6 @@ export function PublicNav({ theme = "light" }: PublicNavProps) {
 
           {/* ── Right: Auth buttons ── */}
           <div className="on-navbar__right">
-            <LanguageSwitcher theme="dark" />
             {isLoggedIn ? (
               <UserDropdown mode="dark" />
             ) : (
