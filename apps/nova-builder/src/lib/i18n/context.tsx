@@ -71,7 +71,8 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
 
   const handleSetAutoDetectByIp = (enabled: boolean) => {
     setAutoDetectState(enabled);
-    languageDetector.storePreferences(locale, enabled);
+    // Callers set the locale first in the same tick; `locale` here is still the previous render's.
+    languageDetector.storePreferences(languageDetector.getStoredLocale() ?? locale, enabled);
   };
 
   const dictionary = getDictionary(locale);

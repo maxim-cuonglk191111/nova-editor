@@ -2,6 +2,16 @@
 
 ---
 
+## [25.6.0] — 2026-10-07
+
+### Email via Brevo; Tier B specs and the fixes they found (Minor)
+
+- **Email**: `lib/email.ts` sends through Brevo when `BREVO_API_KEY` is set (Resend otherwise); sender from `EMAIL_FROM` (Worker secret, currently `no-reply@tinhhoavietbooks.com`, the domain authenticated in Brevo). Password reset, email verification, team invites and lead notifications were silently skipped before — no provider was configured. Mail to `@testqa.dev` (QA accounts) goes to Brevo's sandbox, so e2e runs neither bounce nor spend the 300/day quota.
+- **Verify email**: `/verify-email` no longer redirects a signed-in user to `/` (the link was never consumed right after signup).
+- **Language toggle**: the builder EN/VI toggle (and the public language switcher) now persists the choice — `setAutoDetectByIp` stored the previous render's locale over the new one.
+- **AI Content Fill**: uses the same provider fallback chain as `/api/ai` (Gemini rejects the Worker's region; every request failed).
+- **QA**: 14 Tier B specs in `e2e/tier-b/` on throwaway accounts seeded with a recorded AI page (`e2e/helpers/fresh-account.ts`, `e2e/fixtures/landing.schema.json`) — no AI quota, shared QA account untouched; `scripts/payment-probe.mjs` cleans up after itself. Results in `doc/TEST-ROADMAP.md` and `doc/VERIFIED.md`.
+
 ## [25.5.0] — 2026-10-07
 
 ### i18n everywhere: no hard-coded UI text (Minor)

@@ -1,15 +1,16 @@
 # Task 004 — Merge and verify pending commits
 
-- **Status:** Open
+- **Status:** Done (2026-10-07)
 - **Filed:** 2026-10-07
 - **Owner:** Claude Code
 - **Severity:** Medium
 
-Merged to main in PR #11 (`261d724`): one VND price list for every checkout path, these task files, `scripts/payment-probe.mjs`. Not yet verified on production:
+## Result — 8.5/10
+- Workers Build for `fd86990` (PR #11 + #12) succeeded; production serves it.
+- Checkout prices on production (create-link → SePay): Pro 500.000đ, Max 1.275.000đ, Team 750.000đ, credits 100.000đ. `/api/billing/portal?provider=payos` answers 503 (PayOS not configured) — no UI uses it.
+- `scripts/payment-probe.mjs`: 19/19 + new cleanup step, run on a throwaway account (deleted afterwards).
+- Golden path `e2e/qa-cloud-journey.spec.ts`: 19/19 steps, 0 console errors (`qa-screenshots/cloud-r22`). Deductions: AI took 144 s (Gemini 524, Mistral 429 — Groq served), generated page thin (4 sections, no contact form), navbar stacks on Mobile P (B14).
 
-1. Confirm the Workers Build for `261d724` succeeded.
-2. Production: `/api/billing/portal?provider=payos&plan=pro` uses 500,000đ; payment probe still 19/19; golden path journey green.
-
-Also outstanding (housekeeping):
-- QA project "bakery" (shared account `qa.cloud.1791213340319@testqa.dev`, also used by the owner): hero paragraph reads "View Menu" — origin unclear (owner edit with the old broken inline editor, or a test). Ask before changing.
-- Main working tree `nova-editor` has the owner's uncommitted WIP on `main`; it must be stashed/committed before `git pull` (main is now PRs #1–#10 ahead).
+## Left over
+- QA project "bakery" hero paragraph reads "View Menu" — ask the owner before changing.
+- Main working tree `nova-editor` still holds the owner's uncommitted WIP on an old `main` (b21a8cc); stash/commit before `git pull`.

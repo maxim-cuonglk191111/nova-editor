@@ -18,6 +18,7 @@ export async function pinLocale(page: Page, locale: "en" | "vi" = "en") {
       localStorage.setItem("nova_locale", l);
       localStorage.setItem("nova_auto_detect_ip", "false");
       localStorage.setItem("nova-tour-done", "1");
+      localStorage.setItem("nova-coachmarks-seen", "1");
     } catch { /* storage blocked */ }
   }, locale);
   const url = process.env.BASE_URL;
