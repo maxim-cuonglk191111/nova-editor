@@ -2,6 +2,7 @@
 // Shared numeric-with-unit control (MV2, ADR-NB-020). Mirrors Webstudio's
 // unit input pattern: number field + unit select. Commits on blur/Enter and
 // on arrow-key nudge (Shift = ×10), like the style-panel inputs.
+import { useEffect, useRef } from "react";
 import { UI_VARS as C, FONT } from "@/lib/uiTheme";
 
 export const COMMON_UNITS = ["px", "%", "rem", "em", "vw", "vh", "fr", "ch", "deg", "s", "ms"];
@@ -17,9 +18,18 @@ export function UnitInput({
   units?: string[];
   onCommit: (value: number, unit: string) => void;
 }) {
+  // Uncontrolled while typing, but must follow the store when the value changes
+  // underneath (another element selected, undo, breakpoint switch).
+  const inputRef = useRef<HTMLInputElement>(null);
+  const selectRef = useRef<HTMLSelectElement>(null);
+  useEffect(() => {
+    if (inputRef.current && document.activeElement !== inputRef.current) inputRef.current.value = String(value);
+    if (selectRef.current) selectRef.current.value = unit;
+  }, [value, unit]);
   return (
     <div style={{ display: "flex", gap: 3, alignItems: "center" }}>
       <input
+        ref={inputRef}
         type="number"
         step="any"
         defaultValue={value}
@@ -54,6 +64,7 @@ export function UnitInput({
         }}
       />
       <select
+        ref={selectRef}
         defaultValue={unit}
         onChange={(e) => onCommit(value, e.target.value)}
         style={{

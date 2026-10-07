@@ -510,9 +510,18 @@ export function initDragReparent(): () => void {
     }
   };
 
+  // Links and images are natively draggable: the browser's own drag cancels the
+  // pointer stream, so they could not be moved. Asset drags start in the builder
+  // document, not here, so they are unaffected.
+  const onNativeDragStart = (e: DragEvent) => {
+    if (!$isPreviewMode.get()) e.preventDefault();
+  };
+
   document.addEventListener("pointerdown", onDown, true);
+  document.addEventListener("dragstart", onNativeDragStart, true);
   return () => {
     document.removeEventListener("pointerdown", onDown, true);
+    document.removeEventListener("dragstart", onNativeDragStart, true);
     window.removeEventListener("pointermove", onMove, true);
     window.removeEventListener("pointerup", onUp, true);
     try {

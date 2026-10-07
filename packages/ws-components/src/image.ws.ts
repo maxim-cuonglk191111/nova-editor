@@ -25,6 +25,12 @@ const presetStyle = {
       property: "height",
       value: { type: "keyword", value: "auto" },
     },
+    // The width/height props become an aspect-ratio box (image.tsx); fill it
+    // without distortion. A style-panel object-fit still overrides this.
+    {
+      property: "object-fit",
+      value: { type: "keyword", value: "cover" },
+    },
   ],
 } satisfies PresetStyle<typeof defaultTag>;
 

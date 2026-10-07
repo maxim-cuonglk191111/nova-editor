@@ -62,13 +62,14 @@ export const Image = forwardRef<
       }
     }
 
-    // Build inline style to enforce width/height constraints and object-fit
+    // width/height stay HTML attributes plus an aspect-ratio box. As inline
+    // width/height they beat every style-panel value and canvas resize, and with
+    // `max-width` they squashed images on phones (fixed height, shrunk width).
     const mergedStyle: React.CSSProperties = { ...styleProp as React.CSSProperties };
-    if (width !== undefined && !Number.isNaN(Number(width))) {
-      mergedStyle.width = `${width}px`;
-    }
-    if (height !== undefined && !Number.isNaN(Number(height))) {
-      mergedStyle.height = `${height}px`;
+    const w = Number(width);
+    const h = Number(height);
+    if (w > 0 && h > 0) {
+      mergedStyle.aspectRatio = `${w} / ${h}`;
     }
     if (objectfit) {
       mergedStyle.objectFit = objectfit as React.CSSProperties["objectFit"];

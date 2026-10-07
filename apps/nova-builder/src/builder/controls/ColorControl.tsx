@@ -22,7 +22,7 @@ export function ColorControl({
     <div style={{ display: "flex", gap: 4, alignItems: "center" }}>
       <input
         type="color"
-        defaultValue={hex}
+        value={hex}
         onChange={(e) => {
           const rgb = hexToRgb(e.target.value);
           if (rgb) onCommit({ type: "rgb", ...rgb, alpha });

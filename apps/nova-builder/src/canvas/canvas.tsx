@@ -805,6 +805,8 @@ export const Canvas = () => {
       if ($isPreviewMode.get()) return;
       // Suppress click-to-select while Lexical editor is active.
       if ($textEditingInstance.get()) return;
+      // Releasing a resize handle clicks the selection chrome — keep the selection.
+      if ((e.target as Element)?.closest?.("[data-nova-overlay]")) return;
       const el = (e.target as Element)?.closest(`[${selectorIdAttribute}]`);
       if (!el) {
         $selectedInstanceSelector.set(undefined);

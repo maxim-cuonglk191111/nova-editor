@@ -3,9 +3,11 @@ import { useEffect } from "react";
 import { useStore } from "@nanostores/react";
 import { $toast } from "@/lib/nano-states";
 import { UI_VARS as C, FONT } from "@/lib/uiTheme";
+import { useI18n } from "@/lib/i18n";
 
 export function ToastNotification() {
   const toast = useStore($toast);
+  const { t } = useI18n();
 
   useEffect(() => {
     if (!toast) return;
@@ -23,11 +25,15 @@ export function ToastNotification() {
       : C.success;
 
   const icon =
-    toast.type === "error"
+    toast.onUndo
+      ? "🗑"
+      : toast.type === "error"
       ? "❌"
       : toast.type === "warning"
       ? "⚠️"
       : "✅";
+
+  const onUndo = toast.onUndo;
 
   return (
     <div
@@ -40,7 +46,7 @@ export function ToastNotification() {
         zIndex: 9999,
         maxWidth: 360,
         display: "flex",
-        alignItems: "flex-start",
+        alignItems: onUndo ? "center" : "flex-start",
         gap: 12,
         padding: "12px 18px",
         borderRadius: 10,
@@ -56,7 +62,15 @@ export function ToastNotification() {
       }}
     >
       <span style={{ fontSize: 16, lineHeight: 1 }}>{icon}</span>
-      <div style={{ flex: 1, lineHeight: 1.4 }}>{toast.text}</div>
+      <div style={{ flex: 1, lineHeight: 1.4 }}>{onUndo ? t.commands.elementDeleted : toast.text}</div>
+      {onUndo && (
+        <button
+          onClick={(e) => { e.stopPropagation(); onUndo(); $toast.set(null); }}
+          style={{ background: C.accent, color: "#fff", border: "none", borderRadius: 6, padding: "4px 12px", fontSize: FONT.sm, fontWeight: 600, cursor: "pointer" }}
+        >
+          {t.commands.undo}
+        </button>
+      )}
     </div>
   );
 }

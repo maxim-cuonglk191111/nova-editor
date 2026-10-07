@@ -47,7 +47,7 @@ import { writeStyle } from "@/lib/styleInspectorWrite";
 import type { AnyStyleDecl } from "@/lib/styleValueConversion";
 import { applyReparent, buildParentMap, moveToNewParent } from "@/lib/treeMove";
 import type { SyncEmitter } from "@/lib/sync-client";
-import { deleteInstance } from "@/lib/edit-operations";
+import { deleteInstanceById } from "@/builder/commands";
 import { writeGridSpan, writeGridColumnStart } from "@/lib/propWriteHelper";
 import { writeGridColumnStyle } from "@/lib/styleWriteHelper";
 
@@ -311,11 +311,7 @@ function BuilderPage() {
       // Drag-to-delete: remove instance when dragged out of canvas.
       if (e.data?.type === "nova:deleteInstance") {
         const { instanceId } = e.data as { instanceId: string };
-        const { updated, deleted, nextSelectedId } = deleteInstance(instanceId, $instances.get());
-        if (deleted) {
-          updateData(({ instances }) => replaceMap(instances, updated));
-          $selectedInstanceSelector.set(nextSelectedId ? [nextSelectedId] : undefined);
-        }
+        deleteInstanceById(instanceId);
         return;
       }
       // Resize handles (FA-007): persist width/height to the active breakpoint.

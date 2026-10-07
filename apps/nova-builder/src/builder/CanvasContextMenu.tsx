@@ -1,11 +1,11 @@
-﻿"use client";
+"use client";
 import { useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import { updateData, replaceMap } from "@/lib/transactions";
 import { makeInstanceId } from "@/lib/edit-operations";
 import { $instances } from "@/lib/data-stores";
 import { $selectedInstanceSelector, $clipboard } from "@/lib/nano-states";
-import { copyInstance, cutInstance, pasteClipboard, duplicateInstanceById, deleteInstanceById } from "./commands";
+import { copyInstance, cutInstance, pasteClipboard, duplicateInstanceById, deleteInstanceById, shortcutLabel } from "./commands";
 import { useI18n } from "@/lib/i18n";
 import { UI_VARS as C } from "@/lib/uiTheme";
 
@@ -177,11 +177,11 @@ export function CanvasContextMenu({ instanceId, x, y, onClose }: Props) {
         fontFamily: C.font,
       }}
     >
-      <Item label={t.commands.copy} shortcut="⌘C" onClick={handleCopy} />
-      <Item label={t.commands.cut} shortcut="⌘X" onClick={handleCut} />
-      {hasClipboard && <Item label={t.commands.paste} shortcut="⌘V" onClick={handlePaste} />}
+      <Item label={t.commands.copy} shortcut={shortcutLabel("mod+c")} onClick={handleCopy} />
+      <Item label={t.commands.cut} shortcut={shortcutLabel("mod+x")} onClick={handleCut} />
+      {hasClipboard && <Item label={t.commands.paste} shortcut={shortcutLabel("mod+v")} onClick={handlePaste} />}
       <Separator />
-      <Item label={t.commands.duplicate} shortcut="⌘D" onClick={handleDuplicate} />
+      <Item label={t.commands.duplicate} shortcut={shortcutLabel("mod+d")} onClick={handleDuplicate} />
       <Item label={t.commands.wrapInBox} onClick={handleWrapInBox} />
       <Item label={t.commands.selectParent} onClick={handleSelectParent} />
       <Separator />

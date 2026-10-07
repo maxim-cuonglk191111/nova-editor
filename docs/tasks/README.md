@@ -13,4 +13,4 @@ screenshotted, reviewed and scored /10; a feature we cannot make work is hidden
 | [004](004-ship-pending-commits.md) | Merge and verify pending `qa/ai-template` commits | Done |
 | [005](005-tier-b-feature-tests.md) | Tier B feature specs (B1–B14): test, screenshot, score or cut | Done — all 14 at >= 8/10 |
 | [006](006-cut-tier-c-code.md) | Remove Tier C code that stays hidden | Open |
-| [007](007-builder-feature-audit.md) | Builder feature audit: works + ease of use, every feature >= 8/10 | Open |
+| [007](007-builder-feature-audit.md) | Builder feature audit: works + ease of use, every feature >= 8/10 | In progress — batch 1 (canvas) v25.8.0 |
