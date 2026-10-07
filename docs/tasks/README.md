@@ -11,5 +11,5 @@ screenshotted, reviewed and scored /10; a feature we cannot make work is hidden
 | [002](002-sepay-go-live.md) | SePay VietQR go-live: real account, webhook, wallet scans | Blocked (owner input) |
 | [003](003-google-pay-lemon-squeezy.md) | Cards / Google Pay / Apple Pay via Lemon Squeezy | Blocked (owner input) |
 | [004](004-ship-pending-commits.md) | Merge and verify pending `qa/ai-template` commits | Done |
-| [005](005-tier-b-feature-tests.md) | Tier B feature specs (B1–B14): test, screenshot, score or cut | In progress |
+| [005](005-tier-b-feature-tests.md) | Tier B feature specs (B1–B14): test, screenshot, score or cut | Done — all 14 at >= 8/10 |
 | [006](006-cut-tier-c-code.md) | Remove Tier C code that stays hidden | Open |

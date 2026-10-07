@@ -2117,7 +2117,7 @@ Full parity audit vs `reference/webstudio` @ `65d8a16`: [`doc/WS-PARITY-AUDIT.md
 | B4 | Language toggle persists | ✅ 8/10 |
 | B5 | Style groups → canvas, preview, export | ✅ 8/10 — line-height shows "px" for unitless |
 | B9 | AI Content Fill | ✅ 8/10 |
-| B10 | Accessibility check lists missing alt | ⏳ re-run after 25.6.1 |
+| B10 | Accessibility check lists missing alt | ✅ 8/10 — 21 s, missing alt listed |
 | B11 | Preview view recorded in Analytics | ✅ 8/10 — path fixed |
 | B12 | Preview form submission listed in Leads | ✅ 8/10 |
 | B13 | Forgot / reset password, verify email | ✅ 8/10 — delivered via Brevo |

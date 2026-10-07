@@ -1,6 +1,6 @@
 # Task 005 — Tier B feature specs: test, screenshot, score — or cut
 
-- **Status:** In progress
+- **Status:** Done (2026-10-07)
 - **Filed:** 2026-10-07
 - **Owner:** Claude Code
 - **Severity:** High (owner principle)
@@ -22,3 +22,7 @@ Specs in `e2e/tier-b/` (throwaway account + seeded recorded AI page; `e2e/helper
 - Fixed in 25.6.0, re-run needed: B4 (toggle persistence), B9 (provider fallback), B13 (Brevo email + verify-email redirect; real-inbox delivery check).
 - Open bugs: B2 (paste/duplicate drop props + styles, ⌘X unbound — fix outlined in the agent report: copy props/style sources with the subtree), B14 (AI header needs mobile-breakpoint styles — `validateCompositionWS` + `applyWSComposition` "mobile" breakpoint).
 - Not run yet: B3, B6, B7, B8.
+
+## Result (2026-10-07, production v25.6.1)
+All 14 Tier B specs pass on production (`e2e/tier-b/`, throwaway accounts): B1–B13 8/10, B14 9/10. Fixed on the way: paste/duplicate lost props + styles and ⌘X was unbound (B2), import Update 500 (B3), locale toggle not persisted (B4), CSS vars missing from export (B6), templates replaced the page (B7), restore needed a manual reload (B8), single-provider AI routes (B9, B10) and a 2-minute a11y wait (B10), analytics path (B11), no email provider → Brevo (B13), header stacking on phones (B14).
+Known small gaps (not blocking 8/10): template insert does not scroll the canvas to the new section; a11y AI suggestion often falls back to default text; dashboard cards have no thumbnails.
