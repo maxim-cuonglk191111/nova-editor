@@ -2,14 +2,13 @@
 import { useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { useStore } from "@nanostores/react";
-import { $breakpoints, $instances } from "@/lib/data-stores";
+import { $breakpoints } from "@/lib/data-stores";
 import {
   $selectedBreakpointId, $selectedBreakpoint,
   $selectedInstanceId, $selectedInstanceSelector, $clipboard,
-  $brandingLogo, $brandingName, $nestingWarning,
+  $brandingLogo, $brandingName,
 } from "@/lib/nano-states";
-import { updateData, replaceMap } from "@/lib/transactions";
-import { deleteInstance, duplicateInstance, pasteInstance } from "@/lib/edit-operations";
+import { copyInstance, pasteClipboard, duplicateInstanceById, deleteInstanceById } from "./commands";
 import { BreakpointManager } from "./BreakpointManager";
 import { BreakpointPill } from "./BreakpointPills";
 import { TopbarActions } from "./TopbarActions";
@@ -31,41 +30,19 @@ export function Topbar({ isDemo }: { isDemo?: boolean }) {
   const [bpManagerOpen, setBpManagerOpen] = useState(false);
 
   const handleCopy = useCallback(() => {
-    if (!selectedId) return;
-    $clipboard.set({ instances: new Map($instances.get()), rootId: selectedId });
+    if (selectedId) copyInstance(selectedId);
   }, [selectedId]);
 
-  const handlePaste = useCallback(() => {
-    const cb = $clipboard.get();
-    if (!cb) return;
-    const result = pasteInstance(cb, $selectedInstanceId.get(), $instances.get());
-    if (result?.violation) {
-      $nestingWarning.set(result.violation.message);
-    } else if (result?.updated) {
-      updateData(({ instances, props }) => {
-        replaceMap(instances, result.updated);
-        if (result.clonedProps) for (const [id, p] of result.clonedProps) props.set(id, p);
-      });
-      $selectedInstanceSelector.set([result.newRootId]);
-    }
-  }, []);
+  const handlePaste = useCallback(() => pasteClipboard($clipboard.get(), $selectedInstanceId.get()), []);
 
   const handleDuplicate = useCallback(() => {
     if (!selectedId) return;
-    const result = duplicateInstance(selectedId, $instances.get());
-    if (result) {
-      updateData(({ instances }) => replaceMap(instances, result.updated));
-      $selectedInstanceSelector.set([result.newRootId]);
-    }
+    const newRootId = duplicateInstanceById(selectedId);
+    if (newRootId) $selectedInstanceSelector.set([newRootId]);
   }, [selectedId]);
 
   const handleDelete = useCallback(() => {
-    if (!selectedId) return;
-    const { updated, deleted, nextSelectedId } = deleteInstance(selectedId, $instances.get());
-    if (deleted) {
-      updateData(({ instances }) => replaceMap(instances, updated));
-      $selectedInstanceSelector.set(nextSelectedId ? [nextSelectedId] : undefined);
-    }
+    if (selectedId) deleteInstanceById(selectedId);
   }, [selectedId]);
 
   const sortedBreakpoints = [...breakpoints.values()].sort((a, b) => {

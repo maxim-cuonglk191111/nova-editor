@@ -8,7 +8,7 @@
 // and synced to the canvas follower. Labels are i18n keys resolved by the
 // consumer via t.commands[labelKey].
 
-import { $instances } from "@/lib/data-stores";
+import { $instances, $props, $styleSources, $styleSourceSelections, $styles } from "@/lib/data-stores";
 import {
   $selectedInstanceId,
   $selectedInstanceSelector,
@@ -26,15 +26,17 @@ import {
   duplicateInstance,
   pasteInstance,
   deleteMultipleInstances,
-  duplicateMultipleInstances,
+  topLevelInstanceIds,
 } from "@/lib/edit-operations";
 import { copyToClipboard, readClipboard } from "@/lib/clipboard";
+import { collectFragment, cloneAttachments, applyAttachments } from "@/lib/fragment-attachments";
 import type { I18nCommandsDictionary } from "@/lib/i18n/types";
 
 export type CommandName =
   | "undo"
   | "redo"
   | "copy"
+  | "cut"
   | "paste"
   | "duplicate"
   | "delete"
@@ -57,31 +59,78 @@ export type Command = {
 
 // ── Handlers (multi-select aware, moved from useBuilderKeyboard/CommandPalette) ──
 
-const copyCommand = () => {
-  const selectedId = $selectedInstanceId.get();
-  if (selectedId) {
-    const data = { instances: new Map($instances.get()), rootId: selectedId };
-    $clipboard.set(data);
-    // Also write to the system clipboard so paste works across tabs / from HTML.
-    void copyToClipboard(data);
+// Id-based actions shared by shortcuts, the canvas / navigator context menus and the topbar.
+// Props and styles travel with the subtree (lib/fragment-attachments).
+
+const currentDocument = () => ({
+  instances: $instances.get(),
+  props: $props.get(),
+  styleSources: $styleSources.get(),
+  styleSourceSelections: $styleSourceSelections.get(),
+  styles: $styles.get(),
+});
+
+export const copyInstance = (instanceId: string) => {
+  const data = collectFragment(instanceId, currentDocument());
+  $clipboard.set(data);
+  // Also write to the system clipboard so paste works across tabs / from HTML.
+  void copyToClipboard(data);
+};
+
+export const deleteInstanceById = (instanceId: string) => {
+  const { updated, deleted, nextSelectedId } = deleteInstance(instanceId, $instances.get());
+  if (deleted) {
+    updateData(({ instances }) => replaceMap(instances, updated));
+    $selectedInstanceSelector.set(nextSelectedId ? [nextSelectedId] : undefined);
   }
 };
 
-const applyPaste = (clipboard: ReturnType<typeof $clipboard.get>) => {
+export const cutInstance = (instanceId: string) => {
+  copyInstance(instanceId);
+  deleteInstanceById(instanceId);
+};
+
+/** Pastes after `targetId` (or into the root when undefined). */
+export const pasteClipboard = (clipboard: ReturnType<typeof $clipboard.get>, targetId: string | undefined) => {
   if (!clipboard) return;
-  const result = pasteInstance(clipboard, $selectedInstanceId.get(), $instances.get());
+  const result = pasteInstance(clipboard, targetId, $instances.get());
   if (result?.violation) {
     $nestingWarning.set(result.violation.message);
     return;
   }
   if (result?.updated) {
-    updateData(({ instances, props }) => {
-      replaceMap(instances, result.updated);
-      if (result.clonedProps) for (const [id, p] of result.clonedProps) props.set(id, p);
+    const att = cloneAttachments(clipboard, result.idMap, $styleSources.get());
+    updateData((data) => {
+      replaceMap(data.instances, result.updated);
+      applyAttachments(data, att);
     });
     $selectedInstanceSelector.set([result.newRootId]);
   }
 };
+
+export const duplicateInstanceById = (instanceId: string) => {
+  const doc = currentDocument();
+  const result = duplicateInstance(instanceId, doc.instances);
+  if (!result) return undefined;
+  const att = cloneAttachments(collectFragment(instanceId, doc), result.idMap, doc.styleSources);
+  updateData((data) => {
+    replaceMap(data.instances, result.updated);
+    applyAttachments(data, att);
+  });
+  return result.newRootId;
+};
+
+const copyCommand = () => {
+  const selectedId = $selectedInstanceId.get();
+  if (selectedId) copyInstance(selectedId);
+};
+
+const cutCommand = () => {
+  const selectedId = $selectedInstanceId.get();
+  if (selectedId) cutInstance(selectedId);
+};
+
+const applyPaste = (clipboard: ReturnType<typeof $clipboard.get>) => pasteClipboard(clipboard, $selectedInstanceId.get());
 
 const pasteCommand = () => {
   // Prefer the system clipboard (cross-tab + HTML/design-tool paste); fall back
@@ -94,21 +143,17 @@ const pasteCommand = () => {
 const duplicateCommand = () => {
   const multiIds = $multiSelectedInstanceIds.get();
   if (multiIds.length > 1) {
-    const result = duplicateMultipleInstances(multiIds, $instances.get());
-    if (result && result.newRootIds.length > 0) {
-      updateData(({ instances }) => replaceMap(instances, result.updated));
-      $multiSelectedInstanceIds.set(result.newRootIds);
-      $selectedInstanceSelector.set([result.newRootIds[0]]);
+    const newRootIds = topLevelInstanceIds(multiIds, $instances.get()).flatMap((id) => duplicateInstanceById(id) ?? []);
+    if (newRootIds.length > 0) {
+      $multiSelectedInstanceIds.set(newRootIds);
+      $selectedInstanceSelector.set([newRootIds[0]]);
     }
     return;
   }
   const selectedId = $selectedInstanceId.get();
   if (!selectedId) return;
-  const result = duplicateInstance(selectedId, $instances.get());
-  if (result) {
-    updateData(({ instances }) => replaceMap(instances, result.updated));
-    $selectedInstanceSelector.set([result.newRootId]);
-  }
+  const newRootId = duplicateInstanceById(selectedId);
+  if (newRootId) $selectedInstanceSelector.set([newRootId]);
 };
 
 const deleteCommand = () => {
@@ -123,12 +168,7 @@ const deleteCommand = () => {
     return;
   }
   const selectedId = $selectedInstanceId.get();
-  if (!selectedId) return;
-  const { updated, deleted, nextSelectedId } = deleteInstance(selectedId, $instances.get());
-  if (deleted) {
-    updateData(({ instances }) => replaceMap(instances, updated));
-    $selectedInstanceSelector.set(nextSelectedId ? [nextSelectedId] : undefined);
-  }
+  if (selectedId) deleteInstanceById(selectedId);
 };
 
 const wrapInBoxCommand = () => {
@@ -164,6 +204,7 @@ const _registry: Command[] = [
   { name: "undo", labelKey: "undo", hotkeys: ["mod+z"], run: undo },
   { name: "redo", labelKey: "redo", hotkeys: ["mod+shift+z", "mod+y"], run: redo },
   { name: "copy", labelKey: "copy", hotkeys: ["mod+c"], disableOnInputLike: true, run: copyCommand },
+  { name: "cut", labelKey: "cut", hotkeys: ["mod+x"], disableOnInputLike: true, run: cutCommand },
   { name: "paste", labelKey: "paste", hotkeys: ["mod+v"], disableOnInputLike: true, run: pasteCommand },
   { name: "duplicate", labelKey: "duplicate", hotkeys: ["mod+d"], disableOnInputLike: true, run: duplicateCommand },
   { name: "delete", labelKey: "delete", hotkeys: ["delete", "backspace"], disableOnInputLike: true, run: deleteCommand },
