@@ -49,6 +49,19 @@ If an item fails and the fix is not small, it moves to Tier C.
 | B13 | Forgot / reset password, verify email | auth pages | email actually delivered; if no email provider is configured → Tier C | ✅ 8/10 — Brevo delivers reset + verify mails to Gmail; verify link works signed in (25.6.0) |
 | B14 | Mobile navigation of AI pages | AI output | navbar does not wrap into a column on Mobile P | ✅ 9/10 — two compact rows on phones (25.6.0) |
 
+## Builder audit (task 007, `e2e/builder-audit/`) — Works / Ease of use
+
+Every feature a user meets inside a project, scored twice. Target ≥ 8 on both; below that it is fixed or hidden (Tier C).
+Run: `pwsh scripts/audit-run.ps1 e2e/builder-audit/<area>.spec.ts` (production by default; `BASE_URL` overrides).
+
+| Area | Spec | Result |
+|------|------|--------|
+| 1 Canvas — hover, select, label, breadcrumb, parent, drag reorder / into container / nudge, resize, inline edit, context menu, shortcuts, ⌘K, drag-off delete | `canvas.spec.ts` | 25.8.0: all ≥ 8 after fixes (resize, link/image drag, stale Style-panel inputs, image distortion, delete + Undo toast) — production re-run pending |
+| 2 Left sidebar | — | not run |
+| 3 Right panel | — | not run |
+| 4 Top bar | — | not run |
+| 5 Feedback & safety | — | not run |
+
 ## Tier C — cut (hidden or not linked; not tested)
 
 | Feature | Reason | State |

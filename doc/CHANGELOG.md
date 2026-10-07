@@ -2,6 +2,19 @@
 
 ---
 
+## [25.8.0] — 2026-10-07
+
+### Builder audit batch 1 — canvas (Minor)
+
+Task 007, `e2e/builder-audit/canvas.spec.ts` (throwaway account, seeded AI page).
+
+- **Images keep their shape**: the Image component turned its `width`/`height` props into inline styles, which beat every Style-panel value and the canvas resize handles, and squashed photos on phones (fixed height, shrinking width). They are now HTML attributes plus an `aspect-ratio` box filled with `object-fit: cover` (preset, still overridable).
+- **Canvas resize** works (it wrote the width but the inline style won) and keeps the selection after releasing a handle.
+- **Drag links and images** on the canvas: the browser's native drag of `<a>`/`<img>` cancelled the move, so e.g. a nav link could not be dragged into the header.
+- **Style panel follows the selection**: number, unit, keyword and colour inputs kept the previous element's values after selecting another element (or after undo); they now track the store.
+- **Delete → "Element deleted · Undo" toast** for Delete, the context menu, multi-delete and dragging an element off the canvas (which deletes it).
+- **Shortcut labels** in the context menu and ⌘K palette read `Ctrl+C` on Windows/Linux and `⌘C` on Apple devices.
+
 ## [25.7.1] — 2026-10-07
 
 ### Faster deploys (Patch)

@@ -1,6 +1,6 @@
 # Task 007 — Builder feature audit: works + easy for a non-technical user
 
-- **Status:** Open
+- **Status:** In progress (batch 1 of 5 done)
 - **Filed:** 2026-10-07
 - **Owner:** Claude Code
 - **Severity:** High (owner principle: if a feature exists, it must work well)
@@ -27,3 +27,10 @@ Audit every feature a user meets inside a project in nova-editor (production htt
 5. **Feedback & safety** — toasts, empty states, loading states, error messages (e.g. offline save), undo after every destructive action, unsaved-changes guard on leaving.
 
 **Report** (end of each batch): a table Feature | Works /10 | Ease /10 | Evidence (screenshot names) | Fix or decision; update `doc/TEST-ROADMAP.md`, `doc/VERIFIED.md`, this task file and `doc/CHANGELOG.md`; bump the version per `CLAUDE.md`.
+
+## Progress
+
+Specs: `e2e/builder-audit/` (shared helpers in `audit.ts`), runner `scripts/audit-run.ps1` (loads the Supabase cleanup keys, production by default).
+Skip check: Tier B code (B2, B3, B5–B10) unchanged since `40b1666` (v25.7.0 only removed `LangToggle`), but Tier B scored Works only — Ease is scored again here.
+
+- **Batch 1 — Canvas (v25.8.0):** every item ≥ 8 after fixes. Found on production: resize had no effect (Image inline width/height), links/images could not be dragged (native drag), Style panel showed the previous element's values, images squashed on phones, delete gave no feedback. Fixed; verified locally; production re-run after deploy. SOLID audit: 6 blocking, all pre-existing large files (none introduced).

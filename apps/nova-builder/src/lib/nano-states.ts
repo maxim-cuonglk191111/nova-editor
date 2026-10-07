@@ -250,11 +250,17 @@ export const $pendingCanvasMsg = atom<CanvasMsg | null>(null);
 export type ToastMessage = {
   type: "success" | "error" | "warning";
   text: string;
+  /** Destructive edit: the toast reads t.commands.elementDeleted and offers an Undo button. */
+  onUndo?: () => void;
 };
 export const $toast = atom<ToastMessage | null>(null);
 
 export function showToast(text: string, type: "success" | "error" | "warning" = "success") {
   $toast.set({ type, text });
+}
+
+export function showDeletedToast(onUndo: () => void) {
+  $toast.set({ type: "success", text: "", onUndo });
 }
 
 // ─── Import trigger ──────────────────────────────────────────────────────────

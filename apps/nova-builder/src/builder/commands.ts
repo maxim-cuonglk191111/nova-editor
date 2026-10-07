@@ -17,6 +17,7 @@ import {
   $aiPanelOpen,
   $commandPaletteOpen,
   $nestingWarning,
+  showDeletedToast,
 } from "@/lib/nano-states";
 import { updateData, replaceMap, undo, redo } from "@/lib/transactions";
 import {
@@ -77,17 +78,18 @@ export const copyInstance = (instanceId: string) => {
   void copyToClipboard(data);
 };
 
-export const deleteInstanceById = (instanceId: string) => {
+export const deleteInstanceById = (instanceId: string, { notify = true } = {}) => {
   const { updated, deleted, nextSelectedId } = deleteInstance(instanceId, $instances.get());
   if (deleted) {
     updateData(({ instances }) => replaceMap(instances, updated));
     $selectedInstanceSelector.set(nextSelectedId ? [nextSelectedId] : undefined);
+    if (notify) showDeletedToast(undo);
   }
 };
 
 export const cutInstance = (instanceId: string) => {
   copyInstance(instanceId);
-  deleteInstanceById(instanceId);
+  deleteInstanceById(instanceId, { notify: false });
 };
 
 /** Pastes after `targetId` (or into the root when undefined). */
@@ -164,6 +166,7 @@ const deleteCommand = () => {
       updateData(({ instances }) => replaceMap(instances, updated));
       $multiSelectedInstanceIds.set([]);
       $selectedInstanceSelector.set(undefined);
+      showDeletedToast(undo);
     }
     return;
   }
@@ -264,14 +267,21 @@ export const matchCommand = (event: KeyboardEvent): Command | undefined => {
   return undefined;
 };
 
-/** Human-readable hint for the first hotkey ("⌘Z" style). */
-export const hotkeyHint = (command: Command): string | undefined => {
-  const hotkey = command.hotkeys[0];
-  if (!hotkey) return undefined;
+const isApple = () => typeof navigator !== "undefined" && /Mac|iPhone|iPad/.test(navigator.userAgent);
+
+/** "mod+shift+z" → "⌘⇧Z" on Apple devices, "Ctrl+Shift+Z" elsewhere. */
+export const shortcutLabel = (hotkey: string): string => {
+  const apple = isApple();
   return hotkey
     .split("+")
     .map((part) =>
-      part === "mod" ? "⌘" : part === "shift" ? "⇧" : part === "delete" ? "Del" : part.toUpperCase()
+      part === "mod" ? (apple ? "⌘" : "Ctrl") : part === "shift" ? (apple ? "⇧" : "Shift") : part === "delete" ? "Del" : part.toUpperCase()
     )
-    .join("");
+    .join(apple ? "" : "+");
+};
+
+/** Human-readable hint for the first hotkey. */
+export const hotkeyHint = (command: Command): string | undefined => {
+  const hotkey = command.hotkeys[0];
+  return hotkey ? shortcutLabel(hotkey) : undefined;
 };

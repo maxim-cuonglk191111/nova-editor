@@ -94,6 +94,7 @@ export const viDictionary: I18nDictionary = {
     cut: "Cắt",
     selectParent: "Chọn phần tử cha",
     rename: "Đổi tên",
+    elementDeleted: "Đã xoá phần tử",
   },
   builder: {
     syncSaved: "Đã lưu mọi thay đổi",

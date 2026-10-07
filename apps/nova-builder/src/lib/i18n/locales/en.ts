@@ -94,6 +94,7 @@ export const enDictionary: I18nDictionary = {
     cut: "Cut",
     selectParent: "Select parent",
     rename: "Rename",
+    elementDeleted: "Element deleted",
   },
   builder: {
     syncSaved: "All changes saved",

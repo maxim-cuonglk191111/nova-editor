@@ -50,6 +50,7 @@ export function StyleValueEditor({
     const kv = value as KeywordValue;
     return (
       <input
+        key={kv.value}
         type="text"
         defaultValue={kv.value}
         onBlur={(e) => onWrite({ type: "keyword", value: e.target.value })}

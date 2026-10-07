@@ -334,6 +334,7 @@ export interface I18nCommandsDictionary {
   cut: string;
   selectParent: string;
   rename: string;
+  elementDeleted: string;
 }
 
 export interface I18nCoachmarkItem {

@@ -2123,3 +2123,22 @@ Full parity audit vs `reference/webstudio` @ `65d8a16`: [`doc/WS-PARITY-AUDIT.md
 | B13 | Forgot / reset password, verify email | ✅ 8/10 — delivered via Brevo |
 | B14 | AI page navbar on phones | ✅ 9/10 — two compact rows |
 | B3, B6, B7, B8 | .nova round trip, CSS vars/custom CSS, templates, history | ✅ 8/10 each (fixed in 25.6.0) |
+
+## v25.8.0 — Builder audit batch 1: canvas (2026-10-07, task 007, `e2e/builder-audit/canvas.spec.ts`, screenshots `qa-screenshots/builder-audit/c*.png`)
+Scores are Works / Ease of use. "Prod" = production v25.7.1 before the fixes; fixes verified on a local dev server, production re-run after deploy.
+| ID | Behavior | Status |
+|----|----------|--------|
+| CA-1 | Hover outline on canvas | ✅ 9/8 |
+| CA-2 | Click select: outline, "Heading 836 × 81" label, panel header, footer breadcrumb | ✅ 9/8 |
+| CA-3 | Breadcrumb / context menu "Select parent" | ✅ 9/8 |
+| CA-4 | Drag to reorder inside a section (drop indicator shown) | ✅ 9/8 |
+| CA-5 | Drag a link into another container | ❌ prod 3/3 (native link drag) → fixed 25.8.0, 🟡 9/8 local |
+| CA-6 | Small nudge does not move | ✅ 9/9 |
+| CA-7 | Resize handles | ❌ prod 2/3 (inline width won, selection lost) → fixed 25.8.0, 🟡 9/8 local |
+| CA-8 | Double-click edit: Enter commits (saved to server), Escape cancels | ✅ 9/8 |
+| CA-9 | Context menu copy/cut/paste/duplicate/wrap/select parent/delete | ✅ 9/9 (Ctrl labels on Windows 25.8.0) |
+| CA-10 | Shortcuts Ctrl+C/X/V/D, Delete, Ctrl+Z / Ctrl+Shift+Z | ✅ 9/8 |
+| CA-11 | Ctrl+K command palette (search "dupl" → Enter) | ✅ 9/8 |
+| CA-12 | Delete / drag off canvas → "Element deleted · Undo" toast | 🟡 9/9 local (prod had no feedback: 9/6) |
+| CA-13 | Style panel shows the selected element's values | ❌ prod 4/2 (stale inputs) → fixed 25.8.0, 🟡 local |
+| CA-14 | Images keep aspect ratio (no squash on phones / after resize) | ❌ prod 5 (distorted) → fixed 25.8.0, 🟡 local |
