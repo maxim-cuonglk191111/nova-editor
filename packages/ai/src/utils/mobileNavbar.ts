@@ -11,7 +11,7 @@ type Doc = {
   props: { instanceId: string; name: string; value: unknown }[];
   styleSources: { id: string; type: "local" }[];
   styleSourceSelections: { instanceId: string; values: string[] }[];
-  styles: { styleSourceId: string; breakpointId: string; property: string; value: Value }[];
+  styles: { styleSourceId: string; breakpointId: string; property: string; value: unknown }[];
 };
 
 const kw = (value: string): Value => ({ type: "keyword", value });
