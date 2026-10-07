@@ -1,7 +1,8 @@
 // End-to-end check of the SePay VietQR checkout on a deployed build.
 // node scripts/payment-probe.mjs <base> <email> <password> <webhookKeyFile>
 // Needs: npm i --no-save jsqr  (Playwright's chromium decodes the QR image).
-// Grants 500 credits to <email>; reset them afterwards (see docs/tasks/002).
+// Grants 500 credits to <email>. With SUPABASE_URL + SUPABASE_SERVICE_KEY set it
+// undoes that afterwards (order rows deleted, credits restored), so it can run on every deploy.
 import { readFileSync } from "node:fs";
 import jsQR from "jsqr";
 
@@ -84,3 +85,17 @@ r = await req("/api/billing/payos/history");
 const hist = await r.json();
 check(r.ok && (hist.history ?? []).some((h) => h.order_code === String(co.orderCode)), "transaction history lists it", `HTTP ${r.status}`);
 console.log(`ORDER ${co.orderCode} BEFORE_CREDITS ${before.credits}`);
+
+// 5. Clean up
+const { SUPABASE_URL: sbUrl, SUPABASE_SERVICE_KEY: sbKey } = process.env;
+if (sbUrl && sbKey) {
+  const sb = (path, init = {}) => fetch(`${sbUrl}/rest/v1/${path}`, { ...init, headers: { apikey: sbKey, authorization: `Bearer ${sbKey}`, "content-type": "application/json", prefer: "return=representation", ...(init.headers ?? {}) } });
+  const order = encodeURIComponent(String(co.orderCode));
+  const delPaid = await sb(`processed_payments?order_code=eq.${order}`, { method: "DELETE" });
+  const delOrder = await sb(`payment_orders?order_code=eq.${order}`, { method: "DELETE" });
+  const reset = await sb(`users?email=eq.${encodeURIComponent(email)}`, { method: "PATCH", body: JSON.stringify({ credits_remaining: before.credits }) });
+  const cleaned = delPaid.ok && delOrder.ok && reset.ok && (await account()).credits === before.credits;
+  check(cleaned, "cleanup: order rows deleted, credits restored", `${delPaid.status}/${delOrder.status}/${reset.status}`);
+} else {
+  console.log("SKIP cleanup — set SUPABASE_URL and SUPABASE_SERVICE_KEY to undo the grant");
+}
