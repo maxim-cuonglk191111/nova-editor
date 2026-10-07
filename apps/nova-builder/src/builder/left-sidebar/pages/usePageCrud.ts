@@ -135,6 +135,22 @@ export function usePageCrud() {
     });
   }
 
+  /** The home page is served at "/": the two pages swap paths and the new home moves to the top. */
+  function setHomePage(pageId: string): void {
+    updateData(({ pages }) => {
+      const next = pages.pages.get(pageId);
+      const prev = pages.pages.get(pages.homePageId);
+      if (!next || !prev || next.id === prev.id) return;
+      pages.pages.set(prev.id, { ...prev, path: next.path } as Page);
+      pages.pages.set(next.id, { ...next, path: prev.path } as Page);
+      pages.homePageId = next.id;
+      const root = pages.rootFolderId ? pages.folders.get(pages.rootFolderId) : undefined;
+      if (root?.children?.includes(next.id)) {
+        root.children = [next.id, ...root.children.filter((c: string) => c !== next.id)];
+      }
+    });
+  }
+
   function createFolder(name: string): void {
     const fid = uid("fold_");
     updateData(({ pages }) => {
@@ -176,5 +192,5 @@ export function usePageCrud() {
     });
   }
 
-  return { createPage, renamePage, updatePageSeo, updatePageRedirects, updatePageBasicAuth, deletePage, createFolder, renameFolder, deleteFolder };
+  return { createPage, renamePage, updatePageSeo, updatePageRedirects, updatePageBasicAuth, deletePage, setHomePage, createFolder, renameFolder, deleteFolder };
 }

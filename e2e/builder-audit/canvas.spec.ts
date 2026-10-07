@@ -7,7 +7,7 @@ import { openAuditBuilder, shot, waitSaved, savedText, dragTo, selectedTag } fro
 
 let acc: FreshAccount | undefined;
 test.afterAll(async () => deleteFreshAccount(acc));
-test.use({ permissions: ["clipboard-read", "clipboard-write"] });
+test.use({ actionTimeout: 15_000, permissions: ["clipboard-read", "clipboard-write"] });
 
 test("canvas", async ({ page }) => {
   const b = await openAuditBuilder(page, "canvas");

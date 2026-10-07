@@ -17,7 +17,8 @@ import { useI18n } from "@/lib/i18n";
 
 type TabId = "components" | "pages" | "navigator" | "assets" | "styles" | "comments" | "activity" | "css" | "marketplace" | "symbols";
 
-const TAB_IDS: TabId[] = ["components", "symbols", "pages", "navigator", "assets", "styles", "css", "marketplace", "comments", "activity"];
+// Tabs a remembered choice may reopen (hidden tabs fall back to the navigator).
+const TAB_IDS: TabId[] = ["components", "pages", "navigator", "assets", "marketplace"];
 
 const TAB_KEY = "nova-sidebar-tab";
 const WIDTH_KEY = "nova-sidebar-width";
@@ -94,8 +95,10 @@ export function LeftSidebar() {
     { id: "pages", label: t.builder.pages, short: t.tools.rail.pages, icon: "☰" },
     { id: "navigator", label: t.builder.navigator, short: t.tools.rail.navigator, icon: "◫" },
     { id: "assets", label: t.builder.assets, short: t.tools.rail.assets, icon: "⊡" },
-    { id: "styles", label: t.builder.cssVars, short: t.tools.rail.styles, icon: "§" },
-    { id: "css", label: t.builder.customCss, short: t.tools.rail.css, icon: "♯" },
+    // Tier C (task 007): CSS variables and custom CSS work, but are developer
+    // tools a first-time user cannot use without help. Hidden; saved values still render.
+    // { id: "styles", label: t.builder.cssVars, short: t.tools.rail.styles, icon: "§" },
+    // { id: "css", label: t.builder.customCss, short: t.tools.rail.css, icon: "♯" },
     { id: "marketplace", label: t.builder.templates, short: t.tools.rail.marketplace, icon: "◈" },
     // { id: "comments",   label: t.builder.comments,   short: "Chat",   icon: "💬" },
     // { id: "activity",   label: t.builder.activity,   short: "Log",    icon: "◎" },
@@ -119,6 +122,11 @@ export function LeftSidebar() {
     isResizing.current = true;
     startX.current = e.clientX;
     startWidth.current = panelWidth;
+    // Cover the canvas iframe while dragging: over it, mouse events go to the
+    // iframe's document and the panel stopped following the pointer.
+    const cover = document.createElement("div");
+    cover.style.cssText = "position:fixed;inset:0;z-index:99999;cursor:col-resize;";
+    document.body.appendChild(cover);
 
     function onMove(ev: MouseEvent) {
       if (!isResizing.current) return;
@@ -128,6 +136,7 @@ export function LeftSidebar() {
     }
     function onUp() {
       isResizing.current = false;
+      cover.remove();
       document.removeEventListener("mousemove", onMove);
       document.removeEventListener("mouseup", onUp);
     }
@@ -209,7 +218,7 @@ export function LeftSidebar() {
             right: 0,
             top: 0,
             bottom: 0,
-            width: 4,
+            width: 6,
             cursor: "col-resize",
             background: C.border,
             zIndex: 1,

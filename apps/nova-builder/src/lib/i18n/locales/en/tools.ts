@@ -15,7 +15,7 @@ export const enTools: I18nToolsDictionary = {
     assets: "Assets",
     styles: "Tokens",
     css: "CSS",
-    marketplace: "Tmpl",
+    marketplace: "Templates",
   },
   breakpointPills: {
     desktop: "Desktop",

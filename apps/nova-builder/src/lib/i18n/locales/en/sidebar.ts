@@ -19,6 +19,9 @@ export const enSidebar: I18nSidebarDictionary = {
     confirmDeletePage: "Delete page \"{name}\"?",
     seoSettings: "SEO settings",
     deletePage: "Delete page",
+    renamePage: "Rename page (or double-click)",
+    setHomePage: "Make this the home page",
+    homeBadge: "Home",
     deleteFolder: "Delete folder (pages moved to parent)",
     seoMeta: "SEO / Meta",
     browserTitle: "Browser title",
@@ -52,12 +55,13 @@ export const enSidebar: I18nSidebarDictionary = {
   },
   customCss: {
     title: "Custom CSS",
-    description: "Injected into the canvas <head>. Use any valid CSS rules.",
-    footer: "Changes take effect instantly. Save project (Ctrl+S) to persist.",
+    description: "For advanced users: CSS rules applied to the whole site (canvas, preview and export).",
+    footer: "Changes apply instantly and are saved automatically.",
   },
   components: {
     title: "Components Library",
     search: "Search components...",
+    hint: "Click to add below the selected element, or drag onto the page.",
     categories: {
       Inputs: "Inputs",
       Navigation: "Navigation",
