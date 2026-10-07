@@ -86,7 +86,7 @@ export const enTools: I18nToolsDictionary = {
     saved: "Snapshot saved",
     saveFailed: "Failed to save",
     confirmRestore: "Restore this snapshot? Current version will be saved as a checkpoint.",
-    restored: "Restored. Reload to see changes.",
+    restored: "Restored. Reloading…",
     restoreFailed: "Restore failed",
   },
   activity: {

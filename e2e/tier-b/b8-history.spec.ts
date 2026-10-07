@@ -36,7 +36,7 @@ test("B8 version history snapshot + restore", async ({ page }) => {
   await h1.dblclick();
   await page.keyboard.press("ControlOrMeta+a");
   await page.keyboard.type(NEW);
-  await page.keyboard.press("Escape");
+  await page.keyboard.press("Enter"); // Enter commits inline edits; Escape cancels
   await expect(h1).toHaveText(NEW);
   await page.getByRole("button", { name: /^save$/i }).click();
   await page.getByRole("button", { name: /^update$/i }).click();
@@ -55,7 +55,8 @@ test("B8 version history snapshot + restore", async ({ page }) => {
   await page.screenshot({ path: `${OUT}/b8-03-restored-msg.png` });
   expect(await savedH1(page, id)).not.toContain(NEW);
 
-  await page.reload();
+  // The builder reloads itself and shows the restored page.
+  await page.waitForEvent("load", { timeout: 30_000 });
   await expect(h1).toHaveText(oldH1, { timeout: 120_000 });
   await page.screenshot({ path: `${OUT}/b8-04-after-reload.png` });
 });

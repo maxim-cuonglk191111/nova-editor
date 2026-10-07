@@ -9,7 +9,7 @@ import {
   $pages,
   $breakpoints,
 } from "../data-stores";
-import { $selectedPage } from "../nano-states";
+import { $selectedPage, $selectedInstanceSelector } from "../nano-states";
 import { updateData } from "../transactions";
 import { uid } from "../uid";
 import { BASE_BP, Template } from "./types";
@@ -53,17 +53,24 @@ export function applyTemplate(template: Template): void {
   }));
   const remRootIds = template.rootIds.map(id => freshInst(id));
 
-  const rootId = uid("inst_");
+  // The template's sections are appended to the current page; replacing the page root
+  // silently threw away everything the user had built.
+  const existingRoot = $instances.get().get(page.rootInstanceId);
+  const rootId = existingRoot ? existingRoot.id : uid("inst_");
+  const appended = remRootIds.map(id => ({ type: "id" as const, value: id }));
 
   // One transaction: template application = single undo step + one sync payload (M1)
   updateData(({ pages, instances, props, styles, styleSources, styleSourceSelections }) => {
-    instances.set(rootId, {
-      type: "instance" as const,
-      id: rootId,
-      component: "Body",
-      label: "Page Root",
-      children: remRootIds.map(id => ({ type: "id" as const, value: id })),
-    } as Parameters<typeof instances.set>[1]);
+    const root = instances.get(rootId);
+    instances.set(rootId, root
+      ? { ...root, children: [...root.children, ...appended] }
+      : {
+          type: "instance" as const,
+          id: rootId,
+          component: "Body",
+          label: "Page Root",
+          children: appended,
+        } as Parameters<typeof instances.set>[1]);
     for (const i of remInstances) instances.set(i.id, i as Parameters<typeof instances.set>[1]);
     for (const p of remProps) props.set(p.id, p as Parameters<typeof props.set>[1]);
     for (const s of remSources) styleSources.set(s.id, s as Parameters<typeof styleSources.set>[1]);
@@ -73,6 +80,7 @@ export function applyTemplate(template: Template): void {
       styles.set(key, decl as Parameters<typeof styles.set>[1]);
     }
     const current = pages.pages.get(page.id);
-    if (current) pages.pages.set(page.id, { ...current, rootInstanceId: rootId });
+    if (current && current.rootInstanceId !== rootId) pages.pages.set(page.id, { ...current, rootInstanceId: rootId });
   });
+  if (remRootIds[0]) $selectedInstanceSelector.set([remRootIds[0]]);
 }

@@ -86,7 +86,7 @@ export const viTools: I18nToolsDictionary = {
     saved: "Đã lưu bản lưu",
     saveFailed: "Lưu thất bại",
     confirmRestore: "Khôi phục bản lưu này? Phiên bản hiện tại sẽ được lưu thành một điểm kiểm tra.",
-    restored: "Đã khôi phục. Tải lại trang để thấy thay đổi.",
+    restored: "Đã khôi phục. Đang tải lại…",
     restoreFailed: "Khôi phục thất bại",
   },
   activity: {

@@ -30,7 +30,7 @@ test("B7 templates insert and persist", async ({ page }) => {
   console.log(`elements before=${before} afterHero=${afterHero} originalH1 still on page=${originalStillThere}`);
 
   // Templates add to the page — the existing landing content must still be there.
-  expect.soft(originalStillThere, "template appended, page kept").toBeGreaterThan(0);
+  expect(originalStillThere, "template appended, page kept").toBeGreaterThan(0);
 
   // Save + reload
   await page.getByRole("button", { name: /^save$/i }).click();
