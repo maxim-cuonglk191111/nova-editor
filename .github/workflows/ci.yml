@@ -19,5 +19,7 @@ jobs:
         run: node scripts/i18n-audit.mjs --max=0
       - name: Type check
         run: pnpm --filter @nova/builder typecheck
+      - name: Lint
+        run: pnpm --filter @nova/builder lint
       - name: Unit tests
         run: pnpm --filter @nova/builder exec vitest run

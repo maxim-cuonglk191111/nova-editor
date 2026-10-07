@@ -2,6 +2,13 @@
 
 ---
 
+## [25.7.1] — 2026-10-07
+
+### Faster deploys (Patch)
+
+- Workers Build: only the `main` trigger remains (branch previews and the always-failing `nova-editor-test` Worker removed) — merge → live went from ~9.5 min to ~3.5 min.
+- `next build` skips lint and type check (`next.config.mjs`); CI now runs lint as well as type check on every PR, and the local pre-push gate runs both.
+
 ## [25.7.0] — 2026-10-07
 
 ### Language only in Settings; honest pricing; repo cleanup (Minor)
