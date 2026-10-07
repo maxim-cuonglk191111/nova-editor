@@ -65,6 +65,8 @@ export function UserDropdown({ mode = "dark" }: UserDropdownProps) {
   return (
     <div ref={dropdownRef} style={{ position: "relative", display: "flex", alignItems: "center" }}>
       <button
+        aria-haspopup="menu"
+        aria-expanded={dropdownOpen}
         onClick={() => setDropdownOpen(!dropdownOpen)}
         style={{
           background: "none", border: "none", cursor: "pointer",
@@ -188,6 +190,29 @@ export function UserDropdown({ mode = "dark" }: UserDropdownProps) {
               />
             </svg>
             {t.panels.billingTitle}
+          </Link>
+
+          {/* The only place to change the UI language (English by default). */}
+          <Link
+            href="/settings/language"
+            onClick={() => setDropdownOpen(false)}
+            style={{
+              padding: "10px 16px",
+              fontSize: 14,
+              color: colors.linkColor,
+              textDecoration: "none",
+              display: "flex",
+              alignItems: "center",
+              gap: 8,
+              transition: "background 0.15s",
+            }}
+            onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = colors.linkHoverBg)}
+            onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "transparent")}
+          >
+            <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 21a9 9 0 100-18 9 9 0 000 18zM3.6 9h16.8M3.6 15h16.8M12 3a15 15 0 010 18M12 3a15 15 0 000 18" />
+            </svg>
+            {t.settings.displayLanguage}
           </Link>
 
           <button

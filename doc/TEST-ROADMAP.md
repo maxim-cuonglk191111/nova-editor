@@ -37,7 +37,7 @@ If an item fails and the fix is not small, it moves to Tier C.
 | B1 | Clone / delete / search projects | dashboard card actions | clone appears with same content; delete removes it; search filters | ✅ 8/10 |
 | B2 | Copy / paste / cut / wrap in box / select parent | canvas context menu, shortcuts | tree changes as expected, undo restores | ✅ 8/10 — props + styles kept on paste/duplicate, ⌘X (25.6.0) |
 | B3 | Export project (.nova) → Import | Export menu | round trip reproduces the page | ✅ 8/10 — import saves into the open project (25.6.0) |
-| B4 | Language toggle EN ↔ VI | builder topbar, `/settings/language` | UI strings switch, choice persists | ✅ 8/10 — toggle persists (25.6.0) |
+| B4 | UI language (English default) | Settings → Display Language only (25.7.0) | UI strings switch, choice persists | ✅ 8/10 — toggle persists (25.6.0) |
 | B5 | Style panel groups: size, spacing, typography, color, border, shadow | right panel | value applied on canvas, preview and export | ✅ 8/10 |
 | B6 | CSS variables (Tokens) and Custom CSS | left sidebar | variable / rule visible in preview and export | ✅ 8/10 — CSS vars in export (25.6.0) |
 | B7 | Templates | left sidebar "Tmpl" | inserting a template adds its sections | ✅ 8/10 — templates append (25.6.0); canvas does not scroll to the new section |

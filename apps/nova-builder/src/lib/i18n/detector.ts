@@ -37,14 +37,14 @@ export class LanguageDetector implements ILanguageDetector {
   }
 
   public getStoredAutoDetectPref(): boolean {
-    if (typeof window === "undefined") return true;
+    if (typeof window === "undefined") return false;
     try {
       const stored = localStorage.getItem(AUTO_DETECT_STORAGE_KEY);
-      if (stored === "false") return false;
+      if (stored === "true") return true;
     } catch {
       // Ignore localStorage access errors
     }
-    return true; // Default enabled for guest and user until overridden
+    return false; // English by default; IP detection only when enabled in Settings → Language
   }
 
   public storePreferences(locale: Locale, autoDetect: boolean): void {

@@ -37,7 +37,6 @@ import { saveProject } from "@/lib/saveProject";
 import { SaveProjectDialog } from "./SaveProjectDialog";
 import { DeployPanel } from "./DeployPanel";
 import { CollaboratorAvatars } from "./PresenceLayer";
-import { LangToggle } from "./LangToggle";
 import { TopbarMenu } from "./TopbarMenu";
 import { exportProject } from "@/features/export/export-project";
 import { importProject } from "@/features/import/import-project";
@@ -356,9 +355,6 @@ export function TopbarActions({ isDemo }: Props) {
       {/* Right action area — 7 logical controls */}
       <div style={{ display: "flex", alignItems: "center", gap: 5, flexShrink: 0 }}>
         <CollaboratorAvatars />
-
-        {/* Language toggle — always visible; persists across F5 */}
-        <LangToggle />
 
         {/* 1 — Mode pills: Design / Content */}
         {/* <div style={{ display: "flex", alignItems: "center", background: C.inputBg, border: `1px solid ${C.border}`, borderRadius: 5, overflow: "hidden", flexShrink: 0 }}>

@@ -293,34 +293,34 @@ export const enDictionary: I18nDictionary = {
   },
   pricing: {
     title: "Simple, transparent pricing",
-    subtitle: "Start free. Upgrade when you need more AI power, custom domains, or code export.",
+    subtitle: "Start free. Upgrade when you need more projects or more AI credits.",
     mostPopular: "Most popular",
     faqTitle: "Frequently asked questions",
     faq: [
-      { q: "Can I cancel anytime?", a: "Yes. Cancel from your account settings. No lock-in." },
-      { q: "What happens to my sites if I downgrade?", a: "Your sites stay published. You keep access to the editor on the Free plan limits." },
-      { q: "Do you offer a refund?", a: "Yes — full refund within 14 days of first purchase. Email support@nova.build." },
-      { q: "Is there a yearly discount?", a: "Yes — Pro annual is $190/yr (2 months free). Choose at checkout." },
+      { q: "How do I pay?", a: "Scan the VietQR code with any banking app, MoMo, ZaloPay or ShopeePay. Your plan is upgraded as soon as the transfer arrives." },
+      { q: "Does it renew automatically?", a: "No. Nothing is charged automatically — every payment is a transfer you make yourself." },
+      { q: "What are AI credits?", a: "Generating a page or rewriting its text with AI uses credits. Top-up credits never expire." },
+      { q: "What happens to my projects on the Free plan?", a: "They stay in your account and you can keep editing them within the Free plan limits." },
     ],
     planCopy: {
       free: {
         label: "Free",
-        features: ["3 active projects", "200 AI credits / month", "Visual editor (all blocks)", "Preview links", "Nova branding"],
+        features: ["3 projects", "200 AI credits / month (up to 40 a day)", "Visual editor with every block", "Templates and version history", "Preview link and HTML export", "Visitor analytics and form submissions"],
         cta: "Get started free",
       },
       pro: {
         label: "Pro",
-        features: ["Unlimited projects", "4,000 AI credits / month", "React (.tsx) code export", "Vercel auto-deploy", "1 custom domain", "Premium templates", "Email support"],
+        features: ["Everything in Free", "Unlimited projects", "4,000 AI credits / month", "No daily AI limit"],
         cta: "Upgrade to Pro",
       },
       max: {
         label: "Max",
-        features: ["Everything in Pro", "15,000 AI credits / month", "5 custom domains", "White-label (remove Nova branding)", "Priority email support (48 h)"],
+        features: ["Everything in Pro", "15,000 AI credits / month"],
         cta: "Upgrade to Max",
       },
       team: {
         label: "Team",
-        features: ["5+ seats (min 3)", "5,000 credits / seat (pooled)", "Real-time collaboration", "Admin dashboard", "Priority + onboarding support"],
+        features: ["Everything in Pro", "5,000 AI credits / month"],
         cta: "Upgrade to Team",
       },
     },

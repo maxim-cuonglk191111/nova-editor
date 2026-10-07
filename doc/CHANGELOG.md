@@ -2,6 +2,16 @@
 
 ---
 
+## [25.7.0] — 2026-10-07
+
+### Language only in Settings; honest pricing; repo cleanup (Minor)
+
+- **Language**: English by default (no IP-based guess unless enabled in Settings → Display Language); the EN/VI switchers on the builder top bar, auth pages and public nav are removed. The account menu links to Settings → Display Language.
+- **Pricing**: plan lists show only what ships (projects, AI credits, editor, templates, history, preview/HTML export, analytics, form submissions); FAQ rewritten for VietQR one-off payments. Team plan card hidden — its seats/collaboration features are cut.
+- **Repo**: `test-results/`, `qa-screenshots/` and `*.tsbuildinfo` are no longer tracked.
+- **QA data**: 52 throwaway `@testqa.dev` accounts deleted (shared QA account kept).
+- **Tasks**: 007 — builder feature audit prompt (works + ease of use).
+
 ## [25.6.1] — 2026-10-07
 
 ### Accessibility check answers fast (Patch)
