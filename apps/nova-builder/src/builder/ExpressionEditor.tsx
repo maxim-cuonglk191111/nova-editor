@@ -13,6 +13,7 @@
 import { useMemo, useRef, useState } from "react";
 import { lintExpression, type DataSource } from "@webstudio-is/sdk";
 import { UI_VARS as C, FONT } from "@/lib/uiTheme";
+import { useI18n } from "@/lib/i18n";
 
 type ScopeVariable = Pick<DataSource, "id" | "name">;
 
@@ -27,6 +28,7 @@ export function ExpressionEditor({
   onCommit: (humanExpression: string) => void;
   placeholder?: string;
 }) {
+  const { t } = useI18n();
   const [draft, setDraft] = useState(value);
   const [caret, setCaret] = useState(0);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -81,7 +83,7 @@ export function ExpressionEditor({
         value={draft}
         rows={2}
         spellCheck={false}
-        placeholder={placeholder ?? "e.g. myVar"}
+        placeholder={placeholder ?? t.inspector.expressionPlaceholder}
         onChange={(e) => {
           setDraft(e.target.value);
           setCaret(e.target.selectionStart);

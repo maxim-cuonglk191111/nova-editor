@@ -11,6 +11,7 @@ import {
   colorToHex,
 } from "@/lib/gradientParser";
 import { UI_VARS as C } from "@/lib/uiTheme";
+import { useI18n } from "@/lib/i18n";
 
 // ── Write path ─────────────────────────────────────────────────────────────────
 
@@ -58,6 +59,7 @@ function GradientStopRow({
   onDelete: () => void;
   canDelete: boolean;
 }) {
+  const E = useI18n().t.inspector.editors;
   return (
     <div style={{ display: "flex", alignItems: "center", gap: 5, padding: "2px 0" }}>
       <input
@@ -93,7 +95,7 @@ function GradientStopRow({
           fontSize: 14, lineHeight: 1,
           cursor: canDelete ? "pointer" : "default",
         }}
-        title="Remove stop"
+        title={E.removeStop}
       >
         ×
       </button>
@@ -112,6 +114,7 @@ function GradientLayerCard({
   onChange: (g: GradientLayer) => void;
   onDelete: () => void;
 }) {
+  const E = useI18n().t.inspector.editors;
   const previewCss = serializeGradient(gradient);
 
   const updateStop = (i: number, s: ColorStop) => {
@@ -145,8 +148,8 @@ function GradientLayerCard({
             onChange={e => onChange({ ...gradient, type: e.target.value as GradientType })}
             style={selectStyle}
           >
-            <option value="linear">Linear</option>
-            <option value="radial">Radial</option>
+            <option value="linear">{E.linear}</option>
+            <option value="radial">{E.radial}</option>
           </select>
 
           {gradient.type === "linear" ? (
@@ -171,8 +174,8 @@ function GradientLayerCard({
               onChange={e => onChange({ ...gradient, radialShape: e.target.value as "ellipse" | "circle" })}
               style={selectStyle}
             >
-              <option value="ellipse">Ellipse</option>
-              <option value="circle">Circle</option>
+              <option value="ellipse">{E.ellipse}</option>
+              <option value="circle">{E.circle}</option>
             </select>
           )}
 
@@ -183,7 +186,7 @@ function GradientLayerCard({
               border: "none", background: "none",
               color: "rgba(248,113,113,0.6)", fontSize: 14, lineHeight: 1, cursor: "pointer",
             }}
-            title="Remove gradient"
+            title={E.removeGradient}
           >
             ×
           </button>
@@ -210,7 +213,7 @@ function GradientLayerCard({
             cursor: "pointer", fontFamily: C.font,
           }}
         >
-          + Stop
+          {E.addStop}
         </button>
       </div>
     </div>
@@ -225,6 +228,7 @@ type GradientPanelProps = {
 };
 
 export function GradientPanel({ instanceId, currentCss }: GradientPanelProps) {
+  const E = useI18n().t.inspector.editors;
   const gradients = useMemo(() => {
     return extractGradients(currentCss)
       .map(g => parseGradientLayer(g))
@@ -268,7 +272,7 @@ export function GradientPanel({ instanceId, currentCss }: GradientPanelProps) {
           fontSize: 12, color: C.textMuted, fontFamily: C.font,
           fontWeight: 700, letterSpacing: "0.07em", textTransform: "uppercase", flex: 1,
         }}>
-          Gradient
+          {E.gradient}
           {gradients.length > 0 && (
             <span style={{ color: "rgba(255,255,255,0.2)", fontWeight: 400, marginLeft: 6 }}>
               {gradients.length}
@@ -277,7 +281,7 @@ export function GradientPanel({ instanceId, currentCss }: GradientPanelProps) {
         </span>
         <button
           onClick={addGradient}
-          title="Add gradient"
+          title={E.addGradient}
           style={{
             width: 20, height: 20, border: `1px solid ${C.border}`, borderRadius: 3,
             background: "none", color: C.textMuted, fontSize: 15, lineHeight: "18px",

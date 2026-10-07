@@ -1,0 +1,30 @@
+import type { I18nSiteDictionary } from "../../types-site";
+
+export const enSite: I18nSiteDictionary = {
+  footerRights: "© {year} Nova. All rights reserved.",
+  footerPricing: "Pricing",
+  footerTerms: "Terms",
+  footerPrivacy: "Privacy",
+  footerSupport: "Support",
+  navHome: "home",
+  navMenu: "Menu",
+  typingPhrases: [
+    "Build me a SaaS landing page...",
+    "Create an e-commerce store...",
+    "Design a portfolio website...",
+    "Make a dashboard for my startup...",
+  ],
+  connectLead: "Connect",
+  connectRest: "your apps",
+  connectBody: "Integrate with your favorite tools. Nova connects with Figma, GitHub, Vercel, and hundreds more.",
+  exploreIntegrations: "EXPLORE INTEGRATIONS",
+  starsAlt: "5 stars",
+  userAvatarAlt: "User Avatar",
+  userFallback: "User",
+  dismissWelcome: "Dismiss welcome card",
+  errorTitle: "Something went wrong",
+  errorCode: "Error code: {digest}",
+  errorRetry: "Try again",
+  previewLoadFailed: "Could not load preview",
+  previewLoading: "Loading preview…",
+};

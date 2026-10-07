@@ -7,6 +7,7 @@
 
 import { useState, useRef, useCallback } from "react";
 import { UI_VARS as C } from "@/lib/uiTheme";
+import { useI18n, fmt } from "@/lib/i18n";
 
 const COLS = 12;
 const ACCENT = "var(--ui-accent)";
@@ -20,6 +21,7 @@ type Props = {
 };
 
 export function GridPositionControl({ colStart, span, onChange }: Props) {
+  const E = useI18n().t.inspector.editors;
   const [dragStart, setDragStart] = useState<number | null>(null);
   const [dragEnd, setDragEnd] = useState<number | null>(null);
   const isDragging = useRef(false);
@@ -89,7 +91,7 @@ export function GridPositionControl({ colStart, span, onChange }: Props) {
           marginBottom: 6,
         }}
       >
-        Grid Column Position
+        {E.gridColumnPosition}
       </div>
 
       {/* Mini 12-cell grid picker */}
@@ -118,7 +120,7 @@ export function GridPositionControl({ colStart, span, onChange }: Props) {
               key={col}
               onMouseDown={handleCellMouseDown(col)}
               onMouseEnter={handleCellMouseEnter(col)}
-              title={`Column ${col}`}
+              title={fmt(E.gpcColumn, { col })}
               style={{
                 height: 18,
                 borderRadius: isStart ? "3px 0 0 3px" : isEnd ? "0 3px 3px 0" : 0,
@@ -161,7 +163,7 @@ export function GridPositionControl({ colStart, span, onChange }: Props) {
       <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
         <label style={{ display: "flex", flexDirection: "column", gap: 2, flex: 1 }}>
           <span style={{ fontSize: 9, textTransform: "uppercase", letterSpacing: "0.05em", color: C.textMuted }}>
-            Col
+            {E.gpcCol}
           </span>
           <input
             type="number"
@@ -186,7 +188,7 @@ export function GridPositionControl({ colStart, span, onChange }: Props) {
         <span style={{ fontSize: 14, color: C.textMuted, marginTop: 10 }}>→</span>
         <label style={{ display: "flex", flexDirection: "column", gap: 2, flex: 1 }}>
           <span style={{ fontSize: 9, textTransform: "uppercase", letterSpacing: "0.05em", color: C.textMuted }}>
-            End
+            {E.gpcEnd}
           </span>
           <input
             type="number"
@@ -215,7 +217,7 @@ export function GridPositionControl({ colStart, span, onChange }: Props) {
         </label>
         <label style={{ display: "flex", flexDirection: "column", gap: 2, flex: 1 }}>
           <span style={{ fontSize: 9, textTransform: "uppercase", letterSpacing: "0.05em", color: C.textMuted }}>
-            Span
+            {E.gpcSpan}
           </span>
           <input
             type="number"
@@ -249,9 +251,9 @@ export function GridPositionControl({ colStart, span, onChange }: Props) {
           textAlign: "center",
         }}
       >
-        grid-column: {colStart} / span {span}
+        {`grid-column: ${colStart} / span ${span}` /* i18n-ignore — CSS */}
         <span style={{ color: C.textMuted, fontWeight: 400, marginLeft: 6 }}>
-          (col {colStart}–{colStart + span - 1})
+          {fmt(E.gpcRange, { start: colStart, end: colStart + span - 1 })}
         </span>
       </div>
     </div>

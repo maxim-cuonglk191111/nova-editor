@@ -6,6 +6,7 @@ import { $styleSources, $styleSourceSelections } from "@/lib/data-stores";
 import { $selectedInstanceId } from "@/lib/nano-states";
 import { updateData } from "@/lib/transactions";
 import { UI_VARS as C } from "@/lib/uiTheme";
+import { useI18n } from "@/lib/i18n";
 
 
 type Src = { id: string; type: string; name?: string };
@@ -40,6 +41,7 @@ function btnSt(variant: "accent" | "danger" | "ghost" = "ghost"): React.CSSPrope
 }
 
 export function StyleTokensPanel() {
+  const L = useI18n().t.tools.tokens;
   const instanceId = useStore($selectedInstanceId);
   const styleSources = useStore($styleSources) as Map<string, Src>;
   const styleSourceSelections = useStore($styleSourceSelections) as Map<string, Sel>;
@@ -53,8 +55,8 @@ export function StyleTokensPanel() {
 
   function createToken() {
     const name = draftName.trim();
-    if (!name) { setError("Token name is required"); return; }
-    if (tokens.some((t) => t.name === name)) { setError("A token with that name already exists"); return; }
+    if (!name) { setError(L.errorRequired); return; }
+    if (tokens.some((t) => t.name === name)) { setError(L.errorExists); return; }
     const id = `tok_${nanoid(8)}`;
     updateData(({ styleSources: sources }) => {
       (sources as Map<string, Src>).set(id, { type: "token", id, name } as Src);
@@ -102,10 +104,10 @@ export function StyleTokensPanel() {
       {/* Header */}
       <div style={{ padding: "8px 12px 6px", borderBottom: `1px solid ${C.border}`, flexShrink: 0 }}>
         <div style={{ fontSize: 12, color: C.textMuted, fontWeight: 700, letterSpacing: "0.07em", textTransform: "uppercase" }}>
-          Style Tokens
+          {L.title}
         </div>
         <div style={{ fontSize: 12, color: C.textMuted, marginTop: 3 }}>
-          Reusable named style sets. Apply to any instance.
+          {L.description}
         </div>
       </div>
 
@@ -113,7 +115,7 @@ export function StyleTokensPanel() {
       <div style={{ flex: 1, overflowY: "auto", padding: "6px 0" }}>
         {tokens.length === 0 && (
           <div style={{ padding: "8px 12px", fontSize: 13, color: C.textMuted, fontFamily: C.font }}>
-            No tokens yet. Create one below.
+            {L.empty}
           </div>
         )}
         {tokens.map((tok) => {
@@ -145,13 +147,13 @@ export function StyleTokensPanel() {
                   onClick={() => applied ? removeToken(tok.id) : applyToken(tok.id)}
                   style={btnSt(applied ? "danger" : "accent")}
                 >
-                  {applied ? "Remove" : "Apply"}
+                  {applied ? L.remove : L.apply}
                 </button>
               )}
               {/* Delete */}
               <button
                 onClick={() => deleteToken(tok.id)}
-                title="Delete token"
+                title={L.deleteTitle}
                 style={{ background: "none", border: "none", color: C.danger, cursor: "pointer", fontSize: 14, lineHeight: 1, padding: "0 2px" }}
               >
                 ×
@@ -163,9 +165,9 @@ export function StyleTokensPanel() {
 
       {/* Create form */}
       <div style={{ borderTop: `1px solid ${C.border}`, padding: "8px 12px", flexShrink: 0 }}>
-        <div style={{ fontSize: 12, color: C.textMuted, marginBottom: 5, fontWeight: 600 }}>Create token</div>
+        <div style={{ fontSize: 12, color: C.textMuted, marginBottom: 5, fontWeight: 600 }}>{L.create}</div>
         <input
-          placeholder="Token name (e.g. primary-button)"
+          placeholder={L.namePlaceholder}
           value={draftName}
           onChange={(e) => { setDraftName(e.target.value); setError(""); }}
           onKeyDown={(e) => { if (e.key === "Enter") createToken(); }}
@@ -182,13 +184,13 @@ export function StyleTokensPanel() {
             fontFamily: C.font, cursor: "pointer",
           }}
         >
-          + Create token
+          {L.createButton}
         </button>
       </div>
 
       {!instanceId && (
         <div style={{ padding: "6px 12px 10px", fontSize: 12, color: C.textMuted }}>
-          Select an instance to apply tokens.
+          {L.selectInstance}
         </div>
       )}
     </div>

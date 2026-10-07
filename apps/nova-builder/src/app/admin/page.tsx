@@ -2,6 +2,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { UI_VARS as C } from "@/lib/uiTheme";
+import { useI18n, fmt } from "@/lib/i18n";
 
 
 type User = {
@@ -21,6 +22,7 @@ function formatDate(iso: string) {
 }
 
 export default function AdminPage() {
+  const A = useI18n().t.admin;
   const router = useRouter();
   const [users, setUsers] = useState<User[]>([]);
   const [total, setTotal] = useState(0);
@@ -35,7 +37,7 @@ export default function AdminPage() {
     try {
       const qs = search ? `?q=${encodeURIComponent(search)}` : "";
       const res = await fetch(`/api/admin/users${qs}`);
-      if (res.status === 403) { setError("Access denied — admin only"); return; }
+      if (res.status === 403) { setError(A.accessDenied); return; }
       const json = await res.json() as { users: User[]; total: number };
       setUsers(json.users);
       setTotal(json.total);
@@ -68,13 +70,13 @@ export default function AdminPage() {
             style={{ background: "none", border: "none", color: C.textMuted, cursor: "pointer", fontSize: 18 }}>
             ←
           </button>
-          <h1 style={{ margin: 0, fontSize: 20, fontWeight: 700 }}>Admin Console</h1>
+          <h1 style={{ margin: 0, fontSize: 20, fontWeight: 700 }}>{A.title}</h1>
           <div style={{ flex: 1 }} />
           <button
             onClick={() => router.push("/admin/flags")}
             style={{ padding: "5px 14px", borderRadius: 5, border: `1px solid ${C.border}`, background: "transparent", color: C.textMuted, fontSize: 13, cursor: "pointer", fontFamily: C.font, fontWeight: 600 }}
           >
-            Feature Flags →
+            {A.featureFlagsLink}
           </button>
         </div>
 
@@ -83,7 +85,7 @@ export default function AdminPage() {
         <div style={{ display: "flex", gap: 8, marginBottom: 16 }}>
           <input
             type="text"
-            placeholder="Search by email…"
+            placeholder={A.searchPlaceholder}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             style={{
@@ -92,20 +94,20 @@ export default function AdminPage() {
             }}
           />
           <button onClick={load} style={{ padding: "7px 16px", borderRadius: 6, border: `1px solid ${C.border}`, background: "transparent", color: C.textMuted, fontSize: 12, fontFamily: C.font, cursor: "pointer" }}>
-            Search
+            {A.search}
           </button>
         </div>
 
         <div style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 10, overflow: "hidden" }}>
           <div style={{ padding: "10px 14px", borderBottom: `1px solid ${C.border}`, fontSize: 13, color: C.textMuted }}>
-            {total} user{total !== 1 ? "s" : ""}
+            {fmt(total === 1 ? A.usersOne : A.usersMany, { count: total })}
           </div>
-          {loading && <div style={{ padding: 16, color: C.textMuted, fontSize: 13 }}>Loading…</div>}
+          {loading && <div style={{ padding: 16, color: C.textMuted, fontSize: 13 }}>{A.loading}</div>}
           {!loading && users.map((u) => (
             <div key={u.id} style={{ display: "flex", alignItems: "center", padding: "12px 14px", borderBottom: `1px solid ${C.border}`, gap: 12, flexWrap: "wrap" }}>
               <div style={{ flex: 1, minWidth: 200 }}>
                 <div style={{ fontSize: 12, color: C.text, fontWeight: 600 }}>{u.email}</div>
-                <div style={{ fontSize: 12, color: C.textMuted, marginTop: 2 }}>Joined {formatDate(u.created_at)}</div>
+                <div style={{ fontSize: 12, color: C.textMuted, marginTop: 2 }}>{fmt(A.joined, { date: formatDate(u.created_at) })}</div>
               </div>
 
               {editing === u.id ? (
@@ -120,15 +122,15 @@ export default function AdminPage() {
                   </select>
                   <input type="number" value={editData.credits} onChange={(e) => setEditData((d) => ({ ...d, credits: parseInt(e.target.value, 10) || 0 }))}
                     style={{ width: 70, padding: "3px 6px", background: "#1e1e30", border: `1px solid ${C.border}`, borderRadius: 4, color: C.text, fontSize: 13 }} />
-                  <button onClick={() => saveEdit(u.id)} style={{ padding: "3px 10px", borderRadius: 4, border: "none", background: "rgba(5,150,105,0.7)", color: "#fff", fontSize: 13, cursor: "pointer" }}>Save</button>
-                  <button onClick={() => setEditing(null)} style={{ padding: "3px 10px", borderRadius: 4, border: `1px solid ${C.border}`, background: "transparent", color: C.textMuted, fontSize: 13, cursor: "pointer" }}>Cancel</button>
+                  <button onClick={() => saveEdit(u.id)} style={{ padding: "3px 10px", borderRadius: 4, border: "none", background: "rgba(5,150,105,0.7)", color: "#fff", fontSize: 13, cursor: "pointer" }}>{A.save}</button>
+                  <button onClick={() => setEditing(null)} style={{ padding: "3px 10px", borderRadius: 4, border: `1px solid ${C.border}`, background: "transparent", color: C.textMuted, fontSize: 13, cursor: "pointer" }}>{A.cancel}</button>
                 </div>
               ) : (
                 <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
                   <span style={{ fontSize: 12, fontWeight: 600, color: "#c4b5fd", background: "rgba(124,58,237,0.12)", border: "1px solid rgba(124,58,237,0.2)", borderRadius: 20, padding: "2px 8px" }}>{u.tier}</span>
-                  {u.role === "admin" && <span style={{ fontSize: 12, fontWeight: 600, color: "#fbbf24", background: "rgba(251,191,36,0.1)", border: "1px solid rgba(251,191,36,0.2)", borderRadius: 20, padding: "2px 8px" }}>admin</span>}
-                  <span style={{ fontSize: 13, color: C.textMuted }}>{u.credits} cr</span>
-                  <button onClick={() => startEdit(u)} style={{ padding: "3px 10px", borderRadius: 4, border: `1px solid ${C.border}`, background: "transparent", color: C.textMuted, fontSize: 13, cursor: "pointer", fontFamily: C.font }}>Edit</button>
+                  {u.role === "admin" && <span style={{ fontSize: 12, fontWeight: 600, color: "#fbbf24", background: "rgba(251,191,36,0.1)", border: "1px solid rgba(251,191,36,0.2)", borderRadius: 20, padding: "2px 8px" }}>{A.adminBadge}</span>}
+                  <span style={{ fontSize: 13, color: C.textMuted }}>{fmt(A.credits, { count: u.credits })}</span>
+                  <button onClick={() => startEdit(u)} style={{ padding: "3px 10px", borderRadius: 4, border: `1px solid ${C.border}`, background: "transparent", color: C.textMuted, fontSize: 13, cursor: "pointer", fontFamily: C.font }}>{A.edit}</button>
                 </div>
               )}
             </div>

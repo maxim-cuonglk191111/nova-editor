@@ -2,6 +2,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { UI_VARS as C } from "@/lib/uiTheme";
+import { useI18n, fmt } from "@/lib/i18n";
 
 
 type APIKey = { id: string; name: string; key_prefix: string; created_at: string; last_used_at: string | null };
@@ -11,6 +12,7 @@ function formatDate(iso: string) {
 }
 
 export default function APISettingsPage() {
+  const K = useI18n().t.dashboard.apiKeys;
   const router = useRouter();
   const [keys, setKeys] = useState<APIKey[]>([]);
   const [loading, setLoading] = useState(false);
@@ -48,7 +50,7 @@ export default function APISettingsPage() {
   };
 
   const revoke = async (id: string) => {
-    if (!confirm("Revoke this API key? This cannot be undone.")) return;
+    if (!confirm(K.confirmRevoke)) return;
     await fetch(`/api/keys/${id}`, { method: "DELETE" });
     load();
   };
@@ -62,18 +64,18 @@ export default function APISettingsPage() {
       <div style={{ maxWidth: 640, margin: "0 auto" }}>
         <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 28 }}>
           <button onClick={() => router.back()} style={{ background: "none", border: "none", color: C.textMuted, cursor: "pointer", fontSize: 18 }}>←</button>
-          <h1 style={{ margin: 0, fontSize: 20, fontWeight: 700 }}>API Keys</h1>
+          <h1 style={{ margin: 0, fontSize: 20, fontWeight: 700 }}>{K.title}</h1>
         </div>
 
         {/* Create new key */}
         <div style={cardStyle}>
-          <div style={{ fontSize: 13, fontWeight: 600, marginBottom: 12 }}>Create API key</div>
+          <div style={{ fontSize: 13, fontWeight: 600, marginBottom: 12 }}>{K.createTitle}</div>
           <div style={{ display: "flex", gap: 8 }}>
             <input
               value={newName}
               onChange={(e) => setNewName(e.target.value)}
               onKeyDown={(e) => { if (e.key === "Enter") create(); }}
-              placeholder="Key name (e.g. CI deploy)"
+              placeholder={K.namePlaceholder}
               style={{
                 flex: 1, background: "rgba(255,255,255,0.05)", border: `1px solid ${C.border}`,
                 borderRadius: 6, color: C.text, fontSize: 12, fontFamily: C.font,
@@ -89,7 +91,7 @@ export default function APISettingsPage() {
                 cursor: creating || !newName.trim() ? "default" : "pointer", opacity: creating ? 0.7 : 1,
               }}
             >
-              {creating ? "Creating…" : "Create"}
+              {creating ? K.creating : K.create}
             </button>
           </div>
 
@@ -97,7 +99,7 @@ export default function APISettingsPage() {
           {revealedKey && (
             <div style={{ marginTop: 14, padding: 12, background: "rgba(6,148,105,0.1)", border: "1px solid rgba(6,148,105,0.3)", borderRadius: 6 }}>
               <div style={{ fontSize: 13, color: "#6ee7b7", marginBottom: 6, fontWeight: 600 }}>
-                ✓ Key created — copy it now, it won&apos;t be shown again
+                {K.createdNotice}
               </div>
               <code style={{ fontSize: 13, fontFamily: C.fontMono, color: C.text, wordBreak: "break-all" }}>
                 {revealedKey}
@@ -106,7 +108,7 @@ export default function APISettingsPage() {
                 onClick={() => { navigator.clipboard.writeText(revealedKey); }}
                 style={{ display: "block", marginTop: 8, fontSize: 13, color: C.accent, background: "none", border: "none", cursor: "pointer", padding: 0 }}
               >
-                Copy to clipboard
+                {K.copy}
               </button>
             </div>
           )}
@@ -114,10 +116,10 @@ export default function APISettingsPage() {
 
         {/* Existing keys */}
         <div style={cardStyle}>
-          <div style={{ fontSize: 13, fontWeight: 600, marginBottom: 12 }}>Your API keys</div>
-          {loading && <div style={{ fontSize: 12, color: C.textMuted }}>Loading…</div>}
+          <div style={{ fontSize: 13, fontWeight: 600, marginBottom: 12 }}>{K.listTitle}</div>
+          {loading && <div style={{ fontSize: 12, color: C.textMuted }}>{K.loading}</div>}
           {!loading && keys.length === 0 && (
-            <div style={{ fontSize: 12, color: C.textMuted }}>No API keys yet. Create one above to use with CI/CD pipelines.</div>
+            <div style={{ fontSize: 12, color: C.textMuted }}>{K.empty}</div>
           )}
           {keys.map((k) => (
             <div key={k.id} style={{ display: "flex", alignItems: "center", gap: 12, padding: "10px 0", borderBottom: `1px solid ${C.border}` }}>
@@ -127,22 +129,22 @@ export default function APISettingsPage() {
                   {k.key_prefix}…
                 </div>
                 <div style={{ fontSize: 12, color: C.textMuted, marginTop: 2 }}>
-                  Created {formatDate(k.created_at)}
-                  {k.last_used_at ? ` · Last used ${formatDate(k.last_used_at)}` : " · Never used"}
+                  {fmt(K.created, { date: formatDate(k.created_at) })}
+                  {k.last_used_at ? fmt(K.lastUsed, { date: formatDate(k.last_used_at) }) : K.neverUsed}
                 </div>
               </div>
               <button
                 onClick={() => revoke(k.id)}
                 style={{ fontSize: 13, color: C.danger, background: "none", border: `1px solid ${C.danger}`, borderRadius: 4, padding: "3px 10px", cursor: "pointer" }}
               >
-                Revoke
+                {K.revoke}
               </button>
             </div>
           ))}
         </div>
 
         <div style={{ fontSize: 13, color: C.textMuted, lineHeight: 1.6 }}>
-          API keys authenticate requests to the Nova REST API. Pass them in the <code style={{ fontFamily: C.fontMono }}>Authorization: Bearer &lt;key&gt;</code> header.
+          {K.footerBefore} <code style={{ fontFamily: C.fontMono }}>Authorization: Bearer &lt;key&gt;</code> {K.footerAfter}
         </div>
       </div>
     </div>

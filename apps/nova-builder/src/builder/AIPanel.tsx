@@ -6,6 +6,7 @@ import { $projectMeta } from "@/lib/data-stores";
 import { applyWSComposition } from "@/lib/applyWSComposition";
 import type { WSCompositionResult } from "@studio/ai";
 import { UI_VARS as C } from "@/lib/uiTheme";
+import { useI18n, fmt } from "@/lib/i18n";
 
 
 type AIState =
@@ -15,6 +16,7 @@ type AIState =
   | { type: "error"; message: string; needsAccount?: boolean };
 
 export function AIPanel() {
+  const L = useI18n().t.tools.ai;
   const isOpen = useStore($aiPanelOpen);
   const meta = useStore($projectMeta);
   const [prompt, setPrompt] = useState("");
@@ -71,11 +73,11 @@ export function AIPanel() {
         error?: string;
       };
       if (res.status === 401) {
-        setState({ type: "error", message: "Create a free account to generate pages with AI.", needsAccount: true });
+        setState({ type: "error", message: L.needsAccount, needsAccount: true });
         return;
       }
       if (!res.ok) {
-        setState({ type: "error", message: json.error ?? `Something went wrong (HTTP ${res.status})` });
+        setState({ type: "error", message: json.error ?? fmt(L.genericError, { status: res.status }) });
         return;
       }
       setState({ type: "success", composition: json.composition! });
@@ -95,7 +97,7 @@ export function AIPanel() {
   return (
     <div
       role="dialog"
-      aria-label="Generate with AI"
+      aria-label={L.title}
       style={{
         position: "fixed",
         top: 52,
@@ -115,9 +117,9 @@ export function AIPanel() {
       {/* Header */}
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "13px 18px", borderBottom: `1px solid ${C.border}` }}>
         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-          <span style={{ fontSize: 14, fontWeight: 800, color: "#a78bfa" }}>✦ Generate with AI</span>
+          <span style={{ fontSize: 14, fontWeight: 800, color: "#a78bfa" }}>{L.title}</span>
           {isLoading && (
-            <span style={{ fontSize: 13, color: C.textMuted }}>Building your site…</span>
+            <span style={{ fontSize: 13, color: C.textMuted }}>{L.building}</span>
           )}
         </div>
         <button
@@ -137,7 +139,7 @@ export function AIPanel() {
           onKeyDown={(e) => {
             if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) handleGenerate();
           }}
-          placeholder='Describe your page — e.g. "Landing page with hero, three feature cards, and a contact form"'
+          placeholder={L.placeholder}
           rows={3}
           disabled={isLoading}
           style={{
@@ -158,7 +160,7 @@ export function AIPanel() {
         />
 
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-          <span style={{ fontSize: 13, color: C.textMuted }}>⌘↵ to generate</span>
+          <span style={{ fontSize: 13, color: C.textMuted }}>{L.shortcutHint}</span>
           <button
             onClick={() => handleGenerate()}
             disabled={isLoading || !prompt.trim()}
@@ -182,9 +184,9 @@ export function AIPanel() {
             {isLoading ? (
               <>
                 <span style={{ width: 12, height: 12, border: "2px solid rgba(255,255,255,0.25)", borderTop: "2px solid white", borderRadius: "50%", display: "inline-block", animation: "spin 0.6s linear infinite" }} />
-                Generating…
+                {L.generating}
               </>
-            ) : "Generate →"}
+            ) : L.generate}
           </button>
         </div>
 
@@ -197,14 +199,14 @@ export function AIPanel() {
                 href="/signup?callbackUrl=%2Fprojects"
                 style={{ background: C.accent, borderRadius: 5, color: "#fff", fontSize: 13, fontFamily: C.font, padding: "4px 10px", whiteSpace: "nowrap", textDecoration: "none", fontWeight: 600 }}
               >
-                Sign up free
+                {L.signUpFree}
               </a>
             ) : (
             <button
               onClick={() => setState({ type: "idle" })}
               style={{ background: "rgba(239,68,68,0.15)", border: "1px solid rgba(239,68,68,0.25)", borderRadius: 5, color: "#fca5a5", fontSize: 13, fontFamily: C.font, cursor: "pointer", padding: "3px 8px", whiteSpace: "nowrap" }}
             >
-              Try again
+              {L.tryAgain}
             </button>
             )}
           </div>
@@ -217,10 +219,10 @@ export function AIPanel() {
               <span style={{ fontSize: 18, lineHeight: 1, marginTop: 1 }}>✓</span>
               <div>
                 <div style={{ color: "#6ee7b7", fontSize: 13, fontWeight: 600, marginBottom: 3 }}>
-                  Your page is ready to preview
+                  {L.readyTitle}
                 </div>
                 <div style={{ color: C.textMuted, fontSize: 13 }}>
-                  {state.composition.instances.length} elements generated. Click Apply to add it to your canvas.
+                  {fmt(L.readyBody, { count: state.composition.instances.length })}
                 </div>
               </div>
             </div>
@@ -229,13 +231,13 @@ export function AIPanel() {
                 onClick={() => setState({ type: "idle" })}
                 style={{ padding: "5px 12px", borderRadius: 5, border: "1px solid rgba(255,255,255,0.1)", background: "transparent", color: C.textMuted, fontSize: 13, fontFamily: C.font, cursor: "pointer" }}
               >
-                Discard
+                {L.discard}
               </button>
               <button
                 onClick={handleApply}
                 style={{ padding: "5px 18px", borderRadius: 5, border: "none", background: C.success, color: "#fff", fontSize: 12, fontFamily: C.font, fontWeight: 700, cursor: "pointer" }}
               >
-                Apply to page
+                {L.applyToPage}
               </button>
             </div>
           </div>

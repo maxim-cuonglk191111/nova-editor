@@ -6,6 +6,7 @@ import { $perfPanelOpen, $selectedPageId } from "@/lib/nano-states";
 import type { PerfHint } from "@/app/api/ai/performance/route";
 import type { Instance } from "@webstudio-is/sdk";
 import { UI_VARS as C } from "@/lib/uiTheme";
+import { useI18n, fmt } from "@/lib/i18n";
 
 
 const IMPACT_COLOR: Record<string, string> = {
@@ -42,6 +43,7 @@ function collectInstanceNodes(instances: Map<string, Instance>, rootId: string) 
 }
 
 export function PerformancePanel() {
+  const L = useI18n().t.tools.perf;
   const isOpen = useStore($perfPanelOpen);
   const instances = useStore($instances);
   const assets = useStore($assets);
@@ -91,17 +93,17 @@ export function PerformancePanel() {
   };
 
   return (
-    <div role="dialog" aria-label="Performance Advisor"
+    <div role="dialog" aria-label={L.dialogLabel}
       style={{ position: "fixed", top: 52, right: 296, width: 380, maxHeight: "70vh", zIndex: 100, background: C.bg, border: `1px solid ${C.border}`, borderRadius: 12, boxShadow: "0 8px 32px rgba(0,0,0,0.5)", fontFamily: C.font, overflow: "hidden", display: "flex", flexDirection: "column" }}
     >
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "11px 16px", borderBottom: `1px solid ${C.border}`, flexShrink: 0 }}>
-        <span style={{ fontSize: 13, fontWeight: 700, color: "#34d399" }}>⚡ Performance Advisor</span>
+        <span style={{ fontSize: 13, fontWeight: 700, color: "#34d399" }}>{L.title}</span>
         <button onClick={() => $perfPanelOpen.set(false)} style={{ background: "none", border: "none", color: C.textMuted, cursor: "pointer", fontSize: 18, padding: "2px 4px" }}>×</button>
       </div>
       <div style={{ padding: "10px 14px", borderBottom: `1px solid ${C.border}`, display: "flex", alignItems: "center", gap: 12, flexShrink: 0 }}>
         <button onClick={runAnalysis} disabled={loading}
           style={{ padding: "6px 14px", borderRadius: 6, border: "1px solid rgba(52,211,153,0.4)", background: loading ? "rgba(52,211,153,0.1)" : "rgba(52,211,153,0.15)", color: "#6ee7b7", fontSize: 13, fontFamily: C.font, fontWeight: 700, cursor: loading ? "default" : "pointer" }}>
-          {loading ? "Analyzing…" : "Analyze Page"}
+          {loading ? L.analyzing : L.analyze}
         </button>
         {score !== null && (
           <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
@@ -117,7 +119,7 @@ export function PerformancePanel() {
           >
             <div style={{ display: "flex", alignItems: "center", gap: 5, marginBottom: 3 }}>
               <span style={{ color: IMPACT_COLOR[hint.impact], fontSize: 12 }}>{SEVERITY_ICON[hint.severity]}</span>
-              <span style={{ fontSize: 12, fontWeight: 700, color: IMPACT_COLOR[hint.impact], textTransform: "uppercase" }}>{hint.impact} impact</span>
+              <span style={{ fontSize: 12, fontWeight: 700, color: IMPACT_COLOR[hint.impact], textTransform: "uppercase" }}>{fmt(L.impact, { impact: L.impactLevels[hint.impact] ?? hint.impact })}</span>
               <span style={{ fontSize: 12, color: C.textMuted, marginLeft: 4 }}>{hint.category}</span>
             </div>
             <div style={{ fontSize: 13, color: C.text, marginBottom: 4 }}>{hint.message}</div>
@@ -126,7 +128,7 @@ export function PerformancePanel() {
         ))}
         {!loading && hints.length === 0 && score === null && (
           <div style={{ textAlign: "center", color: C.textMuted, fontSize: 13, paddingTop: 20 }}>
-            Click Analyze Page to run performance checks.
+            {L.hint}
           </div>
         )}
       </div>

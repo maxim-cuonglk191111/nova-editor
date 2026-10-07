@@ -77,7 +77,7 @@ export function UserDropdown({ mode = "dark" }: UserDropdownProps) {
         {session.user?.image ? (
           <img
             src={session.user.image}
-            alt={session.user.name || "User Avatar"}
+            alt={session.user.name || t.site.userAvatarAlt}
             style={{ width: 36, height: 36, borderRadius: "50%", objectFit: "cover", border: `2px solid ${colors.avatarBorder}` }}
           />
         ) : (
@@ -106,7 +106,7 @@ export function UserDropdown({ mode = "dark" }: UserDropdownProps) {
         >
           <div style={{ padding: "12px 16px", borderBottom: `1px solid ${colors.dropdownBorder}`, display: "flex", flexDirection: "column", gap: 2 }}>
             <span style={{ fontSize: 14, fontWeight: 600, color: colors.nameColor, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
-              {session.user?.name || session.user?.email?.split("@")[0] || "User"}
+              {session.user?.name || session.user?.email?.split("@")[0] || t.site.userFallback}
             </span>
             <span style={{ fontSize: 12, color: colors.emailColor, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
               {session.user?.email}

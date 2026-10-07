@@ -20,6 +20,7 @@ const cardStyle = (hovered: boolean): React.CSSProperties => ({
 });
 
 function TemplateCard({ template, onUse }: { template: Template; onUse: (t: Template) => void }) {
+  const { t } = useI18n();
   const [hovered, setHovered] = useState(false);
   const [applied, setApplied] = useState(false);
   function handleUse() {
@@ -37,7 +38,7 @@ function TemplateCard({ template, onUse }: { template: Template; onUse: (t: Temp
         </div>
       </div>
       <button onClick={handleUse} style={{ width: "100%", padding: "6px 0", borderRadius: 6, border: "none", background: applied ? C.success : C.accent, color: "#fff", fontSize: 13, fontWeight: 700, cursor: "pointer", fontFamily: C.font, transition: "background 0.2s" }}>
-        {applied ? "✓ Applied!" : "Use Template"}
+        {applied ? t.panels.applied : t.panels.useTemplate}
       </button>
     </div>
   );

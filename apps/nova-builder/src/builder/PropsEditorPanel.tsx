@@ -31,6 +31,7 @@ function ImageSrcControl({
   current: AnyProp | undefined;
   inputStyle: React.CSSProperties;
 }) {
+  const P = useI18n().t.inspector.props;
   const src = typeof current?.value === "string" ? current.value : "";
   const [localUrl, setLocalUrl] = useState(src);
   const [isFocused, setIsFocused] = useState(false);
@@ -61,7 +62,7 @@ function ImageSrcControl({
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={src}
-            alt="preview"
+            alt={P.previewAlt}
             style={{ maxWidth: "100%", maxHeight: "100%", objectFit: "contain" }}
             onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
           />
@@ -90,7 +91,7 @@ function ImageSrcControl({
         onClick={() => {
           // TODO: open Asset Manager modal (Phase 2)
           // $assetManagerOpen.set(true);
-          alert("Asset Manager coming soon! Paste a URL above for now.");
+          alert(P.assetManagerSoon);
         }}
         style={{
           padding: "5px 10px",
@@ -117,7 +118,7 @@ function ImageSrcControl({
         }}
       >
         <span>📁</span>
-        <span>Chọn từ thư viện</span>
+        <span>{P.pickFromLibrary}</span>
       </button>
     </div>
   );
@@ -131,6 +132,7 @@ function PropControl({
   meta: MetaPropDef;
   current: AnyProp | undefined;
 }) {
+  const P = useI18n().t.inspector.props;
   const value = current?.value;
   const displayValue = value !== undefined ? value : meta.defaultValue;
 
@@ -166,7 +168,7 @@ function PropControl({
         onChange={(e) => writeProp(instanceId, name, e.target.value, "string")}
         style={{ ...inputStyle, fontFamily: C.font }}
       >
-        <option value="">— default —</option>
+        <option value="">{P.defaultOption}</option>
         {meta.options.map((opt) => (
           <option key={opt.name} value={opt.name}>{opt.label}</option>
         ))}
@@ -181,7 +183,7 @@ function PropControl({
         onChange={(e) => writeProp(instanceId, name, e.target.value === "true", "boolean")}
         style={{ ...inputStyle, fontFamily: C.font }}
       >
-        <option value="">— default —</option>
+        <option value="">{P.defaultOption}</option>
         <option value="true">true</option>
         <option value="false">false</option>
       </select>
@@ -322,6 +324,7 @@ function TextContentField({ instanceId, instance }: { instanceId: string; instan
     .filter((c) => c.type === "text")
     .map((c) => c.value)
     .join("");
+  const P = useI18n().t.inspector.props;
   const [localValue, setLocalValue] = useState(plainText);
   const [isFocused, setIsFocused] = useState(false);
 
@@ -349,7 +352,7 @@ function TextContentField({ instanceId, instance }: { instanceId: string; instan
   return (
     <div style={{ padding: "4px 12px 8px", borderBottom: `1px solid ${C.border}` }}>
       <label style={{ fontSize: 12, color: C.textMuted, fontWeight: 600, letterSpacing: "0.04em", display: "block", marginBottom: 4 }}>
-        CONTENT
+        {P.content}
       </label>
       <textarea
         value={localValue}
@@ -372,13 +375,14 @@ function TextContentField({ instanceId, instance }: { instanceId: string; instan
         }}
       />
       <div style={{ fontSize: 11, color: C.textMuted, marginTop: 3 }}>
-        Enter to save · Shift+Enter for new line · double-click canvas to edit rich text
+        {P.contentHint}
       </div>
     </div>
   );
 }
 
 export function PropsEditorPanel() {
+  const P = useI18n().t.inspector.props;
   const instanceId = useStore($selectedInstanceId);
   const instances = useStore($instances);
   const props = useStore($props) as Map<string, AnyProp>;
@@ -387,7 +391,7 @@ export function PropsEditorPanel() {
   if (!instanceId) {
     return (
       <div style={{ padding: 16, fontSize: 13, color: C.textMuted, fontFamily: C.font }}>
-        Select an element to edit its properties.
+        {P.selectElement}
       </div>
     );
   }
@@ -437,7 +441,7 @@ export function PropsEditorPanel() {
         {metaKeys.length > 0 && (
           <>
             <div style={{ padding: "4px 12px 2px", fontSize: 9, color: C.textMuted, letterSpacing: "0.08em", textTransform: "uppercase" }}>
-              Component props
+              {P.componentProps}
             </div>
             {metaKeys.map((key) => {
               const def = metaProps[key];
@@ -453,7 +457,7 @@ export function PropsEditorPanel() {
         {instanceProps.length > 0 && (
           <>
             <div style={{ padding: "8px 12px 2px", fontSize: 9, color: C.textMuted, letterSpacing: "0.08em", textTransform: "uppercase" }}>
-              Custom props
+              {P.customProps}
             </div>
             {instanceProps.sort((a, b) => a.name.localeCompare(b.name)).map((p) => (
               <PropRow key={p.id} instanceId={instanceId} name={p.name} label={p.name} meta={{ type: p.type }} current={p} />
@@ -463,7 +467,7 @@ export function PropsEditorPanel() {
 
         {metaKeys.length === 0 && instanceProps.length === 0 && (
           <div style={{ padding: "12px", fontSize: 13, color: C.textMuted, fontFamily: C.font }}>
-            No editable props for this component.
+            {P.noProps}
           </div>
         )}
       </div>

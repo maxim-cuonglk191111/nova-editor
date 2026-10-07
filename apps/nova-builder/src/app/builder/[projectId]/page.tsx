@@ -20,6 +20,7 @@ import { useStore } from "@nanostores/react";
 import { useParams } from "next/navigation";
 import { nanoid } from "nanoid";
 import { getRegistry } from "@/builder/left-sidebar/components/ComponentRegistry";
+import { useI18n } from "@/lib/i18n";
 import { SHORTCUT_MESSAGE, type ForwardedShortcut } from "@/canvas/forwardShortcuts";
 import { useSession } from "next-auth/react";
 import {
@@ -73,6 +74,7 @@ import { SafeModeBanner } from "@/builder/SafeModeBanner";
 import { NestingToast } from "@/builder/NestingToast";
 
 function BuilderPage() {
+  const { t } = useI18n();
   const params = useParams<{ projectId: string }>();
   const projectId = params.projectId;
   const isDemo = projectId === "demo";
@@ -502,7 +504,7 @@ function BuilderPage() {
                   type: "instance" as const,
                   id: newId,
                   component: "Image",
-                  label: "Image",
+                  label: "Image", // i18n-ignore — instance label (user content)
                   children: [],
                 },
               };
@@ -598,7 +600,7 @@ function BuilderPage() {
   if (loadState === "error") {
     return (
       <ThemeProvider style={{ padding: 32, fontFamily: "system-ui, sans-serif", color: "var(--ui-error)", background: "var(--ui-card)", height: "100vh" }}>
-        Failed to load project: {errorMessage}
+        {t.chrome.loadFailed} {errorMessage}
       </ThemeProvider>
     );
   }
@@ -661,7 +663,7 @@ function BuilderPage() {
               fontSize: 14,
             }}
           >
-            Loading project…
+            {t.chrome.loadingProject}
           </div>
         )}
         {/* Text format toolbar — appears during double-click text editing */}
@@ -698,6 +700,7 @@ function BuilderPage() {
                 display: "block",
                 transition: "width 0.2s ease",
               }}
+              // i18n-ignore — stable selector used by useDraggable + e2e specs
               title="Canvas"
             />
           </div>

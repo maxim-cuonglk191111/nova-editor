@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { PLAN_CARDS } from "@/lib/plans";
 import { useI18n } from "@/lib/i18n";
+import { planPriceVnd } from "@/lib/billing/planPrice";
 
 interface PricingGridProps {
   currentTier?: string;
@@ -10,7 +11,7 @@ interface PricingGridProps {
 }
 
 export default function PricingGrid({ currentTier, onSelectPlan }: PricingGridProps) {
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
 
   return (
     <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: 20, marginBottom: 48 }}>
@@ -38,7 +39,10 @@ export default function PricingGrid({ currentTier, onSelectPlan }: PricingGridPr
 
             <div>
               <div style={{ fontSize: 18, fontWeight: 800, color: "#0f172a", marginBottom: 8 }}>{copy.label}</div>
-              <div style={{ fontSize: 28, fontWeight: 900, color: plan.tier === "pro" ? "#6d28d9" : "#0f172a", letterSpacing: "-0.02em" }}>{plan.price}</div>
+              <div style={{ fontSize: 24, fontWeight: 900, color: plan.tier === "pro" ? "#6d28d9" : "#0f172a", letterSpacing: "-0.02em", whiteSpace: "nowrap" }}>
+                {planPriceVnd(plan.tier, locale)}
+                <span style={{ fontSize: 14, fontWeight: 600, color: "#64748b", letterSpacing: 0, marginLeft: 4 }}>{t.billing.perMonth}</span>
+              </div>
             </div>
 
             <ul style={{ margin: 0, padding: 0, listStyle: "none", display: "flex", flexDirection: "column", gap: 8 }}>
@@ -58,7 +62,7 @@ export default function PricingGrid({ currentTier, onSelectPlan }: PricingGridPr
                 border: "1.5px solid rgba(124,58,237,0.3)",
                 marginTop: "auto",
               }}>
-                Gói hiện tại
+                {t.billing.currentPlan}
               </div>
             ) : plan.tier === "free" ? (
               <Link

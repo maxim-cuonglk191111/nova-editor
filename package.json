@@ -10,6 +10,7 @@
     "lint": "turbo lint",
     "test": "turbo test",
     "solid:audit": "node scripts/solid-audit.mjs",
+    "i18n:audit": "node scripts/i18n-audit.mjs",
     "test:e2e": "playwright test",
     "cf:secrets": "node scripts/cf-push-secrets.mjs"
   },

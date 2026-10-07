@@ -4,6 +4,7 @@ import { useStore } from "@nanostores/react";
 import { $selectedPage } from "@/lib/nano-states";
 import { $projectMeta } from "@/lib/data-stores";
 import { UI_VARS as C } from "@/lib/uiTheme";
+import { useI18n } from "@/lib/i18n";
 import { usePageCrud, type PageRedirect } from "./left-sidebar/pages/usePageCrud";
 
 type PageSEO = {
@@ -63,6 +64,7 @@ function Field({ label, value, onChange, placeholder, multiline }: {
 function OGPreviewCard({ title, description, image, url }: {
   title: string; description: string; image?: string; url?: string;
 }) {
+  const L = useI18n().t.tools.seo;
   return (
     <div style={{ border: `1px solid ${C.border}`, borderRadius: 8, overflow: "hidden", marginBottom: 12 }}>
       {image ? (
@@ -70,14 +72,14 @@ function OGPreviewCard({ title, description, image, url }: {
         <img src={image} alt="" style={{ width: "100%", height: 80, objectFit: "cover", display: "block" }} />
       ) : (
         <div style={{ width: "100%", height: 80, background: "rgba(124,58,237,0.08)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-          <span style={{ fontSize: 12, color: C.textMuted }}>No OG image set</span>
+          <span style={{ fontSize: 12, color: C.textMuted }}>{L.noOgImage}</span>
         </div>
       )}
       <div style={{ padding: "8px 10px", background: "rgba(255,255,255,0.02)" }}>
         {url && <div style={{ fontSize: 9, color: C.textMuted, marginBottom: 3, textTransform: "uppercase" }}>{url}</div>}
-        <div style={{ fontSize: 13, fontWeight: 700, color: C.text, marginBottom: 2 }}>{title || "Page title"}</div>
+        <div style={{ fontSize: 13, fontWeight: 700, color: C.text, marginBottom: 2 }}>{title || L.previewTitle}</div>
         <div style={{ fontSize: 12, color: C.textDim, overflow: "hidden", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical" }}>
-          {description || "Page description"}
+          {description || L.previewDescription}
         </div>
       </div>
     </div>
@@ -85,6 +87,7 @@ function OGPreviewCard({ title, description, image, url }: {
 }
 
 function RedirectsEditor({ pageId, initialRedirects }: { pageId: string; initialRedirects: PageRedirect[] }) {
+  const L = useI18n().t.tools.seo;
   const { updatePageRedirects } = usePageCrud();
   const [rows, setRows] = useState<PageRedirect[]>(initialRedirects);
 
@@ -108,23 +111,23 @@ function RedirectsEditor({ pageId, initialRedirects }: { pageId: string; initial
 
   return (
     <div style={{ marginBottom: 14 }}>
-      <div style={{ fontSize: 12, color: C.textMuted, fontWeight: 600, letterSpacing: "0.05em", marginBottom: 8 }}>REDIRECTS</div>
+      <div style={{ fontSize: 12, color: C.textMuted, fontWeight: 600, letterSpacing: "0.05em", marginBottom: 8 }}>{L.redirects}</div>
       {rows.length === 0 && (
-        <div style={{ fontSize: 12, color: C.muted, marginBottom: 6 }}>No redirects for this page.</div>
+        <div style={{ fontSize: 12, color: C.muted, marginBottom: 6 }}>{L.noRedirects}</div>
       )}
       {rows.map((row, i) => (
         <div key={i} style={{ display: "flex", gap: 4, alignItems: "center", marginBottom: 6 }}>
           <input
             value={row.from}
             onChange={(e) => update(i, { from: e.target.value })}
-            placeholder="/old-path"
+            placeholder={L.redirectFrom}
             style={{ ...inputStyle, flex: 1 }}
           />
           <span style={{ color: C.textMuted, fontSize: 12 }}>→</span>
           <input
             value={row.to}
             onChange={(e) => update(i, { to: e.target.value })}
-            placeholder="/new-path or URL"
+            placeholder={L.redirectTo}
             style={{ ...inputStyle, flex: 1 }}
           />
           <select
@@ -142,7 +145,7 @@ function RedirectsEditor({ pageId, initialRedirects }: { pageId: string; initial
         onClick={addRow}
         style={{ fontSize: 11, color: C.accentText, background: "none", border: "none", cursor: "pointer", fontFamily: C.font, padding: 0 }}
       >
-        + Add redirect
+        {L.addRedirect}
       </button>
     </div>
   );
@@ -157,6 +160,7 @@ function parseRedirects(meta: Record<string, unknown>): PageRedirect[] {
 }
 
 export function SEOPanel() {
+  const L = useI18n().t.tools.seo;
   const page = useStore($selectedPage);
   const meta = useStore($projectMeta);
   const pageKey = (page as { path?: string } | undefined)?.path ?? "/";
@@ -203,24 +207,28 @@ export function SEOPanel() {
   return (
     <div style={{ padding: 12, fontFamily: C.font, color: C.text, overflowY: "auto", height: "100%", boxSizing: "border-box" }}>
       <div style={{ fontSize: 13, fontWeight: 700, color: C.textDim, marginBottom: 14, letterSpacing: "0.04em" }}>
-        SEO — {pageKey === "/" ? "Home" : pageKey}
+        SEO — {pageKey === "/" ? L.home : pageKey}
       </div>
 
-      <Field label="PAGE TITLE" value={pageSeo.title ?? ""} onChange={(v) => update("title", v)} placeholder="My awesome page" />
-      <Field label="META DESCRIPTION" value={pageSeo.description ?? ""} onChange={(v) => update("description", v)} placeholder="Describe this page in 160 chars…" multiline />
-      <Field label="CANONICAL URL" value={pageSeo.canonicalUrl ?? ""} onChange={(v) => update("canonicalUrl", v)} placeholder="https://example.com/page" />
+      <Field label={L.pageTitle} value={pageSeo.title ?? ""} onChange={(v) => update("title", v)} placeholder={L.pageTitlePlaceholder} />
+      <Field label={L.metaDescription} value={pageSeo.description ?? ""} onChange={(v) => update("description", v)} placeholder={L.metaDescriptionPlaceholder} multiline />
+      <Field label={L.canonicalUrl} value={pageSeo.canonicalUrl ?? ""} onChange={(v) => update("canonicalUrl", v)} placeholder="https://example.com/page" />
 
       {/* Per-page robots directive */}
       <div style={{ display: "flex", flexDirection: "column", gap: 3, marginBottom: 12 }}>
-        <label style={labelStyle}>ROBOTS DIRECTIVE</label>
+        <label style={labelStyle}>{L.robotsDirective}</label>
         <select
           value={pageSeo.robots ?? "index,follow"}
           onChange={(e) => update("robots", e.target.value)}
           style={{ ...inputStyle, fontFamily: C.font, cursor: "pointer" }}
         >
-          <option value="index,follow">index, follow (default)</option>
+          {/* i18n-ignore — robots directives are syntax */}
+          <option value="index,follow">index, follow {L.robotsDefault}</option>
+          {/* i18n-ignore */}
           <option value="noindex,follow">noindex, follow</option>
+          {/* i18n-ignore */}
           <option value="index,nofollow">index, nofollow</option>
+          {/* i18n-ignore */}
           <option value="noindex,nofollow">noindex, nofollow</option>
         </select>
       </div>
@@ -233,7 +241,7 @@ export function SEOPanel() {
           onChange={(e) => update("noIndex", e.target.checked)}
           style={{ accentColor: C.accent }}
         />
-        <label htmlFor="noindex" style={{ fontSize: 13, color: C.textDim, cursor: "pointer" }}>Exclude from search engines (noindex)</label>
+        <label htmlFor="noindex" style={{ fontSize: 13, color: C.textDim, cursor: "pointer" }}>{L.noindex}</label>
       </div>
 
       {/* OG section toggle */}
@@ -241,7 +249,7 @@ export function SEOPanel() {
         onClick={() => setShowOG((v) => !v)}
         style={{ background: "none", border: "none", color: C.textMuted, fontSize: 12, cursor: "pointer", fontFamily: C.font, fontWeight: 600, letterSpacing: "0.05em", padding: 0, marginBottom: 12 }}
       >
-        {showOG ? "▼" : "▶"} OPEN GRAPH / SOCIAL PREVIEW
+        {showOG ? "▼" : "▶"} {L.openGraph}
       </button>
 
       {showOG && (
@@ -252,9 +260,9 @@ export function SEOPanel() {
             image={pageSeo.ogImage}
             url={pageSeo.canonicalUrl}
           />
-          <Field label="OG TITLE" value={pageSeo.ogTitle ?? ""} onChange={(v) => update("ogTitle", v)} placeholder="Overrides page title for social" />
-          <Field label="OG DESCRIPTION" value={pageSeo.ogDescription ?? ""} onChange={(v) => update("ogDescription", v)} placeholder="Overrides meta description for social" multiline />
-          <Field label="OG IMAGE URL" value={pageSeo.ogImage ?? ""} onChange={(v) => update("ogImage", v)} placeholder="https://…/og.png (1200×630)" />
+          <Field label={L.ogTitle} value={pageSeo.ogTitle ?? ""} onChange={(v) => update("ogTitle", v)} placeholder={L.ogTitlePlaceholder} />
+          <Field label={L.ogDescription} value={pageSeo.ogDescription ?? ""} onChange={(v) => update("ogDescription", v)} placeholder={L.ogDescriptionPlaceholder} multiline />
+          <Field label={L.ogImage} value={pageSeo.ogImage ?? ""} onChange={(v) => update("ogImage", v)} placeholder="https://…/og.png (1200×630)" /* i18n-ignore */ />
         </>
       )}
 
@@ -263,7 +271,7 @@ export function SEOPanel() {
         onClick={() => setShowRedirects((v) => !v)}
         style={{ background: "none", border: "none", color: C.textMuted, fontSize: 12, cursor: "pointer", fontFamily: C.font, fontWeight: 600, letterSpacing: "0.05em", padding: 0, marginBottom: 12, display: "block" }}
       >
-        {showRedirects ? "▼" : "▶"} REDIRECTS {redirects.length > 0 && <span style={{ color: C.accentText }}>({redirects.length})</span>}
+        {showRedirects ? "▼" : "▶"} {L.redirects} {redirects.length > 0 && <span style={{ color: C.accentText }}>({redirects.length})</span>}
       </button>
 
       {showRedirects && pageId && (
@@ -271,10 +279,11 @@ export function SEOPanel() {
       )}
 
       <div style={{ borderTop: `1px solid ${C.border}`, marginTop: 8, paddingTop: 12 }}>
-        <div style={{ fontSize: 12, color: C.textMuted, fontWeight: 600, letterSpacing: "0.05em", marginBottom: 6 }}>ROBOTS.TXT</div>
+        <div style={{ fontSize: 12, color: C.textMuted, fontWeight: 600, letterSpacing: "0.05em", marginBottom: 6 }}>{L.robotsTxt}</div>
         <textarea
           value={robotsTxt}
           onChange={(e) => setRobotsTxt(e.target.value)}
+          // i18n-ignore — robots.txt syntax
           placeholder={"User-agent: *\nAllow: /"}
           rows={4}
           style={{ ...inputStyle, resize: "vertical", fontFamily: "monospace", marginBottom: 10 }}
@@ -286,7 +295,7 @@ export function SEOPanel() {
             rel="noopener"
             style={{ fontSize: 12, color: C.accent, textDecoration: "none", display: "block", marginBottom: 10 }}
           >
-            ↗ View auto-generated sitemap.xml
+            {L.viewSitemap}
           </a>
         )}
       </div>
@@ -299,7 +308,7 @@ export function SEOPanel() {
           color: "#fff", fontSize: 12, fontFamily: C.font, cursor: "pointer", fontWeight: 600,
         }}
       >
-        {saved ? "✓ Saved!" : "Save SEO"}
+        {saved ? L.saved : L.save}
       </button>
     </div>
   );

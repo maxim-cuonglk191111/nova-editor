@@ -1,49 +1,49 @@
 ﻿"use client";
 import { useEffect, useState } from "react";
 import { UI_VARS as C } from "@/lib/uiTheme";
+import { useI18n, fmt, type I18nShortcutsDictionary } from "@/lib/i18n";
 
-
-const SHORTCUTS = [
+const buildShortcuts = (s: I18nShortcutsDictionary) => [
   {
-    group: "Edit",
+    group: s.groupEdit,
     items: [
-      { keys: ["Ctrl", "Z"], label: "Undo" },
-      { keys: ["Ctrl", "Shift", "Z"], label: "Redo" },
-      { keys: ["Ctrl", "C"], label: "Copy selected element" },
-      { keys: ["Ctrl", "V"], label: "Paste element" },
-      { keys: ["Ctrl", "D"], label: "Duplicate element" },
-      { keys: ["Del"], label: "Delete selected element" },
+      { keys: ["Ctrl", "Z"], label: s.undo },
+      { keys: ["Ctrl", "Shift", "Z"], label: s.redo },
+      { keys: ["Ctrl", "C"], label: s.copy },
+      { keys: ["Ctrl", "V"], label: s.paste },
+      { keys: ["Ctrl", "D"], label: s.duplicate },
+      { keys: ["Del"], label: s.delete },
     ],
   },
   {
-    group: "Selection",
+    group: s.groupSelection,
     items: [
-      { keys: ["Click"], label: "Select element" },
-      { keys: ["Esc"], label: "Deselect / close panel" },
-      { keys: ["↑ ↓"], label: "Navigate tree rows" },
+      { keys: [s.keyClick], label: s.select },
+      { keys: ["Esc"], label: s.deselect },
+      { keys: ["↑ ↓"], label: s.navigateTree },
     ],
   },
   {
-    group: "Canvas",
+    group: s.groupCanvas,
     items: [
-      { keys: ["Ctrl", "+"], label: "Zoom in" },
-      { keys: ["Ctrl", "−"], label: "Zoom out" },
-      { keys: ["Ctrl", "0"], label: "Reset zoom to 100%" },
-      { keys: ["Space"], label: "Preview mode toggle" },
+      { keys: ["Ctrl", "+"], label: s.zoomIn },
+      { keys: ["Ctrl", "−"], label: s.zoomOut },
+      { keys: ["Ctrl", "0"], label: s.resetZoom },
+      { keys: [s.keySpace], label: s.previewToggle },
     ],
   },
   {
-    group: "Panels",
+    group: s.groupPanels,
     items: [
-      { keys: ["Ctrl", "K"], label: "Open command palette" },
-      { keys: ["?"], label: "Open this shortcuts dialog" },
-      { keys: ["Ctrl", "S"], label: "Save project" },
+      { keys: ["Ctrl", "K"], label: s.openPalette },
+      { keys: ["?"], label: s.openShortcuts },
+      { keys: ["Ctrl", "S"], label: s.saveProject },
     ],
   },
   {
-    group: "AI",
+    group: s.groupAI,
     items: [
-      { keys: ["Ctrl", "Enter"], label: "Generate with AI (in AI panel)" },
+      { keys: ["Ctrl", "Enter"], label: s.generateAI },
     ],
   },
 ];
@@ -63,6 +63,8 @@ function Key({ label }: { label: string }) {
 }
 
 export function KeyboardShortcutsModal({ onClose }: { onClose: () => void }) {
+  const { t } = useI18n();
+  const S = t.chrome.shortcuts;
   const [search, setSearch] = useState("");
 
   useEffect(() => {
@@ -73,7 +75,7 @@ export function KeyboardShortcutsModal({ onClose }: { onClose: () => void }) {
     return () => document.removeEventListener("keydown", handler);
   }, [onClose]);
 
-  const filtered = SHORTCUTS.map((g) => ({
+  const filtered = buildShortcuts(S).map((g) => ({
     ...g,
     items: g.items.filter((item) =>
       !search || item.label.toLowerCase().includes(search.toLowerCase()) || item.keys.some((k) => k.toLowerCase().includes(search.toLowerCase()))
@@ -88,11 +90,11 @@ export function KeyboardShortcutsModal({ onClose }: { onClose: () => void }) {
       <div style={{ background: C.bg, border: `1px solid ${C.border}`, borderRadius: 12, width: 520, maxHeight: "80vh", display: "flex", flexDirection: "column", boxShadow: "0 24px 64px rgba(0,0,0,0.6)", overflow: "hidden" }}>
         {/* Header */}
         <div style={{ padding: "16px 20px 12px", borderBottom: `1px solid ${C.border}`, display: "flex", alignItems: "center", gap: 10 }}>
-          <span style={{ fontSize: 14, fontWeight: 700, color: C.text, flex: 1 }}>Keyboard Shortcuts</span>
+          <span style={{ fontSize: 14, fontWeight: 700, color: C.text, flex: 1 }}>{S.title}</span>
           <input
             autoFocus
             type="text"
-            placeholder="Search shortcuts…"
+            placeholder={S.search}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             style={{
@@ -107,7 +109,7 @@ export function KeyboardShortcutsModal({ onClose }: { onClose: () => void }) {
         {/* Shortcut list */}
         <div style={{ overflowY: "auto", padding: "12px 20px 20px" }}>
           {filtered.length === 0 && (
-            <div style={{ color: C.textMuted, fontSize: 12, textAlign: "center", padding: "24px 0" }}>No shortcuts match &ldquo;{search}&rdquo;</div>
+            <div style={{ color: C.textMuted, fontSize: 12, textAlign: "center", padding: "24px 0" }}>{fmt(S.noMatch, { query: search })}</div>
           )}
           {filtered.map((group) => (
             <div key={group.group} style={{ marginBottom: 18 }}>
@@ -134,7 +136,7 @@ export function KeyboardShortcutsModal({ onClose }: { onClose: () => void }) {
         </div>
 
         <div style={{ padding: "10px 20px", borderTop: `1px solid ${C.border}`, fontSize: 12, color: C.textMuted, textAlign: "center" }}>
-          Press <Key label="?" /> anywhere in the builder to open this dialog
+          {S.hintBefore} <Key label="?" /> {S.hintAfter}
         </div>
       </div>
     </div>

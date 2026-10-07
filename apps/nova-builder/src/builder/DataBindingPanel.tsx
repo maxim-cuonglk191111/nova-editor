@@ -50,8 +50,11 @@ export function DataBindingPanel() {
       <div style={{ display: "flex", gap: 6, marginBottom: 12 }}>
         <input value={varName} onChange={(e) => setVarName(e.target.value)} placeholder={t.builder.dbNamePlaceholder} style={{ ...inputStyle, flex: 1 }} />
         <select value={varType} onChange={(e) => setVarType(e.target.value as VariableType)} style={{ ...inputStyle, width: 78 }}>
+          {/* i18n-ignore — variable types are code identifiers */}
           <option value="string">string</option>
+          {/* i18n-ignore */}
           <option value="number">number</option>
+          {/* i18n-ignore */}
           <option value="boolean">boolean</option>
           <option value="json">json</option>
         </select>

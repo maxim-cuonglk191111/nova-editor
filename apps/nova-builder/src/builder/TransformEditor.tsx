@@ -2,6 +2,7 @@
 import { useMemo } from "react";
 import { writeStyleProperty } from "@/lib/styleWriteHelper";
 import { UI_VARS as C } from "@/lib/uiTheme";
+import { useI18n, fmt as fmtMsg } from "@/lib/i18n";
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
@@ -174,6 +175,7 @@ function Field({ label, value, onChange, step }: { label: string; value: number;
 function SectionHeader({
   icon, label, active, onAdd, onRemove,
 }: { icon: string; label: string; active: boolean; onAdd: () => void; onRemove: () => void }) {
+  const E = useI18n().t.inspector.editors;
   return (
     <div style={{
       display: "flex", alignItems: "center", gap: 6,
@@ -193,13 +195,13 @@ function SectionHeader({
       {active ? (
         <button
           onClick={onRemove}
-          title={`Remove ${label}`}
+          title={fmtMsg(E.removeItem, { label })}
           style={{ border: "none", background: "none", color: "rgba(248,113,113,0.55)", fontSize: 16, lineHeight: 1, cursor: "pointer", padding: "0 2px" }}
         >×</button>
       ) : (
         <button
           onClick={onAdd}
-          title={`Add ${label}`}
+          title={fmtMsg(E.addItem, { label })}
           style={{ border: `1px solid ${C.border}`, borderRadius: 3, background: "none", color: C.textMuted, fontSize: 15, lineHeight: "18px", width: 20, height: 20, cursor: "pointer", padding: 0 }}
         >+</button>
       )}
@@ -220,6 +222,7 @@ function FieldRow({ children }: { children: React.ReactNode }) {
 type Props = { instanceId: string; currentCss: string };
 
 export function TransformPanel({ instanceId, currentCss }: Props) {
+  const E = useI18n().t.inspector.editors;
   const parsed = useMemo(() => parseTransformCss(currentCss), [currentCss]);
 
   const commit = (patch: Partial<Parsed>) => {
@@ -235,7 +238,7 @@ export function TransformPanel({ instanceId, currentCss }: Props) {
       {/* Panel header */}
       <div style={{ display: "flex", alignItems: "center", padding: "5px 12px", background: C.sectionBg }}>
         <span style={{ fontSize: 12, color: C.textMuted, fontFamily: C.font, fontWeight: 700, letterSpacing: "0.07em", textTransform: "uppercase" as const, flex: 1 }}>
-          Transform
+          {E.transform}
           {activeCount > 0 && (
             <span style={{ color: "rgba(255,255,255,0.2)", fontWeight: 400, marginLeft: 6 }}>{activeCount}</span>
           )}
@@ -245,7 +248,7 @@ export function TransformPanel({ instanceId, currentCss }: Props) {
       {/* Translate */}
       <SectionHeader
         icon="↔"
-        label="Translate"
+        label={E.translate}
         active={parsed.translate !== null}
         onAdd={() => commit({ translate: { x: 0, y: 0 } })}
         onRemove={() => commit({ translate: null })}
@@ -264,7 +267,7 @@ export function TransformPanel({ instanceId, currentCss }: Props) {
       <div style={{ borderTop: `1px solid ${C.border}` }}>
         <SectionHeader
           icon="↻"
-          label="Rotate"
+          label={E.rotate}
           active={parsed.rotate !== null}
           onAdd={() => commit({ rotate: { x: 0, y: 0, z: 0 } })}
           onRemove={() => commit({ rotate: null })}
@@ -286,7 +289,7 @@ export function TransformPanel({ instanceId, currentCss }: Props) {
       <div style={{ borderTop: `1px solid ${C.border}` }}>
         <SectionHeader
           icon="⇱"
-          label="Scale"
+          label={E.scale}
           active={parsed.scale !== null}
           onAdd={() => commit({ scale: { x: 1, y: 1 } })}
           onRemove={() => commit({ scale: null })}
@@ -306,7 +309,7 @@ export function TransformPanel({ instanceId, currentCss }: Props) {
       <div style={{ borderTop: `1px solid ${C.border}` }}>
         <SectionHeader
           icon="⟋"
-          label="Skew"
+          label={E.skew}
           active={parsed.skew !== null}
           onAdd={() => commit({ skew: { x: 0, y: 0 } })}
           onRemove={() => commit({ skew: null })}

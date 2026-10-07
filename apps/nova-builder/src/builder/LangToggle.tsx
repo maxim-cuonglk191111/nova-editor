@@ -7,7 +7,7 @@ import { useI18n, type Locale } from "@/lib/i18n";
 import { UI_VARS as C, FONT } from "@/lib/uiTheme";
 
 export function LangToggle() {
-  const { locale, setLocale, setAutoDetectByIp } = useI18n();
+  const { locale, setLocale, setAutoDetectByIp, t } = useI18n();
 
   const pick = (next: Locale) => {
     if (next === locale) return;
@@ -26,7 +26,7 @@ export function LangToggle() {
         overflow: "hidden",
         flexShrink: 0,
       }}
-      title="Language"
+      title={t.chrome.language}
     >
       {(["en", "vi"] as const).map((l) => (
         <button

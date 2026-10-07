@@ -7,11 +7,13 @@ import { getDeclsForInstance } from "@/lib/styleInspectorWrite";
 import { styleValueToString } from "@/lib/styleValueConversion";
 import type { AnyStyleDecl } from "@/lib/styleValueConversion";
 import { UI_VARS as C, FONT } from "@/lib/uiTheme";
+import { useI18n } from "@/lib/i18n";
 
 // CSS Preview Navigator — shows the final computed CSS for the selected instance
 // as a read-only code block. Useful for understanding cascade resolution without
 // opening DevTools. Values reflect the active breakpoint + state.
 export function CssPreviewPanel() {
+  const L = useI18n().t.tools.cssPreview;
   const instanceId = useStore($selectedInstanceId);
   const styles = useStore($styles);
   const selections = useStore($styleSourceSelections);
@@ -21,7 +23,7 @@ export function CssPreviewPanel() {
   if (!instanceId) {
     return (
       <div style={{ padding: 16, fontSize: 13, color: C.textMuted, fontFamily: C.font }}>
-        Select an element to preview its CSS.
+        {L.selectElement}
       </div>
     );
   }
@@ -44,20 +46,20 @@ export function CssPreviewPanel() {
   const selectorLabel = `.instance-${instanceId.slice(0, 8)}`;
   const code = cssLines.length > 0
     ? `${selectorLabel} {\n${cssLines.join("\n")}\n}`
-    : `/* No styles at this breakpoint */`;
+    : `/* ${L.noStyles} */`;
 
   return (
     <div style={{ display: "flex", flexDirection: "column", height: "100%", overflow: "hidden" }}>
       <div style={{ padding: "8px 12px", borderBottom: `1px solid ${C.border}`, flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
         <span style={{ fontSize: FONT.xs, color: C.textMuted, fontFamily: C.font, textTransform: "uppercase", letterSpacing: "0.07em", fontWeight: 700 }}>
-          CSS Preview
+          {L.title}
         </span>
         <button
           onClick={() => navigator.clipboard.writeText(code)}
-          title="Copy CSS"
+          title={L.copyTitle}
           style={{ background: "none", border: `1px solid ${C.border}`, borderRadius: 4, color: C.textMuted, fontSize: 11, fontFamily: C.font, cursor: "pointer", padding: "2px 7px" }}
         >
-          Copy
+          {L.copy}
         </button>
       </div>
       <pre

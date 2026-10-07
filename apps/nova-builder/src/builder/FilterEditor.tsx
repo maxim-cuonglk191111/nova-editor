@@ -2,6 +2,7 @@
 import { useMemo } from "react";
 import { writeStyleProperty } from "@/lib/styleWriteHelper";
 import { UI_VARS as C } from "@/lib/uiTheme";
+import { useI18n, fmt } from "@/lib/i18n";
 
 // ── Filter function registry ───────────────────────────────────────────────────
 
@@ -187,16 +188,18 @@ function FieldLabel({ text }: { text: string }) {
 }
 
 function DeleteBtn({ onClick }: { onClick: () => void }) {
+  const E = useI18n().t.inspector.editors;
   return (
     <button
       onClick={onClick}
       style={{ border: "none", background: "none", color: "rgba(248,113,113,0.6)", fontSize: 16, lineHeight: 1, cursor: "pointer", padding: "0 2px", flexShrink: 0 }}
-      title="Remove"
+      title={E.remove}
     >×</button>
   );
 }
 
 function PanelHeader({ label, count, onAdd }: { label: string; count: number; onAdd: () => void }) {
+  const E = useI18n().t.inspector.editors;
   return (
     <div style={{ display: "flex", alignItems: "center", padding: "5px 12px", background: C.sectionBg }}>
       <span style={{ fontSize: 12, color: C.textMuted, fontFamily: C.font, fontWeight: 700, letterSpacing: "0.07em", textTransform: "uppercase" as const, flex: 1 }}>
@@ -205,7 +208,7 @@ function PanelHeader({ label, count, onAdd }: { label: string; count: number; on
       </span>
       <button
         onClick={onAdd}
-        title={`Add ${label} function`}
+        title={fmt(E.addFunction, { label })}
         style={{ width: 20, height: 20, border: `1px solid ${C.border}`, borderRadius: 3, background: "none", color: C.textMuted, fontSize: 15, lineHeight: "18px", cursor: "pointer", padding: 0 }}
       >+</button>
     </div>
@@ -219,6 +222,7 @@ function FilterLayerRow({ layer, onChange, onDelete }: {
   onChange: (l: FilterLayer) => void;
   onDelete: () => void;
 }) {
+  const E = useI18n().t.inspector.editors;
   const upd = (patch: Partial<FilterLayer>) => onChange({ ...layer, ...patch });
 
   const handleFnChange = (fn: FilterFn) => {
@@ -233,7 +237,7 @@ function FilterLayerRow({ layer, onChange, onDelete }: {
       {/* Row 1: function select + (single-value input) + delete */}
       <div style={{ display: "flex", alignItems: "center", gap: 5 }}>
         <div style={{ flex: 1 }}>
-          <FieldLabel text="Function" />
+          <FieldLabel text={E.fn} />
           <select
             value={layer.fn}
             onChange={(e) => handleFnChange(e.target.value as FilterFn)}
@@ -245,7 +249,7 @@ function FilterLayerRow({ layer, onChange, onDelete }: {
 
         {!isDropShadow && cfg && (
           <div>
-            <FieldLabel text="Value" />
+            <FieldLabel text={E.value} />
             <div style={{ display: "flex", alignItems: "center", gap: 2 }}>
               <input
                 key={layer.value}
@@ -273,7 +277,7 @@ function FilterLayerRow({ layer, onChange, onDelete }: {
         <div style={{ display: "flex", gap: 5, alignItems: "flex-end", flexWrap: "wrap" }}>
           {(["dsX", "dsY", "dsBlur"] as const).map((field, i) => (
             <div key={field}>
-              <FieldLabel text={["X", "Y", "Blur"][i]} />
+              <FieldLabel text={["X", "Y", E.blur][i]} />
               <div style={{ display: "flex", alignItems: "center", gap: 2 }}>
                 <input
                   key={layer[field]}
@@ -289,7 +293,7 @@ function FilterLayerRow({ layer, onChange, onDelete }: {
             </div>
           ))}
           <div>
-            <FieldLabel text="Color" />
+            <FieldLabel text={E.color} />
             <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
               <input
                 type="color"
@@ -307,7 +311,7 @@ function FilterLayerRow({ layer, onChange, onDelete }: {
                 max={1}
                 step={0.01}
                 defaultValue={alphaFromColor(layer.dsColor)}
-                title="Alpha"
+                title={E.alpha}
                 style={{ ...baseInput, width: 38 }}
                 onBlur={(e) => {
                   const a = Math.max(0, Math.min(1, parseFloat(e.target.value)));
@@ -354,23 +358,25 @@ function FilterPanelShell({ instanceId, currentCss, property, label }: PanelProp
 // ── Public exports ─────────────────────────────────────────────────────────────
 
 export function FilterPanel({ instanceId, currentCss }: PanelProps) {
+  const E = useI18n().t.inspector.editors;
   return (
     <FilterPanelShell
       instanceId={instanceId}
       currentCss={currentCss}
       property="filter"
-      label="Filter"
+      label={E.filter}
     />
   );
 }
 
 export function BackdropFilterPanel({ instanceId, currentCss }: PanelProps) {
+  const E = useI18n().t.inspector.editors;
   return (
     <FilterPanelShell
       instanceId={instanceId}
       currentCss={currentCss}
       property="backdropFilter"
-      label="Backdrop Filter"
+      label={E.backdropFilter}
     />
   );
 }

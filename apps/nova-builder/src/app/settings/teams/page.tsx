@@ -2,6 +2,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { UI_VARS as C } from "@/lib/uiTheme";
+import { useI18n } from "@/lib/i18n";
 
 
 type Team = { id: string; name: string; owner_id: string; plan: string; seats: number; myRole: string };
@@ -9,6 +10,7 @@ type Member = { id: string; email: string; role: string; status: string };
 type Billing = { plan: string; seats: number; usedSeats: number; seatPrice: number; monthlyTotal: number; billingCycle: string };
 
 export default function TeamsPage() {
+  const T = useI18n().t.dashboard.teams;
   const router = useRouter();
   const [teams, setTeams] = useState<Team[]>([]);
   const [activeTeam, setActiveTeam] = useState<Team | null>(null);
@@ -60,7 +62,7 @@ export default function TeamsPage() {
       body: JSON.stringify({ email: inviteEmail }),
     });
     const json = await res.json();
-    if (!res.ok) { setError(json.error ?? "Failed"); return; }
+    if (!res.ok) { setError(json.error ?? T.failed); return; }
     setInviteEmail("");
     loadTeamDetail(activeTeam.id);
   };
@@ -91,10 +93,10 @@ export default function TeamsPage() {
       <div style={{ maxWidth: 820, margin: "0 auto" }}>
         <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 24 }}>
           <button onClick={() => router.push("/projects")} style={{ background: "none", border: "none", color: C.textMuted, cursor: "pointer", fontSize: 18 }}>←</button>
-          <h1 style={{ margin: 0, fontSize: 20, fontWeight: 700 }}>Team Workspaces</h1>
+          <h1 style={{ margin: 0, fontSize: 20, fontWeight: 700 }}>{T.title}</h1>
         </div>
 
-        {loading && <div style={{ color: C.textMuted, fontSize: 13 }}>Loading…</div>}
+        {loading && <div style={{ color: C.textMuted, fontSize: 13 }}>{T.loading}</div>}
 
         {!loading && (
           <div style={{ display: "grid", gridTemplateColumns: "220px 1fr", gap: 20 }}>
@@ -115,7 +117,7 @@ export default function TeamsPage() {
                 ))}
               </div>
               <div style={{ display: "flex", gap: 6 }}>
-                <input value={newTeamName} onChange={(e) => setNewTeamName(e.target.value)} placeholder="New team"
+                <input value={newTeamName} onChange={(e) => setNewTeamName(e.target.value)} placeholder={T.newTeamPlaceholder}
                   onKeyDown={(e) => { if (e.key === "Enter") createTeam(); }}
                   style={{ flex: 1, padding: "6px 8px", background: C.card, border: `1px solid ${C.border}`, borderRadius: 6, color: C.text, fontSize: 13, fontFamily: C.font, outline: "none" }} />
                 <button onClick={createTeam} style={{ padding: "6px 10px", borderRadius: 6, border: "none", background: "rgba(124,58,237,0.8)", color: "#fff", fontSize: 12, fontWeight: 600, cursor: "pointer" }}>+</button>
@@ -126,7 +128,7 @@ export default function TeamsPage() {
             <div>
               {!activeTeam ? (
                 <div style={{ color: C.textMuted, fontSize: 13, padding: "40px 0", textAlign: "center" }}>
-                  Create a team to invite collaborators and share projects.
+                  {T.empty}
                 </div>
               ) : (
                 <>
@@ -134,13 +136,13 @@ export default function TeamsPage() {
                   {billing && (
                     <div style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 10, padding: "16px 18px", marginBottom: 16 }}>
                       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
-                        <div style={{ fontSize: 13, fontWeight: 600, color: C.textMuted, letterSpacing: "0.05em" }}>SEATS & BILLING</div>
+                        <div style={{ fontSize: 13, fontWeight: 600, color: C.textMuted, letterSpacing: "0.05em" }}>{T.seatsBilling}</div>
                         <span style={{ fontSize: 12, color: "#c4b5fd", background: "rgba(124,58,237,0.12)", border: "1px solid rgba(124,58,237,0.2)", borderRadius: 20, padding: "2px 10px", textTransform: "capitalize" }}>{billing.plan}</span>
                       </div>
                       <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
                         <div>
                           <div style={{ fontSize: 22, fontWeight: 800, color: C.text }}>{billing.usedSeats}/{billing.seats}</div>
-                          <div style={{ fontSize: 12, color: C.textMuted }}>seats used</div>
+                          <div style={{ fontSize: 12, color: C.textMuted }}>{T.seatsUsed}</div>
                         </div>
                         {isOwnerOrAdmin && (
                           <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
@@ -150,8 +152,8 @@ export default function TeamsPage() {
                         )}
                         <div style={{ flex: 1 }} />
                         <div style={{ textAlign: "right" }}>
-                          <div style={{ fontSize: 16, fontWeight: 700, color: C.text }}>${billing.monthlyTotal}/mo</div>
-                          <div style={{ fontSize: 12, color: C.textMuted }}>${billing.seatPrice}/seat · {billing.billingCycle}</div>
+                          <div style={{ fontSize: 16, fontWeight: 700, color: C.text }}>${billing.monthlyTotal}{T.perMonth}</div>
+                          <div style={{ fontSize: 12, color: C.textMuted }}>${billing.seatPrice}{T.perSeat} · {billing.billingCycle}</div>
                         </div>
                       </div>
                     </div>
@@ -159,7 +161,7 @@ export default function TeamsPage() {
 
                   {/* Members */}
                   <div style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 10, overflow: "hidden" }}>
-                    <div style={{ padding: "12px 16px", borderBottom: `1px solid ${C.border}`, fontSize: 13, fontWeight: 600, color: C.textMuted, letterSpacing: "0.05em" }}>MEMBERS</div>
+                    <div style={{ padding: "12px 16px", borderBottom: `1px solid ${C.border}`, fontSize: 13, fontWeight: 600, color: C.textMuted, letterSpacing: "0.05em" }}>{T.members}</div>
                     {members.map((m) => (
                       <div key={m.id} style={{ display: "flex", alignItems: "center", padding: "10px 16px", borderBottom: `1px solid ${C.border}`, gap: 10 }}>
                         <div style={{ flex: 1 }}>
@@ -176,7 +178,7 @@ export default function TeamsPage() {
                         <input value={inviteEmail} onChange={(e) => setInviteEmail(e.target.value)} placeholder="teammate@email.com"
                           onKeyDown={(e) => { if (e.key === "Enter") invite(); }}
                           style={{ flex: 1, padding: "7px 10px", background: "rgba(255,255,255,0.05)", border: `1px solid ${C.border}`, borderRadius: 6, color: C.text, fontSize: 12, fontFamily: C.font, outline: "none" }} />
-                        <button onClick={invite} style={{ padding: "7px 14px", borderRadius: 6, border: "none", background: "rgba(124,58,237,0.8)", color: "#fff", fontSize: 12, fontWeight: 600, cursor: "pointer" }}>Invite</button>
+                        <button onClick={invite} style={{ padding: "7px 14px", borderRadius: 6, border: "none", background: "rgba(124,58,237,0.8)", color: "#fff", fontSize: 12, fontWeight: 600, cursor: "pointer" }}>{T.invite}</button>
                       </div>
                     )}
                     {error && <div style={{ padding: "0 16px 12px", color: C.danger, fontSize: 13 }}>{error}</div>}

@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useRef } from "react";
 import { UI_VARS as C } from "@/lib/uiTheme";
+import { useI18n, fmt } from "@/lib/i18n";
 
 type Step = "confirm" | "create" | "saveAs";
 
@@ -24,11 +25,13 @@ export function SaveProjectDialog({
   onCreate,
   onSaveAs,
 }: SaveProjectDialogProps) {
+  const { t } = useI18n();
+  const D = t.chrome.saveDialog;
   const [step, setStep] = useState<Step>(isDemo ? "create" : "confirm");
-  const [name, setName] = useState(projectName || "Untitled Project");
+  const [name, setName] = useState(projectName || D.untitled);
   const [description, setDescription] = useState("");
   const [thumbnail, setThumbnail] = useState("");
-  const [saveAsName, setSaveAsName] = useState(projectName ? `${projectName} (copy)` : "Untitled Project (copy)");
+  const [saveAsName, setSaveAsName] = useState(fmt(D.copyName, { name: projectName || D.untitled }));
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
@@ -38,10 +41,10 @@ export function SaveProjectDialog({
   useEffect(() => {
     if (isOpen) {
       setStep(isDemo ? "create" : "confirm");
-      setName(projectName || "Untitled Project");
+      setName(projectName || D.untitled);
       setDescription("");
       setThumbnail("");
-      setSaveAsName(projectName ? `${projectName} (copy)` : "Untitled Project (copy)");
+      setSaveAsName(fmt(D.copyName, { name: projectName || D.untitled }));
       setIsSubmitting(false);
       setErrorMsg(null);
 
@@ -94,7 +97,7 @@ export function SaveProjectDialog({
       onClose();
     } catch (err) {
       console.error(err);
-      setErrorMsg("Failed to update project. Please try again.");
+      setErrorMsg(D.errorUpdate);
     } finally {
       setIsSubmitting(false);
     }
@@ -103,7 +106,7 @@ export function SaveProjectDialog({
   const handleCreateSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!name.trim()) {
-      setErrorMsg("Project name is required.");
+      setErrorMsg(D.errorNameRequired);
       return;
     }
     setIsSubmitting(true);
@@ -113,7 +116,7 @@ export function SaveProjectDialog({
       onClose();
     } catch (err) {
       console.error(err);
-      setErrorMsg("Failed to create project. Please try again.");
+      setErrorMsg(D.errorCreate);
     } finally {
       setIsSubmitting(false);
     }
@@ -122,7 +125,7 @@ export function SaveProjectDialog({
   const handleSaveAsSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!saveAsName.trim()) {
-      setErrorMsg("Project name is required.");
+      setErrorMsg(D.errorNameRequired);
       return;
     }
     setIsSubmitting(true);
@@ -132,7 +135,7 @@ export function SaveProjectDialog({
       onClose();
     } catch (err) {
       console.error(err);
-      setErrorMsg("Failed to save copy. Please try again.");
+      setErrorMsg(D.errorSaveAs);
     } finally {
       setIsSubmitting(false);
     }
@@ -230,9 +233,9 @@ export function SaveProjectDialog({
         {/* Header */}
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
           <h2 style={titleStyle}>
-            {step === "confirm" && "Save changes?"}
-            {step === "create" && "Save Project"}
-            {step === "saveAs" && "Save Project As"}
+            {step === "confirm" && D.titleConfirm}
+            {step === "create" && D.titleCreate}
+            {step === "saveAs" && D.titleSaveAs}
           </h2>
           {!isSubmitting && (
             <button
@@ -255,24 +258,24 @@ export function SaveProjectDialog({
         {step === "confirm" && (
           <>
             <p style={{ margin: 0, fontSize: 13, color: C.textMuted, lineHeight: 1.5 }}>
-              Choose how you want to save your changes to the project.
+              {D.confirmBody}
             </p>
             <div style={{ fontSize: 14, fontWeight: 700, padding: "12px 14px", background: "rgba(255,255,255,0.03)", borderRadius: 8, border: `1px solid ${C.border}` }}>
-              Project: <span style={{ color: C.accentText }}>{projectName}</span>
+              {D.projectLabel} <span style={{ color: C.accentText }}>{projectName}</span>
             </div>
 
             <div style={{ display: "flex", gap: 8, justifyContent: "flex-end", marginTop: 8 }}>
               <button onClick={onClose} disabled={isSubmitting} style={secondaryBtnStyle}>
-                Cancel
+                {D.cancel}
               </button>
               <button onClick={() => setStep("saveAs")} disabled={isSubmitting} style={secondaryBtnStyle}>
-                Save As
+                {D.saveAs}
               </button>
               <button onClick={handleUpdateClick} disabled={isSubmitting} style={primaryBtnStyle}>
                 {isSubmitting ? (
                   <span className="spinner" style={{ width: 12, height: 12, border: "2px solid rgba(255,255,255,0.3)", borderTop: "2px solid white", borderRadius: "50%", display: "inline-block", animation: "spin 0.6s linear infinite" }} />
                 ) : null}
-                Update
+                {D.update}
               </button>
             </div>
           </>
@@ -282,13 +285,13 @@ export function SaveProjectDialog({
         {step === "create" && (
           <form onSubmit={handleCreateSubmit} style={{ display: "flex", flexDirection: "column", gap: 14 }}>
             <div>
-              <label style={labelStyle}>Project Name</label>
+              <label style={labelStyle}>{D.nameLabel}</label>
               <input
                 ref={nameInputRef}
                 type="text"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                placeholder="e.g. Portfolio Website"
+                placeholder={D.namePlaceholder}
                 disabled={isSubmitting}
                 style={inputStyle}
                 required
@@ -296,11 +299,11 @@ export function SaveProjectDialog({
             </div>
 
             <div>
-              <label style={labelStyle}>Description (Optional)</label>
+              <label style={labelStyle}>{D.descriptionLabel}</label>
               <textarea
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                placeholder="e.g. My personal portfolio built with Nova Builder"
+                placeholder={D.descriptionPlaceholder}
                 rows={2}
                 disabled={isSubmitting}
                 style={textareaStyle}
@@ -308,12 +311,12 @@ export function SaveProjectDialog({
             </div>
 
             <div>
-              <label style={labelStyle}>Thumbnail URL (Optional)</label>
+              <label style={labelStyle}>{D.thumbnailLabel}</label>
               <input
                 type="text"
                 value={thumbnail}
                 onChange={(e) => setThumbnail(e.target.value)}
-                placeholder="e.g. https://example.com/thumbnail.png"
+                placeholder={D.thumbnailPlaceholder}
                 disabled={isSubmitting}
                 style={inputStyle}
               />
@@ -321,13 +324,13 @@ export function SaveProjectDialog({
 
             <div style={{ display: "flex", gap: 8, justifyContent: "flex-end", marginTop: 8 }}>
               <button type="button" onClick={onClose} disabled={isSubmitting} style={secondaryBtnStyle}>
-                Cancel
+                {D.cancel}
               </button>
               <button type="submit" disabled={isSubmitting} style={primaryBtnStyle}>
                 {isSubmitting ? (
                   <span className="spinner" style={{ width: 12, height: 12, border: "2px solid rgba(255,255,255,0.3)", borderTop: "2px solid white", borderRadius: "50%", display: "inline-block", animation: "spin 0.6s linear infinite" }} />
                 ) : null}
-                Create Project
+                {D.createProject}
               </button>
             </div>
           </form>
@@ -337,17 +340,17 @@ export function SaveProjectDialog({
         {step === "saveAs" && (
           <form onSubmit={handleSaveAsSubmit} style={{ display: "flex", flexDirection: "column", gap: 14 }}>
             <p style={{ margin: 0, fontSize: 13, color: C.textMuted, lineHeight: 1.5 }}>
-              Save a new copy of this project under a different name. The original project will remain unchanged.
+              {D.saveAsBody}
             </p>
 
             <div>
-              <label style={labelStyle}>New Project Name</label>
+              <label style={labelStyle}>{D.newNameLabel}</label>
               <input
                 ref={saveAsInputRef}
                 type="text"
                 value={saveAsName}
                 onChange={(e) => setSaveAsName(e.target.value)}
-                placeholder="e.g. Landing Page (Copy)"
+                placeholder={D.newNamePlaceholder}
                 disabled={isSubmitting}
                 style={inputStyle}
                 required
@@ -356,13 +359,13 @@ export function SaveProjectDialog({
 
             <div style={{ display: "flex", gap: 8, justifyContent: "flex-end", marginTop: 8 }}>
               <button type="button" onClick={handleBack} disabled={isSubmitting} style={secondaryBtnStyle}>
-                Back
+                {D.back}
               </button>
               <button type="submit" disabled={isSubmitting} style={primaryBtnStyle}>
                 {isSubmitting ? (
                   <span className="spinner" style={{ width: 12, height: 12, border: "2px solid rgba(255,255,255,0.3)", borderTop: "2px solid white", borderRadius: "50%", display: "inline-block", animation: "spin 0.6s linear infinite" }} />
                 ) : null}
-                Save As Copy
+                {D.saveAsCopy}
               </button>
             </div>
           </form>

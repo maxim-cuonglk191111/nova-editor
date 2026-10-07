@@ -8,6 +8,7 @@ import { FolderItem } from "./FolderItem";
 import { usePageCrud } from "./usePageCrud";
 import type { PageSeo } from "./usePageCrud";
 import { UI_VARS as C } from "@/lib/uiTheme";
+import { useI18n, fmt } from "@/lib/i18n";
 
 
 const inputStyle: React.CSSProperties = {
@@ -24,6 +25,7 @@ const inputStyle: React.CSSProperties = {
 };
 
 export function PagesPanel() {
+  const L = useI18n().t.sidebar.pages;
   const pages = useStore($pages);
   const selectedPageId = useStore($selectedPageId);
   const { createPage, renamePage, updatePageSeo, deletePage, createFolder, renameFolder, deleteFolder } = usePageCrud();
@@ -36,7 +38,7 @@ export function PagesPanel() {
   const [newFolderName, setNewFolderName] = useState("");
 
   if (!pages) {
-    return <div style={{ padding: 12, fontSize: 13, color: C.textMuted, fontFamily: C.font }}>No pages loaded.</div>;
+    return <div style={{ padding: 12, fontSize: 13, color: C.textMuted, fontFamily: C.font }}>{L.noPages}</div>;
   }
 
   // Narrow for use inside closures — TypeScript doesn't track non-null through nested functions.
@@ -80,7 +82,7 @@ export function PagesPanel() {
               onToggle: () => toggleFolder(childId),
               onRename: (name) => renameFolder(childId, name),
               onDelete: () => {
-                if (confirm(`Delete folder "${folder.name}"? Its pages will be moved to the parent.`)) {
+                if (confirm(fmt(L.confirmDeleteFolder, { name: folder.name }))) {
                   deleteFolder(childId);
                 }
               },
@@ -110,7 +112,7 @@ export function PagesPanel() {
             onRename: (name, path) => renamePage(page.id, name, path),
             onSeoChange: (seo: PageSeo) => updatePageSeo(page.id, seo),
             onDelete: () => {
-              if (confirm(`Delete page "${page.name}"?`)) deletePage(page.id);
+              if (confirm(fmt(L.confirmDeletePage, { name: page.name }))) deletePage(page.id);
             },
           }}
         />
@@ -127,7 +129,7 @@ export function PagesPanel() {
       {/* Header */}
       <div style={{ padding: "7px 10px 6px", borderBottom: `1px solid ${C.border}`, flexShrink: 0 }}>
         <span style={{ fontSize: 12, fontFamily: C.font, color: C.textMuted, fontWeight: 700, letterSpacing: "0.06em", textTransform: "uppercase" }}>
-          Pages
+          {L.title}
         </span>
       </div>
 
@@ -139,20 +141,20 @@ export function PagesPanel() {
       {/* New page form */}
       {showNewPage && (
         <div style={{ padding: "8px 10px", borderTop: `1px solid ${C.border}`, display: "flex", flexDirection: "column", gap: 4, flexShrink: 0 }}>
-          <input autoFocus value={newName} onChange={(e) => setNewName(e.target.value)} placeholder="Page name"
+          <input autoFocus value={newName} onChange={(e) => setNewName(e.target.value)} placeholder={L.pageName}
             onKeyDown={(e) => { if (e.key === "Enter") handleCreatePage(); if (e.key === "Escape") { setShowNewPage(false); setNewName(""); setNewPath("/"); } }}
             style={inputStyle} />
-          <input value={newPath} onChange={(e) => setNewPath(e.target.value)} placeholder="/path or /blog/[slug]"
+          <input value={newPath} onChange={(e) => setNewPath(e.target.value)} placeholder={L.pathPlaceholder}
             onKeyDown={(e) => { if (e.key === "Enter") handleCreatePage(); if (e.key === "Escape") { setShowNewPage(false); } }}
             style={{ ...inputStyle, border: "1px solid rgba(255,255,255,0.1)", color: C.textMuted, fontFamily: C.fontMono, fontSize: 13 }} />
           {newPath.includes("[") && (
             <div style={{ fontSize: 10, color: C.accentText, fontFamily: C.font, marginTop: -2 }}>
-              Path param: use <code style={{ fontFamily: C.fontMono }}>/[slug]</code> syntax
+              {L.pathParamHintBefore} <code style={{ fontFamily: C.fontMono }}>/[slug]</code> {L.pathParamHintAfter}
             </div>
           )}
           <div style={{ display: "flex", gap: 6, marginTop: 2 }}>
-            <button onClick={handleCreatePage} style={{ flex: 1, padding: "4px 0", background: "rgba(139,92,246,0.25)", border: "1px solid rgba(139,92,246,0.5)", borderRadius: 4, color: "#c4b5fd", fontSize: 13, fontFamily: C.font, cursor: "pointer" }}>Create</button>
-            <button onClick={() => { setShowNewPage(false); setNewName(""); setNewPath("/"); }} style={{ padding: "4px 10px", background: "none", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 4, color: C.textMuted, fontSize: 13, fontFamily: C.font, cursor: "pointer" }}>Cancel</button>
+            <button onClick={handleCreatePage} style={{ flex: 1, padding: "4px 0", background: "rgba(139,92,246,0.25)", border: "1px solid rgba(139,92,246,0.5)", borderRadius: 4, color: "#c4b5fd", fontSize: 13, fontFamily: C.font, cursor: "pointer" }}>{L.create}</button>
+            <button onClick={() => { setShowNewPage(false); setNewName(""); setNewPath("/"); }} style={{ padding: "4px 10px", background: "none", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 4, color: C.textMuted, fontSize: 13, fontFamily: C.font, cursor: "pointer" }}>{L.cancel}</button>
           </div>
         </div>
       )}
@@ -160,12 +162,12 @@ export function PagesPanel() {
       {/* New folder form */}
       {showNewFolder && (
         <div style={{ padding: "8px 10px", borderTop: `1px solid ${C.border}`, display: "flex", flexDirection: "column", gap: 4, flexShrink: 0 }}>
-          <input autoFocus value={newFolderName} onChange={(e) => setNewFolderName(e.target.value)} placeholder="Folder name"
+          <input autoFocus value={newFolderName} onChange={(e) => setNewFolderName(e.target.value)} placeholder={L.folderName}
             onKeyDown={(e) => { if (e.key === "Enter") handleCreateFolder(); if (e.key === "Escape") { setShowNewFolder(false); setNewFolderName(""); } }}
             style={inputStyle} />
           <div style={{ display: "flex", gap: 6 }}>
-            <button onClick={handleCreateFolder} style={{ flex: 1, padding: "4px 0", background: "rgba(139,92,246,0.25)", border: "1px solid rgba(139,92,246,0.5)", borderRadius: 4, color: "#c4b5fd", fontSize: 13, fontFamily: C.font, cursor: "pointer" }}>Create Folder</button>
-            <button onClick={() => { setShowNewFolder(false); setNewFolderName(""); }} style={{ padding: "4px 10px", background: "none", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 4, color: C.textMuted, fontSize: 13, fontFamily: C.font, cursor: "pointer" }}>Cancel</button>
+            <button onClick={handleCreateFolder} style={{ flex: 1, padding: "4px 0", background: "rgba(139,92,246,0.25)", border: "1px solid rgba(139,92,246,0.5)", borderRadius: 4, color: "#c4b5fd", fontSize: 13, fontFamily: C.font, cursor: "pointer" }}>{L.createFolder}</button>
+            <button onClick={() => { setShowNewFolder(false); setNewFolderName(""); }} style={{ padding: "4px 10px", background: "none", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 4, color: C.textMuted, fontSize: 13, fontFamily: C.font, cursor: "pointer" }}>{L.cancel}</button>
           </div>
         </div>
       )}
@@ -175,11 +177,11 @@ export function PagesPanel() {
         <div style={{ padding: "6px 10px", borderTop: `1px solid ${C.border}`, flexShrink: 0, display: "flex", gap: 10 }}>
           <button onClick={() => setShowNewPage(true)} style={{ background: "none", border: "none", color: C.textMuted, fontSize: 13, fontFamily: C.font, cursor: "pointer", padding: 0 }}
             onMouseEnter={(e) => (e.currentTarget.style.color = C.text)} onMouseLeave={(e) => (e.currentTarget.style.color = C.textMuted)}>
-            + Page
+            {L.addPage}
           </button>
           <button onClick={() => setShowNewFolder(true)} style={{ background: "none", border: "none", color: C.textMuted, fontSize: 13, fontFamily: C.font, cursor: "pointer", padding: 0 }}
             onMouseEnter={(e) => (e.currentTarget.style.color = C.text)} onMouseLeave={(e) => (e.currentTarget.style.color = C.textMuted)}>
-            + Folder
+            {L.addFolder}
           </button>
         </div>
       )}

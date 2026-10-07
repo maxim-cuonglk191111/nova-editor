@@ -1,6 +1,7 @@
 import { serializeProject } from "./serializer";
 import { downloadFile } from "./downloader";
 import { showToast } from "@/lib/nano-states";
+import { getActiveDictionary } from "@/lib/i18n/dictionaries";
 
 export function exportProject(projectName: string) {
   try {
@@ -14,11 +15,11 @@ export function exportProject(projectName: string) {
       : "untitled";
     const filename = `${safeName || "untitled"}.nova`;
     downloadFile(content, filename, "application/json");
-    showToast("Project exported successfully!", "success");
+    showToast(getActiveDictionary().chrome.toastExported, "success");
   } catch (err) {
     console.error("Failed to export project:", err);
     showToast(
-      err instanceof Error ? err.message : "Failed to export project",
+      err instanceof Error ? err.message : getActiveDictionary().chrome.toastExportFailed,
       "error"
     );
   }

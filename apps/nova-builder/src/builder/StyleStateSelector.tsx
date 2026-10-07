@@ -4,10 +4,11 @@
 import { useStore } from "@nanostores/react";
 import { $selectedState, type CSSState } from "@/lib/nano-states";
 import { UI_VARS as C } from "@/lib/uiTheme";
+import { useI18n } from "@/lib/i18n";
 import { ToggleGroup } from "./controls/ToggleGroup";
 
-const CSS_STATES: { label: string; value: CSSState }[] = [
-  { label: "Default", value: "" },
+// Pseudo-state selectors are CSS syntax and stay untranslated.
+const PSEUDO_STATES: { label: string; value: CSSState }[] = [
   { label: ":hover", value: ":hover" },
   { label: ":focus", value: ":focus" },
   { label: ":focus-within", value: ":focus-within" },
@@ -17,7 +18,9 @@ const CSS_STATES: { label: string; value: CSSState }[] = [
 ];
 
 export function StateSelector() {
+  const { t } = useI18n();
   const selected = useStore($selectedState);
+  const states = [{ label: t.inspector.stateDefault, value: "" as CSSState }, ...PSEUDO_STATES];
   const hasNonDefault = selected !== "";
 
   return (
@@ -31,7 +34,7 @@ export function StateSelector() {
     >
       <ToggleGroup
         mono
-        options={CSS_STATES}
+        options={states}
         value={selected}
         onChange={(value) => $selectedState.set(value)}
       />

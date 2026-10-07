@@ -4,6 +4,7 @@ import { useStore } from "@nanostores/react";
 import { $instances } from "@/lib/data-stores";
 import { $selectedInstanceId, $selectedInstanceSelector, $multiSelectedInstanceIds } from "@/lib/nano-states";
 import { $canUndo, $canRedo, undo, redo } from "@/lib/history";
+import { useI18n, fmt } from "@/lib/i18n";
 
 function buildAncestors(
   instanceId: string,
@@ -41,6 +42,7 @@ const btnBase: React.CSSProperties = {
 };
 
 export function Footer() {
+  const { t } = useI18n();
   const selectedId = useStore($selectedInstanceId);
   const multiSelectedIds = useStore($multiSelectedInstanceIds);
   const instances = useStore($instances);
@@ -70,7 +72,7 @@ export function Footer() {
       <button
         onClick={undo}
         disabled={!canUndo}
-        title="Undo (Ctrl+Z)"
+        title={t.chrome.undoTitle}
         style={{
           ...btnBase,
           color: canUndo ? "rgba(255,255,255,0.7)" : "rgba(255,255,255,0.2)",
@@ -83,7 +85,7 @@ export function Footer() {
       <button
         onClick={redo}
         disabled={!canRedo}
-        title="Redo (Ctrl+Shift+Z)"
+        title={t.chrome.redoTitle}
         style={{
           ...btnBase,
           color: canRedo ? "rgba(255,255,255,0.7)" : "rgba(255,255,255,0.2)",
@@ -110,11 +112,11 @@ export function Footer() {
             fontFamily: "system-ui, sans-serif",
           }}
         >
-          {multiSelectedIds.length} selected — Ctrl+D duplicate · Del delete
+          {fmt(t.chrome.multiSelected, { count: multiSelectedIds.length })}
         </span>
       ) : ancestors.length === 0 ? (
         <span style={{ fontSize: 13, color: "rgba(255,255,255,0.3)" }}>
-          No selection
+          {t.chrome.noSelection}
         </span>
       ) : (
         ancestors.map((item, i) => (

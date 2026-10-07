@@ -1,4 +1,12 @@
 import { I18nDictionary } from "../types";
+import { viChrome } from "./vi/chrome";
+import { viAdmin } from "./vi/admin";
+import { viSite } from "./vi/site";
+import { viBilling } from "./vi/billing";
+import { viDashboard } from "./vi/dashboard";
+import { viTools } from "./vi/tools";
+import { viInspector } from "./vi/inspector";
+import { viSidebar } from "./vi/sidebar";
 
 export const viDictionary: I18nDictionary = {
   nav: {
@@ -58,6 +66,9 @@ export const viDictionary: I18nDictionary = {
     emailVerifiedBody: "Địa chỉ email của bạn đã được xác nhận. Cảm ơn bạn đã bảo mật tài khoản!",
     verifyFailedTitle: "Xác minh thất bại",
     continueToProjects: "Tiếp tục đến dự án của bạn",
+    passwordPlaceholder: "Mật khẩu của bạn",
+    invalidCredentials: "Email hoặc mật khẩu không đúng.",
+    signInFailed: "Đăng nhập thất bại. Vui lòng thử lại.",
   },
   common: {
     save: "Lưu",
@@ -326,7 +337,7 @@ export const viDictionary: I18nDictionary = {
     steps: [
       { title: "Tạo trang", body: "Nhấn '+ Trang mới' và mô tả website trong một câu. AI xây dựng ngay lập tức." },
       { title: "Chỉnh sửa trong trình thiết kế", body: "Nhấp vào bất kỳ phần tử nào để thay đổi văn bản, màu sắc hoặc bố cục. Không cần code." },
-      { title: "Xuất bản hoặc chia sẻ", body: "Nhấn Xuất bản để nhận liên kết chia sẻ, hoặc xuất mã React sạch." },
+      { title: "Xem trước hoặc xuất", body: "Nhấn Xem trước để xem trang của bạn, hoặc Xuất để tải về dạng HTML." },
     ],
   },
   coachmarks: {
@@ -391,5 +402,27 @@ export const viDictionary: I18nDictionary = {
     deleteInUse: "{count} thành phần đang dùng tài nguyên này.",
     deleteWarning: "Xóa sẽ làm hỏng các tham chiếu đó.",
     delete: "Xóa",
+    fileOne: "{count} tệp",
+    fileMany: "{count} tệp",
+    deleteFolder: "Xóa thư mục",
+    preview: "Xem trước",
+    insert: "Chèn",
+    closeEsc: "Đóng (Esc)",
+    zoomOut: "Thu nhỏ (-)",
+    zoomReset: "Đặt lại thu phóng (0)",
+    zoomIn: "Phóng to (+)",
+    fitScreen: "Vừa màn hình",
+    uploadFailed: "Tải lên thất bại",
+    createFolderFailed: "Không thể tạo thư mục",
+    deleteFailed: "Xóa thất bại",
+    confirmDeleteFolder: "Xóa thư mục \"{name}\"?",
   },
+  chrome: viChrome,
+  admin: viAdmin,
+  site: viSite,
+  billing: viBilling,
+  dashboard: viDashboard,
+  tools: viTools,
+  inspector: viInspector,
+  sidebar: viSidebar,
 };

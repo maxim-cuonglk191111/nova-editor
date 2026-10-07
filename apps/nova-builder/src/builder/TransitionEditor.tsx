@@ -2,6 +2,7 @@
 import { useMemo } from "react";
 import { writeStyleProperty } from "@/lib/styleWriteHelper";
 import { UI_VARS as C } from "@/lib/uiTheme";
+import { useI18n, fmt } from "@/lib/i18n";
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
@@ -224,11 +225,12 @@ export function SelectField({ value, options, onChange, width = 90 }: { value: s
 }
 
 export function DeleteBtn({ onClick }: { onClick: () => void }) {
+  const E = useI18n().t.inspector.editors;
   return (
     <button
       onClick={onClick}
       style={{ border: "none", background: "none", color: "rgba(248,113,113,0.6)", fontSize: 16, lineHeight: 1, cursor: "pointer", padding: "0 2px", flexShrink: 0 }}
-      title="Remove"
+      title={E.remove}
     >×</button>
   );
 }
@@ -236,6 +238,7 @@ export function DeleteBtn({ onClick }: { onClick: () => void }) {
 // ── Panel header ──────────────────────────────────────────────────────────────
 
 export function PanelHeader({ label, count, onAdd }: { label: string; count: number; onAdd: () => void }) {
+  const E = useI18n().t.inspector.editors;
   return (
     <div style={{ display: "flex", alignItems: "center", padding: "5px 12px", background: C.sectionBg }}>
       <span style={{ fontSize: 12, color: C.textMuted, fontFamily: C.font, fontWeight: 700, letterSpacing: "0.07em", textTransform: "uppercase" as const, flex: 1 }}>
@@ -244,7 +247,7 @@ export function PanelHeader({ label, count, onAdd }: { label: string; count: num
       </span>
       <button
         onClick={onAdd}
-        title={`Add ${label}`}
+        title={fmt(E.addItem, { label })}
         style={{ width: 20, height: 20, border: `1px solid ${C.border}`, borderRadius: 3, background: "none", color: C.textMuted, fontSize: 15, lineHeight: "18px", cursor: "pointer", padding: 0 }}
       >+</button>
     </div>
@@ -258,12 +261,13 @@ function TransitionLayerRow({ layer, onChange, onDelete }: {
   onChange: (l: TransitionLayer) => void;
   onDelete: () => void;
 }) {
+  const E = useI18n().t.inspector.editors;
   const upd = (patch: Partial<TransitionLayer>) => onChange({ ...layer, ...patch });
   return (
     <div style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 5, padding: "5px 7px", display: "flex", flexDirection: "column", gap: 5 }}>
       <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
         <div style={{ flex: 1 }}>
-          <FieldLabel text="Property" />
+          <FieldLabel text={E.property} />
           <input
             list="nova-transition-props"
             defaultValue={layer.property}
@@ -281,21 +285,21 @@ function TransitionLayerRow({ layer, onChange, onDelete }: {
       </div>
       <div style={{ display: "flex", gap: 5, flexWrap: "wrap", alignItems: "flex-end" }}>
         <div>
-          <FieldLabel text="Duration" />
+          <FieldLabel text={E.duration} />
           <div style={{ display: "flex", alignItems: "center", gap: 2 }}>
             <MsInput value={layer.duration} onChange={(n) => upd({ duration: n })} />
             <span style={{ fontSize: 9, color: C.textMuted, fontFamily: C.fontMono }}>ms</span>
           </div>
         </div>
         <div>
-          <FieldLabel text="Delay" />
+          <FieldLabel text={E.delay} />
           <div style={{ display: "flex", alignItems: "center", gap: 2 }}>
             <MsInput value={layer.delay} onChange={(n) => upd({ delay: n })} />
             <span style={{ fontSize: 9, color: C.textMuted, fontFamily: C.fontMono }}>ms</span>
           </div>
         </div>
         <div style={{ flex: 1, minWidth: 80 }}>
-          <FieldLabel text="Easing" />
+          <FieldLabel text={E.easing} />
           <SelectField value={layer.easing} options={EASING_OPTIONS} onChange={(v) => upd({ easing: v })} width={100} />
         </div>
       </div>
@@ -308,6 +312,7 @@ function TransitionLayerRow({ layer, onChange, onDelete }: {
 type PanelProps = { instanceId: string; currentCss: string };
 
 export function TransitionPanel({ instanceId, currentCss }: PanelProps) {
+  const E = useI18n().t.inspector.editors;
   const layers = useMemo(() => parseTransitionCss(currentCss), [currentCss]);
 
   const commit = (next: TransitionLayer[]) =>
@@ -319,7 +324,7 @@ export function TransitionPanel({ instanceId, currentCss }: PanelProps) {
 
   return (
     <div style={{ borderBottom: `1px solid ${C.border}` }}>
-      <PanelHeader label="Transition" count={layers.length} onAdd={addLayer} />
+      <PanelHeader label={E.transition} count={layers.length} onAdd={addLayer} />
       {layers.length > 0 && (
         <div style={{ padding: "4px 8px 8px", display: "flex", flexDirection: "column", gap: 4 }}>
           {layers.map((l, i) => (

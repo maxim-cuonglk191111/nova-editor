@@ -1,6 +1,7 @@
 ﻿"use client";
 import { useState } from "react";
 import { UI_VARS as C } from "@/lib/uiTheme";
+import { useI18n } from "@/lib/i18n";
 
 
 type FolderItemHandlers = {
@@ -17,6 +18,7 @@ type FolderItemProps = {
 };
 
 export function FolderItem({ name, isExpanded, handlers, children }: FolderItemProps) {
+  const L = useI18n().t.sidebar.pages;
   const { onToggle, onRename, onDelete } = handlers;
   const [hovered, setHovered] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
@@ -66,7 +68,7 @@ export function FolderItem({ name, isExpanded, handlers, children }: FolderItemP
         {hovered && !isEditing && (
           <button
             onClick={(e) => { e.stopPropagation(); onDelete(); }}
-            title="Delete folder (pages moved to parent)"
+            title={L.deleteFolder}
             style={{ position: "absolute", right: 6, background: "rgba(30,41,59,0.95)", border: "none", color: C.danger, cursor: "pointer", fontSize: 13, lineHeight: 1, padding: "1px 4px", borderRadius: 3 }}
           >
             ×

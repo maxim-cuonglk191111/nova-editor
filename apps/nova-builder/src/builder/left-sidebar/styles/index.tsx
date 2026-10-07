@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useStore } from "@nanostores/react";
 import { $cssVars } from "@/lib/nano-states";
 import { UI_VARS as C } from "@/lib/uiTheme";
+import { useI18n } from "@/lib/i18n";
 
 
 const inputSt: React.CSSProperties = {
@@ -19,6 +20,7 @@ const inputSt: React.CSSProperties = {
 };
 
 export function StylesPanel() {
+  const L = useI18n().t.sidebar.cssVars;
   const vars = useStore($cssVars);
   const [draftName, setDraftName] = useState("");
   const [draftValue, setDraftValue] = useState("");
@@ -38,8 +40,8 @@ export function StylesPanel() {
 
   function addVar() {
     const name = draftName.trim().replace(/^--/, "");
-    if (!name) { setError("Name is required"); return; }
-    if (!/^[a-zA-Z][\w-]*$/.test(name)) { setError("Use letters, numbers, hyphens only (start with a letter)"); return; }
+    if (!name) { setError(L.errorNameRequired); return; }
+    if (!/^[a-zA-Z][\w-]*$/.test(name)) { setError(L.errorNameFormat); return; }
     $cssVars.set({ ...$cssVars.get(), [name]: draftValue.trim() || "inherit" });
     setDraftName("");
     setDraftValue("");
@@ -59,12 +61,12 @@ export function StylesPanel() {
       }}
     >
       <div style={{ fontSize: 12, color: C.textMuted, fontWeight: 700, letterSpacing: "0.07em", textTransform: "uppercase", marginBottom: 10 }}>
-        CSS Variables
+        {L.title}
       </div>
 
       {entries.length === 0 && (
         <div style={{ fontSize: 13, color: C.textMuted, marginBottom: 12, padding: "8px 0" }}>
-          No variables yet. Add one below.
+          {L.empty}
         </div>
       )}
 
@@ -90,17 +92,17 @@ export function StylesPanel() {
 
       {/* Add new */}
       <div style={{ borderTop: `1px solid ${C.border}`, marginTop: 8, paddingTop: 10 }}>
-        <div style={{ fontSize: 12, color: C.textMuted, marginBottom: 5, fontWeight: 600 }}>Add variable</div>
+        <div style={{ fontSize: 12, color: C.textMuted, marginBottom: 5, fontWeight: 600 }}>{L.addVariable}</div>
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 4, marginBottom: 4 }}>
           <input
-            placeholder="name (e.g. brand-color)"
+            placeholder={L.namePlaceholder}
             value={draftName}
             onChange={(e) => { setDraftName(e.target.value); setError(""); }}
             onKeyDown={(e) => { if (e.key === "Enter") addVar(); }}
             style={{ ...inputSt, fontFamily: C.mono }}
           />
           <input
-            placeholder="value (e.g. #7c3aed)"
+            placeholder={L.valuePlaceholder}
             value={draftValue}
             onChange={(e) => setDraftValue(e.target.value)}
             onKeyDown={(e) => { if (e.key === "Enter") addVar(); }}
@@ -122,13 +124,14 @@ export function StylesPanel() {
             cursor: "pointer",
           }}
         >
-          + Add variable
+          {L.addButton}
         </button>
       </div>
 
       <div style={{ marginTop: 12, padding: "8px 10px", background: "rgba(124,58,237,0.06)", border: `1px solid rgba(124,58,237,0.15)`, borderRadius: 4 }}>
-        <div style={{ fontSize: 9, color: "#7c3aed", fontWeight: 700, letterSpacing: "0.06em", textTransform: "uppercase", marginBottom: 4 }}>Usage</div>
+        <div style={{ fontSize: 9, color: "#7c3aed", fontWeight: 700, letterSpacing: "0.06em", textTransform: "uppercase", marginBottom: 4 }}>{L.usage}</div>
         <div style={{ fontFamily: C.mono, fontSize: 12, color: C.textMuted, lineHeight: 1.6 }}>
+          {/* i18n-ignore — CSS sample */}
           {"color: var(--brand-color)"}
         </div>
       </div>

@@ -5,6 +5,8 @@ import { $selectedInstanceId, $selectedBreakpoint } from "@/lib/nano-states";
 import { updateData } from "@/lib/transactions";
 import { ensureLocalSource } from "@/lib/style-object-model";
 import { UI_VARS as C } from "@/lib/uiTheme";
+import { useI18n } from "@/lib/i18n";
+import type { I18nSettingsPanelDictionary } from "@/lib/i18n";
 
 type AnyProp = {
   id: string;
@@ -20,35 +22,22 @@ const HIDDEN_PROPS = new Set(["_legacyClasses"]);
 // Display order for common props
 const PROP_ORDER = ["src", "alt", "width", "height", "loading", "decoding"];
 
-// Human-readable labels
-const PROP_LABELS: Record<string, string> = {
-  src: "Source URL",
-  alt: "Alt text",
-  width: "Width",
-  height: "Height",
-  loading: "Loading",
-  decoding: "Decoding",
-  href: "Link URL",
-  target: "Open in",
-  placeholder: "Placeholder",
-};
-
 // Enum options for specific prop names (non-objectFit)
-const ENUM_OPTIONS: Record<string, { label: string; value: string }[]> = {
+const enumOptions = (S: I18nSettingsPanelDictionary): Record<string, { label: string; value: string }[]> => ({
   target: [
-    { label: "Same tab (_self)", value: "_self" },
-    { label: "New tab (_blank)", value: "_blank" },
+    { label: S.targetSelf, value: "_self" },
+    { label: S.targetBlank, value: "_blank" },
   ],
   loading: [
-    { label: "Lazy (default)", value: "lazy" },
-    { label: "Eager (preload)", value: "eager" },
+    { label: S.loadingLazy, value: "lazy" },
+    { label: S.loadingEager, value: "eager" },
   ],
   decoding: [
-    { label: "Auto", value: "auto" },
-    { label: "Async", value: "async" },
-    { label: "Sync", value: "sync" },
+    { label: S.decodingAuto, value: "auto" },
+    { label: S.decodingAsync, value: "async" },
+    { label: S.decodingSync, value: "sync" },
   ],
-};
+});
 
 const OBJECT_FIT_VALUES = ["cover", "contain", "fill", "none", "scale-down"] as const;
 
@@ -89,6 +78,7 @@ const labelStyle: React.CSSProperties = {
 
 // ── ObjectFit control (reads/writes CSS styles, not props) ──────────────────
 function ObjectFitControl({ instanceId }: { instanceId: string }) {
+  const S = useI18n().t.inspector.settings;
   const styles = useStore($styles) as Map<string, { property: string; value: { value: string }; styleSourceId: string; breakpointId: string }>;
   const styleSourceSelections = useStore($styleSourceSelections) as Map<string, { instanceId: string; values: string[] }>;
   const breakpoints = useStore($breakpoints) as Map<string, { id: string; minWidth?: number }>;
@@ -129,7 +119,7 @@ function ObjectFitControl({ instanceId }: { instanceId: string }) {
 
   return (
     <div style={{ padding: "6px 14px", display: "flex", flexDirection: "column", gap: 6 }}>
-      <label style={labelStyle}>Object Fit</label>
+      <label style={labelStyle}>{S.objectFit}</label>
       <div style={{ display: "flex", gap: 4, flexWrap: "wrap" }}>
         {OBJECT_FIT_VALUES.map((val) => {
           const active = currentFit === val;
@@ -161,6 +151,7 @@ function ObjectFitControl({ instanceId }: { instanceId: string }) {
 }
 
 export function SettingsPanel() {
+  const S = useI18n().t.inspector.settings;
   const instanceId = useStore($selectedInstanceId);
   const instances = useStore($instances);
   const props = useStore($props);
@@ -168,7 +159,7 @@ export function SettingsPanel() {
   if (!instanceId) {
     return (
       <div style={{ padding: 16, fontSize: 13, color: C.textMuted, fontFamily: C.font }}>
-        Select an instance to edit its settings.
+        {S.selectInstance}
       </div>
     );
   }
@@ -226,12 +217,12 @@ export function SettingsPanel() {
 
         {instanceProps.length === 0 && !isImage ? (
           <div style={{ padding: "8px 14px", fontSize: 13, color: C.textMuted, fontFamily: C.font }}>
-            No editable props.
+            {S.noProps}
           </div>
         ) : (
           instanceProps.map((p) => {
-            const label = PROP_LABELS[p.name] ?? p.name;
-            const enumOpts = ENUM_OPTIONS[p.name];
+            const label = S.propLabels[p.name] ?? p.name;
+            const enumOpts = enumOptions(S)[p.name];
             const isEnum = enumOpts !== undefined;
             const isBool = p.type === "boolean";
             const currentVal =

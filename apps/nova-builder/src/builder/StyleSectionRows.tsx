@@ -7,6 +7,7 @@ import type { UnitValue, KeywordValue, ColorValue, RgbValue, StyleValue, AnyStyl
 import { styleValueToString } from "@/lib/styleValueConversion";
 import { writeStyle } from "@/lib/styleInspectorWrite";
 import { UI_VARS as C } from "@/lib/uiTheme";
+import { useI18n, fmt } from "@/lib/i18n";
 import { UnitInput } from "./controls/UnitInput";
 import { ColorControl } from "./controls/ColorControl";
 import { CollapsibleSection } from "./controls/CollapsibleSection";
@@ -96,6 +97,7 @@ export function EditablePropRow({
   decl: AnyStyleDecl;
   instanceId: string;
 }) {
+  const { t } = useI18n();
   const styleSources = useStore($styleSources) as Map<string, StyleSrc>;
   const src = styleSources.get(decl.styleSourceId);
   const isToken = src?.type === "token";
@@ -110,7 +112,7 @@ export function EditablePropRow({
       <td style={{ padding: "3px 8px 3px 12px", color: isToken ? "#a78bfa" : C.codeKey, fontFamily: C.fontMono, fontSize: 13, whiteSpace: "nowrap", width: "42%" }}>
         {property}
         {isToken && (
-          <span title={`From token: ${src?.name}`} style={{ marginLeft: 4, fontSize: 8, background: "rgba(124,58,237,0.2)", color: "#c4b5fd", borderRadius: 3, padding: "1px 4px", verticalAlign: "middle", fontFamily: C.font, letterSpacing: "0.05em", textTransform: "uppercase" }}>T</span>
+          <span title={fmt(t.inspector.fromToken, { name: src?.name ?? "" })} style={{ marginLeft: 4, fontSize: 8, background: "rgba(124,58,237,0.2)", color: "#c4b5fd", borderRadius: 3, padding: "1px 4px", verticalAlign: "middle", fontFamily: C.font, letterSpacing: "0.05em", textTransform: "uppercase" }}>T{/* i18n-ignore — token badge */}</span>
         )}
       </td>
       <td style={{ padding: "3px 8px 3px 4px", width: "58%" }}>
@@ -131,10 +133,11 @@ export function StyleSection({
   entries: [string, AnyStyleDecl][];
   instanceId: string;
 }) {
+  const { t } = useI18n();
   if (entries.length === 0) return null;
   return (
     <CollapsibleSection
-      title={name}
+      title={t.inspector.sections[name] ?? name}
       badge={entries.length}
       defaultOpen={name === "Layout" || name === "Size" || name === "Spacing"}
     >
@@ -172,13 +175,14 @@ export function InstanceHeader() {
 // ─── Multi-select header ──────────────────────────────────────────────────────
 
 export function MultiSelectHeader({ count }: { count: number }) {
+  const { t } = useI18n();
   return (
     <div style={{ padding: "8px 12px 6px", borderBottom: `1px solid ${C.border}`, flexShrink: 0 }}>
       <div style={{ fontSize: 12, color: C.text, fontFamily: C.font, fontWeight: 600 }}>
-        {count} instances selected
+        {fmt(t.inspector.instancesSelected, { count })}
       </div>
       <div style={{ fontSize: 12, color: C.textMuted, fontFamily: C.font, marginTop: 2 }}>
-        Showing shared properties only
+        {t.inspector.sharedOnly}
       </div>
     </div>
   );
