@@ -2113,13 +2113,13 @@ Full parity audit vs `reference/webstudio` @ `65d8a16`: [`doc/WS-PARITY-AUDIT.md
 | G10 | SePay VietQR probe incl. cleanup (20 checks); checkout prices 500.000/1.275.000/750.000/100.000đ | ✅ |
 | I18N-1 | EN/VI: pricing, login, dashboard, builder, Tools, subscription, checkout (details + QR), history; audit 0 | ✅ 8.5/10 (dev server); prod re-check pending |
 | B1 | Clone / delete / search projects | ✅ 8/10 — no thumbnails; icon-only card buttons |
-| B2 | Copy / paste / cut / wrap / select parent, undo | 🟡 6/10 — pasted/duplicated element loses props + styles; ⌘X not bound |
-| B4 | Language toggle persists | 🔴→🟡 fixed in 25.6.0, re-run pending |
+| B2 | Copy / paste / cut / wrap / select parent, undo | ✅ 8/10 — paste/duplicate keep props + styles; ⌘X |
+| B4 | Language toggle persists | ✅ 8/10 |
 | B5 | Style groups → canvas, preview, export | ✅ 8/10 — line-height shows "px" for unitless |
-| B9 | AI Content Fill | 🔴→🟡 fallback chain in 25.6.0, re-run pending |
-| B10 | Accessibility check lists missing alt | ✅ 7/10 — AI suggestion never shown |
-| B11 | Preview view recorded in Analytics | ✅ 7/10 — path shows /preview/<uuid> |
+| B9 | AI Content Fill | ✅ 8/10 |
+| B10 | Accessibility check lists missing alt | ⏳ re-run after 25.6.1 |
+| B11 | Preview view recorded in Analytics | ✅ 8/10 — path fixed |
 | B12 | Preview form submission listed in Leads | ✅ 8/10 |
-| B13 | Forgot / reset password, verify email | 🟡 pages work; email provider (Brevo) added in 25.6.0 — delivery check pending |
-| B14 | AI page navbar on phones | 🔴 3/10 — fix proposed, not applied |
-| B3, B6, B7, B8 | .nova round trip, CSS vars/custom CSS, templates, history | ⏳ specs written, not run yet |
+| B13 | Forgot / reset password, verify email | ✅ 8/10 — delivered via Brevo |
+| B14 | AI page navbar on phones | ✅ 9/10 — two compact rows |
+| B3, B6, B7, B8 | .nova round trip, CSS vars/custom CSS, templates, history | ✅ 8/10 each (fixed in 25.6.0) |
