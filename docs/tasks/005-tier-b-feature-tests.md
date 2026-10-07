@@ -1,6 +1,6 @@
 # Task 005 — Tier B feature specs: test, screenshot, score — or cut
 
-- **Status:** Open
+- **Status:** In progress
 - **Filed:** 2026-10-07
 - **Owner:** Claude Code
 - **Severity:** High (owner principle)
@@ -15,3 +15,10 @@ Also: make the SePay probe (`scripts/payment-probe.mjs`) clean up after itself s
 
 For each item: pass → add row to `doc/VERIFIED.md` with score; fail with a small fix → fix + PR; fail otherwise → hide it (move to Tier C) and say so.
 Smoke evidence already collected: `e2e/feature-smoke.spec.ts` (all pages/panels open, no console errors except `/admin*` 403 for non-admin — expected).
+
+## Progress (2026-10-07)
+Specs in `e2e/tier-b/` (throwaway account + seeded recorded AI page; `e2e/helpers/fresh-account.ts`). Probe cleanup done. Scores in `doc/TEST-ROADMAP.md` / `doc/VERIFIED.md`.
+- Pass: B1 8, B5 8, B10 7, B11 7, B12 8.
+- Fixed in 25.6.0, re-run needed: B4 (toggle persistence), B9 (provider fallback), B13 (Brevo email + verify-email redirect; real-inbox delivery check).
+- Open bugs: B2 (paste/duplicate drop props + styles, ⌘X unbound — fix outlined in the agent report: copy props/style sources with the subtree), B14 (AI header needs mobile-breakpoint styles — `validateCompositionWS` + `applyWSComposition` "mobile" breakpoint).
+- Not run yet: B3, B6, B7, B8.

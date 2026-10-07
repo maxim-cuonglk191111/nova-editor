@@ -9,8 +9,8 @@ import {
   deductCredit,
   getMonthlySpentToday,
 } from "@/lib/supabase-server";
-import { getProvider, PROVIDER_CREDIT_COST } from "@studio/ai";
-import type { ProviderName } from "@studio/ai";
+import type { getProvider, ProviderName } from "@studio/ai";
+import { withProviderFallback } from "@/lib/ai-fallback";
 import { dailyCreditCap, decideCreditSource } from "@/lib/tiers";
 
 type TextInstance = { instanceId: string; currentText: string };
@@ -69,9 +69,6 @@ export async function POST(req: Request) {
     return Response.json({ error: "topic and instances are required" }, { status: 400 });
   }
 
-  const providerName: ProviderName =
-    clientProvider ?? (process.env["AI_PROVIDER"] as ProviderName | undefined) ?? "anthropic";
-  const provider = getProvider(providerName);
   const creditCost = Math.max(1, Math.ceil(instances.length / 5));
 
   const cap = dailyCreditCap(user.tier);
@@ -88,7 +85,7 @@ export async function POST(req: Request) {
   }
 
   try {
-    const fills = await generateContent(provider, topic, instances);
+    const fills = await withProviderFallback(clientProvider, (p) => generateContent(p, topic, instances), (f) => f.length > 0);
     if (fills.length > 0) {
       await deductCredit(user.id, null, creditCost, decision.source === "topup");
     }

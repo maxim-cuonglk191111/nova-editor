@@ -2,7 +2,8 @@
 import { useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import type { Instances } from "@webstudio-is/sdk";
-import { deleteInstance, duplicateInstance, makeInstanceId } from "@/lib/edit-operations";
+import { deleteInstance, makeInstanceId } from "@/lib/edit-operations";
+import { duplicateInstanceById } from "@/builder/commands";
 import { useI18n } from "@/lib/i18n";
 import { UI_VARS as C } from "@/lib/uiTheme";
 
@@ -46,8 +47,7 @@ export function ContextMenu({ x, y, instanceId, instances, actions }: ContextMen
 
   function handleDuplicate() {
     onClose();
-    const result = duplicateInstance(instanceId, instances);
-    if (result) onInstancesChange(result.updated);
+    duplicateInstanceById(instanceId);
   }
 
   function handleWrapInBox() {

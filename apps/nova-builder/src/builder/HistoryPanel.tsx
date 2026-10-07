@@ -2,7 +2,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { useStore } from "@nanostores/react";
 import { $projectMeta } from "@/lib/data-stores";
-import { $historyPanelOpen } from "@/lib/nano-states";
+import { $historyPanelOpen, $isDirty } from "@/lib/nano-states";
 import { UI_VARS as C } from "@/lib/uiTheme";
 import { useI18n } from "@/lib/i18n";
 
@@ -75,7 +75,11 @@ export function HistoryPanel() {
       const res = await fetch(`/api/projects/${meta.id}/snapshots/${snapId}/restore`, { method: "POST" });
       if (res.ok) {
         setMessage({ type: "ok", text: L.restored });
-        load();
+        // The server copy now holds the snapshot; reload so the editor shows it
+        // (the in-memory edits it replaced must not be autosaved back).
+        $isDirty.set(false);
+        setTimeout(() => window.location.reload(), 800);
+        return;
       } else setMessage({ type: "err", text: L.restoreFailed });
     } finally {
       setRestoring(null);

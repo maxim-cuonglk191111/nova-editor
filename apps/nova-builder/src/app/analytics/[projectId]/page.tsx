@@ -137,6 +137,7 @@ export default function AnalyticsPage() {
 
   const topPageRows = (stats?.topPages ?? []).map((p) => ({ key: p.path, count: p.count }));
   const topRefRows  = (stats?.topReferrers ?? []).map((r) => ({ key: r.referrer, count: r.count }));
+  const topDevice = Object.entries(stats?.devices ?? {}).sort((a, b) => b[1] - a[1])[0];
 
   return (
     <div style={{ background: C.bg, minHeight: "100vh", padding: "28px 32px", fontFamily: C.font, color: C.text }}>
@@ -182,10 +183,8 @@ export default function AnalyticsPage() {
               <StatCard label={fmt(A.totalViews, { days })} value={stats.totalViews.toLocaleString()} />
               <StatCard label={A.topPage} value={stats.topPages[0]?.path ?? "—"} sub={stats.topPages[0] ? fmt(A.views, { count: stats.topPages[0].count }) : undefined} />
               <StatCard label={A.mostCommonDevice}
-                value={
-                  Object.entries(stats.devices).sort((a, b) => b[1] - a[1])[0]?.[0] ?? "—"
-                }
-                sub={fmt(A.pctOfViews, { pct: Math.round(((Object.entries(stats.devices).sort((a, b) => b[1] - a[1])[0]?.[1] ?? 0) / (stats.totalViews || 1)) * 100) })}
+                value={topDevice && stats.totalViews > 0 ? topDevice[0] : "—"}
+                sub={topDevice && stats.totalViews > 0 ? fmt(A.pctOfViews, { pct: Math.round((topDevice[1] / stats.totalViews) * 100) }) : undefined}
               />
             </div>
 

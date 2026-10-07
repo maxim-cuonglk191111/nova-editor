@@ -7,9 +7,9 @@ screenshotted, reviewed and scored /10; a feature we cannot make work is hidden
 
 | # | Task | Status |
 |---|------|--------|
-| [001](001-finish-i18n-conversion.md) | Finish i18n conversion (branch `qa/i18n`) incl. billing UI | In progress |
+| [001](001-finish-i18n-conversion.md) | Finish i18n conversion (branch `qa/i18n`) incl. billing UI | Merged #13 (v25.5.0); prod check pending |
 | [002](002-sepay-go-live.md) | SePay VietQR go-live: real account, webhook, wallet scans | Blocked (owner input) |
 | [003](003-google-pay-lemon-squeezy.md) | Cards / Google Pay / Apple Pay via Lemon Squeezy | Blocked (owner input) |
-| [004](004-ship-pending-commits.md) | Merge and verify pending `qa/ai-template` commits | Open |
-| [005](005-tier-b-feature-tests.md) | Tier B feature specs (B1–B14): test, screenshot, score or cut | Open |
+| [004](004-ship-pending-commits.md) | Merge and verify pending `qa/ai-template` commits | Done |
+| [005](005-tier-b-feature-tests.md) | Tier B feature specs (B1–B14): test, screenshot, score or cut | In progress |
 | [006](006-cut-tier-c-code.md) | Remove Tier C code that stays hidden | Open |

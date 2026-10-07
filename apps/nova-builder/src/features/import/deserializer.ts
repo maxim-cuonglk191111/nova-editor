@@ -38,10 +38,12 @@ export function deserializeProject(projectData: any) {
   $customCss.set(typeof schema.customCss === "string" ? schema.customCss : "");
   $symbols.set(Array.isArray(schema.symbols) ? (schema.symbols as Symbol[]) : []);
 
-  // 4. Mark project as unsaved so it does NOT overwrite an existing DB project
+  // 4. Import replaces the content of the open project; Update saves it like any edit.
+  // (The old placeholder id "unsaved" made Update PATCH /api/projects/unsaved → 500.)
+  const current = $projectMeta.get();
   $projectMeta.set({
-    id: "unsaved",
-    name: projectData.name || "Imported Project",
+    id: current?.id ?? "demo",
+    name: current?.name ?? (projectData.name || "Imported Project"),
     updatedAt: new Date().toISOString(),
   });
 

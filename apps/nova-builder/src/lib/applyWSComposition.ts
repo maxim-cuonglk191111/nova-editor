@@ -50,6 +50,10 @@ export function applyWSComposition(result: WSCompositionResult): void {
     );
     baseBpId = sorted[0]?.id ?? "base";
   }
+  // "mobile" decls (AI header layout for phones) go to the widest breakpoint ≤ 767px.
+  const mobileBpId = [...breakpoints.values()]
+    .filter((bp) => bp.maxWidth !== undefined && bp.maxWidth <= 767)
+    .sort((a, b) => (b.maxWidth ?? 0) - (a.maxWidth ?? 0))[0]?.id;
 
   warnOnAiNesting(result.instances as unknown as Instance[]);
 
@@ -81,7 +85,8 @@ export function applyWSComposition(result: WSCompositionResult): void {
     }
     // StyleDecl key: `${styleSourceId}:${breakpointId}:${state ?? ""}:${property}`
     for (const decl of result.styles) {
-      const bpId = decl.breakpointId === "base" ? baseBpId : decl.breakpointId;
+      if (decl.breakpointId === "mobile" && !mobileBpId) continue;
+      const bpId = decl.breakpointId === "base" ? baseBpId : decl.breakpointId === "mobile" ? mobileBpId! : decl.breakpointId;
       const key = `${decl.styleSourceId}:${bpId}::${decl.property}`;
       styles.set(key, {
         ...decl,

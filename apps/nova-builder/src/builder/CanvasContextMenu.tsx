@@ -2,9 +2,10 @@
 import { useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import { updateData, replaceMap } from "@/lib/transactions";
-import { deleteInstance, duplicateInstance, makeInstanceId, pasteInstance } from "@/lib/edit-operations";
-import { $instances, } from "@/lib/data-stores";
-import { $selectedInstanceSelector, $clipboard, $nestingWarning } from "@/lib/nano-states";
+import { makeInstanceId } from "@/lib/edit-operations";
+import { $instances } from "@/lib/data-stores";
+import { $selectedInstanceSelector, $clipboard } from "@/lib/nano-states";
+import { copyInstance, cutInstance, pasteClipboard, duplicateInstanceById, deleteInstanceById } from "./commands";
 import { useI18n } from "@/lib/i18n";
 import { UI_VARS as C } from "@/lib/uiTheme";
 
@@ -77,42 +78,23 @@ export function CanvasContextMenu({ instanceId, x, y, onClose }: Props) {
   // ── Actions (all read atoms at call-time) ────────────────────────────────────
 
   function handleCopy() {
-    $clipboard.set({ instances: new Map($instances.get()), rootId: instanceId });
+    copyInstance(instanceId);
     onClose();
   }
 
   function handleCut() {
-    $clipboard.set({ instances: new Map($instances.get()), rootId: instanceId });
-    const { updated, deleted, nextSelectedId } = deleteInstance(instanceId, $instances.get());
-    if (deleted) {
-      updateData(({ instances }) => replaceMap(instances, updated));
-      $selectedInstanceSelector.set(nextSelectedId ? [nextSelectedId] : undefined);
-    }
+    cutInstance(instanceId);
     onClose();
   }
 
   function handlePaste() {
-    const clipboard = $clipboard.get();
-    if (!clipboard) return;
-    const result = pasteInstance(clipboard, instanceId, $instances.get());
-    if (result?.violation) {
-      $nestingWarning.set(result.violation.message);
-    } else if (result?.updated) {
-      updateData(({ instances, props }) => {
-        replaceMap(instances, result.updated);
-        if (result.clonedProps) for (const [id, p] of result.clonedProps) props.set(id, p);
-      });
-      $selectedInstanceSelector.set([result.newRootId]);
-    }
+    pasteClipboard($clipboard.get(), instanceId);
     onClose();
   }
 
   function handleDuplicate() {
-    const result = duplicateInstance(instanceId, $instances.get());
-    if (result) {
-      updateData(({ instances }) => replaceMap(instances, result.updated));
-      $selectedInstanceSelector.set([result.newRootId]);
-    }
+    const newRootId = duplicateInstanceById(instanceId);
+    if (newRootId) $selectedInstanceSelector.set([newRootId]);
     onClose();
   }
 
@@ -165,11 +147,7 @@ export function CanvasContextMenu({ instanceId, x, y, onClose }: Props) {
   }
 
   function handleDelete() {
-    const { updated, deleted, nextSelectedId } = deleteInstance(instanceId, $instances.get());
-    if (deleted) {
-      updateData(({ instances }) => replaceMap(instances, updated));
-      $selectedInstanceSelector.set(nextSelectedId ? [nextSelectedId] : undefined);
-    }
+    deleteInstanceById(instanceId);
     onClose();
   }
 

@@ -7,7 +7,7 @@
 // Falls back to the in-memory $clipboard atom when the system clipboard is empty
 // or denied (older behaviour preserved).
 
-import type { Instance } from "@webstudio-is/sdk";
+import type { Instance, Prop, StyleDecl, StyleSource, StyleSourceSelection } from "@webstudio-is/sdk";
 import type { ClipboardData } from "./edit-operations";
 import { parseHtmlToFragment } from "./htmlPaste";
 
@@ -17,13 +17,24 @@ type SerializedFragment = {
   [SENTINEL]: 1;
   rootId: string;
   instances: Array<[string, Instance]>;
+  props?: Array<[string, Prop]>;
+  styleSources?: Array<[string, StyleSource]>;
+  styleSourceSelections?: Array<[string, StyleSourceSelection]>;
+  styles?: Array<[string, StyleDecl]>;
 };
+
+const entries = <V>(m: Map<string, V> | undefined) => (m ? [...m.entries()] : undefined);
+const toMap = <V>(a: Array<[string, V]> | undefined) => (Array.isArray(a) ? new Map(a) : undefined);
 
 export function serializeFragment(data: ClipboardData): string {
   const payload: SerializedFragment = {
     [SENTINEL]: 1,
     rootId: data.rootId,
     instances: [...data.instances.entries()],
+    props: entries(data.props),
+    styleSources: entries(data.styleSources),
+    styleSourceSelections: entries(data.styleSourceSelections),
+    styles: entries(data.styles),
   };
   return JSON.stringify(payload);
 }
@@ -34,7 +45,14 @@ export function deserializeFragment(text: string): ClipboardData | null {
     if (parsed[SENTINEL] !== 1 || !parsed.rootId || !Array.isArray(parsed.instances)) {
       return null;
     }
-    return { rootId: parsed.rootId, instances: new Map(parsed.instances) };
+    return {
+      rootId: parsed.rootId,
+      instances: new Map(parsed.instances),
+      props: toMap(parsed.props),
+      styleSources: toMap(parsed.styleSources),
+      styleSourceSelections: toMap(parsed.styleSourceSelections),
+      styles: toMap(parsed.styles),
+    };
   } catch {
     return null;
   }

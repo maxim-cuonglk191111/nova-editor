@@ -4,7 +4,7 @@
 
 import { getToken } from "next-auth/jwt";
 import { getOrProvisionUser } from "@/lib/supabase-server";
-import { getProvider } from "@studio/ai";
+import { withProviderFallback } from "@/lib/ai-fallback";
 import type { ProviderName } from "@studio/ai";
 
 type InstanceNode = {
@@ -89,18 +89,16 @@ export async function POST(req: Request) {
   // If there are issues, optionally enrich with AI suggestions
   if (issues.length > 0) {
     try {
-      const providerName: ProviderName =
-        clientProvider ?? (process.env["AI_PROVIDER"] as ProviderName | undefined) ?? "anthropic";
-      const provider = getProvider(providerName);
       const summary = issues.map((i, n) => `${n + 1}. [${i.rule}] ${i.message}`).join("\n");
       const prompt = `You are an accessibility expert. Given these detected issues in a web page, suggest concise, actionable fixes (max 80 chars each):
 
 ${summary}
 
 Reply with a JSON array of strings, one fix per issue (same order): ["fix1", "fix2", ...]`;
-      const raw = await provider.complete(
-        [{ role: "user", content: prompt }],
-        { tier: "patcher", maxTokens: 800 }
+      const raw = await withProviderFallback(
+        clientProvider,
+        (provider) => provider.complete([{ role: "user", content: prompt }], { tier: "patcher", maxTokens: 800 }),
+        (text) => /\[[\s\S]*\]/.test(text)
       );
       const match = raw.match(/\[[\s\S]*\]/);
       if (match) {

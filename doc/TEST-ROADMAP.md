@@ -27,27 +27,27 @@ proof that the feature works.
 
 Infra checks per deploy: `load-1102` probe (0/150 failures on 2026-10-06), Worker log tail during the run.
 
-## Tier B — kept, functional spec still to write (next, in this order)
+## Tier B — kept, functional specs (`e2e/tier-b/`, throwaway account + seeded page)
 
 Each item gets a spec that performs the action and asserts the result, plus a screenshot review.
 If an item fails and the fix is not small, it moves to Tier C.
 
-| # | Feature | Where | Pass criteria |
-|---|---------|-------|---------------|
-| B1 | Clone / delete / search projects | dashboard card actions | clone appears with same content; delete removes it; search filters |
-| B2 | Copy / paste / cut / wrap in box / select parent | canvas context menu, shortcuts | tree changes as expected, undo restores |
-| B3 | Export project (.nova) → Import | Export menu | round trip reproduces the page |
-| B4 | Language toggle EN ↔ VI | builder topbar, `/settings/language` | UI strings switch, choice persists |
-| B5 | Style panel groups: size, spacing, typography, color, border, shadow | right panel | value applied on canvas, preview and export |
-| B6 | CSS variables (Tokens) and Custom CSS | left sidebar | variable / rule visible in preview and export |
-| B7 | Templates | left sidebar "Tmpl" | inserting a template adds its sections |
-| B8 | Version history snapshots | Tools → History | save snapshot, change page, restore |
-| B9 | AI Content Fill | Tools | rewrites copy of the page in the requested language |
-| B10 | Accessibility check | Tools | lists issues for a page with a known issue (image without alt) |
-| B11 | Analytics | dashboard card → Analytics | opening the preview records a view |
-| B12 | Form submissions (Leads) | dashboard card → Leads | submitting the preview's contact form shows a row |
-| B13 | Forgot / reset password, verify email | auth pages | email actually delivered; if no email provider is configured → Tier C |
-| B14 | Mobile navigation of AI pages | AI output | navbar does not wrap into a column on Mobile P |
+| # | Feature | Where | Pass criteria | Last result (spec `e2e/tier-b/`) |
+|---|---------|-------|---------------|------|
+| B1 | Clone / delete / search projects | dashboard card actions | clone appears with same content; delete removes it; search filters | ✅ 8/10 (2026-10-07) |
+| B2 | Copy / paste / cut / wrap in box / select parent | canvas context menu, shortcuts | tree changes as expected, undo restores | 🟡 6/10 — paste/duplicate drop props + styles; ⌘X missing |
+| B3 | Export project (.nova) → Import | Export menu | round trip reproduces the page | ⏳ spec written, not run |
+| B4 | Language toggle EN ↔ VI | builder topbar, `/settings/language` | UI strings switch, choice persists | 🟡 5/10 — builder toggle didn't persist (fixed 25.6.0, re-run) |
+| B5 | Style panel groups: size, spacing, typography, color, border, shadow | right panel | value applied on canvas, preview and export | ✅ 8/10 |
+| B6 | CSS variables (Tokens) and Custom CSS | left sidebar | variable / rule visible in preview and export | ⏳ spec written, not run |
+| B7 | Templates | left sidebar "Tmpl" | inserting a template adds its sections | ⏳ spec written, not run |
+| B8 | Version history snapshots | Tools → History | save snapshot, change page, restore | ⏳ spec written, not run |
+| B9 | AI Content Fill | Tools | rewrites copy of the page in the requested language | 🔴 2/10 — single provider, Gemini region-blocked (fallback added 25.6.0, re-run) |
+| B10 | Accessibility check | Tools | lists issues for a page with a known issue (image without alt) | ✅ 7/10 |
+| B11 | Analytics | dashboard card → Analytics | opening the preview records a view | ✅ 7/10 — top page shows /preview/<uuid> |
+| B12 | Form submissions (Leads) | dashboard card → Leads | submitting the preview's contact form shows a row | ✅ 8/10 |
+| B13 | Forgot / reset password, verify email | auth pages | email actually delivered; if no email provider is configured → Tier C | 🟡 3/10 → email via Brevo (25.6.0), verify-email redirect fixed; re-run |
+| B14 | Mobile navigation of AI pages | AI output | navbar does not wrap into a column on Mobile P | 🔴 3/10 — header stacks on phones; fix proposed (mobile styles in AI output) |
 
 ## Tier C — cut (hidden or not linked; not tested)
 

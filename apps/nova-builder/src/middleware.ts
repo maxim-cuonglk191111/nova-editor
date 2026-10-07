@@ -42,7 +42,6 @@ const AUTH_PAGES = new Set([
   "/signup",
   "/reset-password",
   "/forgot-password",
-  "/verify-email",
 ]);
 
 function isPublic(pathname: string) {

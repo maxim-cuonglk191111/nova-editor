@@ -3,7 +3,7 @@
 // captureSnapshot() must be called by the caller BEFORE applying any result.
 
 import { nanoid } from "nanoid";
-import type { Instance, Instances, Prop } from "@webstudio-is/sdk";
+import type { Instance, Instances, Prop, StyleDecl, StyleSource, StyleSourceSelection } from "@webstudio-is/sdk";
 import { checkFragmentNesting, type NestingViolation } from "./nestingGuard";
 
 export type ClipboardData = {
@@ -12,6 +12,10 @@ export type ClipboardData = {
   // Optional props that accompany the fragment (e.g. a "style" prop derived from
   // pasted Tailwind classes). Keyed by prop id; instanceId points into instances.
   props?: Map<string, Prop>;
+  // Styles of the fragment (see lib/fragment-attachments.ts).
+  styleSources?: Map<string, StyleSource>;
+  styleSourceSelections?: Map<string, StyleSourceSelection>;
+  styles?: Map<string, StyleDecl>;
 };
 
 export function makeInstanceId(): string {
@@ -62,22 +66,6 @@ export function cloneSubtree(
   return { cloned, newRootId: idMap.get(rootId)!, idMap };
 }
 
-// Re-key a fragment's props onto cloned instance ids with fresh prop ids.
-export function cloneFragmentProps(
-  props: Map<string, Prop> | undefined,
-  idMap: Map<string, string>
-): Map<string, Prop> {
-  const out = new Map<string, Prop>();
-  if (!props) return out;
-  for (const prop of props.values()) {
-    const newInstanceId = idMap.get(prop.instanceId);
-    if (!newInstanceId) continue;
-    const newId = `prop_${nanoid(8)}`;
-    out.set(newId, { ...prop, id: newId, instanceId: newInstanceId });
-  }
-  return out;
-}
-
 // Delete an instance and remove it from its parent's children list.
 // Returns { updated, deleted: false } unchanged if instanceId has no parent (root cannot be deleted).
 // `nextSelectedId` is what to select afterwards (next sibling, else previous, else
@@ -108,17 +96,18 @@ export function deleteInstance(
 }
 
 // Duplicate: clone subtree with new IDs and insert the clone immediately after the original.
+// `idMap` (old → new) lets the caller clone props and styles (lib/fragment-attachments).
 export function duplicateInstance(
   instanceId: string,
   instances: Instances
-): { updated: Instances; newRootId: string } | null {
+): { updated: Instances; newRootId: string; idMap: Map<string, string> } | null {
   const parentMap = buildParentMap(instances);
   const parentId = parentMap.get(instanceId);
   if (!parentId) return null;
   const parent = instances.get(parentId);
   if (!parent) return null;
 
-  const { cloned, newRootId } = cloneSubtree(instanceId, instances);
+  const { cloned, newRootId, idMap } = cloneSubtree(instanceId, instances);
   const updated = new Map(instances);
   for (const [id, inst] of cloned) updated.set(id, inst);
 
@@ -128,24 +117,23 @@ export function duplicateInstance(
   const newChildren = [...parent.children];
   newChildren.splice(origIdx + 1, 0, { type: "id" as const, value: newRootId });
   updated.set(parentId, { ...parent, children: newChildren });
-  return { updated, newRootId };
+  return { updated, newRootId, idMap };
 }
 
 export type PasteResult =
-  | { updated: Instances; newRootId: string; clonedProps: Map<string, Prop>; violation?: undefined }
-  | { updated?: undefined; newRootId?: undefined; clonedProps?: undefined; violation: NestingViolation };
+  | { updated: Instances; newRootId: string; idMap: Map<string, string>; violation?: undefined }
+  | { updated?: undefined; newRootId?: undefined; idMap?: undefined; violation: NestingViolation };
 
 // Paste clipboard as a sibling after selectedId, or as last child of root when nothing selected.
 // IDs are always re-minted so each paste produces unique instances.
 // Returns a `violation` (and no mutation) when the paste would break the content model.
-// `clonedProps` carries any fragment-accompanying props (e.g. styles from pasted HTML).
+// `idMap` (old → new) lets the caller clone the fragment's props and styles.
 export function pasteInstance(
   clipboard: ClipboardData,
   selectedId: string | undefined,
   instances: Instances
 ): PasteResult | null {
   const { cloned, newRootId, idMap } = cloneSubtree(clipboard.rootId, clipboard.instances);
-  const clonedProps = cloneFragmentProps(clipboard.props, idMap);
   const updated = new Map(instances);
   for (const [id, inst] of cloned) updated.set(id, inst);
 
@@ -162,7 +150,7 @@ export function pasteInstance(
       const newChildren = [...parent.children];
       newChildren.splice(origIdx + 1, 0, { type: "id" as const, value: newRootId });
       updated.set(parentId, { ...parent, children: newChildren });
-      return { updated, newRootId, clonedProps };
+      return { updated, newRootId, idMap };
     }
   }
 
@@ -176,7 +164,7 @@ export function pasteInstance(
         ...inst,
         children: [...inst.children, { type: "id" as const, value: newRootId }],
       });
-      return { updated, newRootId, clonedProps };
+      return { updated, newRootId, idMap };
     }
   }
   return null;
@@ -212,22 +200,26 @@ export function deleteMultipleInstances(
   return { updated, deletedCount };
 }
 
+// Ids whose ancestors are not also in the list (acting on an ancestor covers its descendants).
+export function topLevelInstanceIds(instanceIds: string[], instances: Instances): string[] {
+  const set = new Set(instanceIds);
+  const parentMap = buildParentMap(instances);
+  return instanceIds.filter((id) => {
+    let cur = parentMap.get(id);
+    while (cur !== undefined) {
+      if (set.has(cur)) return false;
+      cur = parentMap.get(cur);
+    }
+    return true;
+  });
+}
+
 // Duplicate multiple instances.  Same ancestor-skip logic as deleteMultipleInstances.
 export function duplicateMultipleInstances(
   instanceIds: string[],
   instances: Instances
 ): { updated: Instances; newRootIds: string[] } | null {
-  const skipSet = new Set(instanceIds);
-  const parentMap = buildParentMap(instances);
-
-  const toDuplicate = instanceIds.filter((id) => {
-    let cur = parentMap.get(id);
-    while (cur !== undefined) {
-      if (skipSet.has(cur)) return false;
-      cur = parentMap.get(cur);
-    }
-    return true;
-  });
+  const toDuplicate = topLevelInstanceIds(instanceIds, instances);
 
   let updated = instances;
   const newRootIds: string[] = [];

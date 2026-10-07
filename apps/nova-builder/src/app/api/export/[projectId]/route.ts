@@ -53,8 +53,11 @@ export async function GET(
   // Published-site wiring (R5): custom CSS, interactions, cookie banner, and
   // live form capture all travel with the export.
   const stored = (row.schema_json ?? {}) as Record<string, unknown>;
+  // CSS variables (Tokens panel) as :root custom properties, the same rule the canvas injects.
+  const vars = Object.entries((stored.cssVars as Record<string, string> | undefined) ?? {});
+  const varsCss = vars.length ? `:root {\n${vars.map(([k, v]) => `  --${k}: ${v};`).join("\n")}\n}\n` : "";
   const sharedOpts = {
-    customCss: (stored.customCss as string) ?? "",
+    customCss: varsCss + ((stored.customCss as string) ?? ""),
     interactions: (stored.interactions as Record<string, ExportInteraction[]>) ?? {},
     cookieConsent: (stored.cookieConsent as ExportCookieConsent | null) ?? null,
     projectId,
