@@ -9,8 +9,8 @@ import {
   deductCredit,
   getMonthlySpentToday,
 } from "@/lib/supabase-server";
-import { getProvider, providerChain } from "@studio/ai";
-import type { ProviderName } from "@studio/ai";
+import type { getProvider, ProviderName } from "@studio/ai";
+import { withProviderFallback } from "@/lib/ai-fallback";
 import { dailyCreditCap, decideCreditSource } from "@/lib/tiers";
 
 type TextInstance = { instanceId: string; currentText: string };
@@ -69,7 +69,6 @@ export async function POST(req: Request) {
     return Response.json({ error: "topic and instances are required" }, { status: 400 });
   }
 
-  const chain = providerChain([clientProvider, process.env["AI_PROVIDER"]], process.env["AI_FALLBACK_PROVIDERS"]);
   const creditCost = Math.max(1, Math.ceil(instances.length / 5));
 
   const cap = dailyCreditCap(user.tier);
@@ -86,18 +85,7 @@ export async function POST(req: Request) {
   }
 
   try {
-    // Same fallback as /api/ai: Gemini rejects some Worker regions, a free tier may be rate-limited.
-    let fills: { instanceId: string; text: string }[] = [];
-    let lastErr: unknown;
-    for (const name of chain) {
-      try {
-        fills = await generateContent(getProvider(name), topic, instances);
-        if (fills.length > 0) break;
-      } catch (err) {
-        lastErr = err;
-      }
-    }
-    if (fills.length === 0 && lastErr) throw lastErr;
+    const fills = await withProviderFallback(clientProvider, (p) => generateContent(p, topic, instances), (f) => f.length > 0);
     if (fills.length > 0) {
       await deductCredit(user.id, null, creditCost, decision.source === "topup");
     }

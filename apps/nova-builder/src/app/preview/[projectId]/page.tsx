@@ -195,7 +195,8 @@ function PreviewPage() {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             projectId,
-            path: window.location.pathname,
+            // The site page being viewed ("/" for home), not this app's /preview/<id> URL.
+            path: $pages.get()?.pages.get($selectedPageId.get() ?? "")?.path || "/",
             referrer: document.referrer || null,
           }),
         }).catch(() => { /* non-fatal */ });

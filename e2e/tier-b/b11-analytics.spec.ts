@@ -37,8 +37,8 @@ test("B11 preview visit shows up in analytics", async ({ page, browser }) => {
   await page.reload();
   await expect(page.getByText("No views yet")).toHaveCount(0, { timeout: 60_000 });
   await expect(totalViewsCard(page)).toContainText(/TOTAL VIEWS[\s\S]*\b1\b/);
-  await expect(page.getByText(`/preview/${id}`).first()).toBeVisible();
-  const stats = (await (await page.request.get(`/api/analytics/${id}?days=30`)).json()) as { totalViews: number };
+  const stats = (await (await page.request.get(`/api/analytics/${id}?days=30`)).json()) as { totalViews: number; topPages: { path: string }[] };
   expect(stats.totalViews).toBe(1);
+  expect(stats.topPages[0]?.path, "records the site page, not the /preview URL").toBe("/");
   await page.screenshot({ path: `${OUT}/b11-03-analytics-one-view.png`, fullPage: true });
 });
