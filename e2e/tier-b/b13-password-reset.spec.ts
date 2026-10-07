@@ -94,14 +94,8 @@ test("B13 forgot / reset password + verify email", async ({ page }) => {
   const vraw = await plantToken("email_verification_tokens", user.id);
   // Real-world path: the user is still signed in when they click the emailed link.
   await page.goto(`/verify-email?token=${vraw}`);
-  await page.waitForLoadState("load");
-  await page.waitForTimeout(3000);
-  expect.soft(new URL(page.url()).pathname, "verify link works while signed in").toBe("/verify-email");
-  await page.screenshot({ path: `${OUT}/b13-07a-verify-signed-in.png` });
-  // Signed out, the page itself must consume the token.
-  await page.context().clearCookies();
-  await page.goto(`/verify-email?token=${vraw}`);
   await expect(page.getByRole("heading", { name: "Email verified" })).toBeVisible({ timeout: 30_000 });
+  expect(new URL(page.url()).pathname, "verify link works while signed in").toBe("/verify-email");
   await page.screenshot({ path: `${OUT}/b13-07-email-verified.png` });
   const [after] = (await sb(`users?id=eq.${user.id}&select=email_verified`)) as { email_verified: boolean }[];
   expect(after.email_verified).toBe(true);

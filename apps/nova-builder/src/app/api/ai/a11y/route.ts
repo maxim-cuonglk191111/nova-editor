@@ -5,6 +5,9 @@
 import { getToken } from "next-auth/jwt";
 import { getOrProvisionUser } from "@/lib/supabase-server";
 import { withProviderFallback } from "@/lib/ai-fallback";
+
+// AI fix suggestions are optional; the rule-based result is never held longer than this.
+const A11Y_AI_BUDGET_MS = 20_000;
 import type { ProviderName } from "@studio/ai";
 
 type InstanceNode = {
@@ -95,11 +98,14 @@ export async function POST(req: Request) {
 ${summary}
 
 Reply with a JSON array of strings, one fix per issue (same order): ["fix1", "fix2", ...]`;
-      const raw = await withProviderFallback(
-        clientProvider,
-        (provider) => provider.complete([{ role: "user", content: prompt }], { tier: "patcher", maxTokens: 800 }),
-        (text) => /\[[\s\S]*\]/.test(text)
-      );
+      const raw = await Promise.race([
+        withProviderFallback(
+          clientProvider,
+          (provider) => provider.complete([{ role: "user", content: prompt }], { tier: "patcher", maxTokens: 800 }),
+          (text) => /\[[\s\S]*\]/.test(text)
+        ),
+        new Promise<string>((resolve) => setTimeout(() => resolve(""), A11Y_AI_BUDGET_MS)),
+      ]);
       const match = raw.match(/\[[\s\S]*\]/);
       if (match) {
         const fixes = JSON.parse(match[0]) as string[];

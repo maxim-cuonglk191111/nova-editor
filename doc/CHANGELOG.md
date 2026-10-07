@@ -2,6 +2,13 @@
 
 ---
 
+## [25.6.1] — 2026-10-07
+
+### Accessibility check answers fast (Patch)
+
+- **Accessibility check**: AI fix suggestions get at most 20 s, then the rule-based result is returned (a run with issues took over 2 minutes while the provider chain timed out).
+- **QA**: B13 spec checks the verify link while signed in (the real path after signup). All 14 Tier B specs run on production; results in `doc/TEST-ROADMAP.md`.
+
 ## [25.6.0] — 2026-10-07
 
 ### Email via Brevo; Tier B specs and the fixes they found (Minor)
