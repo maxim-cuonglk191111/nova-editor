@@ -5,9 +5,9 @@
 - **Owner:** Claude Code
 - **Severity:** Medium
 
-`qa/ai-template` is ahead of main with `bd43c7b` (one VND price list for every checkout path; payments back in the golden path) and the commit adding these task files.
+Merged to main in PR #11 (`261d724`): one VND price list for every checkout path, these task files, `scripts/payment-probe.mjs`. Not yet verified on production:
 
-1. Typecheck + `build:cf` validation (Workers Build runs it), PR → merge.
+1. Confirm the Workers Build for `261d724` succeeded.
 2. Production: `/api/billing/portal?provider=payos&plan=pro` uses 500,000đ; payment probe still 19/19; golden path journey green.
 
 Also outstanding (housekeeping):
