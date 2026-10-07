@@ -3,7 +3,7 @@
 // pills. Wraps instead of clipping (broken-layout register V-2).
 import { UI_VARS as C, FONT } from "@/lib/uiTheme";
 
-export type ToggleOption<V extends string> = { label: string; value: V };
+export type ToggleOption<V extends string> = { label: string; value: V; title?: string };
 
 export function ToggleGroup<V extends string>({
   options,
@@ -24,6 +24,7 @@ export function ToggleGroup<V extends string>({
           <button
             key={option.value}
             onClick={() => onChange(option.value)}
+            title={option.title}
             aria-pressed={active}
             style={{
               padding: "3px 8px",

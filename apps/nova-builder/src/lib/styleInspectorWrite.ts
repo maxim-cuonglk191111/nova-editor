@@ -32,6 +32,27 @@ export function writeStyle(instanceId: string, decl: AnyStyleDecl, newValue: Sty
   });
 }
 
+/** Removes one property at the decl's own breakpoint + state (undoable), for every selected instance. */
+export function removeStyle(instanceId: string, decl: AnyStyleDecl) {
+  const multiIds = $multiSelectedInstanceIds.get();
+  const targetIds = multiIds.length > 1 ? multiIds : [instanceId];
+  const state = decl.state ?? "";
+  updateData(({ styles, styleSources, styleSourceSelections }) => {
+    const selections = styleSourceSelections as Map<string, { instanceId: string; values: string[] }>;
+    const sources = styleSources as Map<string, { id: string; type: string }>;
+    // Local sources only — a token's value is shared by other elements.
+    const sourceIds = new Set(
+      [decl.styleSourceId, ...targetIds.flatMap((id) => selections.get(id)?.values ?? [])]
+        .filter((id) => sources.get(id)?.type === "local"),
+    );
+    for (const [key, d] of styles as Map<string, AnyStyleDecl>) {
+      if (sourceIds.has(d.styleSourceId) && d.property === decl.property && d.breakpointId === decl.breakpointId && (d.state ?? "") === state) {
+        (styles as Map<string, AnyStyleDecl>).delete(key);
+      }
+    }
+  });
+}
+
 export function getDeclsForInstance(
   targetId: string,
   styles: Map<string, AnyStyleDecl>,

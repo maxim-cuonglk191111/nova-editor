@@ -54,6 +54,8 @@ export interface I18nStyleEditorsDictionary {
   /** "{label}" is replaced with the lower-cased track kind. */
   addTrack: string;
   removeTrack: string;
+  /** Shown for a responsive repeat(auto-fit, …) track list. */
+  autoTracks: string;
   gridPlacement: string;
   colStartSpan: string;
   columnStartLine: string;
@@ -82,6 +84,14 @@ export interface I18nPropsPanelDictionary {
   pickFromLibrary: string;
   assetManagerSoon: string;
   previewAlt: string;
+  /** Shown in the image picker when the project has no uploaded images. */
+  libraryEmpty: string;
+  /** Under a variant select when the element has its own colours in the Style tab. */
+  variantOverridden: string;
+  /** Friendly labels for common component props, keyed by prop name. */
+  propLabels: Record<string, string>;
+  /** Friendly labels for select options, keyed by option value (e.g. "_blank"). */
+  optionLabels: Record<string, string>;
 }
 
 export interface I18nSettingsPanelDictionary {
@@ -139,6 +149,14 @@ export interface I18nInspectorDictionary {
   propertyPlaceholder: string;
   valuePlaceholder: string;
   expressionPlaceholder: string;
+  /** Heading above the "add a style" row. */
+  addStyle: string;
+  /** Tooltip of the × button that removes a style value. */
+  removeValue: string;
+  /** Human-readable CSS property names, keyed by camelCase property. */
+  propNames: Record<string, string>;
+  /** Plain-language tooltips for the pseudo-state pills, keyed by state (":hover"). */
+  stateHints: Record<string, string>;
   editors: I18nStyleEditorsDictionary;
   props: I18nPropsPanelDictionary;
   settings: I18nSettingsPanelDictionary;

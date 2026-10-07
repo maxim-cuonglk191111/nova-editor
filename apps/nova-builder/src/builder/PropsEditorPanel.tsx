@@ -6,6 +6,8 @@ import { $selectedInstanceId, $registeredComponentMetas, $pendingCanvasMsg } fro
 import { updateData } from "@/lib/transactions";
 import { decodeExpression } from "@/lib/expression";
 import { BindingPopover } from "./BindingPopover";
+import { ImageLibraryPicker } from "./ImageLibraryPicker";
+import { VariantOverrideHint } from "./VariantOverrideHint";
 import { nanoid } from "nanoid";
 import { UI_VARS as C, FONT } from "@/lib/uiTheme";
 import { useI18n } from "@/lib/i18n";
@@ -16,9 +18,15 @@ type MetaPropDef = {
   control?: string;
   label?: string;
   defaultValue?: unknown;
-  options?: Array<{ label: string; name: string }>;
+  options?: Array<string | { label: string; name: string }>;
   description?: string;
 };
+
+const SELECT_CONTROLS = new Set(["select", "tag", "radio"]);
+
+// Framework/optimizer props with no visible effect in a Nova site — hidden so the
+// Props tab only shows what a site owner can act on.
+const HIDDEN_META_PROPS = new Set(["prefetch", "preventScrollReset", "reloadDocument", "replace", "optimize", "quality"]);
 
 // ── Image Source Control ─────────────────────────────────────────────────────
 // Dedicated UI for setting an Image component's src — URL paste + library button.
@@ -35,6 +43,7 @@ function ImageSrcControl({
   const src = typeof current?.value === "string" ? current.value : "";
   const [localUrl, setLocalUrl] = useState(src);
   const [isFocused, setIsFocused] = useState(false);
+  const [libraryOpen, setLibraryOpen] = useState(false);
 
   // Keep local state in sync when the prop changes externally
   useEffect(() => {
@@ -86,13 +95,9 @@ function ImageSrcControl({
         }}
       />
 
-      {/* Library button — stub for future Asset Manager */}
       <button
-        onClick={() => {
-          // TODO: open Asset Manager modal (Phase 2)
-          // $assetManagerOpen.set(true);
-          alert(P.assetManagerSoon);
-        }}
+        aria-expanded={libraryOpen}
+        onClick={() => setLibraryOpen((v) => !v)}
         style={{
           padding: "5px 10px",
           background: "none",
@@ -120,6 +125,12 @@ function ImageSrcControl({
         <span>📁</span>
         <span>{P.pickFromLibrary}</span>
       </button>
+      {libraryOpen && (
+        <ImageLibraryPicker
+          current={src}
+          onPick={(url) => { commit(url); setLibraryOpen(false); }}
+        />
+      )}
     </div>
   );
 }
@@ -161,7 +172,10 @@ function PropControl({
     );
   }
 
-  if ((meta.control === "select" || meta.type === "enum") && meta.options?.length) {
+  if (meta.options?.length && (SELECT_CONTROLS.has(meta.control ?? "") || meta.type === "enum")) {
+    // Generated metas list plain strings ("_blank"); hand-written ones use { label, name }.
+    const options = meta.options.map((o) =>
+      typeof o === "string" ? { name: o, label: P.optionLabels[o] ?? o } : { name: o.name, label: P.optionLabels[o.name] ?? o.label });
     return (
       <select
         value={typeof displayValue === "string" ? displayValue : ""}
@@ -169,7 +183,7 @@ function PropControl({
         style={{ ...inputStyle, fontFamily: C.font }}
       >
         <option value="">{P.defaultOption}</option>
-        {meta.options.map((opt) => (
+        {options.map((opt) => (
           <option key={opt.name} value={opt.name}>{opt.label}</option>
         ))}
       </select>
@@ -310,6 +324,7 @@ function PropRow({
       ) : (
         <PropControl instanceId={instanceId} name={name} meta={meta} current={current} />
       )}
+      {name === "variant" && <VariantOverrideHint instanceId={instanceId} />}
     </div>
   );
 }
@@ -403,7 +418,7 @@ export function PropsEditorPanel() {
   const metaProps: Record<string, MetaPropDef> = (meta as any)?.props ?? {};
 
   // Props from meta definition
-  const metaKeys = Object.keys(metaProps).filter((k) => !k.startsWith("data-ws"));
+  const metaKeys = Object.keys(metaProps).filter((k) => !k.startsWith("data-ws") && !HIDDEN_META_PROPS.has(k));
 
   // Ad-hoc props (on the instance but not in meta)
   const instanceProps: AnyProp[] = [];
@@ -445,7 +460,7 @@ export function PropsEditorPanel() {
             </div>
             {metaKeys.map((key) => {
               const def = metaProps[key];
-              const label = def.label ?? key;
+              const label = P.propLabels[key] ?? def.label ?? key;
               return (
                 <PropRow key={key} instanceId={instanceId} name={key} label={label} meta={def} current={propMap.get(key)} />
               );
@@ -460,7 +475,7 @@ export function PropsEditorPanel() {
               {P.customProps}
             </div>
             {instanceProps.sort((a, b) => a.name.localeCompare(b.name)).map((p) => (
-              <PropRow key={p.id} instanceId={instanceId} name={p.name} label={p.name} meta={{ type: p.type }} current={p} />
+              <PropRow key={p.id} instanceId={instanceId} name={p.name} label={P.propLabels[p.name] ?? p.name} meta={{ type: p.type }} current={p} />
             ))}
           </>
         )}

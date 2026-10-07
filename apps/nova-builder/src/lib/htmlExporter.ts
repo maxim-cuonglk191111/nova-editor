@@ -15,6 +15,7 @@ import {
 } from "@webstudio-is/sdk";
 import { generateCss } from "./publish/cssGen";
 import { resolveProps } from "./publish/expressionGen";
+import { animationKeyframesCss } from "./animationKeyframes";
 
 // Stable public attribute names — matching the generated CSS selectors (cssGen).
 const idAttribute = "data-ws-id";
@@ -515,6 +516,7 @@ export function exportPageToHtml(data: WebstudioData, page: Page, opts: ExportOp
     // otherwise size <body> to its widest content on narrow screens.
     "    body { margin: 0; min-width: 0; }",
     "    @keyframes nova-spin { to { transform: rotate(360deg); } }",
+    animationKeyframesCss(css.user),
     css.fonts,
     css.presets,
     shadcnDefaults,

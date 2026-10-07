@@ -1,9 +1,6 @@
 import { writeStyleProperty } from "@/lib/styleWriteHelper";
 import { UI_VARS as C } from "@/lib/uiTheme";
 import { useI18n, fmt } from "@/lib/i18n";
-import { writeGridSpan, writeGridColumnStart, type AnyProp } from "@/lib/propWriteHelper";
-import { useStore } from "@nanostores/react";
-import { $props } from "@/lib/data-stores";
 
 // ── Track list parsing ─────────────────────────────────────────────────────────
 
@@ -86,6 +83,9 @@ function TrackSection({
   function updateTracks(next: string[]) {
     writeStyleProperty(instanceId, property, serializeTrackList(next));
   }
+  // repeat(auto-fit, …) already creates as many tracks as fit; appending a
+  // flexible track to it is invalid CSS and collapses the grid to one column.
+  const autoRepeat = tracks.some((t) => /^repeat\(\s*auto-(fit|fill)/.test(t));
 
   return (
     <div style={{ borderTop: `1px solid ${C.border}`, padding: "4px 8px 6px" }}>
@@ -95,24 +95,25 @@ function TrackSection({
         </span>
         <button
           onClick={() => updateTracks([...tracks, "1fr"])}
-          title={fmt(E.addTrack, { label: label.toLowerCase() })}
+          disabled={autoRepeat}
+          title={autoRepeat ? E.autoTracks : fmt(E.addTrack, { label: label.toLowerCase() })}
           style={{
-            background: C.accent,
-            border: `1px solid ${C.accentBorder}`,
+            background: "none",
+            border: `1px solid ${C.border}`,
             borderRadius: 3,
-            color: C.accentText,
-            fontSize: 12,
-            width: 18,
-            height: 18,
+            color: C.textMuted,
+            fontSize: 15,
+            width: 20,
+            height: 20,
             cursor: "pointer",
-            lineHeight: 1,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
+            lineHeight: "18px",
             padding: 0,
           }}
         >+</button>
       </div>
+      {autoRepeat && (
+        <div style={{ fontSize: 11, color: C.textMuted, fontFamily: C.font, padding: "2px 0" }}>{E.autoTracks}</div>
+      )}
       {tracks.length === 0 && (
         <div style={{ fontSize: 12, color: C.textMuted, fontFamily: C.font, padding: "2px 0" }}>
           {fmt(E.noTracks, { label: label.toLowerCase() })}
@@ -124,11 +125,15 @@ function TrackSection({
             {index + 1}
           </span>
           <input
+            key={`${index}-${track}`}
             type="text"
-            value={track}
-            onChange={(e) => {
+            defaultValue={track}
+            // Commit on blur/Enter, not per keystroke: one undo step per edit.
+            onBlur={(e) => {
+              const v = e.target.value.trim();
+              if (!v || v === track) return;
               const next = [...tracks];
-              next[index] = e.target.value;
+              next[index] = v;
               updateTracks(next);
             }}
             onKeyDown={(e) => { if (e.key === "Enter") (e.target as HTMLInputElement).blur(); }}
@@ -205,22 +210,15 @@ export function GridContainerPanel({
 export function GridChildPanel({
   instanceId,
   rowCss,
+  columnCss,
 }: {
   instanceId: string;
   rowCss: string;
+  columnCss: string;
 }) {
   const E = useI18n().t.inspector.editors;
-  const props = useStore($props) as Map<string, AnyProp>;
-  
-  let colStart: number | null = null;
-  let span = 6; // default span
-  for (const p of props.values()) {
-    if (p.instanceId === instanceId) {
-      if (p.name === "colStart" && typeof p.value === "number") colStart = p.value;
-      if (p.name === "span" && typeof p.value === "number") span = p.value;
-    }
-  }
-
+  // Both axes write grid-column / grid-row styles, which work in any CSS grid.
+  const col = parseGridLine(columnCss);
   const row = parseGridLine(rowCss);
 
   return (
@@ -240,13 +238,19 @@ export function GridChildPanel({
           </div>
           <div style={{ display: "flex", gap: 4 }}>
             <input
-              type="number" min={1} value={colStart ?? ""} placeholder="auto"
-              onChange={(e) => writeGridColumnStart(instanceId, parseInt(e.target.value) || null)}
+              type="number" min={1} value={col.start}
+              onChange={(e) =>
+                writeStyleProperty(instanceId, "gridColumn",
+                  serializeGridLine(parseInt(e.target.value) || 1, col.span))
+              }
               style={numInputStyle} title={E.columnStartLine}
             />
             <input
-              type="number" min={1} value={span}
-              onChange={(e) => writeGridSpan(instanceId, parseInt(e.target.value) || 1)}
+              type="number" min={1} value={col.span}
+              onChange={(e) =>
+                writeStyleProperty(instanceId, "gridColumn",
+                  serializeGridLine(col.start, parseInt(e.target.value) || 1))
+              }
               style={numInputStyle} title={E.columnSpan}
             />
           </div>

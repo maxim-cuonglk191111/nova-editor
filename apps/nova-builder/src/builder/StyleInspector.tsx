@@ -29,6 +29,7 @@ import {
   $styleSourceSelections,
   $styleSources,
   $breakpoints,
+  $instances,
 } from "@/lib/data-stores";
 import {
   $selectedInstanceId,
@@ -58,6 +59,8 @@ function TokenChipsRow({ instanceId }: { instanceId: string }) {
   const appliedTokens = values
     .map((id) => styleSources.get(id))
     .filter((s): s is Src => !!s && s.type === "token");
+  // "Cascade: Local" is jargon with nothing to act on — only show the row when tokens apply.
+  if (appliedTokens.length === 0) return null;
 
   // Determine active cascade indicator
   const hasLocal = values.some((id) => styleSources.get(id)?.type === "local");
@@ -153,6 +156,7 @@ export function StyleInspector() {
   const breakpoint = useStore($selectedBreakpoint);
   const allBreakpoints = useStore($breakpoints);
   const selectedState = useStore($selectedState);
+  const instances = useStore($instances);
 
   const isMultiSelect = multiSelectedIds.length > 1;
 
@@ -220,6 +224,19 @@ export function StyleInspector() {
   }
   const gridChildPos = parseGridColumnCss(gridColumnCss);
 
+  // Grid editors only make sense on a grid (tracks) or inside one (placement).
+  const parentId = [...instances.values()].find((inst) =>
+    inst.children.some((c) => c.type === "id" && c.value === instanceId))?.id;
+  const parentDecls = parentId
+    ? getDeclsForInstance(parentId, typedStyles, typedSelections, bpId, baseBpId, "")
+    : undefined;
+  const parentDisplay = parentDecls?.get("display");
+  // The 12-column picker only describes a 12-column parent grid.
+  const parentCols = parentDecls?.get("gridTemplateColumns");
+  const inTwelveColGrid = !!parentCols && /^repeat\(\s*12\s*,/.test(styleValueToString(parentCols.value));
+  const isGrid = /grid/.test(css("display")) || !!gridTemplateColumnsCss || !!gridTemplateRowsCss;
+  const inGrid = (!!parentDisplay && /grid/.test(styleValueToString(parentDisplay.value))) || !!gridRowCss || !!gridColumnCss;
+
   const grouped = new Map<string, [string, AnyStyleDecl][]>(SECTION_ORDER.map((n) => [n, []]));
   for (const [prop, decl] of byProperty) {
     if (DEDICATED.has(prop)) continue;
@@ -236,8 +253,9 @@ export function StyleInspector() {
       {isMultiSelect ? <MultiSelectHeader count={multiSelectedIds.length} /> : <InstanceHeader />}
       <StateSelector />
       {!isMultiSelect && <TokenChipsRow instanceId={instanceId} />}
+      {!isMultiSelect && <AddPropertyRow instanceId={instanceId} breakpointId={bpId} />}
       {/* Grid position control — shown when element has an explicit grid-column CSS value */}
-      {!isMultiSelect && gridChildPos && (
+      {!isMultiSelect && gridChildPos && inTwelveColGrid && (
         <GridPositionControl
           key={`${instanceId}-gpc`}
           colStart={gridChildPos.colStart}
@@ -265,9 +283,8 @@ export function StyleInspector() {
         <FilterPanel key={`${instanceId}-filter-${filterCss}`} instanceId={instanceId} currentCss={filterCss} />
         <BackdropFilterPanel key={`${instanceId}-backdrop-${backdropFilterCss}`} instanceId={instanceId} currentCss={backdropFilterCss} />
         <GradientPanel key={`${instanceId}-gradient-${backgroundImageCss}`} instanceId={instanceId} currentCss={backgroundImageCss} />
-        <GridContainerPanel key={`${instanceId}-grid-container-${gridTemplateColumnsCss}-${gridTemplateRowsCss}`} instanceId={instanceId} columnsCss={gridTemplateColumnsCss} rowsCss={gridTemplateRowsCss} />
-        <GridChildPanel key={`${instanceId}-grid-child-${gridRowCss}`} instanceId={instanceId} rowCss={gridRowCss} />
-        {!isMultiSelect && <AddPropertyRow instanceId={instanceId} breakpointId={bpId} />}
+        {isGrid && <GridContainerPanel key={`${instanceId}-grid-container`} instanceId={instanceId} columnsCss={gridTemplateColumnsCss} rowsCss={gridTemplateRowsCss} />}
+        {inGrid && <GridChildPanel key={`${instanceId}-grid-child`} instanceId={instanceId} rowCss={gridRowCss} columnCss={gridColumnCss} />}
       </div>
     </div>
   );
