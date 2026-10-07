@@ -2,6 +2,7 @@ import { I18nDictionary } from "../types";
 import { viChrome } from "./vi/chrome";
 import { viAdmin } from "./vi/admin";
 import { viSite } from "./vi/site";
+import { viBilling } from "./vi/billing";
 import { viDashboard } from "./vi/dashboard";
 import { viTools } from "./vi/tools";
 import { viInspector } from "./vi/inspector";
@@ -336,7 +337,7 @@ export const viDictionary: I18nDictionary = {
     steps: [
       { title: "Tạo trang", body: "Nhấn '+ Trang mới' và mô tả website trong một câu. AI xây dựng ngay lập tức." },
       { title: "Chỉnh sửa trong trình thiết kế", body: "Nhấp vào bất kỳ phần tử nào để thay đổi văn bản, màu sắc hoặc bố cục. Không cần code." },
-      { title: "Xuất bản hoặc chia sẻ", body: "Nhấn Xuất bản để nhận liên kết chia sẻ, hoặc xuất mã React sạch." },
+      { title: "Xem trước hoặc xuất", body: "Nhấn Xem trước để xem trang của bạn, hoặc Xuất để tải về dạng HTML." },
     ],
   },
   coachmarks: {
@@ -419,6 +420,7 @@ export const viDictionary: I18nDictionary = {
   chrome: viChrome,
   admin: viAdmin,
   site: viSite,
+  billing: viBilling,
   dashboard: viDashboard,
   tools: viTools,
   inspector: viInspector,

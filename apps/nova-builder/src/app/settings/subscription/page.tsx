@@ -6,6 +6,8 @@ import { PLAN_CARDS } from "@/lib/plans";
 import { TIER_ENTITLEMENTS } from "@/lib/tiers";
 import type { Tier } from "@/lib/tiers";
 import PayOSCheckoutModal from "@/components/PayOSCheckoutModal";
+import { useI18n, fmt, formatNumber } from "@/lib/i18n";
+import { planPriceLabel } from "@/lib/billing/planPrice";
 
 type UserInfo = {
   tier: Tier;
@@ -18,6 +20,9 @@ function PlanCard({ plan, current, onPayVietQR }: {
   current: boolean;
   onPayVietQR: () => void;
 }) {
+  const { t, locale } = useI18n();
+  const b = t.billing;
+  const copy = t.pricing.planCopy[plan.tier];
   return (
     <div style={{
       background: C.card,
@@ -33,27 +38,27 @@ function PlanCard({ plan, current, onPayVietQR }: {
           background: C.accent || "#7c3aed", color: "#fff", fontSize: 10, fontWeight: 700,
           padding: "2px 10px", borderRadius: 999, textTransform: "uppercase", letterSpacing: "0.05em"
         }}>
-          Phổ biến nhất
+          {t.pricing.mostPopular}
         </div>
       )}
 
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
         <div>
-          <div style={{ fontSize: FONT.md, fontWeight: 700, color: C.text }}>{plan.tier === "free" ? "Miễn phí" : plan.tier === "pro" ? "Pro" : plan.tier === "max" ? "Max" : "Team"}</div>
-          <div style={{ fontSize: 20, fontWeight: 800, color: current ? (C.accentText || "#a78bfa") : C.text, marginTop: 4 }}>{plan.price}</div>
+          <div style={{ fontSize: FONT.md, fontWeight: 700, color: C.text }}>{copy.label}</div>
+          <div style={{ fontSize: 20, fontWeight: 800, color: current ? (C.accentText || "#a78bfa") : C.text, marginTop: 4 }}>{planPriceLabel(plan.tier, b, locale)}</div>
         </div>
         {current && (
           <div style={{
             background: "rgba(124,58,237,0.15)", border: "1px solid rgba(124,58,237,0.3)",
             borderRadius: 20, padding: "2px 10px", fontSize: FONT.xs, color: C.accentText || "#a78bfa", fontWeight: 700
           }}>
-            Gói hiện tại
+            {b.currentPlan}
           </div>
         )}
       </div>
 
       <ul style={{ margin: 0, padding: 0, listStyle: "none", display: "flex", flexDirection: "column", gap: 8 }}>
-        {plan.features.map((f) => (
+        {copy.features.map((f) => (
           <li key={f} style={{ fontSize: FONT.sm, color: C.textDim, display: "flex", alignItems: "flex-start", gap: 6 }}>
             <span style={{ color: C.success || "#10b981", fontSize: FONT.md, flexShrink: 0 }}>✓</span>
             <span>{f}</span>
@@ -70,7 +75,7 @@ function PlanCard({ plan, current, onPayVietQR }: {
           border: "1px solid rgba(124,58,237,0.2)",
           marginTop: "auto",
         }}>
-          Gói hiện tại
+          {b.currentPlan}
         </div>
       ) : plan.tier === "free" ? (
         <div style={{
@@ -81,7 +86,7 @@ function PlanCard({ plan, current, onPayVietQR }: {
           border: `1px solid ${C.border || "rgba(255,255,255,0.08)"}`,
           marginTop: "auto",
         }}>
-          Có sẵn
+          {b.included}
         </div>
       ) : (
         <button
@@ -98,7 +103,7 @@ function PlanCard({ plan, current, onPayVietQR }: {
             fontFamily: "inherit",
           }}
         >
-          {plan.tier === "team" ? "Nâng cấp lên Team" : plan.tier === "max" ? "Nâng cấp lên Max" : "Nâng cấp lên Pro"}
+          {copy.cta}
         </button>
       )}
     </div>
@@ -109,6 +114,8 @@ function PlanCard({ plan, current, onPayVietQR }: {
 
 export default function SubscriptionPage() {
   const router = useRouter();
+  const { t, locale } = useI18n();
+  const b = t.billing;
   const [user, setUser] = useState<UserInfo | null>(null);
   const [loading, setLoading] = useState(true);
   const [selectedTier, setSelectedTier] = useState<string>("pro");
@@ -140,11 +147,11 @@ export default function SubscriptionPage() {
       <div style={{ maxWidth: 760, margin: "0 auto" }}>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 28 }}>
           <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-            <button onClick={() => router.push("/projects")}
+            <button onClick={() => router.push("/projects")} aria-label={b.back}
               style={{ background: "none", border: "none", color: C.textMuted, cursor: "pointer", fontSize: 18 }}>
               ←
             </button>
-            <h1 style={{ margin: 0, fontSize: 20, fontWeight: 700 }}>Subscription</h1>
+            <h1 style={{ margin: 0, fontSize: 20, fontWeight: 700 }}>{b.subscriptionTitle}</h1>
           </div>
           <button
             onClick={() => router.push("/settings/subscription/history")}
@@ -163,11 +170,11 @@ export default function SubscriptionPage() {
             onMouseEnter={(e) => e.currentTarget.style.borderColor = C.accent || "#7c3aed"}
             onMouseLeave={(e) => e.currentTarget.style.borderColor = C.border || "rgba(255,255,255,0.08)"}
           >
-            Lịch sử giao dịch
+            {b.historyTitle}
           </button>
         </div>
 
-        {loading && <div style={{ color: C.textMuted, fontSize: FONT.sm }}>Loading…</div>}
+        {loading && <div style={{ color: C.textMuted, fontSize: FONT.sm }}>{b.loading}</div>}
 
         {!loading && (
           <>
@@ -175,19 +182,19 @@ export default function SubscriptionPage() {
             <div style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 10, padding: "16px 20px", marginBottom: 24 }}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
                 <div style={{ fontSize: FONT.xs, color: C.textMuted, fontWeight: 600, letterSpacing: "0.05em" }}>
-                  AI CREDITS REMAINING
+                  {b.creditsRemaining}
                 </div>
                 <button
                   onClick={() => handleVietQR("credits")}
-                  title="Buy a credit top-up pack (VietQR)"
+                  title={b.topUpTitle}
                   style={{ padding: "3px 10px", borderRadius: 5, border: `1px solid ${C.border}`, background: "transparent", color: C.textDim, fontSize: FONT.xs, fontFamily: C.font, cursor: "pointer", fontWeight: 600 }}
                 >
-                  + Top up
+                  {b.topUp}
                 </button>
               </div>
               <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6 }}>
-                <span style={{ fontSize: FONT.sm, fontWeight: 700, color: C.text }}>{creditsLeft.toLocaleString()} left</span>
-                <span style={{ fontSize: FONT.xs, color: C.textMuted }}>{maxCredits === 9999 ? "Unlimited plan" : `${maxCredits.toLocaleString()} / month`}</span>
+                <span style={{ fontSize: FONT.sm, fontWeight: 700, color: C.text }}>{fmt(b.creditsLeft, { n: formatNumber(creditsLeft, locale) })}</span>
+                <span style={{ fontSize: FONT.xs, color: C.textMuted }}>{maxCredits === 9999 ? b.unlimitedPlan : fmt(b.creditsPerMonth, { n: formatNumber(maxCredits, locale) })}</span>
               </div>
               <div style={{ height: 6, background: "rgba(255,255,255,0.06)", borderRadius: 3, overflow: "hidden" }}>
                 <div style={{
@@ -211,8 +218,8 @@ export default function SubscriptionPage() {
             </div>
 
             <div style={{ marginTop: 20, fontSize: FONT.xs, color: C.textMuted, textAlign: "center" }}>
-              Need a custom plan?{" "}
-              <a href="mailto:support@nova.build" style={{ color: C.accent, textDecoration: "none" }}>Contact us</a>
+              {b.customPlan}{" "}
+              <a href="mailto:support@nova.build" style={{ color: C.accent, textDecoration: "none" }}>{b.contactUs}</a>
             </div>
           </>
         )}

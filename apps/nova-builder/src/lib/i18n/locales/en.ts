@@ -2,6 +2,7 @@ import { I18nDictionary } from "../types";
 import { enChrome } from "./en/chrome";
 import { enAdmin } from "./en/admin";
 import { enSite } from "./en/site";
+import { enBilling } from "./en/billing";
 import { enDashboard } from "./en/dashboard";
 import { enTools } from "./en/tools";
 import { enInspector } from "./en/inspector";
@@ -336,7 +337,7 @@ export const enDictionary: I18nDictionary = {
     steps: [
       { title: "Create a site", body: "Click '+ New Site' and describe your website in one sentence. AI builds it instantly." },
       { title: "Edit in the builder", body: "Click any element to change text, colors, or layout. No code needed." },
-      { title: "Publish or share", body: "Click Publish to get a shareable link, or export clean React code." },
+      { title: "Preview or export", body: "Click Preview to see your live site, or Export to download it as HTML." },
     ],
   },
   coachmarks: {
@@ -419,6 +420,7 @@ export const enDictionary: I18nDictionary = {
   chrome: enChrome,
   admin: enAdmin,
   site: enSite,
+  billing: enBilling,
   dashboard: enDashboard,
   tools: enTools,
   inspector: enInspector,

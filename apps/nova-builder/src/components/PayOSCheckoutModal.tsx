@@ -2,9 +2,9 @@
 
 import { useState, useEffect, useRef } from "react";
 import { useSession } from "next-auth/react";
-import { PLAN_CARDS } from "@/lib/plans";
 import { PAYOS_PRICES_VND } from "@/lib/billing/payos";
 import { UI_VARS as C } from "@/lib/uiTheme";
+import { useI18n, fmt, formatNumber } from "@/lib/i18n";
 
 interface PayOSCheckoutModalProps {
   isOpen: boolean;
@@ -26,6 +26,8 @@ type CheckoutData = {
 
 export default function PayOSCheckoutModal({ isOpen, onClose, tier, teamId }: PayOSCheckoutModalProps) {
   const { data: session } = useSession();
+  const { t, locale } = useI18n();
+  const b = t.billing;
   const [step, setStep] = useState<"details" | "qr" | "success">("details");
   const [agreed, setAgreed] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -37,17 +39,10 @@ export default function PayOSCheckoutModal({ isOpen, onClose, tier, teamId }: Pa
   const pollingRef = useRef<NodeJS.Timeout | null>(null);
 
   const plan = tier === "credits"
-    ? {
-        label: "AI Credits Pack",
-        price: "99.000 VND",
-        features: [
-          "Cộng thêm 500 AI credits vào tài khoản",
-          "Sử dụng vĩnh viễn không hết hạn",
-          "Áp dụng ngay sau khi thanh toán thành công",
-        ],
-      }
-    : PLAN_CARDS.find((p) => p.tier === tier);
+    ? { label: b.creditsPackLabel, features: b.creditsPackFeatures }
+    : t.pricing.planCopy[tier];
   const vndPrice = PAYOS_PRICES_VND[tier];
+  const vnd = (n: number) => `${formatNumber(n, locale)} VND`;
 
   // Reset state when modal is opened/closed
   useEffect(() => {
@@ -82,13 +77,13 @@ export default function PayOSCheckoutModal({ isOpen, onClose, tier, teamId }: Pa
       });
       const data = await res.json();
       if (!res.ok) {
-        throw new Error(data.error || "Không thể khởi tạo link thanh toán.");
+        throw new Error(data.error || b.createLinkFailed);
       }
       setCheckoutData(data);
       setStep("qr");
       startPolling(data.orderCode);
     } catch (err: any) {
-      setError(err.message || "Đã xảy ra lỗi.");
+      setError(err.message || b.genericError);
     } finally {
       setLoading(false);
     }
@@ -107,7 +102,7 @@ export default function PayOSCheckoutModal({ isOpen, onClose, tier, teamId }: Pa
           startSuccessCountdown();
         }
       } catch (err) {
-        console.error("Lỗi khi kiểm tra trạng thái thanh toán:", err);
+        console.error("Payment status check failed:", err);
       }
     }, 3000);
   };
@@ -130,7 +125,7 @@ export default function PayOSCheckoutModal({ isOpen, onClose, tier, teamId }: Pa
     setTimeout(() => setCopiedField(null), 2000);
   };
 
-  if (!isOpen || !plan) return null;
+  if (!isOpen || !plan || !vndPrice) return null;
 
   return (
     <div style={{
@@ -155,12 +150,12 @@ export default function PayOSCheckoutModal({ isOpen, onClose, tier, teamId }: Pa
           padding: "16px 20px", borderBottom: `1px solid ${C.border || "rgba(255,255,255,0.1)"}`,
         }}>
           <h3 style={{ margin: 0, fontSize: 16, fontWeight: 700 }}>
-            {step === "details" && "Chi tiết dịch vụ"}
-            {step === "qr" && "Quét mã chuyển khoản VietQR"}
-            {step === "success" && "Thanh toán thành công"}
+            {step === "details" && b.stepDetails}
+            {step === "qr" && b.stepQr}
+            {step === "success" && b.stepSuccess}
           </h3>
           {step !== "success" && (
-            <button onClick={onClose} style={{
+            <button onClick={onClose} aria-label={b.close} style={{
               background: "none", border: "none", color: C.textMuted || "rgba(255,255,255,0.6)",
               cursor: "pointer", fontSize: 20, padding: 4, display: "flex",
               alignItems: "center", justifyContent: "center",
@@ -175,9 +170,9 @@ export default function PayOSCheckoutModal({ isOpen, onClose, tier, teamId }: Pa
           {step === "details" && !session?.user && (
             <div style={{ display: "flex", flexDirection: "column", gap: 16, textAlign: "center", padding: "12px 0" }}>
               <div style={{ fontSize: 40 }}>🔒</div>
-              <h4 style={{ margin: 0, fontSize: 16, fontWeight: 700 }}>Yêu cầu đăng nhập</h4>
+              <h4 style={{ margin: 0, fontSize: 16, fontWeight: 700 }}>{b.loginRequiredTitle}</h4>
               <p style={{ fontSize: 13, color: C.textMuted || "rgba(255,255,255,0.6)", lineHeight: 1.5, margin: 0 }}>
-                Bạn cần đăng nhập tài khoản Nova Editor để có thể thực hiện thanh toán và liên kết chính xác gói dịch vụ với tài khoản của mình.
+                {b.loginRequiredBody}
               </p>
               <button
                 onClick={() => {
@@ -190,7 +185,7 @@ export default function PayOSCheckoutModal({ isOpen, onClose, tier, teamId }: Pa
                   marginTop: 8,
                 }}
               >
-                Đăng nhập ngay
+                {b.loginNow}
               </button>
             </div>
           )}
@@ -202,15 +197,15 @@ export default function PayOSCheckoutModal({ isOpen, onClose, tier, teamId }: Pa
                 border: "1px solid rgba(124, 58, 237, 0.2)",
                 borderRadius: 8, padding: 16, textAlign: "center"
               }}>
-                <div style={{ fontSize: 13, textTransform: "uppercase", letterSpacing: "0.05em", color: C.accentText || "#a78bfa" }}>Gói dịch vụ đã chọn</div>
+                <div style={{ fontSize: 13, textTransform: "uppercase", letterSpacing: "0.05em", color: C.accentText || "#a78bfa" }}>{b.selectedPlan}</div>
                 <div style={{ fontSize: 24, fontWeight: 800, margin: "4px 0" }}>{plan.label}</div>
                 <div style={{ fontSize: 18, fontWeight: 700, color: C.success || "#10b981" }}>
-                  {vndPrice ? `${vndPrice.toLocaleString("vi-VN")} VND` : plan.price}
+                  {vnd(vndPrice)}
                 </div>
               </div>
 
               <div>
-                <div style={{ fontSize: 13, fontWeight: 700, marginBottom: 8, color: C.textDim }}>Các tính năng nổi bật:</div>
+                <div style={{ fontSize: 13, fontWeight: 700, marginBottom: 8, color: C.textDim }}>{b.highlights}</div>
                 <ul style={{ margin: 0, padding: 0, listStyle: "none", display: "flex", flexDirection: "column", gap: 8 }}>
                   {plan.features.map((feat) => (
                     <li key={feat} style={{ fontSize: 13, display: "flex", alignItems: "flex-start", gap: 8, color: C.textMuted }}>
@@ -240,7 +235,7 @@ export default function PayOSCheckoutModal({ isOpen, onClose, tier, teamId }: Pa
                   style={{ marginTop: 3 }}
                 />
                 <span style={{ fontSize: 12, color: C.textMuted || "rgba(255,255,255,0.6)", lineHeight: 1.4 }}>
-                  Tôi đồng ý với các điều khoản dịch vụ và chính sách nâng cấp tài khoản của Nova Editor.
+                  {b.agreeTerms}
                 </span>
               </label>
 
@@ -256,7 +251,7 @@ export default function PayOSCheckoutModal({ isOpen, onClose, tier, teamId }: Pa
                   marginTop: 8,
                 }}
               >
-                {loading ? "Đang xử lý..." : "Tiến hành thanh toán"}
+                {loading ? b.processing : b.proceedToPay}
               </button>
             </div>
           )}
@@ -272,13 +267,13 @@ export default function PayOSCheckoutModal({ isOpen, onClose, tier, teamId }: Pa
               }}>
                 <img
                   src={`https://img.vietqr.io/image/${checkoutData.bin}-${checkoutData.accountNumber}-qr_only.png?amount=${checkoutData.amount}&addInfo=${encodeURIComponent(checkoutData.description)}&accountName=${encodeURIComponent(checkoutData.accountName)}`}
-                  alt="VietQR PayOS"
+                  alt={b.qrAlt}
                   style={{ width: 220, height: 220, objectFit: "contain" }}
                 />
               </div>
 
               <div style={{ textAlign: "center", fontSize: 12, color: C.textMuted }}>
-                Quét mã QR bằng ứng dụng Ngân hàng để thanh toán tự động, hoặc chuyển khoản thủ công theo thông tin bên dưới:
+                {b.qrHint}
               </div>
 
               {/* Payment Details */}
@@ -288,10 +283,10 @@ export default function PayOSCheckoutModal({ isOpen, onClose, tier, teamId }: Pa
                 borderRadius: 8, padding: 12, display: "flex", flexDirection: "column", gap: 10,
               }}>
                 {[
-                  { label: "Chủ tài khoản", value: checkoutData.accountName, field: "name" },
-                  { label: "Số tài khoản", value: checkoutData.accountNumber, field: "account" },
-                  { label: "Số tiền", value: `${checkoutData.amount.toLocaleString("vi-VN")} VND`, field: "amount", rawValue: String(checkoutData.amount) },
-                  { label: "Nội dung chuyển khoản", value: checkoutData.description, field: "desc", highlight: true },
+                  { label: b.accountName, value: checkoutData.accountName, field: "name" },
+                  { label: b.accountNumber, value: checkoutData.accountNumber, field: "account" },
+                  { label: b.amount, value: vnd(checkoutData.amount), field: "amount", rawValue: String(checkoutData.amount) },
+                  { label: b.transferNote, value: checkoutData.description, field: "desc", highlight: true },
                 ].map((item) => (
                   <div key={item.label} style={{
                     display: "flex", justifyContent: "space-between", alignItems: "center",
@@ -316,7 +311,7 @@ export default function PayOSCheckoutModal({ isOpen, onClose, tier, teamId }: Pa
                           borderRadius: 4, display: "flex", alignItems: "center", gap: 2,
                         }}
                       >
-                        {copiedField === item.field ? "Đã chép" : "Sao chép"}
+                        {copiedField === item.field ? b.copied : b.copy}
                       </button>
                     </div>
                   </div>
@@ -330,7 +325,7 @@ export default function PayOSCheckoutModal({ isOpen, onClose, tier, teamId }: Pa
                     width: 8, height: 8, borderRadius: "50%", background: C.accent || "#7c3aed",
                     boxShadow: "0 0 8px #7c3aed", animation: "pulse 1.5s infinite"
                   }} />
-                  <span>Đang chờ thanh toán (tự động phát hiện)...</span>
+                  <span>{b.waitingForPayment}</span>
                 </div>
 
                 {process.env.NODE_ENV === "development" && (
@@ -351,10 +346,10 @@ export default function PayOSCheckoutModal({ isOpen, onClose, tier, teamId }: Pa
                           }),
                         });
                         if (res.ok) {
-                          console.log("Giả lập thành công!");
+                          console.log("Simulated payment succeeded");
                         }
                       } catch (err) {
-                        console.error("Lỗi giả lập:", err);
+                        console.error("Simulated payment failed:", err);
                       }
                     }}
                     style={{
@@ -364,7 +359,7 @@ export default function PayOSCheckoutModal({ isOpen, onClose, tier, teamId }: Pa
                       marginTop: 8, boxShadow: "0 2px 4px rgba(0,0,0,0.2)",
                     }}
                   >
-                    Giả lập thanh toán thành công (Chỉ dành cho Test)
+                    {b.simulatePayment}
                   </button>
                 )}
               </div>
@@ -382,12 +377,12 @@ export default function PayOSCheckoutModal({ isOpen, onClose, tier, teamId }: Pa
               }}>
                 ✓
               </div>
-              <h2 style={{ fontSize: 20, fontWeight: 800, color: C.success || "#10b981", margin: 0 }}>Giao dịch thành công!</h2>
+              <h2 style={{ fontSize: 20, fontWeight: 800, color: C.success || "#10b981", margin: 0 }}>{b.successTitle}</h2>
               <p style={{ textAlign: "center", fontSize: 14, color: C.textDim, margin: 0, lineHeight: 1.5 }}>
-                Cảm ơn bạn đã nâng cấp dịch vụ của Nova Editor. Hệ thống sẽ tự động cập nhật tài khoản của bạn.
+                {b.successBody}
               </p>
               <div style={{ fontSize: 12, color: C.textMuted, marginTop: 12 }}>
-                Đang tải lại trang sau {countdown} giây...
+                {fmt(b.reloadingIn, { n: countdown })}
               </div>
             </div>
           )}

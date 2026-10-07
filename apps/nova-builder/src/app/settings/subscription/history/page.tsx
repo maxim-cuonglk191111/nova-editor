@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { UI_VARS as C, FONT } from "@/lib/uiTheme";
+import { useI18n, fmt, formatNumber } from "@/lib/i18n";
 
 
 interface Transaction {
@@ -16,6 +17,8 @@ interface Transaction {
 
 export default function SubscriptionHistoryPage() {
   const router = useRouter();
+  const { t, locale } = useI18n();
+  const b = t.billing;
   const [history, setHistory] = useState<Transaction[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -27,14 +30,14 @@ export default function SubscriptionHistoryPage() {
           setHistory(json.history);
         }
       })
-      .catch((err) => console.error("Lỗi khi tải lịch sử giao dịch:", err))
+      .catch((err) => console.error("Loading transaction history failed:", err))
       .finally(() => setLoading(false));
   }, []);
 
   const formatDateTime = (isoString: string) => {
     try {
       const date = new Date(isoString);
-      return date.toLocaleString("vi-VN", {
+      return date.toLocaleString(locale === "vi" ? "vi-VN" : "en-US", {
         year: "numeric",
         month: "2-digit",
         day: "2-digit",
@@ -48,24 +51,15 @@ export default function SubscriptionHistoryPage() {
   };
 
   const formatAmount = (amount: number | null) => {
-    if (amount === null || amount === undefined) return "10.000 VND"; // default test price
-    return `${amount.toLocaleString("vi-VN")} VND`;
+    if (amount === null || amount === undefined) return "—";
+    return `${formatNumber(amount, locale)} VND`;
   };
 
   const getPlanLabel = (plan: string | null, kind: string) => {
-    if (!plan) return kind === "credits" ? "500 Credits Pack" : "Gói Pro";
-    switch (plan.toLowerCase()) {
-      case "pro":
-        return "Gói Pro";
-      case "max":
-        return "Gói Max";
-      case "team":
-        return "Gói Team";
-      case "credits":
-        return "500 Credits Pack";
-      default:
-        return plan;
-    }
+    const key = (plan ?? (kind === "credits" ? "credits" : "")).toLowerCase();
+    if (key === "credits") return b.creditsPackLabel;
+    const copy = t.pricing.planCopy[key];
+    return copy ? fmt(b.planName, { plan: copy.label }) : plan ?? "—";
   };
 
   return (
@@ -74,10 +68,10 @@ export default function SubscriptionHistoryPage() {
         {/* Header navigation using Breadcrumbs */}
         <div style={{ marginBottom: 24, display: "flex", gap: 8, alignItems: "center", fontSize: "14px" }}>
           <span onClick={() => router.push("/settings/subscription")} style={{ cursor: "pointer", color: C.accent, opacity: 0.85 }}>
-            Subscription
+            {b.subscriptionTitle}
           </span>
           <span style={{ color: C.textMuted }}>/</span>
-          <span style={{ color: C.text }}>Lịch sử giao dịch</span>
+          <span style={{ color: C.text }}>{b.historyTitle}</span>
         </div>
 
         {loading ? (
@@ -92,7 +86,7 @@ export default function SubscriptionHistoryPage() {
               marginRight: 10,
               verticalAlign: "middle"
             }} />
-            Đang tải lịch sử giao dịch...
+            {b.historyLoading}
           </div>
         ) : history.length === 0 ? (
           <div style={{ 
@@ -106,8 +100,8 @@ export default function SubscriptionHistoryPage() {
             <svg width="48" height="48" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5} style={{ margin: "0 auto 16px", color: "rgba(255,255,255,0.2)" }}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 002.25-2.25V6.75A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25v10.5A2.25 2.25 0 004.5 19.5z" />
             </svg>
-            <div style={{ fontSize: FONT.md, fontWeight: 600, color: C.text, marginBottom: 6 }}>Chưa có giao dịch nào</div>
-            <div style={{ fontSize: FONT.sm }}>Lịch sử giao dịch chuyển khoản VietQR của bạn sẽ hiển thị tại đây.</div>
+            <div style={{ fontSize: FONT.md, fontWeight: 600, color: C.text, marginBottom: 6 }}>{b.historyEmptyTitle}</div>
+            <div style={{ fontSize: FONT.sm }}>{b.historyEmptyBody}</div>
           </div>
         ) : (
           <div style={{ 
@@ -121,12 +115,12 @@ export default function SubscriptionHistoryPage() {
               <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left", fontSize: FONT.sm }}>
                 <thead>
                   <tr style={{ borderBottom: `1px solid ${C.border}`, background: "rgba(255,255,255,0.02)" }}>
-                    <th style={{ padding: "14px 16px", color: C.textMuted, fontWeight: 600 }}>Mã đơn hàng</th>
-                    <th style={{ padding: "14px 16px", color: C.textMuted, fontWeight: 600 }}>Gói mua</th>
-                    <th style={{ padding: "14px 16px", color: C.textMuted, fontWeight: 600 }}>Số tiền</th>
-                    <th style={{ padding: "14px 16px", color: C.textMuted, fontWeight: 600 }}>Cổng thanh toán</th>
-                    <th style={{ padding: "14px 16px", color: C.textMuted, fontWeight: 600 }}>Thời gian</th>
-                    <th style={{ padding: "14px 16px", color: C.textMuted, fontWeight: 600, textAlign: "right" }}>Trạng thái</th>
+                    <th style={{ padding: "14px 16px", color: C.textMuted, fontWeight: 600 }}>{b.colOrder}</th>
+                    <th style={{ padding: "14px 16px", color: C.textMuted, fontWeight: 600 }}>{b.colPlan}</th>
+                    <th style={{ padding: "14px 16px", color: C.textMuted, fontWeight: 600 }}>{b.colAmount}</th>
+                    <th style={{ padding: "14px 16px", color: C.textMuted, fontWeight: 600 }}>{b.colProvider}</th>
+                    <th style={{ padding: "14px 16px", color: C.textMuted, fontWeight: 600 }}>{b.colTime}</th>
+                    <th style={{ padding: "14px 16px", color: C.textMuted, fontWeight: 600, textAlign: "right" }}>{b.colStatus}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -157,7 +151,7 @@ export default function SubscriptionHistoryPage() {
                           fontSize: FONT.xs, 
                           fontWeight: 700 
                         }}>
-                          {tx.status || "Thành công"}
+                          {!tx.status || tx.status === "success" || tx.status === "paid" ? b.statusPaid : tx.status}
                         </span>
                       </td>
                     </tr>

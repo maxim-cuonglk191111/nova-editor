@@ -6,6 +6,7 @@
 import type { I18nChromeDictionary } from "./types-chrome";
 import type { I18nAdminDictionary } from "./types-admin";
 import type { I18nSiteDictionary } from "./types-site";
+import type { I18nBillingDictionary } from "./types-billing";
 import type { I18nDashboardDictionary } from "./types-dashboard";
 import type { I18nToolsDictionary } from "./types-tools";
 import type { I18nInspectorDictionary } from "./types-inspector";
@@ -436,6 +437,7 @@ export interface I18nDictionary {
   tools: I18nToolsDictionary;
   dashboard: I18nDashboardDictionary;
   site: I18nSiteDictionary;
+  billing: I18nBillingDictionary;
   admin: I18nAdminDictionary;
 }
 

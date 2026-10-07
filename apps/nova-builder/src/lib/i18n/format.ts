@@ -5,6 +5,11 @@ export function fmt(template: string, vars: Record<string, string | number>): st
   );
 }
 
+/** Number in the locale's grouping: "500.000" (vi) / "500,000" (en). */
+export function formatNumber(n: number, locale: string): string {
+  return n.toLocaleString(locale === "vi" ? "vi-VN" : "en-US");
+}
+
 /** Relative "x minutes ago" label using the active locale's time strings. */
 export function formatTimeAgo(
   iso: string,

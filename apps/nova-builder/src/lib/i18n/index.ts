@@ -5,6 +5,7 @@ export * from "./context";
 export * from "./types-chrome";
 export * from "./types-admin";
 export * from "./types-site";
+export * from "./types-billing";
 export * from "./types-dashboard";
 export * from "./types-tools";
 export * from "./types-inspector";
