@@ -56,8 +56,8 @@ Run: `pwsh scripts/audit-run.ps1 e2e/builder-audit/<area>.spec.ts` (production b
 
 | Area | Spec | Result |
 |------|------|--------|
-| 1 Canvas — hover, select, label, breadcrumb, parent, drag reorder / into container / nudge, resize, inline edit, context menu, shortcuts, ⌘K, drag-off delete | `canvas.spec.ts` | 25.8.0: all ≥ 8 after fixes (resize, link/image drag, stale Style-panel inputs, image distortion, delete + Undo toast) — production re-run pending |
-| 2 Left sidebar | — | not run |
+| 1 Canvas — hover, select, label, breadcrumb, parent, drag reorder / into container / nudge, resize, inline edit, context menu, shortcuts, ⌘K, drag-off delete | `canvas.spec.ts` | ✅ all ≥ 8 on production 25.8.0 (fixed: resize, link/image drag, stale Style-panel inputs, image distortion, delete + Undo toast) |
+| 2 Left sidebar — components, pages, layers, assets, templates, resize/collapse | `left-sidebar.spec.ts` | 25.9.0: all ≥ 8 after fixes (click-to-insert on the open page, set home page, scroll to selection, asset delete confirm, resize over canvas, autosave of CSS vars/custom CSS); CSS Vars, Custom CSS and template community/bundles hidden (Tier C) — production re-run pending |
 | 3 Right panel | — | not run |
 | 4 Top bar | — | not run |
 | 5 Feedback & safety | — | not run |
@@ -72,7 +72,9 @@ Run: `pwsh scripts/audit-run.ps1 e2e/builder-audit/<area>.spec.ts` (production b
 | White-label branding, API keys, notification preferences | Paid-plan / developer extras; no email sending wired for notifications | Pages not linked |
 | Admin console, feature flags | Internal only (403 for normal users — correct) | Not linked |
 | Symbols, interactions, data binding, CMS, SEO panel, cookie banner, React export, deploy panel | Already disabled in the UI | Commented out |
-| Performance advisor, CSS preview | Low user value; candidates to hide if B-tier time is short | Linked from Tools — decide after B5–B10 |
+| Performance advisor, CSS preview | Low user value; candidates to hide if B-tier time is short | Linked from Tools — decided in task 007 batch 4 |
+| CSS Variables, Custom CSS panels | Work, but developer tools a non-technical user cannot use unaided (task 007 ease 4/10) | Rail tabs hidden 25.9.0; saved values still render and export |
+| Template bundles export/import, Publish to community, Community list | Public sharing without moderation; empty list; "bundle" jargon | Hidden in Templates 25.9.0 (`SHOW_COMMUNITY`) |
 
 Follow-up task (not started): delete Tier C code that stays hidden for a full release, to shrink the bundle.
 

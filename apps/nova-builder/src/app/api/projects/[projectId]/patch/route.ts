@@ -1,7 +1,8 @@
 // POST /api/projects/:projectId/patch — apply immerhin transaction patches to
 // the stored document under optimistic concurrency (Tier P M2, ADR-NB-019 p2).
 //
-// Body: { baseVersion: number, transactions: { transactionId, changes: { namespace, patches }[] }[] }
+// Body: { baseVersion: number, transactions: { transactionId, changes: { namespace, patches }[] }[],
+//         extras?: { cssVars?, customCss?, interactions?, symbols? } }
 // - 409 when baseVersion no longer matches the row's version (another tab won);
 //   the response carries the current server version.
 // - On success the row's version becomes baseVersion + 1 and is returned.
@@ -36,6 +37,8 @@ const DATA_NAMESPACES = new Set<keyof WebstudioData>([
   "assets",
 ]);
 
+const EXTRA_KEYS = ["cssVars", "customCss", "interactions", "symbols"] as const;
+
 export async function POST(
   req: Request,
   context: { params: Promise<{ projectId: string }> }
@@ -48,7 +51,7 @@ export async function POST(
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  let body: { baseVersion?: unknown; transactions?: unknown };
+  let body: { baseVersion?: unknown; transactions?: unknown; extras?: unknown };
   try {
     body = await req.json();
   } catch {
@@ -126,9 +129,20 @@ export async function POST(
     return NextResponse.json({ error: "Invalid patches" }, { status: 400 });
   }
 
+  // Project-level settings edited outside immerhin transactions (CSS variables,
+  // custom CSS, interactions, symbols) ride along as whole values.
+  const extras: Record<string, unknown> = {};
+  if (body.extras && typeof body.extras === "object") {
+    for (const key of EXTRA_KEYS) {
+      const value = (body.extras as Record<string, unknown>)[key];
+      if (value !== undefined) extras[key] = value;
+    }
+  }
+
   const stored = (project.schema_json ?? {}) as Record<string, unknown>;
   const nextSchemaJson = {
     ...stored,
+    ...extras,
     schemaVersion: "5.0",
     data: serializeWebstudioData(data),
   };

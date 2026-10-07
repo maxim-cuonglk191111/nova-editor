@@ -20,11 +20,21 @@ export type SaveStatus =
   | "error"       // retries exhausted (still retrying in background)
   | "conflict";   // 409 — another tab/session saved first; reload required
 
+/** Project-level values edited outside immerhin transactions; saved whole. */
+export type SaveExtras = Partial<Record<"cssVars" | "customCss" | "interactions" | "symbols", unknown>>;
+
 /** Abstract persist contract — swap the backend without touching saveQueue. */
 export type PersistFn = (
   transactions: SyncItem[],
-  baseVersion: number
+  baseVersion: number,
+  extras?: SaveExtras
 ) => Promise<{ version: number }>;
+
+let pendingExtras: SaveExtras = {};
+/** Queue the latest value of a project-level setting for the next autosave flush. */
+export const queueExtras = (extras: SaveExtras) => {
+  pendingExtras = { ...pendingExtras, ...extras };
+};
 
 export const $saveStatus = atom<SaveStatus>("idle");
 /** Last server-confirmed document version (optimistic concurrency token). */
@@ -47,11 +57,11 @@ export const markRemoteTransaction = (transactionId: string) => {
 
 /** Default adapter: POST patches to the REST endpoint. */
 const makeFetchPersist = (projectId: string): PersistFn =>
-  async (transactions, baseVersion) => {
+  async (transactions, baseVersion, extras) => {
     const res = await fetch(`/api/projects/${projectId}/patch`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ baseVersion, transactions }),
+      body: JSON.stringify({ baseVersion, transactions, extras }),
     });
     if (res.status === 409) throw Object.assign(new Error("conflict"), { status: 409 });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
@@ -66,6 +76,7 @@ export const startSaveQueue = (
   $saveStatus.set("idle");
   // Drain anything enqueued before the queue started.
   serverSyncStore.popAll();
+  pendingExtras = {};
 
   let pending: SyncItem[] = [];
   let retries = 0;
@@ -83,14 +94,17 @@ export const startSaveQueue = (
       return true;
     });
     pending.push(...drained);
-    if (pending.length === 0) {
+    const extras = pendingExtras;
+    const hasExtras = Object.keys(extras).length > 0;
+    if (pending.length === 0 && !hasExtras) {
       if ($saveStatus.get() === "saving") $saveStatus.set("saved");
       return;
     }
     inFlight = true;
+    pendingExtras = {};
     $saveStatus.set("saving");
     try {
-      const json = await persist(pending, $docVersion.get());
+      const json = await persist(pending, $docVersion.get(), hasExtras ? extras : undefined);
       $docVersion.set(json.version);
       pending = [];
       retries = 0;
@@ -100,6 +114,8 @@ export const startSaveQueue = (
         $saveStatus.set("conflict");
         return;
       }
+      // Re-queue the extras unless a newer value arrived meanwhile.
+      pendingExtras = { ...extras, ...pendingExtras };
       retries += 1;
       $saveStatus.set(retries >= MAX_RECOVERY_RETRIES ? "error" : "recovering");
     } finally {

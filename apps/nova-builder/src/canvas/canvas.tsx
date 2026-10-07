@@ -334,12 +334,14 @@ export const Canvas = () => {
       const instanceId = selector?.[0];
       if (!instanceId) return;
       let attempts = 0;
+      // data-ws-id, not data-ws-selector: the selector holds the whole ancestor
+      // path ("id,parent,…"), so an exact match only ever hit the page root.
       const tryScroll = () => {
-        const el = document.querySelector(`[${selectorIdAttribute}="${instanceId}"]`);
+        const el = document.querySelector(`[data-ws-id="${instanceId}"]`);
         if (el) {
           el.scrollIntoView({ block: "nearest", inline: "nearest" });
-        } else if (attempts++ < 5) {
-          setTimeout(tryScroll, 30);
+        } else if (attempts++ < 20) {
+          setTimeout(tryScroll, 50);
         }
       };
       requestAnimationFrame(tryScroll);

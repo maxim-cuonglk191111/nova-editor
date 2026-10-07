@@ -397,6 +397,7 @@ export interface I18nAssetsDictionary {
   /** "{count}" is replaced with the number of instances using the asset. */
   deleteInUse: string;
   deleteWarning: string;
+  deletePermanent: string;
   delete: string;
   /** "{count}" is replaced with the number of files. */
   fileOne: string;

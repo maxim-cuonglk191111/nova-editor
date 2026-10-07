@@ -402,6 +402,7 @@ export const viDictionary: I18nDictionary = {
     deleteTitle: "Xóa tài nguyên?",
     deleteInUse: "{count} thành phần đang dùng tài nguyên này.",
     deleteWarning: "Xóa sẽ làm hỏng các tham chiếu đó.",
+    deletePermanent: "Tệp sẽ bị xóa vĩnh viễn và không thể hoàn tác.",
     delete: "Xóa",
     fileOne: "{count} tệp",
     fileMany: "{count} tệp",

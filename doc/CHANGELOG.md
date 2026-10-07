@@ -2,6 +2,21 @@
 
 ---
 
+## [25.9.0] — 2026-10-07
+
+### Builder audit batch 2 — left sidebar (Minor)
+
+Task 007, `e2e/builder-audit/left-sidebar.spec.ts`.
+
+- **Autosave saves everything**: CSS variables, custom CSS, interactions and symbols were only written by the Save dialog, while the chip said "All changes saved". They now ride along on the autosave patch (`extras` on `POST /api/projects/:id/patch`), and the Save button returns to "Saved" when autosave confirms (it stayed green "Save" forever).
+- **Pages**: visible ✎ rename, ⌂ "Make this the home page" (new — swaps paths so the home page stays at `/`), SEO and × delete buttons; a "Home" badge on the home page.
+- **Components**: one click adds the component below the selection (it needed a double-click); components land on the page that is open (always went to the home page); a one-line hint under the search; Layout and Typography listed first; the misleading ⌘K badge removed; neutral default texts ("Your heading", "Click me").
+- **Selecting from Layers or inserting a template scrolls the canvas to it** (the scroll looked up `data-ws-selector`, which never matched below the root).
+- **Assets**: deleting always asks first (unused files were deleted permanently without a prompt).
+- **Layers**: Delete in the context menu shows the Undo toast.
+- **Panel resize** works when dragging over the canvas (the iframe swallowed the mouse); 6 px handle.
+- **Hidden (Tier C)**: CSS Variables and Custom CSS tabs (developer tools; saved values still render), and in Templates the bundle export/import, "Publish current page" and the Community list (public sharing without moderation, empty list). Rail label "Tmpl" → "Templates".
+
 ## [25.8.0] — 2026-10-07
 
 ### Builder audit batch 1 — canvas (Minor)

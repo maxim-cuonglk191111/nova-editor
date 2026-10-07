@@ -29,6 +29,7 @@ type PageData = {
 
 type PageStatus = {
   isActive: boolean;
+  isHome: boolean;
   canDelete: boolean;
 };
 
@@ -36,7 +37,19 @@ type PageHandlers = {
   onClick: () => void;
   onRename: (name: string, path: string) => void;
   onSeoChange: (seo: PageSeo) => void;
+  onSetHome: () => void;
   onDelete: () => void;
+};
+
+const actionStyle: React.CSSProperties = {
+  background: "none",
+  border: "none",
+  color: C.textMuted,
+  cursor: "pointer",
+  fontSize: 13,
+  lineHeight: 1,
+  padding: "2px 4px",
+  borderRadius: 3,
 };
 
 type PageItemProps = {
@@ -48,8 +61,8 @@ type PageItemProps = {
 export function PageItem({ page, status, handlers }: PageItemProps) {
   const L = useI18n().t.sidebar.pages;
   const { name, path, title, description, noindex } = page;
-  const { isActive, canDelete } = status;
-  const { onClick, onRename, onSeoChange, onDelete } = handlers;
+  const { isActive, isHome, canDelete } = status;
+  const { onClick, onRename, onSeoChange, onSetHome, onDelete } = handlers;
 
   const [isEditing, setIsEditing] = useState(false);
   const [seoOpen, setSeoOpen] = useState(false);
@@ -101,28 +114,30 @@ export function PageItem({ page, status, handlers }: PageItemProps) {
         >
           <span style={{ fontSize: 12, fontFamily: C.font, color: isActive ? C.accent : C.text, fontWeight: isActive ? 600 : 400 }}>
             {name}
+            {isHome && (
+              <span style={{ marginLeft: 6, fontSize: 10, fontWeight: 600, color: C.accentText, background: C.accentBg, borderRadius: 3, padding: "1px 5px" }}>
+                {L.homeBadge}
+              </span>
+            )}
           </span>
           <span style={{ fontSize: 12, fontFamily: C.fontMono, color: C.textMuted }}>{path}</span>
         </button>
 
-        {isActive && (
-          <button
-            onClick={(e) => { e.stopPropagation(); setSeoOpen(o => !o); }}
-            title={L.seoSettings}
-            style={{ background: "none", border: "none", color: seoOpen ? C.accent : C.textMuted, cursor: "pointer", fontSize: 12, padding: "0 6px", flexShrink: 0 }}
-          >
-            {seoOpen ? "▲" : "▼"} SEO
-          </button>
-        )}
-
-        {hovered && canDelete && (
-          <button
-            onClick={(e) => { e.stopPropagation(); onDelete(); }}
-            title={L.deletePage}
-            style={{ position: "absolute", right: isActive ? 52 : 6, top: "50%", transform: "translateY(-50%)", background: "rgba(30,41,59,0.95)", border: "none", color: C.danger, cursor: "pointer", fontSize: 14, lineHeight: 1, padding: "2px 4px", borderRadius: 3 }}
-          >
-            ×
-          </button>
+        {(hovered || isActive) && (
+          <div style={{ display: "flex", alignItems: "center", gap: 1, paddingRight: 4, flexShrink: 0 }}>
+            <button aria-label={L.renamePage} title={L.renamePage} onClick={(e) => { e.stopPropagation(); setIsEditing(true); }} style={actionStyle}>✎</button>
+            {!isHome && (
+              <button aria-label={L.setHomePage} title={L.setHomePage} onClick={(e) => { e.stopPropagation(); onSetHome(); }} style={actionStyle}>⌂</button>
+            )}
+            {isActive && (
+              <button aria-label={L.seoSettings} title={L.seoSettings} onClick={(e) => { e.stopPropagation(); setSeoOpen(o => !o); }} style={{ ...actionStyle, fontSize: 11, color: seoOpen ? C.accent : C.textMuted }}>
+                SEO
+              </button>
+            )}
+            {canDelete && (
+              <button aria-label={L.deletePage} title={L.deletePage} onClick={(e) => { e.stopPropagation(); onDelete(); }} style={{ ...actionStyle, color: C.danger, fontSize: 15 }}>×</button>
+            )}
+          </div>
         )}
       </div>
 

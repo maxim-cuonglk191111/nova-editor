@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useEffect, useRef } from "react";
 import { useStore } from "@nanostores/react";
 import { nanoid } from "nanoid";
-import { $registeredComponentMetas, $selectedInstanceSelector } from "@/lib/nano-states";
+import { $registeredComponentMetas, $selectedInstanceSelector, $selectedPage } from "@/lib/nano-states";
 import { updateData } from "@/lib/transactions";
 import { $pages, $instances, $breakpoints } from "@/lib/data-stores";
 import { ensureLocalSource } from "@/lib/style-object-model";
@@ -98,23 +98,16 @@ function ChevronIcon({ expanded }: { expanded: boolean }) {
 export function ComponentsPanel() {
   const L = useI18n().t.sidebar.components;
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedId, setSelectedId] = useState<string | null>(null);
   const [collapsedCategories, setCollapsedCategories] = useState<Record<string, boolean>>({});
 
   // Insertion helper logic
   function insertComponent(componentName: string, dropTarget: DropTarget = null) {
     const instances = $instances.get();
     const selector = $selectedInstanceSelector.get();
-    const pages = $pages.get();
-
-    if (!pages) {
-      console.error("[builder] insertComponent error: No pages found!");
-      return;
-    }
-
-    const activePage = pages.pages ? pages.pages.get(pages.homePageId) : null;
+    // The page open on the canvas, not always the home page.
+    const activePage = $selectedPage.get();
     if (!activePage) {
-      console.error("[builder] insertComponent error: No home page found!");
+      console.error("[builder] insertComponent error: No page found!");
       return;
     }
 
@@ -270,14 +263,15 @@ export function ComponentsPanel() {
 
   // Group components by shadcn design system categories
   const categoriesMap = useMemo(() => {
+    // Page-building basics first (sections, text, images), then forms and widgets.
     const map: Record<string, ReturnType<typeof getRegistry>> = {
+      Layout: [],
+      Typography: [],
+      Display: [],
       Inputs: [],
       Navigation: [],
-      Overlay: [],
-      Layout: [],
-      Display: [],
-      Typography: [],
       Feedback: [],
+      Overlay: [],
       Advanced: [],
     };
 
@@ -322,12 +316,9 @@ export function ComponentsPanel() {
             >
               ✕
             </button>
-          ) : (
-            <span className="absolute right-3 text-[9px] text-muted-foreground/50 border border-border/60 px-1 rounded select-none">
-              ⌘K{/* i18n-ignore — shortcut */}
-            </span>
-          )}
+          ) : null}
         </div>
+        <p className="text-[11px] leading-snug text-muted-foreground">{L.hint}</p>
       </div>
 
       {/* Component Explorer List */}
@@ -356,22 +347,13 @@ export function ComponentsPanel() {
               {!isCollapsed && (
                 <div className="grid grid-cols-1 gap-3.5 mt-1.5">
                   {items.map((item) => {
-                    const isSelected = selectedId === item.id;
-
                     return (
                       <div
                         key={item.id}
-                        className={`group relative rounded-xl border transition-all duration-300 cursor-pointer overflow-hidden flex flex-col bg-card select-none ${
-                          isSelected
-                            ? "border-primary bg-primary/5 shadow-[0_0_12px_rgba(124,58,237,0.15)]"
-                            : "border-border hover:shadow-md hover:border-primary/50 hover:scale-[1.02] transform active:scale-[0.98]"
-                        }`}
-                        onClick={() => {
-                          setSelectedId(item.id);
-                        }}
-                        onDoubleClick={() => {
-                          insertComponent(item.id);
-                        }}
+                        role="button"
+                        aria-label={item.displayName}
+                        className="group relative rounded-xl border transition-all duration-300 cursor-pointer overflow-hidden flex flex-col bg-card select-none border-border hover:shadow-md hover:border-primary/50 hover:scale-[1.02] transform active:scale-[0.98]"
+                        onClick={() => insertComponent(item.id)}
                         onMouseDown={(e) => handleMouseDown(e, item.id)}
                       >
                         {/* Scaled visual preview element */}
@@ -382,14 +364,7 @@ export function ComponentsPanel() {
                         {/* Metadata Details */}
                         <div className="p-3.5 flex flex-col gap-0.5 bg-card/60 border-t border-border/10">
                           <div className="text-xs font-semibold flex items-center gap-1.5 text-foreground leading-none">
-                            {isSelected ? (
-                              <>
-                                <span className="text-primary text-[10px] font-bold">✓</span>
-                                <span className="text-primary">{item.displayName}</span>
-                              </>
-                            ) : (
-                              item.displayName
-                            )}
+                            {item.displayName}
                           </div>
                           <p className="text-[10px] text-muted-foreground line-clamp-1 mt-1 leading-normal font-medium">
                             {L.descriptions[item.id] ?? item.description}

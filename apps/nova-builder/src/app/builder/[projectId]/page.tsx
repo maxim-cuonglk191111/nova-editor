@@ -54,6 +54,7 @@ import { writeGridColumnStyle } from "@/lib/styleWriteHelper";
 
 import { useProjectLoad } from "@/builder/hooks/useProjectLoad";
 import { useBuilderKeyboard } from "@/builder/hooks/useBuilderKeyboard";
+import { useAutosaveExtras } from "@/builder/hooks/useAutosaveExtras";
 import { Topbar } from "@/builder/Topbar";
 import { LeftSidebar } from "@/builder/left-sidebar";
 import { RightPanel } from "@/builder/RightPanel";
@@ -97,6 +98,7 @@ function BuilderPage() {
 
   // ── Load project + seed atoms + SyncClient (leader) ─────────────────────────
   const { loadState, errorMessage, syncEmitterRef } = useProjectLoad(projectId, isDemo);
+  useAutosaveExtras(loadState === "ready" && !isDemo);
 
   // ── Track dirty state (isDirty) ─────────────────────────────────────────────
   useEffect(() => {

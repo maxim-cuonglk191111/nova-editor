@@ -2,8 +2,8 @@
 import { useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import type { Instances } from "@webstudio-is/sdk";
-import { deleteInstance, makeInstanceId } from "@/lib/edit-operations";
-import { duplicateInstanceById } from "@/builder/commands";
+import { makeInstanceId } from "@/lib/edit-operations";
+import { duplicateInstanceById, deleteInstanceById } from "@/builder/commands";
 import { useI18n } from "@/lib/i18n";
 import { UI_VARS as C } from "@/lib/uiTheme";
 
@@ -41,8 +41,7 @@ export function ContextMenu({ x, y, instanceId, instances, actions }: ContextMen
 
   function handleDelete() {
     onClose();
-    const { updated, deleted } = deleteInstance(instanceId, instances);
-    if (deleted) onInstancesChange(updated);
+    deleteInstanceById(instanceId);
   }
 
   function handleDuplicate() {
