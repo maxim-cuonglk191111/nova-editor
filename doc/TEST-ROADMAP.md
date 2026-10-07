@@ -43,7 +43,7 @@ If an item fails and the fix is not small, it moves to Tier C.
 | B7 | Templates | left sidebar "Tmpl" | inserting a template adds its sections | ✅ 8/10 — templates append (25.6.0); canvas does not scroll to the new section |
 | B8 | Version history snapshots | Tools → History | save snapshot, change page, restore | ✅ 8/10 — restore reloads (25.6.0) |
 | B9 | AI Content Fill | Tools | rewrites copy of the page in the requested language | ✅ 8/10 — provider fallback; copy rewritten in Vietnamese (25.6.0) |
-| B10 | Accessibility check | Tools | lists issues for a page with a known issue (image without alt) | ⏳ AI suggestions capped at 20 s (25.6.1), re-run |
+| B10 | Accessibility check | Tools | lists issues for a page with a known issue (image without alt) | ✅ 8/10 — answers in ~20 s (25.6.1); AI suggestion often falls back to the default text |
 | B11 | Analytics | dashboard card → Analytics | opening the preview records a view | ✅ 8/10 — page path recorded (25.6.0) |
 | B12 | Form submissions (Leads) | dashboard card → Leads | submitting the preview's contact form shows a row | ✅ 8/10 |
 | B13 | Forgot / reset password, verify email | auth pages | email actually delivered; if no email provider is configured → Tier C | ✅ 8/10 — Brevo delivers reset + verify mails to Gmail; verify link works signed in (25.6.0) |
