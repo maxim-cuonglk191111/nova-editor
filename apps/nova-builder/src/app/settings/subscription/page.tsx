@@ -7,7 +7,7 @@ import { TIER_ENTITLEMENTS } from "@/lib/tiers";
 import type { Tier } from "@/lib/tiers";
 import PayOSCheckoutModal from "@/components/PayOSCheckoutModal";
 import { useI18n, fmt, formatNumber } from "@/lib/i18n";
-import { planPriceLabel } from "@/lib/billing/planPrice";
+import { planPriceVnd } from "@/lib/billing/planPrice";
 
 type UserInfo = {
   tier: Tier;
@@ -45,7 +45,10 @@ function PlanCard({ plan, current, onPayVietQR }: {
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
         <div>
           <div style={{ fontSize: FONT.md, fontWeight: 700, color: C.text }}>{copy.label}</div>
-          <div style={{ fontSize: 20, fontWeight: 800, color: current ? (C.accentText || "#a78bfa") : C.text, marginTop: 4 }}>{planPriceLabel(plan.tier, b, locale)}</div>
+          <div style={{ fontSize: 20, fontWeight: 800, color: current ? (C.accentText || "#a78bfa") : C.text, marginTop: 4, whiteSpace: "nowrap" }}>
+            {planPriceVnd(plan.tier, locale)}
+            <span style={{ fontSize: FONT.xs, fontWeight: 600, color: C.textMuted, marginLeft: 4 }}>{b.perMonth}</span>
+          </div>
         </div>
         {current && (
           <div style={{

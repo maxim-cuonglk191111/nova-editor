@@ -14,8 +14,7 @@ export interface I18nBillingDictionary {
   /** "{n}" is replaced with the monthly allowance. */
   creditsPerMonth: string;
   unlimitedPlan: string;
-  /** "{price}" is replaced with the formatted price. */
-  pricePerMonth: string;
+  perMonth: string;
   currentPlan: string;
   included: string;
   customPlan: string;

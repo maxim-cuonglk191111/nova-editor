@@ -11,7 +11,7 @@ export const enBilling: I18nBillingDictionary = {
   creditsLeft: "{n} left",
   creditsPerMonth: "{n} / month",
   unlimitedPlan: "Unlimited plan",
-  pricePerMonth: "{price} / month",
+  perMonth: "/ month",
   currentPlan: "Current plan",
   included: "Included",
   customPlan: "Need a custom plan?",

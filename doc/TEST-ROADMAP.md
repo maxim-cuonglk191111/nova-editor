@@ -55,6 +55,7 @@ If an item fails and the fix is not small, it moves to Tier C.
 |---------|--------|-------|
 | Teams, real-time collaboration, comments, activity log, presence | Out of scope (no collaboration) | Builder tabs commented out; `/settings/teams` not linked |
 | Custom domains | Needs Cloudflare for SaaS; not workable on Workers Free | `/settings/domains/*` not linked |
+| Billing info / invoices page (`/settings/billing`) | Form saved nothing; VietQR receipts come from the bank | Redirects to `/settings/subscription` (25.5.0) |
 | White-label branding, API keys, notification preferences | Paid-plan / developer extras; no email sending wired for notifications | Pages not linked |
 | Admin console, feature flags | Internal only (403 for normal users — correct) | Not linked |
 | Symbols, interactions, data binding, CMS, SEO panel, cookie banner, React export, deploy panel | Already disabled in the UI | Commented out |

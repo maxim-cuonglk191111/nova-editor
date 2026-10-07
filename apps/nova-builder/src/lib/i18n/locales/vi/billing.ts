@@ -11,7 +11,7 @@ export const viBilling: I18nBillingDictionary = {
   creditsLeft: "Còn {n}",
   creditsPerMonth: "{n} / tháng",
   unlimitedPlan: "Gói không giới hạn",
-  pricePerMonth: "{price} / tháng",
+  perMonth: "/ tháng",
   currentPlan: "Gói hiện tại",
   included: "Có sẵn",
   customPlan: "Cần gói riêng?",

@@ -2,6 +2,15 @@
 
 ---
 
+## [25.5.0] — 2026-10-07
+
+### i18n everywhere: no hard-coded UI text (Minor)
+
+- **Dictionaries per area** (`lib/i18n/locales/{en,vi}/{admin,billing,chrome,dashboard,inspector,sidebar,site,tools}.ts`): ~100 files moved off hard-coded English/Vietnamese; `fmt()` / `formatNumber()` helpers in `lib/i18n/format.ts`.
+- **Billing UI**: checkout modal, subscription page, transaction history and pricing grid go through `t.billing` / `t.pricing.planCopy`. The QR step says it can be paid from any banking app, MoMo, ZaloPay or ShopeePay. Plan cards show the VND amount the VietQR checkout charges (500.000đ Pro, 1.275.000đ Max, 750.000đ Team) instead of hard-coded USD.
+- **Cut**: `/settings/billing` (unlinked; its billing-info form saved nothing) redirects to `/settings/subscription`. Dashboard welcome card no longer promises Publish / React export.
+- **Guard**: `scripts/i18n-audit.mjs` (`pnpm i18n:audit --max=0`) and a first GitHub Actions workflow `.github/workflows/ci.yml` (i18n audit, typecheck, unit tests — no deploy; Workers Builds still deploys).
+
 ## [25.4.1] — 2026-10-06
 
 ### Production fixes: Google sign-in, AI free-tier limits (Patch)
