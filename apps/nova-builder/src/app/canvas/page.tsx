@@ -99,8 +99,9 @@ function DiagnosticsOverlay() {
       border: "1px solid #ef4444"
     }}>
       <div style={{ fontWeight: "bold", borderBottom: "1px solid rgba(255,255,255,0.2)", paddingBottom: 4, marginBottom: 8, display: "flex", justifyContent: "space-between" }}>
+        {/* i18n-ignore — developer diagnostics overlay */}
         <span>Canvas Diagnostic Errors ({errors.length})</span>
-        <button onClick={() => setErrors([])} style={{ background: "none", border: "none", color: "#fff", cursor: "pointer", fontWeight: "bold" }}>Clear</button>
+        <button onClick={() => setErrors([])} style={{ background: "none", border: "none", color: "#fff", cursor: "pointer", fontWeight: "bold" }}>Clear{/* i18n-ignore */}</button>
       </div>
       {errors.map((err, i) => (
         <div key={i} style={{ marginBottom: 6, borderBottom: "1px solid rgba(255,255,255,0.1)", paddingBottom: 4 }}>

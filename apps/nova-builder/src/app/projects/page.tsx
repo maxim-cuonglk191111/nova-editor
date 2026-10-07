@@ -5,7 +5,7 @@ import { useEffect, useState, useRef, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { WelcomeCard } from "@/components/WelcomeCard";
-import { useI18n } from "@/lib/i18n";
+import { useI18n, fmt, formatTimeAgo, type I18nTimeAgoDictionary } from "@/lib/i18n";
 import { UI_VARS as C } from "@/lib/uiTheme";
 import { UserDropdown } from "@/components/UserDropdown";
 import { showToast } from "@/lib/nano-states";
@@ -19,20 +19,15 @@ type Site = {
 // EXAMPLES removed — sourced from t.landing.examples via useI18n() (OCP fix: single source of truth).
 
 
-function timeAgo(iso: string | null): string {
+function timeAgo(iso: string | null, d: I18nTimeAgoDictionary): string {
   if (!iso) return "";
-  const diff = Date.now() - new Date(iso).getTime();
-  const m = Math.floor(diff / 60000);
-  if (m < 1) return "just now";
-  if (m < 60) return `${m}m ago`;
-  const h = Math.floor(m / 60);
-  if (h < 24) return `${h}h ago`;
-  const d = Math.floor(h / 24);
-  if (d < 30) return `${d}d ago`;
-  return new Date(iso).toLocaleDateString();
+  const days = (Date.now() - new Date(iso).getTime()) / 86_400_000;
+  return days < 30 ? formatTimeAgo(iso, d) : new Date(iso).toLocaleDateString();
 }
 
 function SiteCard({ site, onOpen, onDelete, onAnalytics, onLeads, onClone, isCloning }: { site: Site; onOpen: () => void; onDelete: () => void; onAnalytics: () => void; onLeads: () => void; onClone: () => void; isCloning: boolean }) {
+  const { t } = useI18n();
+  const P = t.dashboard.projects;
   const [hovered, setHovered] = useState(false);
 
   return (
@@ -79,7 +74,7 @@ function SiteCard({ site, onOpen, onDelete, onAnalytics, onLeads, onClone, isClo
           {site.name}
         </div>
         <div style={{ fontSize: 13, color: C.textMuted }}>
-          {site.updatedAt ? `Edited ${timeAgo(site.updatedAt)}` : "Never saved"}
+          {site.updatedAt ? fmt(P.edited, { time: timeAgo(site.updatedAt, t.tools.time) }) : P.neverSaved}
         </div>
 
         <div style={{ display: "flex", gap: 6, marginTop: 8 }} onClick={(e) => e.stopPropagation()}>
@@ -91,11 +86,11 @@ function SiteCard({ site, onOpen, onDelete, onAnalytics, onLeads, onClone, isClo
               fontWeight: 600, cursor: "pointer",
             }}
           >
-            Edit
+            {P.edit}
           </button>
           <button
             onClick={onAnalytics}
-            title="View analytics"
+            title={P.viewAnalytics}
             style={{
               padding: "5px 8px", borderRadius: 6, border: `1px solid ${C.border}`,
               background: "transparent", color: C.textMuted, fontSize: 13,
@@ -106,7 +101,7 @@ function SiteCard({ site, onOpen, onDelete, onAnalytics, onLeads, onClone, isClo
           </button>
           <button
             onClick={onLeads}
-            title="View form submissions"
+            title={P.viewSubmissions}
             style={{
               padding: "5px 8px", borderRadius: 6, border: `1px solid ${C.border}`,
               background: "transparent", color: C.textMuted, fontSize: 13,
@@ -118,7 +113,7 @@ function SiteCard({ site, onOpen, onDelete, onAnalytics, onLeads, onClone, isClo
           <button
             onClick={onClone}
             disabled={isCloning}
-            title="Duplicate site"
+            title={P.duplicate}
             style={{
               padding: "5px 8px", borderRadius: 6, border: `1px solid ${C.border}`,
               background: "transparent", color: C.textMuted, fontSize: 13,
@@ -128,7 +123,7 @@ function SiteCard({ site, onOpen, onDelete, onAnalytics, onLeads, onClone, isClo
             ⊕
           </button>
           <button onClick={onDelete}
-            title="Delete site"
+            title={P.deleteSite}
             style={{
               padding: "5px 10px", borderRadius: 6, border: `1px solid ${C.border}`,
               background: "transparent", color: C.textMuted, fontSize: 13,
@@ -153,6 +148,7 @@ function SiteCard({ site, onOpen, onDelete, onAnalytics, onLeads, onClone, isClo
 
 function NewSiteModal({ onCreate, onClose }: { onCreate: (prompt: string) => Promise<void>; onClose: () => void }) {
   const { t } = useI18n();
+  const P = t.dashboard.projects;
   const [prompt, setPrompt] = useState("");
   const [creating, setCreating] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -168,7 +164,7 @@ function NewSiteModal({ onCreate, onClose }: { onCreate: (prompt: string) => Pro
     const trimmed = prompt.trim();
     setCreating(true);
     try {
-      await onCreate(trimmed || "New site");
+      await onCreate(trimmed || P.defaultSiteName);
     } finally {
       setCreating(false);
     }
@@ -181,12 +177,12 @@ function NewSiteModal({ onCreate, onClose }: { onCreate: (prompt: string) => Pro
     >
       <div style={{ width: 480, background: C.surface, border: `1px solid ${C.border}`, borderRadius: 14, padding: "28px 32px", display: "flex", flexDirection: "column", gap: 16, boxShadow: "0 24px 48px rgba(0,0,0,0.5)" }}>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-          <h2 style={{ margin: 0, fontSize: 18, fontWeight: 700, color: C.text, fontFamily: C.font }}>What should your site be about?</h2>
+          <h2 style={{ margin: 0, fontSize: 18, fontWeight: 700, color: C.text, fontFamily: C.font }}>{P.newSiteTitle}</h2>
           <button onClick={onClose} style={{ background: "transparent", border: "none", color: C.textMuted, fontSize: 18, cursor: "pointer", lineHeight: 1 }}>×</button>
         </div>
 
         <p style={{ margin: 0, fontSize: 13, color: C.textMuted, fontFamily: C.font, lineHeight: 1.5 }}>
-          Nova will build it with AI. You can edit any part visually afterwards.
+          {P.newSiteBody}
         </p>
 
         <textarea
@@ -194,7 +190,7 @@ function NewSiteModal({ onCreate, onClose }: { onCreate: (prompt: string) => Pro
           value={prompt}
           onChange={(e) => setPrompt(e.target.value)}
           onKeyDown={(e) => { if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) handleCreate(); }}
-          placeholder="e.g. A modern portfolio for a brand designer based in Tokyo…"
+          placeholder={P.newSitePlaceholder}
           rows={3}
           style={{ padding: "11px 14px", borderRadius: 9, border: `1px solid ${C.border}`, background: "rgba(255,255,255,0.05)", color: C.text, fontSize: 13, fontFamily: C.font, outline: "none", width: "100%", boxSizing: "border-box", resize: "vertical", lineHeight: 1.5 }}
         />
@@ -217,13 +213,13 @@ function NewSiteModal({ onCreate, onClose }: { onCreate: (prompt: string) => Pro
         <div style={{ display: "flex", gap: 8, justifyContent: "flex-end" }}>
           <button onClick={onClose}
             style={{ padding: "8px 16px", borderRadius: 7, border: `1px solid ${C.border}`, background: "transparent", color: C.textMuted, fontSize: 12, fontFamily: C.font, cursor: "pointer" }}>
-            Cancel
+            {P.cancel}
           </button>
           <button onClick={handleCreate} disabled={creating}
             style={{ padding: "8px 22px", borderRadius: 7, border: "none", background: creating ? "rgba(124,58,237,0.5)" : C.accent, color: "#fff", fontSize: 13, fontFamily: C.font, fontWeight: 700, cursor: creating ? "default" : "pointer", display: "flex", alignItems: "center", gap: 6 }}>
             {creating ? (
-              <><span style={{ width: 12, height: 12, border: "2px solid rgba(255,255,255,0.3)", borderTop: "2px solid white", borderRadius: "50%", display: "inline-block", animation: "spin 0.6s linear infinite" }} />Building…</>
-            ) : "Build with AI →"}
+              <><span style={{ width: 12, height: 12, border: "2px solid rgba(255,255,255,0.3)", borderTop: "2px solid white", borderRadius: "50%", display: "inline-block", animation: "spin 0.6s linear infinite" }} />{P.building}</>
+            ) : P.buildWithAI}
           </button>
         </div>
       </div>
@@ -233,6 +229,7 @@ function NewSiteModal({ onCreate, onClose }: { onCreate: (prompt: string) => Pro
 }
 
 function DeleteConfirmModal({ siteName, onConfirm, onClose }: { siteName: string; onConfirm: () => Promise<void>; onClose: () => void }) {
+  const P = useI18n().t.dashboard.projects;
   const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
@@ -258,22 +255,22 @@ function DeleteConfirmModal({ siteName, onConfirm, onClose }: { siteName: string
     >
       <div style={{ width: 400, background: C.surface, border: `1px solid ${C.border}`, borderRadius: 14, padding: "28px 32px", display: "flex", flexDirection: "column", gap: 16, boxShadow: "0 24px 48px rgba(0,0,0,0.5)" }}>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-          <h2 style={{ margin: 0, fontSize: 18, fontWeight: 700, color: C.text, fontFamily: C.font }}>Delete Project</h2>
+          <h2 style={{ margin: 0, fontSize: 18, fontWeight: 700, color: C.text, fontFamily: C.font }}>{P.deleteTitle}</h2>
           <button onClick={onClose} style={{ background: "transparent", border: "none", color: C.textMuted, fontSize: 18, cursor: "pointer", lineHeight: 1 }}>×</button>
         </div>
 
         <p style={{ margin: 0, fontSize: 13, color: C.textMuted, fontFamily: C.font, lineHeight: 1.5 }}>
-          Are you sure you want to delete <strong style={{ color: C.text }}>&ldquo;{siteName}&rdquo;</strong>? This action cannot be undone.
+          {fmt(P.deleteBody, { name: siteName })}
         </p>
 
         <div style={{ display: "flex", gap: 8, justifyContent: "flex-end", marginTop: 8 }}>
           <button onClick={onClose}
             style={{ padding: "8px 16px", borderRadius: 7, border: `1px solid ${C.border}`, background: "transparent", color: C.textMuted, fontSize: 12, fontFamily: C.font, cursor: "pointer" }}>
-            Cancel
+            {P.cancel}
           </button>
           <button onClick={handleConfirm} disabled={deleting}
             style={{ padding: "8px 22px", borderRadius: 7, border: "none", background: deleting ? "rgba(220,38,38,0.5)" : C.danger, color: "#fff", fontSize: 13, fontFamily: C.font, fontWeight: 700, cursor: deleting ? "default" : "pointer" }}>
-            {deleting ? "Deleting…" : "Delete"}
+            {deleting ? P.deleting : P.delete}
           </button>
         </div>
       </div>
@@ -284,6 +281,7 @@ function DeleteConfirmModal({ siteName, onConfirm, onClose }: { siteName: string
 function SitesPage() {
   const router = useRouter();
   const { t } = useI18n();
+  const P = t.dashboard.projects;
   const EXAMPLES = t.landing.examples;
   const [sites, setSites] = useState<Site[]>([]);
   const [loading, setLoading] = useState(true);
@@ -338,7 +336,7 @@ function SitesPage() {
       const res = await fetch("/api/projects", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: name || "New site" }),
+        body: JSON.stringify({ name: name || P.defaultSiteName }),
       });
       if (!res.ok) {
         const errData = await res.json().catch(() => ({}));
@@ -350,13 +348,13 @@ function SitesPage() {
       router.push(`/builder/${id}`);
     } catch (err) {
       console.error(err);
-      showToast(err instanceof Error ? err.message : "Failed to create project", "error");
+      showToast(err instanceof Error ? err.message : P.createFailed, "error");
     }
   }
 
   async function handleDelete(siteId: string) {
     const res = await fetch(`/api/projects/${siteId}`, { method: "DELETE" });
-    if (!res.ok) { alert("Failed to delete. Please try again."); return; }
+    if (!res.ok) { alert(P.deleteFailed); return; }
     setSites((prev) => prev.filter((s) => s.id !== siteId));
   }
 
@@ -372,7 +370,7 @@ function SitesPage() {
       await loadSites();
     } catch (err) {
       console.error("Clone failed:", err);
-      showToast(err instanceof Error ? err.message : "Clone failed. Please try again.", "error");
+      showToast(err instanceof Error ? err.message : P.cloneFailed, "error");
     } finally {
       setCloning(null);
     }
@@ -404,7 +402,7 @@ function SitesPage() {
       <div style={{ borderBottom: `1px solid ${C.border}`, padding: "0 28px", height: 54, display: "flex", alignItems: "center", gap: 10, background: C.bg }}>
         <Link href="/" style={{ fontSize: 14, fontWeight: 800, color: C.accentLight, letterSpacing: "-0.02em" }}>Nova</Link>
         <span style={{ color: "rgba(255,255,255,0.18)", fontSize: 14 }}>/</span>
-        <span style={{ fontSize: 13, color: C.text }}>My Sites</span>
+        <span style={{ fontSize: 13, color: C.text }}>{P.mySites}</span>
 
         {/* Search */}
         <div style={{ position: "relative", marginLeft: 8 }}>
@@ -461,14 +459,14 @@ function SitesPage() {
             href="/settings/subscription"
             style={{ padding: "5px 14px", borderRadius: 7, border: "1px solid rgba(124,58,237,0.4)", background: "transparent", color: C.accentLight, fontSize: 13, fontFamily: C.font, fontWeight: 600, textDecoration: "none", display: "inline-flex", alignItems: "center", gap: 4 }}
           >
-            ⭐ Upgrade
+            {P.upgrade}
           </Link>
         )}
         <button
           onClick={() => setShowCreate(true)}
           style={{ padding: "7px 18px", borderRadius: 8, border: "none", background: C.accent, color: "#fff", fontSize: 13, fontFamily: C.font, fontWeight: 700, cursor: "pointer", display: "flex", alignItems: "center", gap: 5 }}
         >
-          <span style={{ fontSize: 15, lineHeight: 1 }}>+</span> New Site
+          <span style={{ fontSize: 15, lineHeight: 1 }}>+</span> {P.newSite}
         </button>
         <UserDropdown mode="dark" />
       </div>
@@ -477,14 +475,14 @@ function SitesPage() {
       <div style={{ padding: "28px 28px 48px" }}>
         <WelcomeCard />
         {loading && (
-          <div style={{ color: C.textMuted, fontSize: 13 }}>Loading your sites…</div>
+          <div style={{ color: C.textMuted, fontSize: 13 }}>{P.loadingSites}</div>
         )}
 
         {pageError && (
           <div style={{ color: "#fca5a5", fontSize: 13, display: "flex", gap: 8, alignItems: "center" }}>
             {pageError}
             <button onClick={loadSites} style={{ fontSize: 12, color: C.accentLight, background: "none", border: "none", cursor: "pointer", fontFamily: C.font, textDecoration: "underline", padding: 0 }}>
-              Retry
+              {P.retry}
             </button>
           </div>
         )}
@@ -499,9 +497,9 @@ function SitesPage() {
               </svg>
             </div>
             <div>
-              <div style={{ fontSize: 18, fontWeight: 700, color: C.text, marginBottom: 6 }}>Build your first site</div>
+              <div style={{ fontSize: 18, fontWeight: 700, color: C.text, marginBottom: 6 }}>{P.emptyTitle}</div>
               <div style={{ fontSize: 13, color: C.textMuted, lineHeight: 1.6 }}>
-                Tell Nova what you need — it generates a fully editable site in seconds.
+                {P.emptyBody}
               </div>
             </div>
             <div style={{ width: "100%", display: "flex", flexDirection: "column", gap: 10 }}>
@@ -525,7 +523,7 @@ function SitesPage() {
                 onClick={() => setShowCreate(true)}
                 style={{ padding: "11px 0", borderRadius: 10, border: `1px dashed ${C.border}`, background: "transparent", color: C.textMuted, fontSize: 12, fontFamily: C.font, cursor: "pointer" }}
               >
-                + Write your own prompt
+                {P.writeOwnPrompt}
               </button>
             </div>
           </div>
@@ -543,13 +541,13 @@ function SitesPage() {
                 onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.background = "rgba(124,58,237,0.04)"; (e.currentTarget as HTMLElement).style.borderColor = "rgba(124,58,237,0.2)"; }}
               >
                 <span style={{ fontSize: 22, color: C.accentLight, opacity: 0.5 }}>+</span>
-                <span style={{ fontSize: 12, color: C.accentLight, fontWeight: 600, opacity: 0.6 }}>New Site</span>
+                <span style={{ fontSize: 12, color: C.accentLight, fontWeight: 600, opacity: 0.6 }}>{P.newSite}</span>
               </div>
             )}
 
             {filteredSites.length === 0 && search && (
               <div style={{ gridColumn: "1/-1", color: C.textMuted, fontSize: 13, padding: "32px 0", textAlign: "center" }}>
-                No sites match &ldquo;{search}&rdquo;
+                {fmt(P.noMatch, { query: search })}
               </div>
             )}
 

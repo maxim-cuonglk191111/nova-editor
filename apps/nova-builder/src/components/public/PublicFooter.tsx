@@ -1,4 +1,6 @@
+"use client";
 import Link from "next/link";
+import { useI18n, fmt } from "@/lib/i18n";
 
 interface PublicFooterProps {
   theme?: "light" | "dark";
@@ -6,6 +8,7 @@ interface PublicFooterProps {
 
 export function PublicFooter({ theme = "light" }: PublicFooterProps) {
   const isDark = theme === "dark";
+  const S = useI18n().t.site;
 
   return (
     <footer style={{
@@ -15,17 +18,17 @@ export function PublicFooter({ theme = "light" }: PublicFooterProps) {
     }}>
       <div style={{ maxWidth: 1120, margin: "0 auto", display: "flex", flexWrap: "wrap", gap: 24, justifyContent: "space-between", alignItems: "center" }}>
         <div style={{ fontSize: 14, color: isDark ? "#9f9fa0" : "#475569", fontFamily: isDark ? "var(--font-suisse-intl)" : "inherit" }}>
-          © {new Date().getFullYear()} Nova. All rights reserved.
+          {fmt(S.footerRights, { year: new Date().getFullYear() })}
         </div>
         <div style={{ display: "flex", gap: 24, flexWrap: "wrap" }}>
           {[
-            { href: "/pricing", label: "Pricing" },
-            { href: "/terms", label: "Terms" },
-            { href: "/privacy", label: "Privacy" },
-            { href: "mailto:support@nova.build", label: "Support" },
+            { href: "/pricing", label: S.footerPricing },
+            { href: "/terms", label: S.footerTerms },
+            { href: "/privacy", label: S.footerPrivacy },
+            { href: "mailto:support@nova.build", label: S.footerSupport },
           ].map(({ href, label }) => (
             <Link
-              key={label}
+              key={href}
               href={href}
               style={{
                 fontSize: 14,

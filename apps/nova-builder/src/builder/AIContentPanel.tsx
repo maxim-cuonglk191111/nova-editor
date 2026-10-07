@@ -7,6 +7,7 @@ import { $aiContentPanelOpen, $selectedPageId } from "@/lib/nano-states";
 import { $projectMeta } from "@/lib/data-stores";
 import type { Instance } from "@webstudio-is/sdk";
 import { UI_VARS as C } from "@/lib/uiTheme";
+import { useI18n, fmt } from "@/lib/i18n";
 
 
 type FillState =
@@ -37,6 +38,7 @@ function collectTextInstances(instances: Map<string, Instance>, rootId: string):
 }
 
 export function AIContentPanel() {
+  const L = useI18n().t.tools.aiContent;
   const isOpen = useStore($aiContentPanelOpen);
   const instances = useStore($instances);
   const pages = useStore($pages);
@@ -69,7 +71,7 @@ export function AIContentPanel() {
         body: JSON.stringify({ topic: topic.trim(), instances: textInstances, projectId: meta?.id }),
       });
       const json = await res.json() as { fills?: { instanceId: string; text: string }[]; error?: string };
-      if (!res.ok) { setState({ type: "error", message: json.error ?? "Failed" }); return; }
+      if (!res.ok) { setState({ type: "error", message: json.error ?? L.failed }); return; }
       setState({ type: "success", fills: json.fills ?? [] });
     } catch (err) {
       setState({ type: "error", message: String(err) });
@@ -95,7 +97,7 @@ export function AIContentPanel() {
   return (
     <div
       role="dialog"
-      aria-label="AI Content Fill"
+      aria-label={L.dialogLabel}
       style={{
         position: "fixed", top: 52, left: "50%", transform: "translateX(-50%)",
         width: 500, maxWidth: "calc(100vw - 32px)", zIndex: 100,
@@ -104,21 +106,20 @@ export function AIContentPanel() {
       }}
     >
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "12px 18px", borderBottom: `1px solid ${C.border}` }}>
-        <span style={{ fontSize: 13, fontWeight: 700, color: "#a78bfa" }}>✦ Fill with AI</span>
+        <span style={{ fontSize: 13, fontWeight: 700, color: "#a78bfa" }}>{L.title}</span>
         <button onClick={() => $aiContentPanelOpen.set(false)}
           style={{ background: "none", border: "none", color: C.textMuted, cursor: "pointer", fontSize: 18, padding: "2px 4px" }}>×</button>
       </div>
       <div style={{ padding: 16, display: "flex", flexDirection: "column", gap: 10 }}>
         <div style={{ fontSize: 13, color: C.textMuted }}>
-          Found <strong style={{ color: C.text }}>{textInstances.length}</strong> text elements on this page.
-          Describe the topic/purpose and AI will write copy for each one.
+          {fmt(L.found, { count: textInstances.length })}
         </div>
         <textarea
           ref={textareaRef}
           value={topic}
           onChange={(e) => setTopic(e.target.value)}
           onKeyDown={(e) => { if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) handleFill(); }}
-          placeholder='e.g. "SaaS product for project management, professional tone"'
+          placeholder={L.placeholder}
           rows={2}
           disabled={isLoading}
           style={{ width: "100%", background: C.input, border: `1px solid ${C.inputBorder}`, borderRadius: 8, color: C.text, fontSize: 12, fontFamily: C.font, padding: "9px 12px", resize: "none", outline: "none", boxSizing: "border-box", opacity: isLoading ? 0.5 : 1 }}
@@ -129,7 +130,7 @@ export function AIContentPanel() {
             disabled={isLoading || !topic.trim() || !textInstances.length}
             style={{ padding: "6px 16px", borderRadius: 6, border: "none", background: isLoading || !topic.trim() ? "rgba(124,58,237,0.25)" : "linear-gradient(135deg, #7c3aed, #6d28d9)", color: "#fff", fontSize: 12, fontFamily: C.font, fontWeight: 700, cursor: isLoading ? "default" : "pointer" }}
           >
-            {isLoading ? "Generating…" : "Fill →"}
+            {isLoading ? L.generating : L.fill}
           </button>
         </div>
         {state.type === "error" && (
@@ -139,10 +140,10 @@ export function AIContentPanel() {
         )}
         {state.type === "success" && (
           <div style={{ padding: 12, borderRadius: 8, background: "rgba(5,150,105,0.07)", border: "1px solid rgba(5,150,105,0.18)", display: "flex", flexDirection: "column", gap: 8 }}>
-            <div style={{ color: "#6ee7b7", fontSize: 12, fontWeight: 600 }}>✓ {state.fills.length} elements filled</div>
+            <div style={{ color: "#6ee7b7", fontSize: 12, fontWeight: 600 }}>{fmt(L.filled, { count: state.fills.length })}</div>
             <div style={{ display: "flex", gap: 6, justifyContent: "flex-end" }}>
-              <button onClick={() => setState({ type: "idle" })} style={{ padding: "4px 10px", borderRadius: 5, border: "1px solid rgba(255,255,255,0.1)", background: "transparent", color: C.textMuted, fontSize: 13, fontFamily: C.font, cursor: "pointer" }}>Discard</button>
-              <button onClick={handleApply} style={{ padding: "4px 14px", borderRadius: 5, border: "none", background: C.success, color: "#fff", fontSize: 13, fontFamily: C.font, fontWeight: 700, cursor: "pointer" }}>Apply</button>
+              <button onClick={() => setState({ type: "idle" })} style={{ padding: "4px 10px", borderRadius: 5, border: "1px solid rgba(255,255,255,0.1)", background: "transparent", color: C.textMuted, fontSize: 13, fontFamily: C.font, cursor: "pointer" }}>{L.discard}</button>
+              <button onClick={handleApply} style={{ padding: "4px 14px", borderRadius: 5, border: "none", background: C.success, color: "#fff", fontSize: 13, fontFamily: C.font, fontWeight: 700, cursor: "pointer" }}>{L.apply}</button>
             </div>
           </div>
         )}

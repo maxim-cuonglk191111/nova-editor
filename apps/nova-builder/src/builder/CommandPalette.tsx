@@ -12,7 +12,7 @@ import { $pages } from "@/lib/data-stores";
 import { updateData } from "@/lib/transactions";
 import { makeInstanceId } from "@/lib/edit-operations";
 import { getCommands, hotkeyHint } from "./commands";
-import { useI18n } from "@/lib/i18n";
+import { useI18n, fmt } from "@/lib/i18n";
 import { UI_VARS as C } from "@/lib/uiTheme";
 
 
@@ -161,6 +161,11 @@ export function CommandPalette() {
 
   // Group the filtered results preserving group order
   const groupOrder: Group[] = ["Pages", "Components", "Actions"];
+  const groupLabels: Record<Group, string> = {
+    Pages: t.chrome.palette.groupPages,
+    Components: t.chrome.palette.groupComponents,
+    Actions: t.chrome.palette.groupActions,
+  };
   const grouped = useMemo(() => {
     const map = new Map<Group, CommandItem[]>(groupOrder.map((g) => [g, []]));
     for (const item of filtered) {
@@ -216,7 +221,7 @@ export function CommandPalette() {
             value={query}
             onChange={(e) => { setQuery(e.target.value); setActiveIdx(0); }}
             onKeyDown={onKeyDown}
-            placeholder="Search pages, components, actions…"
+            placeholder={t.chrome.palette.search}
             style={{ width: "100%", background: "none", border: "none", outline: "none", color: C.text, fontSize: 15, fontFamily: C.font, caretColor: "#7c3aed" }}
           />
         </div>
@@ -225,7 +230,7 @@ export function CommandPalette() {
         <div style={{ maxHeight: 360, overflowY: "auto" }}>
           {flatItems.length === 0 && (
             <div style={{ padding: "20px 14px", color: C.textMuted, fontSize: 13, fontFamily: C.font }}>
-              No results for &ldquo;{query}&rdquo;
+              {fmt(t.chrome.palette.noResults, { query })}
             </div>
           )}
 
@@ -237,7 +242,7 @@ export function CommandPalette() {
               <div key={group}>
                 {/* Group heading */}
                 <div style={{ padding: "8px 14px 4px", fontSize: 12, fontFamily: C.font, color: C.textMuted, textTransform: "uppercase", letterSpacing: "0.07em", fontWeight: 700 }}>
-                  {group}
+                  {groupLabels[group]}
                 </div>
 
                 {groupItems.map((item) => {
@@ -279,7 +284,7 @@ export function CommandPalette() {
 
         {/* Footer hint */}
         <div style={{ padding: "6px 14px", borderTop: `1px solid ${C.border}`, display: "flex", gap: 14 }}>
-          {[["↑↓", "Navigate"], ["↵", "Select"], ["Esc", "Close"]].map(([key, label]) => (
+          {[["↑↓", t.chrome.palette.navigate], ["↵", t.chrome.palette.select], ["Esc", t.chrome.palette.close]].map(([key, label]) => (
             <span key={key} style={{ fontSize: 13, fontFamily: C.font, color: C.textMuted }}>
               <span style={{ fontFamily: C.fontMono, color: C.text }}>{key}</span>{" "}{label}
             </span>

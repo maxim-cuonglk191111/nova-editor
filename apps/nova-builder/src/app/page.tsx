@@ -68,13 +68,7 @@ export default function Home() {
 
   const isLoading = status === "loading";
 
-  const typingPhrases = [
-    "Build me a SaaS landing page...",
-    "Create an e-commerce store...",
-    "Design a portfolio website...",
-    "Make a dashboard for my startup...",
-  ];
-  const typedText = useTypingAnimation(typingPhrases);
+  const typedText = useTypingAnimation(t.site.typingPhrases);
 
   async function handleStart() {
     const trimmed = prompt.trim();
@@ -350,15 +344,15 @@ export default function Home() {
         <FadeSection>
           <div className="origin-sphere-center">
             <h2 className="origin-large-heading" style={{ fontSize: "clamp(32px, 5vw, 48px)" }}>
-              <em className="origin-text-italics">Connect</em> your apps
+              <em className="origin-text-italics">{t.site.connectLead}</em> {t.site.connectRest}
             </h2>
             <div className="origin-hero__sub-wrapper" style={{ marginTop: 16 }}>
               <p className="origin-p60">
-                Integrate with your favorite tools. Nova connects with Figma, GitHub, Vercel, and hundreds more.
+                {t.site.connectBody}
               </p>
             </div>
             <Link href="/signup" className="origin-button origin-button--dark" style={{ marginTop: 24 }}>
-              EXPLORE INTEGRATIONS
+              {t.site.exploreIntegrations}
             </Link>
           </div>
         </FadeSection>
@@ -378,7 +372,7 @@ export default function Home() {
                   <div>
                     <img
                       src="https://cdn.prod.website-files.com/68acbc076b672f730e0c77b9/68acd3d1459c4533e7d4649a_stars.svg"
-                      alt="5 stars"
+                      alt={t.site.starsAlt}
                       className="origin-quote-card__stars"
                     />
                     <p className="origin-quote-card__text">&ldquo;{item.quote}&rdquo;</p>

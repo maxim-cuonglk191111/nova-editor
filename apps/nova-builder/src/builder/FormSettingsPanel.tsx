@@ -5,6 +5,7 @@ import { $instances, $props } from "@/lib/data-stores";
 import { $selectedInstanceId } from "@/lib/nano-states";
 import { updateData } from "@/lib/transactions";
 import { UI_VARS as C } from "@/lib/uiTheme";
+import { useI18n } from "@/lib/i18n";
 
 export const FORM_COMPONENTS = new Set([
   "Form", "WebhookForm",
@@ -38,7 +39,8 @@ const selectSt: React.CSSProperties = {
 
 type FieldDef = {
   name: string;
-  label: string;
+  /** Key into t.inspector.form.fields. */
+  labelKey: string;
   control: "text" | "select" | "boolean" | "number";
   options?: string[];
   placeholder?: string;
@@ -46,54 +48,54 @@ type FieldDef = {
 
 const FIELDS: Record<string, FieldDef[]> = {
   Form: [
-    { name: "action", label: "Action URL", control: "text", placeholder: "https://..." },
-    { name: "method", label: "Method", control: "select", options: ["get", "post"] },
-    { name: "id", label: "ID", control: "text", placeholder: "form-id" },
+    { name: "action", labelKey: "actionUrl", control: "text", placeholder: "https://..." },
+    { name: "method", labelKey: "method", control: "select", options: ["get", "post"] },
+    { name: "id", labelKey: "id", control: "text", placeholder: "form-id" },
   ],
   WebhookForm: [
-    { name: "action", label: "Webhook URL", control: "text", placeholder: "https://..." },
-    { name: "state", label: "State", control: "select", options: ["", "success", "error"] },
-    { name: "id", label: "ID", control: "text", placeholder: "form-id" },
+    { name: "action", labelKey: "webhookUrl", control: "text", placeholder: "https://..." },
+    { name: "state", labelKey: "state", control: "select", options: ["", "success", "error"] },
+    { name: "id", labelKey: "id", control: "text", placeholder: "form-id" },
   ],
   Input: [
-    { name: "type", label: "Type", control: "select", options: ["text","email","password","number","tel","url","search","date","time","checkbox","radio","file","hidden"] },
-    { name: "name", label: "Name", control: "text", placeholder: "field-name" },
-    { name: "placeholder", label: "Placeholder", control: "text", placeholder: "Enter value…" },
-    { name: "value", label: "Default value", control: "text" },
-    { name: "required", label: "Required", control: "boolean" },
-    { name: "autofocus", label: "Autofocus", control: "boolean" },
-    { name: "min", label: "Min", control: "text", placeholder: "0" },
-    { name: "max", label: "Max", control: "text", placeholder: "100" },
-    { name: "pattern", label: "Pattern (regex)", control: "text", placeholder: "[A-Za-z]+" },
-    { name: "id", label: "ID", control: "text" },
+    { name: "type", labelKey: "type", control: "select", options: ["text","email","password","number","tel","url","search","date","time","checkbox","radio","file","hidden"] },
+    { name: "name", labelKey: "name", control: "text", placeholder: "field-name" },
+    { name: "placeholder", labelKey: "placeholder", control: "text", placeholder: "Enter value…" },
+    { name: "value", labelKey: "defaultValue", control: "text" },
+    { name: "required", labelKey: "required", control: "boolean" },
+    { name: "autofocus", labelKey: "autofocus", control: "boolean" },
+    { name: "min", labelKey: "min", control: "text", placeholder: "0" },
+    { name: "max", labelKey: "max", control: "text", placeholder: "100" },
+    { name: "pattern", labelKey: "pattern", control: "text", placeholder: "[A-Za-z]+" },
+    { name: "id", labelKey: "id", control: "text" },
   ],
   Textarea: [
-    { name: "name", label: "Name", control: "text", placeholder: "field-name" },
-    { name: "placeholder", label: "Placeholder", control: "text" },
-    { name: "rows", label: "Rows", control: "number" },
-    { name: "required", label: "Required", control: "boolean" },
-    { name: "id", label: "ID", control: "text" },
+    { name: "name", labelKey: "name", control: "text", placeholder: "field-name" },
+    { name: "placeholder", labelKey: "placeholder", control: "text" },
+    { name: "rows", labelKey: "rows", control: "number" },
+    { name: "required", labelKey: "required", control: "boolean" },
+    { name: "id", labelKey: "id", control: "text" },
   ],
   Select: [
-    { name: "name", label: "Name", control: "text", placeholder: "field-name" },
-    { name: "required", label: "Required", control: "boolean" },
-    { name: "multiple", label: "Multiple", control: "boolean" },
-    { name: "id", label: "ID", control: "text" },
+    { name: "name", labelKey: "name", control: "text", placeholder: "field-name" },
+    { name: "required", labelKey: "required", control: "boolean" },
+    { name: "multiple", labelKey: "multiple", control: "boolean" },
+    { name: "id", labelKey: "id", control: "text" },
   ],
   Label: [
-    { name: "htmlFor", label: "For (field ID)", control: "text", placeholder: "input-id" },
+    { name: "htmlFor", labelKey: "forField", control: "text", placeholder: "input-id" },
   ],
   Checkbox: [
-    { name: "name", label: "Name", control: "text", placeholder: "field-name" },
-    { name: "value", label: "Value", control: "text", placeholder: "on" },
-    { name: "checked", label: "Checked", control: "boolean" },
-    { name: "required", label: "Required", control: "boolean" },
-    { name: "id", label: "ID", control: "text" },
+    { name: "name", labelKey: "name", control: "text", placeholder: "field-name" },
+    { name: "value", labelKey: "value", control: "text", placeholder: "on" },
+    { name: "checked", labelKey: "checked", control: "boolean" },
+    { name: "required", labelKey: "required", control: "boolean" },
+    { name: "id", labelKey: "id", control: "text" },
   ],
   Button: [
-    { name: "type", label: "Type", control: "select", options: ["submit","button","reset"] },
-    { name: "disabled", label: "Disabled", control: "boolean" },
-    { name: "id", label: "ID", control: "text" },
+    { name: "type", labelKey: "type", control: "select", options: ["submit","button","reset"] },
+    { name: "disabled", labelKey: "disabled", control: "boolean" },
+    { name: "id", labelKey: "id", control: "text" },
   ],
 };
 
@@ -126,13 +128,14 @@ function writeProp(instanceId: string, name: string, rawValue: string, type: str
 // ── Section ───────────────────────────────────────────────────────────────────
 
 function FieldRow({ field, instanceId, propMap }: { field: FieldDef; instanceId: string; propMap: Map<string, AnyProp> }) {
+  const F = useI18n().t.inspector.form;
   const existing = propMap.get(field.name);
   const rawVal = existing ? String(existing.value ?? "") : "";
 
   return (
     <div style={{ padding: "4px 12px", display: "flex", flexDirection: "column", gap: 3 }}>
       <label style={{ fontSize: 12, color: C.textMuted, fontFamily: C.font, fontWeight: 600, letterSpacing: "0.04em" }}>
-        {field.label}
+        {F.fields[field.labelKey] ?? field.labelKey}
       </label>
       {field.control === "boolean" ? (
         <select
@@ -150,7 +153,7 @@ function FieldRow({ field, instanceId, propMap }: { field: FieldDef; instanceId:
           style={selectSt}
         >
           {(field.options ?? []).map((opt) => (
-            <option key={opt} value={opt}>{opt || "(default)"}</option>
+            <option key={opt} value={opt}>{opt || F.defaultOption}</option>
           ))}
         </select>
       ) : (
@@ -169,6 +172,7 @@ function FieldRow({ field, instanceId, propMap }: { field: FieldDef; instanceId:
 // ── Panel ─────────────────────────────────────────────────────────────────────
 
 export function FormSettingsPanel() {
+  const F = useI18n().t.inspector.form;
   const instanceId = useStore($selectedInstanceId);
   const instances = useStore($instances);
   const props = useStore($props) as Map<string, AnyProp>;
@@ -176,7 +180,7 @@ export function FormSettingsPanel() {
   if (!instanceId) {
     return (
       <div style={{ padding: 16, fontSize: 13, color: C.textMuted, fontFamily: C.font }}>
-        Select a form element to edit its settings.
+        {F.selectElement}
       </div>
     );
   }
@@ -203,7 +207,7 @@ export function FormSettingsPanel() {
       <div style={{ flex: 1, overflowY: "auto", padding: "6px 0" }}>
         {fields.length === 0 ? (
           <div style={{ padding: "8px 12px", fontSize: 13, color: C.textMuted, fontFamily: C.font }}>
-            No form settings for this component.
+            {F.noSettings}
           </div>
         ) : (
           fields.map((f) => (

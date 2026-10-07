@@ -28,10 +28,10 @@ export function TextFormatToolbar({ iframeRef }: { iframeRef: RefObject<HTMLIFra
       }}
     >
       {[
-        { label: "B", title: "Bold (Ctrl+B)", cmd: "bold", style: { fontWeight: 700 } },
-        { label: "I", title: "Italic (Ctrl+I)", cmd: "italic", style: { fontStyle: "italic" } },
-        { label: "U̲", title: "Underline (Ctrl+U)", cmd: "underline", style: {} },
-        { label: "🔗", title: "Link (Ctrl+K)", cmd: "link", style: {} },
+        { label: "B" /* i18n-ignore */, title: t.chrome.boldTitle, cmd: "bold", style: { fontWeight: 700 } },
+        { label: "I" /* i18n-ignore */, title: t.chrome.italicTitle, cmd: "italic", style: { fontStyle: "italic" } },
+        { label: "U̲" /* i18n-ignore */, title: t.chrome.underlineTitle, cmd: "underline", style: {} },
+        { label: "🔗", title: t.chrome.linkTitle, cmd: "link", style: {} },
       ].map(({ label, title, cmd, style }) => (
         <button
           key={cmd}

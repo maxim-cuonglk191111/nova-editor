@@ -2,21 +2,17 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { UI_VARS as C } from "@/lib/uiTheme";
+import { useI18n } from "@/lib/i18n";
 
 
 type Prefs = Record<string, boolean>;
 
-const NOTIFICATION_TYPES = [
-  { key: "publish", label: "Project published", description: "When a project preview is published or shared" },
-  { key: "ai_complete", label: "AI generation complete", description: "When AI finishes generating content for a page" },
-  { key: "form_submission", label: "New form submission", description: "When a visitor submits a form on your site" },
-  { key: "comment", label: "New comment", description: "When a collaborator adds a comment to a project" },
-  { key: "team_invite", label: "Team invitations", description: "When you are invited to a team workspace" },
-  { key: "billing", label: "Billing & invoices", description: "Receipts, plan changes, and credit alerts" },
-  { key: "tips", label: "Product tips & updates", description: "Nova feature announcements and how-to guides" },
-];
+// Preference keys; copy lives in t.dashboard.notifications.types.
+const NOTIFICATION_KEYS = ["publish", "ai_complete", "form_submission", "comment", "team_invite", "billing", "tips"];
 
 export default function NotificationsPage() {
+  const N = useI18n().t.dashboard.notifications;
+  const NOTIFICATION_TYPES = NOTIFICATION_KEYS.map((key) => ({ key, ...N.types[key] }));
   const router = useRouter();
   const [prefs, setPrefs] = useState<Prefs>({});
   const [loading, setLoading] = useState(true);
@@ -50,11 +46,11 @@ export default function NotificationsPage() {
             style={{ background: "none", border: "none", color: C.textMuted, cursor: "pointer", fontSize: 18 }}>
             ←
           </button>
-          <h1 style={{ margin: 0, fontSize: 20, fontWeight: 700 }}>Notification Preferences</h1>
+          <h1 style={{ margin: 0, fontSize: 20, fontWeight: 700 }}>{N.title}</h1>
         </div>
 
         {loading ? (
-          <div style={{ color: C.textMuted, fontSize: 13 }}>Loading…</div>
+          <div style={{ color: C.textMuted, fontSize: 13 }}>{N.loading}</div>
         ) : (
           <>
             <div style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 10, overflow: "hidden", marginBottom: 20 }}>
@@ -97,7 +93,7 @@ export default function NotificationsPage() {
                 color: "#fff", fontSize: 12, fontFamily: C.font, cursor: "pointer", fontWeight: 600,
               }}
             >
-              {saved ? "✓ Saved!" : "Save Preferences"}
+              {saved ? N.saved : N.save}
             </button>
           </>
         )}

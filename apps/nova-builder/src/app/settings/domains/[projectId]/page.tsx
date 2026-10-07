@@ -2,6 +2,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { UI_VARS as C } from "@/lib/uiTheme";
+import { useI18n } from "@/lib/i18n";
 
 type Domain = {
   id: string;
@@ -17,6 +18,7 @@ const STATUS_COLOR: Record<string, string> = {
 };
 
 export default function DomainsPage() {
+  const D = useI18n().t.dashboard.domains;
   const router = useRouter();
   const { projectId } = useParams<{ projectId: string }>();
   const [domains, setDomains] = useState<Domain[]>([]);
@@ -30,7 +32,7 @@ export default function DomainsPage() {
     setLoading(true);
     try {
       const res = await fetch(`/api/projects/${projectId}/domains`);
-      if (res.status === 403) { setError("Access denied"); return; }
+      if (res.status === 403) { setError(D.accessDenied); return; }
       const json = await res.json() as { domains: Domain[] };
       setDomains(json.domains);
     } finally { setLoading(false); }
@@ -46,7 +48,7 @@ export default function DomainsPage() {
         body: JSON.stringify({ domain: newDomain }),
       });
       const json = await res.json();
-      if (!res.ok) { setError(json.error ?? "Failed"); return; }
+      if (!res.ok) { setError(json.error ?? D.failed); return; }
       setNewDomain("");
       setDomains((d) => [json.domain, ...d]);
     } finally { setAdding(false); }
@@ -76,12 +78,12 @@ export default function DomainsPage() {
       <div style={{ maxWidth: 700, margin: "0 auto" }}>
         <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 24 }}>
           <button onClick={() => router.push("/projects")} style={{ background: "none", border: "none", color: C.textMuted, cursor: "pointer", fontSize: 18 }}>←</button>
-          <h1 style={{ margin: 0, fontSize: 20, fontWeight: 700 }}>Custom Domains</h1>
+          <h1 style={{ margin: 0, fontSize: 20, fontWeight: 700 }}>{D.title}</h1>
         </div>
 
         {/* Add domain */}
         <div style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 10, padding: "16px 18px", marginBottom: 20 }}>
-          <div style={{ fontSize: 13, fontWeight: 600, color: C.textMuted, letterSpacing: "0.05em", marginBottom: 10 }}>ADD A DOMAIN</div>
+          <div style={{ fontSize: 13, fontWeight: 600, color: C.textMuted, letterSpacing: "0.05em", marginBottom: 10 }}>{D.addTitle}</div>
           <div style={{ display: "flex", gap: 8 }}>
             <input
               value={newDomain}
@@ -92,17 +94,17 @@ export default function DomainsPage() {
             />
             <button onClick={add} disabled={adding || !newDomain.trim()}
               style={{ padding: "7px 16px", borderRadius: 6, border: "none", background: "rgba(124,58,237,0.8)", color: "#fff", fontSize: 12, fontWeight: 600, cursor: "pointer", flexShrink: 0 }}>
-              {adding ? "Adding…" : "Add Domain"}
+              {adding ? D.adding : D.add}
             </button>
           </div>
           {error && <div style={{ color: C.danger, fontSize: 13, marginTop: 8 }}>{error}</div>}
         </div>
 
-        {loading && <div style={{ color: C.textMuted, fontSize: 13 }}>Loading…</div>}
+        {loading && <div style={{ color: C.textMuted, fontSize: 13 }}>{D.loading}</div>}
 
         {!loading && domains.length === 0 && (
           <div style={{ textAlign: "center", padding: "40px 0", color: C.textMuted, fontSize: 13 }}>
-            No custom domains yet. Add one above to connect your own URL.
+            {D.empty}
           </div>
         )}
 
@@ -121,10 +123,10 @@ export default function DomainsPage() {
 
               {d.status !== "verified" && d.status !== "ssl_active" && (
                 <div style={{ background: "rgba(255,255,255,0.02)", border: `1px solid ${C.border}`, borderRadius: 6, padding: "10px 12px", marginBottom: 12 }}>
-                  <div style={{ fontSize: 13, color: C.textDim, marginBottom: 8 }}>Add these DNS records at your registrar, then click Verify:</div>
+                  <div style={{ fontSize: 13, color: C.textDim, marginBottom: 8 }}>{D.dnsHint}</div>
                   <div style={{ fontSize: 12, fontFamily: C.mono, color: C.textMuted, lineHeight: 1.7 }}>
-                    <div><span style={{ color: C.textDim }}>CNAME</span> {d.domain} → cname.nova.build</div>
-                    <div><span style={{ color: C.textDim }}>TXT</span> _nova-verify.{d.domain} → {d.verify_token}</div>
+                    <div><span style={{ color: C.textDim }}>CNAME</span> {`${d.domain} → cname.nova.build` /* i18n-ignore — DNS record */}</div>
+                    <div><span style={{ color: C.textDim }}>TXT</span> {`_nova-verify.${d.domain} → ${d.verify_token}` /* i18n-ignore — DNS record */}</div>
                   </div>
                 </div>
               )}
@@ -133,12 +135,12 @@ export default function DomainsPage() {
                 {d.status !== "verified" && d.status !== "ssl_active" && (
                   <button onClick={() => verify(d.id)} disabled={verifying === d.id}
                     style={{ padding: "5px 14px", borderRadius: 5, border: "none", background: "rgba(5,150,105,0.7)", color: "#fff", fontSize: 13, fontWeight: 600, cursor: "pointer" }}>
-                    {verifying === d.id ? "Verifying…" : "Verify DNS"}
+                    {verifying === d.id ? D.verifying : D.verify}
                   </button>
                 )}
                 <button onClick={() => remove(d.id)}
                   style={{ padding: "5px 14px", borderRadius: 5, border: `1px solid ${C.border}`, background: "transparent", color: C.textMuted, fontSize: 13, cursor: "pointer" }}>
-                  Remove
+                  {D.remove}
                 </button>
               </div>
             </div>

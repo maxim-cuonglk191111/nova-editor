@@ -1,25 +1,27 @@
 "use client";
 import type { Breakpoint } from "@webstudio-is/sdk";
 import { UI_VARS as C } from "@/lib/uiTheme";
+import { useI18n } from "@/lib/i18n";
+import type { I18nBreakpointPillsDictionary } from "@/lib/i18n";
 
 
-export function bpFriendlyName(bp: Breakpoint): string {
-  if (!bp.maxWidth && !bp.minWidth) return "Desktop";
+export function bpFriendlyName(bp: Breakpoint, L: I18nBreakpointPillsDictionary): string {
+  if (!bp.maxWidth && !bp.minWidth) return L.desktop;
   if (bp.label) {
     const lower = bp.label.toLowerCase();
     if (lower.includes("mobile") || lower.includes("phone")) {
       // Two default mobile breakpoints exist; keep them distinguishable.
-      if (lower.includes("landscape")) return "Mobile L";
-      if (lower.includes("portrait")) return "Mobile P";
-      return "Mobile";
+      if (lower.includes("landscape")) return L.mobileLandscape;
+      if (lower.includes("portrait")) return L.mobilePortrait;
+      return L.mobile;
     }
-    if (lower.includes("tablet")) return "Tablet";
-    if (lower.includes("desktop") || lower.includes("wide") || lower.includes("xl")) return "Desktop";
+    if (lower.includes("tablet")) return L.tablet;
+    if (lower.includes("desktop") || lower.includes("wide") || lower.includes("xl")) return L.desktop;
     return bp.label;
   }
-  if (bp.maxWidth && bp.maxWidth <= 640) return "Mobile";
-  if (bp.maxWidth && bp.maxWidth <= 1024) return "Tablet";
-  return "Desktop";
+  if (bp.maxWidth && bp.maxWidth <= 640) return L.mobile;
+  if (bp.maxWidth && bp.maxWidth <= 1024) return L.tablet;
+  return L.desktop;
 }
 
 export function BreakpointPill({
@@ -31,8 +33,9 @@ export function BreakpointPill({
   active: boolean;
   onClick: () => void;
 }) {
-  const label = bpFriendlyName(bp);
-  const pxHint = bp.maxWidth != null ? `≤${bp.maxWidth}px` : bp.minWidth != null ? `≥${bp.minWidth}px` : "All sizes";
+  const L = useI18n().t.tools.breakpointPills;
+  const label = bpFriendlyName(bp, L);
+  const pxHint = bp.maxWidth != null ? `≤${bp.maxWidth}px` : bp.minWidth != null ? `≥${bp.minWidth}px` : L.allSizes;
 
   return (
     <button

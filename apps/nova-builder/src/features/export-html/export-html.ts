@@ -7,6 +7,7 @@ import { exportToHtml } from "@/lib/htmlExporter";
 import { getExportMetas } from "@/lib/publish/metas";
 import { downloadFile } from "@/features/export/downloader";
 import { showToast } from "@/lib/nano-states";
+import { getActiveDictionary } from "@/lib/i18n/dictionaries";
 import {
   $pages, $assets, $instances, $props, $dataSources,
   $resources, $breakpoints, $styles, $styleSources,
@@ -18,7 +19,7 @@ export function exportHtml() {
   try {
     const pages = $pages.get();
     if (!pages) {
-      showToast("No project loaded.", "error");
+      showToast(getActiveDictionary().chrome.toastNoProject, "error");
       return;
     }
 
@@ -55,7 +56,7 @@ export function exportHtml() {
       .replace(/(^-|-$)/g, "") || "untitled";
 
     downloadFile(html, `${safeName}.html`, "text/html;charset=utf-8");
-    showToast("HTML exported successfully!", "success");
+    showToast(getActiveDictionary().chrome.toastHtmlExported, "success");
   } catch (err) {
     console.error("Failed to export HTML:", err);
     showToast(

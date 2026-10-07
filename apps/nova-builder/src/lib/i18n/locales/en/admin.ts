@@ -1,0 +1,28 @@
+import type { I18nAdminDictionary } from "../../types-admin";
+
+export const enAdmin: I18nAdminDictionary = {
+  title: "Admin Console",
+  featureFlagsLink: "Feature Flags →",
+  searchPlaceholder: "Search by email…",
+  search: "Search",
+  usersOne: "{count} user",
+  usersMany: "{count} users",
+  loading: "Loading…",
+  joined: "Joined {date}",
+  save: "Save",
+  cancel: "Cancel",
+  edit: "Edit",
+  adminBadge: "admin",
+  credits: "{count} cr",
+  accessDenied: "Access denied — admin only",
+  flagsTitle: "Feature Flags",
+  flagKey: "FLAG KEY",
+  flagDescription: "DESCRIPTION",
+  flagDescriptionPlaceholder: "What does this flag control?",
+  creating: "Creating…",
+  addFlag: "+ Add Flag",
+  flagsEmpty: "No feature flags yet. Create one above.",
+  on: "ON",
+  off: "OFF",
+  deleteFlag: "Delete flag",
+};

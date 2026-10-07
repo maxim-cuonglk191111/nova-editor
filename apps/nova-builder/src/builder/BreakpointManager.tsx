@@ -6,6 +6,7 @@ import { updateData } from "@/lib/transactions";
 import { uid } from "@/lib/uid";
 import type { Breakpoint } from "@webstudio-is/sdk";
 import { UI_VARS as C } from "@/lib/uiTheme";
+import { useI18n } from "@/lib/i18n";
 
 const inputSt: React.CSSProperties = {
   background: C.inputBg,
@@ -19,6 +20,7 @@ const inputSt: React.CSSProperties = {
 };
 
 export function BreakpointManager({ onClose }: { onClose: () => void }) {
+  const B = useI18n().t.inspector.breakpoints;
   const bps = useStore($breakpoints);
   const ref = useRef<HTMLDivElement>(null);
 
@@ -109,7 +111,7 @@ export function BreakpointManager({ onClose }: { onClose: () => void }) {
     const id = uid("bp_");
     updateData(({ breakpoints }) => {
       // Default to a min-width mobile-first breakpoint
-      breakpoints.set(id, { id, label: "Mobile", minWidth: 0, maxWidth: 639 });
+      breakpoints.set(id, { id, label: "Mobile" /* i18n-ignore — stored breakpoint name */, minWidth: 0, maxWidth: 639 });
     });
   }
 
@@ -132,15 +134,15 @@ export function BreakpointManager({ onClose }: { onClose: () => void }) {
       }}
     >
       <div style={{ fontSize: 12, color: C.textMuted, fontWeight: 700, letterSpacing: "0.07em", textTransform: "uppercase", marginBottom: 8 }}>
-        Breakpoints
+        {B.title}
       </div>
 
       {/* Header row */}
       <div style={{ display: "grid", gridTemplateColumns: "1fr 65px 65px 95px 24px", gap: 6, marginBottom: 4 }}>
-        <span style={{ fontSize: 9, color: C.textMuted, textTransform: "uppercase" }}>Label</span>
-        <span style={{ fontSize: 9, color: C.textMuted, textTransform: "uppercase" }}>Min (px)</span>
-        <span style={{ fontSize: 9, color: C.textMuted, textTransform: "uppercase" }}>Max (px)</span>
-        <span style={{ fontSize: 9, color: C.textMuted, textTransform: "uppercase" }}>Condition</span>
+        <span style={{ fontSize: 9, color: C.textMuted, textTransform: "uppercase" }}>{B.label}</span>
+        <span style={{ fontSize: 9, color: C.textMuted, textTransform: "uppercase" }}>{B.min}</span>
+        <span style={{ fontSize: 9, color: C.textMuted, textTransform: "uppercase" }}>{B.max}</span>
+        <span style={{ fontSize: 9, color: C.textMuted, textTransform: "uppercase" }}>{B.condition}</span>
         <span />
       </div>
 
@@ -164,7 +166,7 @@ export function BreakpointManager({ onClose }: { onClose: () => void }) {
             type="number"
             min={1}
             value={bp.maxWidth ?? ""}
-            placeholder={isBase(bp) ? "All sizes" : "px"}
+            placeholder={isBase(bp) ? B.allSizes : "px"}
             disabled={isBase(bp)}
             onChange={(e) => updateMaxWidth(bp.id, e.target.value)}
             style={{ ...inputSt, width: "100%", opacity: isBase(bp) ? 0.4 : 1 }}
@@ -172,7 +174,7 @@ export function BreakpointManager({ onClose }: { onClose: () => void }) {
           <input
             type="text"
             value={bp.condition ?? ""}
-            placeholder={isBase(bp) ? "—" : "screen and ..."}
+            placeholder={isBase(bp) ? "—" : B.conditionPlaceholder}
             disabled={isBase(bp)}
             onChange={(e) => updateCondition(bp.id, e.target.value)}
             style={{ ...inputSt, width: "100%", opacity: isBase(bp) ? 0.4 : 1 }}
@@ -180,7 +182,7 @@ export function BreakpointManager({ onClose }: { onClose: () => void }) {
           <button
             onClick={() => deleteBp(bp.id)}
             disabled={isBase(bp)}
-            title={isBase(bp) ? "Base breakpoint cannot be deleted" : "Delete breakpoint (migrates styles to Base)"}
+            title={isBase(bp) ? B.baseCannotDelete : B.deleteBreakpoint}
             style={{
               background: "none",
               border: "none",
@@ -209,7 +211,7 @@ export function BreakpointManager({ onClose }: { onClose: () => void }) {
           cursor: "pointer",
         }}
       >
-        + Add breakpoint
+        {B.add}
       </button>
     </div>
   );

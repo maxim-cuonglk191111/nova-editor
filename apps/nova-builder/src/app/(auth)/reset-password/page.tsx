@@ -20,7 +20,7 @@ function ResetForm() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (password.length < 8) {
-      setError("Password must be at least 8 characters.");
+      setError(t.auth.passwordTooShort);
       return;
     }
     setBusy(true);

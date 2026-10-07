@@ -3,6 +3,7 @@ import { useState, useEffect, useCallback } from "react";
 import { useStore } from "@nanostores/react";
 import { $projectMeta } from "@/lib/data-stores";
 import { UI_VARS as C } from "@/lib/uiTheme";
+import { useI18n } from "@/lib/i18n";
 
 
 const inputStyle: React.CSSProperties = {
@@ -35,6 +36,7 @@ const DEFAULTS: ConsentConfig = {
 };
 
 export function CookieBannerPanel() {
+  const L = useI18n().t.tools.cookie;
   const meta = useStore($projectMeta);
   const [config, setConfig] = useState<ConsentConfig>(DEFAULTS);
   const [saved, setSaved] = useState(false);
@@ -67,7 +69,7 @@ export function CookieBannerPanel() {
   return (
     <div style={{ padding: 12, fontFamily: C.font, color: C.text, overflowY: "auto", height: "100%", boxSizing: "border-box" }}>
       <div style={{ fontSize: 13, fontWeight: 700, color: C.textMuted, marginBottom: 14, letterSpacing: "0.04em" }}>
-        COOKIE CONSENT / GDPR
+        {L.title}
       </div>
 
       <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 16 }}>
@@ -79,14 +81,14 @@ export function CookieBannerPanel() {
           style={{ accentColor: C.accent }}
         />
         <label htmlFor="cookie-enabled" style={{ fontSize: 13, color: C.text, cursor: "pointer", fontWeight: 600 }}>
-          Enable cookie consent banner
+          {L.enable}
         </label>
       </div>
 
       {config.enabled && (
         <>
           <div style={{ display: "flex", flexDirection: "column", gap: 3, marginBottom: 10 }}>
-            <label style={{ fontSize: 12, color: C.textMuted, fontWeight: 600, letterSpacing: "0.05em" }}>MESSAGE</label>
+            <label style={{ fontSize: 12, color: C.textMuted, fontWeight: 600, letterSpacing: "0.05em" }}>{L.message}</label>
             <textarea
               value={config.message}
               onChange={(e) => set("message", e.target.value)}
@@ -97,24 +99,24 @@ export function CookieBannerPanel() {
 
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, marginBottom: 10 }}>
             <div>
-              <label style={{ fontSize: 12, color: C.textMuted, fontWeight: 600, letterSpacing: "0.05em", display: "block", marginBottom: 3 }}>ACCEPT LABEL</label>
+              <label style={{ fontSize: 12, color: C.textMuted, fontWeight: 600, letterSpacing: "0.05em", display: "block", marginBottom: 3 }}>{L.acceptLabel}</label>
               <input style={inputStyle} value={config.acceptLabel} onChange={(e) => set("acceptLabel", e.target.value)} />
             </div>
             <div>
-              <label style={{ fontSize: 12, color: C.textMuted, fontWeight: 600, letterSpacing: "0.05em", display: "block", marginBottom: 3 }}>DECLINE LABEL</label>
+              <label style={{ fontSize: 12, color: C.textMuted, fontWeight: 600, letterSpacing: "0.05em", display: "block", marginBottom: 3 }}>{L.declineLabel}</label>
               <input style={inputStyle} value={config.declineLabel} onChange={(e) => set("declineLabel", e.target.value)} />
             </div>
           </div>
 
           <div style={{ display: "flex", flexDirection: "column", gap: 3, marginBottom: 10 }}>
-            <label style={{ fontSize: 12, color: C.textMuted, fontWeight: 600, letterSpacing: "0.05em" }}>POSITION</label>
+            <label style={{ fontSize: 12, color: C.textMuted, fontWeight: 600, letterSpacing: "0.05em" }}>{L.position}</label>
             <select
               value={config.position}
               onChange={(e) => set("position", e.target.value as ConsentConfig["position"])}
               style={{ ...inputStyle }}
             >
               {(["bottom", "top", "bottom-left", "bottom-right"] as const).map((p) => (
-                <option key={p} value={p}>{p}</option>
+                <option key={p} value={p}>{L.positions[p] ?? p}</option>
               ))}
             </select>
           </div>
@@ -123,7 +125,7 @@ export function CookieBannerPanel() {
             {(["bgColor", "textColor", "buttonColor"] as const).map((key) => (
               <div key={key}>
                 <label style={{ fontSize: 9, color: C.textMuted, fontWeight: 600, letterSpacing: "0.04em", display: "block", marginBottom: 3 }}>
-                  {key === "bgColor" ? "BG" : key === "textColor" ? "TEXT" : "BUTTON"}
+                  {key === "bgColor" ? L.bg : key === "textColor" ? L.text : L.button}
                 </label>
                 <input type="color" value={config[key]} onChange={(e) => set(key, e.target.value)}
                   style={{ width: "100%", height: 28, border: `1px solid ${C.border}`, borderRadius: 4, cursor: "pointer", background: "none" }} />
@@ -154,7 +156,7 @@ export function CookieBannerPanel() {
           color: "#fff", fontSize: 12, fontFamily: C.font, cursor: "pointer", fontWeight: 600,
         }}
       >
-        {saved ? "✓ Saved!" : "Save Banner Settings"}
+        {saved ? L.saved : L.save}
       </button>
     </div>
   );

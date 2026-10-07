@@ -1,0 +1,30 @@
+import type { I18nSiteDictionary } from "../../types-site";
+
+export const viSite: I18nSiteDictionary = {
+  footerRights: "© {year} Nova. Bảo lưu mọi quyền.",
+  footerPricing: "Bảng giá",
+  footerTerms: "Điều khoản",
+  footerPrivacy: "Quyền riêng tư",
+  footerSupport: "Hỗ trợ",
+  navHome: "trang chủ",
+  navMenu: "Menu",
+  typingPhrases: [
+    "Tạo cho tôi một trang giới thiệu SaaS...",
+    "Tạo một cửa hàng thương mại điện tử...",
+    "Thiết kế một website portfolio...",
+    "Làm bảng điều khiển cho startup của tôi...",
+  ],
+  connectLead: "Kết nối",
+  connectRest: "các ứng dụng của bạn",
+  connectBody: "Tích hợp với các công cụ yêu thích của bạn. Nova kết nối với Figma, GitHub, Vercel và hàng trăm công cụ khác.",
+  exploreIntegrations: "KHÁM PHÁ TÍCH HỢP",
+  starsAlt: "5 sao",
+  userAvatarAlt: "Ảnh đại diện",
+  userFallback: "Người dùng",
+  dismissWelcome: "Ẩn thẻ chào mừng",
+  errorTitle: "Đã xảy ra lỗi",
+  errorCode: "Mã lỗi: {digest}",
+  errorRetry: "Thử lại",
+  previewLoadFailed: "Không thể tải bản xem trước",
+  previewLoading: "Đang tải bản xem trước…",
+};

@@ -28,7 +28,7 @@ export function WelcomeCard() {
           <div style={{ fontSize: 17, fontWeight: 800, color: C.text, marginBottom: 4 }}>{t.welcome.title}</div>
           <div style={{ fontSize: 14, color: C.textMuted }}>{t.welcome.subtitle}</div>
         </div>
-        <button onClick={dismiss} aria-label="Dismiss welcome card" style={{ background: "none", border: "none", color: C.textMuted, fontSize: 20, cursor: "pointer", lineHeight: 1, padding: 0 }}>×</button>
+        <button onClick={dismiss} aria-label={t.site.dismissWelcome} style={{ background: "none", border: "none", color: C.textMuted, fontSize: 20, cursor: "pointer", lineHeight: 1, padding: 0 }}>×</button>
       </div>
 
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: 16, marginBottom: 20 }}>

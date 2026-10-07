@@ -35,6 +35,7 @@ import * as baseComponentMetas from "@webstudio-is/sdk-components-react/metas";
 import * as baseComponentTemplates from "@webstudio-is/sdk-components-react/templates";
 import * as radixComponentMetas from "@webstudio-is/sdk-components-react-radix/metas";
 import * as radixTemplates from "@webstudio-is/sdk-components-react-radix/templates";
+import { useI18n } from "@/lib/i18n";
 
 type CookieConsent = {
   enabled: boolean;
@@ -103,6 +104,7 @@ function CookieBanner({ config }: { config: CookieConsent }) {
 }
 
 function PreviewPage() {
+  const S = useI18n().t.site;
   const params = useParams<{ projectId: string }>();
   const projectId = params.projectId;
 
@@ -269,7 +271,7 @@ function PreviewPage() {
           gap: 12,
         }}
       >
-        <div style={{ fontSize: 14 }}>Could not load preview</div>
+        <div style={{ fontSize: 14 }}>{S.previewLoadFailed}</div>
         <div style={{ fontSize: 12, color: "rgba(255,255,255,0.4)" }}>{errorMsg}</div>
       </div>
     );
@@ -330,7 +332,7 @@ function PreviewPage() {
             }}
           >
             <div className="spinner" />
-            <div style={{ fontSize: 13, color: "#64748b", fontWeight: 500 }}>Loading preview…</div>
+            <div style={{ fontSize: 13, color: "#64748b", fontWeight: 500 }}>{S.previewLoading}</div>
           </div>
 
           {/* Header Skeleton */}
@@ -381,6 +383,7 @@ function PreviewPage() {
           src="/canvas?mode=preview"
           onLoad={onIframeLoad}
           style={{ width: "100%", height: "100%", border: "none" }}
+          // i18n-ignore — stable selector used by e2e specs
           title="Preview"
         />
       )}

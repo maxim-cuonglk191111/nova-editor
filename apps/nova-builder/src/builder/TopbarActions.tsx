@@ -43,7 +43,7 @@ import { exportProject } from "@/features/export/export-project";
 import { importProject } from "@/features/import/import-project";
 import { exportHtml } from "@/features/export-html/export-html";
 import { UI_VARS as C } from "@/lib/uiTheme";
-import { useI18n } from "@/lib/i18n";
+import { useI18n, fmt } from "@/lib/i18n";
 import { $saveStatus } from "@/lib/saveQueue";
 import type { I18nBuilderDictionary } from "@/lib/i18n/types";
 import { $symbols } from "@/lib/symbols";
@@ -80,6 +80,7 @@ function SyncStatusChip() {
 }
 
 function UnsavedChangesModal({ onConfirm, onClose }: { onConfirm: () => void; onClose: () => void }) {
+  const { t } = useI18n();
   return (
     <div
       onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
@@ -87,22 +88,22 @@ function UnsavedChangesModal({ onConfirm, onClose }: { onConfirm: () => void; on
     >
       <div style={{ width: 400, background: C.surface || "#1e293b", border: `1px solid ${C.border || "rgba(255,255,255,0.1)"}`, borderRadius: 14, padding: "28px 32px", display: "flex", flexDirection: "column", gap: 16, boxShadow: "0 24px 48px rgba(0,0,0,0.5)" }}>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-          <h2 style={{ margin: 0, fontSize: 18, fontWeight: 700, color: C.text || "#fff", fontFamily: C.font }}>Unsaved Changes</h2>
+          <h2 style={{ margin: 0, fontSize: 18, fontWeight: 700, color: C.text || "#fff", fontFamily: C.font }}>{t.chrome.unsavedTitle}</h2>
           <button onClick={onClose} style={{ background: "transparent", border: "none", color: C.textMuted || "rgba(255,255,255,0.5)", fontSize: 18, cursor: "pointer", lineHeight: 1 }}>×</button>
         </div>
 
         <p style={{ margin: 0, fontSize: 13, color: C.textMuted || "rgba(255,255,255,0.5)", fontFamily: C.font, lineHeight: 1.5 }}>
-          You have unsaved changes. Importing will replace the current project.
+          {t.chrome.unsavedBody}
         </p>
 
         <div style={{ display: "flex", gap: 8, justifyContent: "flex-end", marginTop: 8 }}>
           <button onClick={onClose}
             style={{ padding: "8px 16px", borderRadius: 7, border: `1px solid ${C.border || "rgba(255,255,255,0.1)"}`, background: "transparent", color: C.textMuted || "rgba(255,255,255,0.5)", fontSize: 12, fontFamily: C.font, cursor: "pointer" }}>
-            Cancel
+            {t.chrome.cancel}
           </button>
           <button onClick={onConfirm}
             style={{ padding: "8px 22px", borderRadius: 7, border: "none", background: C.danger || "#dc2626", color: "#fff", fontSize: 13, fontFamily: C.font, fontWeight: 700, cursor: "pointer" }}>
-            Import
+            {t.chrome.import}
           </button>
         </div>
       </div>
@@ -190,19 +191,19 @@ export function TopbarActions({ isDemo }: Props) {
       const diff = Date.now() - lastSavedTime;
       const seconds = Math.floor(diff / 1000);
       if (seconds < 10) {
-        setTimeLabel("Saved");
+        setTimeLabel(t.chrome.saved);
       } else if (seconds < 60) {
-        setTimeLabel(`Saved (${seconds}s ago)`);
+        setTimeLabel(fmt(t.chrome.savedSecondsAgo, { s: seconds }));
       } else {
         const minutes = Math.floor(seconds / 60);
-        setTimeLabel(`Saved (${minutes}m ago)`);
+        setTimeLabel(fmt(t.chrome.savedMinutesAgo, { m: minutes }));
       }
     };
 
     updateLabel();
     const interval = setInterval(updateLabel, 5000);
     return () => clearInterval(interval);
-  }, [lastSavedTime, isSaving, isDirty]);
+  }, [lastSavedTime, isSaving, isDirty, t]);
 
   const handleUpdate = async () => {
     if (!meta) return;
@@ -212,12 +213,12 @@ export function TopbarActions({ isDemo }: Props) {
       await saveProject(meta.id);
       $isDirty.set(false);
       setLastSavedTime(Date.now());
-      showToast("Project changes saved successfully!", "success");
+      showToast(t.chrome.toastUpdated, "success");
       router.push("/projects");
     } catch (err) {
       console.error(err);
       setSaveError(true);
-      showToast(err instanceof Error ? err.message : "Failed to update project", "error");
+      showToast(err instanceof Error ? err.message : t.chrome.toastUpdateFailed, "error");
       throw err;
     } finally {
       setIsSaving(false);
@@ -275,12 +276,12 @@ export function TopbarActions({ isDemo }: Props) {
       $isDirty.set(false);
       setLastSavedTime(Date.now());
 
-      showToast("Project created and saved successfully!", "success");
+      showToast(t.chrome.toastCreated, "success");
       router.push("/projects");
     } catch (err) {
       console.error(err);
       setSaveError(true);
-      showToast(err instanceof Error ? err.message : "Failed to create project", "error");
+      showToast(err instanceof Error ? err.message : t.chrome.toastCreateFailed, "error");
       throw err;
     } finally {
       setIsSaving(false);
@@ -307,12 +308,12 @@ export function TopbarActions({ isDemo }: Props) {
       $isDirty.set(false);
       setLastSavedTime(Date.now());
 
-      showToast("Project copy saved successfully!", "success");
+      showToast(t.chrome.toastCopySaved, "success");
       router.push("/projects");
     } catch (err) {
       console.error(err);
       setSaveError(true);
-      showToast(err instanceof Error ? err.message : "Failed to save project copy", "error");
+      showToast(err instanceof Error ? err.message : t.chrome.toastCopyFailed, "error");
       throw err;
     } finally {
       setIsSaving(false);
@@ -345,11 +346,11 @@ export function TopbarActions({ isDemo }: Props) {
     <>
       {/* Zoom controls */}
       <div style={{ display: "flex", alignItems: "center", flexShrink: 0, background: C.inputBg, border: `1px solid ${C.border}`, borderRadius: 5, overflow: "hidden" }}>
-        <button onClick={handleZoomOut} title="Zoom out" style={{ background: "none", border: "none", cursor: "pointer", color: C.textMuted, fontSize: 14, lineHeight: 1, padding: "2px 7px", fontFamily: C.font }}>−</button>
-        <button onClick={() => $canvasZoom.set(1)} title="Reset zoom (Ctrl+0)" style={{ background: "none", border: "none", borderLeft: `1px solid ${C.border}`, borderRight: `1px solid ${C.border}`, cursor: "pointer", color: canvasZoom !== 1 ? C.accentText : C.textMuted, fontSize: 13, fontFamily: C.font, fontWeight: canvasZoom !== 1 ? 700 : 400, padding: "2px 8px", minWidth: 40, textAlign: "center" }}>
+        <button onClick={handleZoomOut} title={t.chrome.zoomOut} style={{ background: "none", border: "none", cursor: "pointer", color: C.textMuted, fontSize: 14, lineHeight: 1, padding: "2px 7px", fontFamily: C.font }}>−</button>
+        <button onClick={() => $canvasZoom.set(1)} title={t.chrome.zoomReset} style={{ background: "none", border: "none", borderLeft: `1px solid ${C.border}`, borderRight: `1px solid ${C.border}`, cursor: "pointer", color: canvasZoom !== 1 ? C.accentText : C.textMuted, fontSize: 13, fontFamily: C.font, fontWeight: canvasZoom !== 1 ? 700 : 400, padding: "2px 8px", minWidth: 40, textAlign: "center" }}>
           {Math.round(canvasZoom * 100)}%
         </button>
-        <button onClick={handleZoomIn} title="Zoom in" style={{ background: "none", border: "none", cursor: "pointer", color: C.textMuted, fontSize: 14, lineHeight: 1, padding: "2px 7px", fontFamily: C.font }}>+</button>
+        <button onClick={handleZoomIn} title={t.chrome.zoomIn} style={{ background: "none", border: "none", cursor: "pointer", color: C.textMuted, fontSize: 14, lineHeight: 1, padding: "2px 7px", fontFamily: C.font }}>+</button>
       </div>
 
       {/* Right action area — 7 logical controls */}
@@ -429,7 +430,7 @@ export function TopbarActions({ isDemo }: Props) {
                 e.currentTarget.style.color = C.textMuted;
               }}
             >
-              Preview
+              {t.chrome.preview}
             </button>
             <button
               onClick={handleSaveClick}
@@ -454,20 +455,20 @@ export function TopbarActions({ isDemo }: Props) {
               }}
             >
               {isSaving
-                ? "Saving..."
+                ? t.chrome.saving
                 : saveError
-                  ? "Failed. Retry?"
+                  ? t.chrome.saveFailedRetry
                   : isDirty
-                    ? "Save"
+                    ? t.chrome.save
                     : lastSavedTime !== null
                       ? timeLabel
-                      : "Save"}
+                      : t.chrome.save}
             </button>
 
             {/* ✦ Generate — also in demo mode */}
             <button
               onClick={() => $aiPanelOpen.set(!isAIPanelOpen)}
-              title="Generate with AI"
+              title={t.chrome.generateWithAI}
               style={{ padding: "4px 14px", borderRadius: 6, border: `1px solid ${isAIPanelOpen ? C.accentBorder : C.accent}`, background: isAIPanelOpen ? C.accentBg : `linear-gradient(135deg, ${C.accentBg} 0%, rgba(79,70,229,0.1) 100%)`, color: C.accentText, fontSize: 12, fontFamily: C.font, cursor: "pointer", fontWeight: 700 }}
             >
               {t.builder.generate}
@@ -483,11 +484,11 @@ export function TopbarActions({ isDemo }: Props) {
               onToggle={() => { setExportOpen((v) => !v); setToolsOpen(false); }}
               onClose={() => setExportOpen(false)}
               items={[
-                { label: t.builder.exportHtml, title: "Download as standalone HTML", href: meta ? `/api/export/${meta.id}` : "#", download: true },
+                { label: t.builder.exportHtml, title: t.chrome.exportHtmlTitle, href: meta ? `/api/export/${meta.id}` : "#", download: true },
                 // { label: t.builder.exportReact, title: "Download as React component", href: meta ? `/api/export/${meta.id}/react` : "#", download: true },
                 // { label: t.builder.deploy, title: "Deploy to hosting", onClick: () => setDeployOpen((v) => !v) },
-                { label: t.builder.exportProject, title: "Export project template file", onClick: () => exportProject(meta ? meta.name : "untitled") },
-                { label: t.builder.importProject, title: "Import a .nova project file", onClick: () => { setExportOpen(false); handleImportClick(); } },
+                { label: t.builder.exportProject, title: t.chrome.exportProjectTitle, onClick: () => exportProject(meta ? meta.name : "untitled") },
+                { label: t.builder.importProject, title: t.chrome.importProjectTitle, onClick: () => { setExportOpen(false); handleImportClick(); } },
               ]}
             />
 
@@ -538,7 +539,7 @@ export function TopbarActions({ isDemo }: Props) {
                   e.currentTarget.style.color = C.textMuted;
                 }}
               >
-                Preview
+                {t.chrome.preview}
               </button>
             )}
 
@@ -566,20 +567,20 @@ export function TopbarActions({ isDemo }: Props) {
               }}
             >
               {isSaving
-                ? "Saving..."
+                ? t.chrome.saving
                 : saveError
-                  ? "Failed. Retry?"
+                  ? t.chrome.saveFailedRetry
                   : isDirty
-                    ? "Save"
+                    ? t.chrome.save
                     : lastSavedTime !== null
                       ? timeLabel
-                      : "Saved"}
+                      : t.chrome.saved}
             </button>
 
             {/* 6 — ✦ Generate */}
             <button
               onClick={() => $aiPanelOpen.set(!isAIPanelOpen)}
-              title="Generate with AI"
+              title={t.chrome.generateWithAI}
               style={{ padding: "4px 14px", borderRadius: 6, border: `1px solid ${isAIPanelOpen ? C.accentBorder : C.accent}`, background: isAIPanelOpen ? C.accentBg : `linear-gradient(135deg, ${C.accentBg} 0%, rgba(79,70,229,0.1) 100%)`, color: C.accentText, fontSize: 12, fontFamily: C.font, cursor: "pointer", fontWeight: 700 }}
             >
               {t.builder.generate}

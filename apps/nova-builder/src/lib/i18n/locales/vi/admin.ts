@@ -1,0 +1,28 @@
+import type { I18nAdminDictionary } from "../../types-admin";
+
+export const viAdmin: I18nAdminDictionary = {
+  title: "Bảng quản trị",
+  featureFlagsLink: "Cờ tính năng →",
+  searchPlaceholder: "Tìm theo email…",
+  search: "Tìm",
+  usersOne: "{count} người dùng",
+  usersMany: "{count} người dùng",
+  loading: "Đang tải…",
+  joined: "Tham gia {date}",
+  save: "Lưu",
+  cancel: "Hủy",
+  edit: "Sửa",
+  adminBadge: "quản trị",
+  credits: "{count} tín dụng",
+  accessDenied: "Từ chối truy cập — chỉ dành cho quản trị viên",
+  flagsTitle: "Cờ tính năng",
+  flagKey: "KHÓA CỜ",
+  flagDescription: "MÔ TẢ",
+  flagDescriptionPlaceholder: "Cờ này điều khiển điều gì?",
+  creating: "Đang tạo…",
+  addFlag: "+ Thêm cờ",
+  flagsEmpty: "Chưa có cờ tính năng nào. Tạo cờ ở trên.",
+  on: "BẬT",
+  off: "TẮT",
+  deleteFlag: "Xóa cờ",
+};

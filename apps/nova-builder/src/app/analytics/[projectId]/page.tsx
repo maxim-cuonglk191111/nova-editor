@@ -2,6 +2,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { UI_VARS as C } from "@/lib/uiTheme";
+import { useI18n, fmt } from "@/lib/i18n";
 const BAR = "rgba(124,58,237,0.6)";
 const BAR_BG = "rgba(255,255,255,0.05)";
 
@@ -60,12 +61,13 @@ function BarChart({ series }: { series: DaySeries[] }) {
 }
 
 function DevicePie({ devices }: { devices: Devices }) {
+  const A = useI18n().t.dashboard.analytics;
   const total = (devices.mobile ?? 0) + (devices.tablet ?? 0) + (devices.desktop ?? 0);
   const pct = (n: number) => total === 0 ? 0 : Math.round((n / total) * 100);
   const bars: { label: string; value: number; color: string }[] = [
-    { label: "Desktop", value: pct(devices.desktop), color: C.accent },
-    { label: "Mobile",  value: pct(devices.mobile),  color: "#06b6d4" },
-    { label: "Tablet",  value: pct(devices.tablet),  color: "#8b5cf6" },
+    { label: A.desktop, value: pct(devices.desktop), color: C.accent },
+    { label: A.mobile,  value: pct(devices.mobile),  color: "#06b6d4" },
+    { label: A.tablet,  value: pct(devices.tablet),  color: "#8b5cf6" },
   ];
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
@@ -80,7 +82,7 @@ function DevicePie({ devices }: { devices: Devices }) {
           </div>
         </div>
       ))}
-      {total === 0 && <div style={{ fontSize: 13, color: C.textMuted }}>No data yet</div>}
+      {total === 0 && <div style={{ fontSize: 13, color: C.textMuted }}>{A.noData}</div>}
     </div>
   );
 }
@@ -90,7 +92,8 @@ function TopTable({ rows, keyCol, valLabel }: {
   keyCol: string;
   valLabel: string;
 }) {
-  if (rows.length === 0) return <div style={{ fontSize: 13, color: C.textMuted }}>No data yet</div>;
+  const A = useI18n().t.dashboard.analytics;
+  if (rows.length === 0) return <div style={{ fontSize: 13, color: C.textMuted }}>{A.noData}</div>;
   const max = rows[0].count;
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
@@ -111,6 +114,7 @@ function TopTable({ rows, keyCol, valLabel }: {
 }
 
 export default function AnalyticsPage() {
+  const A = useI18n().t.dashboard.analytics;
   const router = useRouter();
   const { projectId } = useParams<{ projectId: string }>();
   const [days, setDays] = useState(30);
@@ -143,7 +147,7 @@ export default function AnalyticsPage() {
             style={{ background: "none", border: "none", color: C.textMuted, cursor: "pointer", fontSize: 18 }}>
             ←
           </button>
-          <h1 style={{ margin: 0, fontSize: 20, fontWeight: 700 }}>Analytics</h1>
+          <h1 style={{ margin: 0, fontSize: 20, fontWeight: 700 }}>{A.title}</h1>
           <div style={{ flex: 1 }} />
           {/* Period selector */}
           <div style={{ display: "flex", gap: 4 }}>
@@ -157,7 +161,7 @@ export default function AnalyticsPage() {
                   color: days === d ? "#c4b5fd" : C.textMuted,
                   fontSize: 12, fontFamily: C.font, cursor: "pointer", fontWeight: days === d ? 600 : 400,
                 }}
-              >{d}d</button>
+              >{fmt(A.daysShort, { days: d })}</button>
             ))}
             <button onClick={load} style={{ padding: "4px 10px", borderRadius: 5, border: `1px solid ${C.border}`, background: "transparent", color: C.textMuted, fontSize: 12, fontFamily: C.font, cursor: "pointer" }}>↻</button>
           </div>
@@ -168,52 +172,52 @@ export default function AnalyticsPage() {
         )}
 
         {loading && !stats && (
-          <div style={{ color: C.textMuted, fontSize: 13 }}>Loading analytics…</div>
+          <div style={{ color: C.textMuted, fontSize: 13 }}>{A.loading}</div>
         )}
 
         {stats && (
           <>
             {/* Summary cards */}
             <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 16, marginBottom: 24 }}>
-              <StatCard label={`TOTAL VIEWS (${days}d)`} value={stats.totalViews.toLocaleString()} />
-              <StatCard label="TOP PAGE" value={stats.topPages[0]?.path ?? "—"} sub={stats.topPages[0] ? `${stats.topPages[0].count} views` : undefined} />
-              <StatCard label="MOST COMMON DEVICE"
+              <StatCard label={fmt(A.totalViews, { days })} value={stats.totalViews.toLocaleString()} />
+              <StatCard label={A.topPage} value={stats.topPages[0]?.path ?? "—"} sub={stats.topPages[0] ? fmt(A.views, { count: stats.topPages[0].count }) : undefined} />
+              <StatCard label={A.mostCommonDevice}
                 value={
                   Object.entries(stats.devices).sort((a, b) => b[1] - a[1])[0]?.[0] ?? "—"
                 }
-                sub={`${Math.round(((Object.entries(stats.devices).sort((a, b) => b[1] - a[1])[0]?.[1] ?? 0) / (stats.totalViews || 1)) * 100)}% of views`}
+                sub={fmt(A.pctOfViews, { pct: Math.round(((Object.entries(stats.devices).sort((a, b) => b[1] - a[1])[0]?.[1] ?? 0) / (stats.totalViews || 1)) * 100) })}
               />
             </div>
 
             {/* Views over time */}
             <div style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 10, padding: 20, marginBottom: 24 }}>
-              <div style={{ fontSize: 12, fontWeight: 600, color: C.textDim, marginBottom: 14 }}>VIEWS OVER TIME</div>
+              <div style={{ fontSize: 12, fontWeight: 600, color: C.textDim, marginBottom: 14 }}>{A.viewsOverTime}</div>
               <BarChart series={stats.daySeries} />
             </div>
 
             {/* Bottom grid: Top Pages + Devices + Referrers */}
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 16 }}>
               <div style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 10, padding: 20 }}>
-                <div style={{ fontSize: 12, fontWeight: 600, color: C.textDim, marginBottom: 16 }}>TOP PAGES</div>
+                <div style={{ fontSize: 12, fontWeight: 600, color: C.textDim, marginBottom: 16 }}>{A.topPages}</div>
                 <TopTable rows={topPageRows} keyCol="path" valLabel="Views" />
               </div>
 
               <div style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 10, padding: 20 }}>
-                <div style={{ fontSize: 12, fontWeight: 600, color: C.textDim, marginBottom: 16 }}>DEVICES</div>
+                <div style={{ fontSize: 12, fontWeight: 600, color: C.textDim, marginBottom: 16 }}>{A.devices}</div>
                 <DevicePie devices={stats.devices} />
               </div>
 
               <div style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 10, padding: 20 }}>
-                <div style={{ fontSize: 12, fontWeight: 600, color: C.textDim, marginBottom: 16 }}>TOP REFERRERS</div>
+                <div style={{ fontSize: 12, fontWeight: 600, color: C.textDim, marginBottom: 16 }}>{A.topReferrers}</div>
                 <TopTable rows={topRefRows} keyCol="referrer" valLabel="Views" />
               </div>
             </div>
 
             {stats.totalViews === 0 && (
               <div style={{ marginTop: 24, padding: "20px", background: "rgba(124,58,237,0.06)", border: `1px solid rgba(124,58,237,0.15)`, borderRadius: 10, textAlign: "center" }}>
-                <div style={{ fontSize: 14, fontWeight: 600, color: C.text, marginBottom: 8 }}>No views yet</div>
+                <div style={{ fontSize: 14, fontWeight: 600, color: C.text, marginBottom: 8 }}>{A.noViewsTitle}</div>
                 <div style={{ fontSize: 13, color: C.textMuted }}>
-                  Share your preview link to start collecting analytics. Views are recorded when visitors open your published preview.
+                  {A.noViewsBody}
                 </div>
               </div>
             )}

@@ -2,23 +2,26 @@
 import { useStore } from "@nanostores/react";
 import { $customCss } from "@/lib/nano-states";
 import { UI_VARS as C } from "@/lib/uiTheme";
+import { useI18n } from "@/lib/i18n";
 
 
 export function CustomCSSPanel() {
   const css = useStore($customCss);
+  const L = useI18n().t.sidebar.customCss;
 
   return (
     <div style={{ display: "flex", flexDirection: "column", height: "100%", fontFamily: C.font }}>
       <div style={{ padding: "8px 12px 6px", borderBottom: `1px solid ${C.border}`, flexShrink: 0 }}>
-        <div style={{ fontSize: 13, color: C.text, fontWeight: 600 }}>Custom CSS</div>
+        <div style={{ fontSize: 13, color: C.text, fontWeight: 600 }}>{L.title}</div>
         <div style={{ fontSize: 12, color: C.textMuted, marginTop: 2, lineHeight: 1.4 }}>
-          Injected into the canvas &lt;head&gt;. Use any valid CSS rules.
+          {L.description}
         </div>
       </div>
       <textarea
         value={css}
         onChange={(e) => $customCss.set(e.target.value)}
         spellCheck={false}
+        // i18n-ignore — CSS sample
         placeholder={`.my-class {\n  color: red;\n}`}
         style={{
           flex: 1,
@@ -38,7 +41,7 @@ export function CustomCSSPanel() {
       />
       <div style={{ padding: "6px 12px", borderTop: `1px solid ${C.border}`, flexShrink: 0 }}>
         <span style={{ fontSize: 9, color: C.textMuted }}>
-          Changes take effect instantly. Save project (Ctrl+S) to persist.
+          {L.footer}
         </span>
       </div>
     </div>

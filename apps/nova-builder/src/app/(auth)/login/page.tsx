@@ -23,9 +23,9 @@ function AuthForm() {
 
   const error =
     authError === "CredentialsSignin"
-      ? "Invalid email or password."
+      ? t.auth.invalidCredentials
       : authError
-      ? "Sign-in failed. Please try again."
+      ? t.auth.signInFailed
       : localError;
 
   async function handleEmailSignIn(e: React.FormEvent) {
@@ -41,7 +41,7 @@ function AuthForm() {
     });
     setBusy(false);
     if (result?.error) {
-      setLocalError("Invalid email or password.");
+      setLocalError(t.auth.invalidCredentials);
     } else if (result?.ok) {
       // result.url is built from NEXTAUTH_URL; stay on the current host instead.
       const sameHost = callbackUrl.startsWith("/") && !callbackUrl.startsWith("//");
@@ -121,7 +121,7 @@ function AuthForm() {
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="Your password"
+              placeholder={t.auth.passwordPlaceholder}
               required
               autoComplete="current-password"
             />

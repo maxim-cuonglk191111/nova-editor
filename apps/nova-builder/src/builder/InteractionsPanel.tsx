@@ -10,18 +10,20 @@ import {
   type InteractionAction,
 } from "@/lib/nano-states";
 import { UI_VARS as C } from "@/lib/uiTheme";
+import { useI18n } from "@/lib/i18n";
+import type { I18nInteractionsDictionary } from "@/lib/i18n";
 
 
-const TRIGGERS: { value: InteractionTrigger; label: string }[] = [
-  { value: "click", label: "On Click" },
-  { value: "mouseover", label: "On Hover" },
-  { value: "focus", label: "On Focus" },
+const triggers = (L: I18nInteractionsDictionary): { value: InteractionTrigger; label: string }[] => [
+  { value: "click", label: L.onClick },
+  { value: "mouseover", label: L.onHover },
+  { value: "focus", label: L.onFocus },
 ];
 
-const ACTION_TYPES = [
-  { value: "navigate", label: "Navigate to URL" },
-  { value: "toggleClass", label: "Toggle CSS class" },
-  { value: "showHide", label: "Show / Hide element" },
+const actionTypes = (L: I18nInteractionsDictionary) => [
+  { value: "navigate", label: L.navigate },
+  { value: "toggleClass", label: L.toggleClass },
+  { value: "showHide", label: L.showHide },
 ];
 
 function defaultAction(type: string): InteractionAction {
@@ -55,6 +57,7 @@ function ActionEditor({
   action: InteractionAction;
   onChange: (a: InteractionAction) => void;
 }) {
+  const L = useI18n().t.tools.interactions;
   if (action.type === "navigate") {
     return (
       <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
@@ -70,7 +73,7 @@ function ActionEditor({
             checked={!!action.newTab}
             onChange={(e) => onChange({ ...action, newTab: e.target.checked })}
           />
-          Open in new tab
+          {L.newTab}
         </label>
       </div>
     );
@@ -79,7 +82,7 @@ function ActionEditor({
     return (
       <input
         style={inputStyle}
-        placeholder="CSS class name"
+        placeholder={L.classPlaceholder}
         value={action.className}
         onChange={(e) => onChange({ ...action, className: e.target.value })}
       />
@@ -89,7 +92,7 @@ function ActionEditor({
     return (
       <input
         style={inputStyle}
-        placeholder="Target instance ID (leave blank = self)"
+        placeholder={L.targetPlaceholder}
         value={action.targetInstanceId ?? ""}
         onChange={(e) => onChange({ ...action, targetInstanceId: e.target.value || undefined })}
       />
@@ -99,6 +102,9 @@ function ActionEditor({
 }
 
 export function InteractionsPanel() {
+  const L = useI18n().t.tools.interactions;
+  const TRIGGERS = triggers(L);
+  const ACTION_TYPES = actionTypes(L);
   const instanceId = useStore($selectedInstanceId);
   const all = useStore($interactions);
   const defs: InteractionDef[] = instanceId ? (all[instanceId] ?? []) : [];
@@ -109,7 +115,7 @@ export function InteractionsPanel() {
   if (!instanceId) {
     return (
       <div style={{ padding: 16, color: C.textMuted, fontSize: 13, fontFamily: C.font }}>
-        Select an element to add interactions.
+        {L.selectElement}
       </div>
     );
   }
@@ -138,7 +144,7 @@ export function InteractionsPanel() {
   return (
     <div style={{ padding: 12, display: "flex", flexDirection: "column", gap: 10, fontFamily: C.font }}>
       <div style={{ fontSize: 12, color: C.textMuted, textTransform: "uppercase", letterSpacing: "0.08em" }}>
-        Interactions active in Preview mode
+        {L.activeInPreview}
       </div>
 
       {defs.map((def) => (
@@ -216,7 +222,7 @@ export function InteractionsPanel() {
             whiteSpace: "nowrap",
           }}
         >
-          + Add
+          {L.add}
         </button>
       </div>
     </div>

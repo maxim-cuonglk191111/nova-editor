@@ -3,6 +3,14 @@
  * Follows Interface Segregation Principle (ISP) and Dependency Inversion Principle (DIP).
  */
 
+import type { I18nChromeDictionary } from "./types-chrome";
+import type { I18nAdminDictionary } from "./types-admin";
+import type { I18nSiteDictionary } from "./types-site";
+import type { I18nDashboardDictionary } from "./types-dashboard";
+import type { I18nToolsDictionary } from "./types-tools";
+import type { I18nInspectorDictionary } from "./types-inspector";
+import type { I18nSidebarDictionary } from "./types-sidebar";
+
 export type Locale = "en" | "vi";
 
 export interface I18nNavDictionary {
@@ -63,6 +71,9 @@ export interface I18nAuthDictionary {
   emailVerifiedBody: string;
   verifyFailedTitle: string;
   continueToProjects: string;
+  passwordPlaceholder: string;
+  invalidCredentials: string;
+  signInFailed: string;
 }
 
 export interface I18nCommonDictionary {
@@ -385,6 +396,23 @@ export interface I18nAssetsDictionary {
   deleteInUse: string;
   deleteWarning: string;
   delete: string;
+  /** "{count}" is replaced with the number of files. */
+  fileOne: string;
+  /** "{count}" is replaced with the number of files. */
+  fileMany: string;
+  deleteFolder: string;
+  preview: string;
+  insert: string;
+  closeEsc: string;
+  zoomOut: string;
+  zoomReset: string;
+  zoomIn: string;
+  fitScreen: string;
+  uploadFailed: string;
+  createFolderFailed: string;
+  deleteFailed: string;
+  /** "{name}" is replaced with the folder name. */
+  confirmDeleteFolder: string;
 }
 
 export interface I18nDictionary {
@@ -402,6 +430,13 @@ export interface I18nDictionary {
   coachmarks: I18nCoachmarksDictionary;
   panels: I18nPanelsDictionary;
   assets: I18nAssetsDictionary;
+  chrome: I18nChromeDictionary;
+  sidebar: I18nSidebarDictionary;
+  inspector: I18nInspectorDictionary;
+  tools: I18nToolsDictionary;
+  dashboard: I18nDashboardDictionary;
+  site: I18nSiteDictionary;
+  admin: I18nAdminDictionary;
 }
 
 export interface ILanguageDetector {

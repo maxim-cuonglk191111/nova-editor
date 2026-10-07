@@ -2,6 +2,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { UI_VARS as C } from "@/lib/uiTheme";
+import { useI18n, fmt } from "@/lib/i18n";
 
 type Submission = {
   id: string;
@@ -16,6 +17,7 @@ function formatDate(iso: string) {
 }
 
 export default function SubmissionsPage() {
+  const S = useI18n().t.dashboard.submissions;
   const router = useRouter();
   const { projectId } = useParams<{ projectId: string }>();
   const [submissions, setSubmissions] = useState<Submission[]>([]);
@@ -62,7 +64,7 @@ export default function SubmissionsPage() {
             style={{ background: "none", border: "none", color: C.textMuted, cursor: "pointer", fontSize: 18 }}>
             ←
           </button>
-          <h1 style={{ margin: 0, fontSize: 20, fontWeight: 700 }}>Form Submissions</h1>
+          <h1 style={{ margin: 0, fontSize: 20, fontWeight: 700 }}>{S.title}</h1>
           <div style={{ flex: 1 }} />
           {submissions.length > 0 && (
             <a
@@ -75,7 +77,7 @@ export default function SubmissionsPage() {
                 fontSize: 12, textDecoration: "none", fontWeight: 600,
               }}
             >
-              ↓ Export CSV
+              {S.exportCsv}
             </a>
           )}
         </div>
@@ -92,21 +94,21 @@ export default function SubmissionsPage() {
                   color: formFilter === f ? "#c4b5fd" : C.textMuted,
                   cursor: "pointer", fontWeight: formFilter === f ? 600 : 400,
                 }}>
-                {f || "All forms"}
+                {f || S.allForms}
               </button>
             ))}
           </div>
         )}
 
         {error && <div style={{ color: C.danger, fontSize: 12, marginBottom: 16 }}>{error}</div>}
-        {loading && <div style={{ color: C.textMuted, fontSize: 13 }}>Loading…</div>}
+        {loading && <div style={{ color: C.textMuted, fontSize: 13 }}>{S.loading}</div>}
 
         {!loading && submissions.length === 0 && (
           <div style={{ textAlign: "center", padding: "60px 0" }}>
             <div style={{ fontSize: 32, marginBottom: 12, opacity: 0.25 }}>◧</div>
-            <div style={{ fontSize: 14, fontWeight: 600, color: C.text, marginBottom: 8 }}>No submissions yet</div>
+            <div style={{ fontSize: 14, fontWeight: 600, color: C.text, marginBottom: 8 }}>{S.emptyTitle}</div>
             <div style={{ fontSize: 13, color: C.textMuted }}>
-              Form submissions will appear here when visitors submit forms on your published site.
+              {S.emptyBody}
             </div>
           </div>
         )}
@@ -117,8 +119,8 @@ export default function SubmissionsPage() {
               <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 12 }}>
                 <thead>
                   <tr style={{ borderBottom: `1px solid ${C.border}`, background: "rgba(255,255,255,0.02)" }}>
-                    <th style={{ padding: "10px 14px", textAlign: "left", color: C.textMuted, fontWeight: 600, whiteSpace: "nowrap" }}>Date</th>
-                    <th style={{ padding: "10px 14px", textAlign: "left", color: C.textMuted, fontWeight: 600 }}>Form</th>
+                    <th style={{ padding: "10px 14px", textAlign: "left", color: C.textMuted, fontWeight: 600, whiteSpace: "nowrap" }}>{S.date}</th>
+                    <th style={{ padding: "10px 14px", textAlign: "left", color: C.textMuted, fontWeight: 600 }}>{S.form}</th>
                     {allKeys.map((k) => (
                       <th key={k} style={{ padding: "10px 14px", textAlign: "left", color: C.textMuted, fontWeight: 600, whiteSpace: "nowrap" }}>{k}</th>
                     ))}
@@ -140,7 +142,7 @@ export default function SubmissionsPage() {
                           onClick={() => handleDelete(s.id)}
                           disabled={deleting === s.id}
                           style={{ background: "none", border: "none", color: deleting === s.id ? C.textMuted : C.danger, cursor: "pointer", fontSize: 14, padding: "2px 6px" }}
-                          title="Delete submission"
+                          title={S.deleteTitle}
                         >
                           ×
                         </button>
@@ -151,7 +153,7 @@ export default function SubmissionsPage() {
               </table>
             </div>
             <div style={{ padding: "10px 14px", fontSize: 13, color: C.textMuted, borderTop: `1px solid ${C.border}` }}>
-              {submissions.length} submission{submissions.length !== 1 ? "s" : ""}
+              {fmt(submissions.length === 1 ? S.countOne : S.countMany, { count: submissions.length })}
             </div>
           </div>
         )}

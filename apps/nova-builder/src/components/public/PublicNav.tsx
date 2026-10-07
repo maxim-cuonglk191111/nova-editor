@@ -59,7 +59,7 @@ export function PublicNav({ theme = "light" }: PublicNavProps) {
         <div className="on-navbar__inner">
           {/* ── Left: Logo ── */}
           <div className="on-navbar__left">
-            <Link href="/" className="on-navbar__brand" aria-label="home">
+            <Link href="/" className="on-navbar__brand" aria-label={t.site.navHome}>
               <LogoIcon width={20} height={22} />
             </Link>
           </div>
@@ -77,7 +77,7 @@ export function PublicNav({ theme = "light" }: PublicNavProps) {
             </div>
 
             {/* Mobile hamburger */}
-            <button className="on-menu-button" onClick={() => setMobileOpen(!mobileOpen)} aria-label="Menu">
+            <button className="on-menu-button" onClick={() => setMobileOpen(!mobileOpen)} aria-label={t.site.navMenu}>
               <div className={`on-menu-bar on-menu-bar-1 ${mobileOpen ? "active" : ""}`} />
               <div className={`on-menu-bar on-menu-bar-2 ${mobileOpen ? "active" : ""}`} />
               <div className={`on-menu-bar on-menu-bar-3 ${mobileOpen ? "active" : ""}`} />

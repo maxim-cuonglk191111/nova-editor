@@ -3,6 +3,7 @@ import { useMemo } from "react";
 import { writeStyleProperty } from "@/lib/styleWriteHelper";
 import { ShadowLayer, parseLayers, serializeLayers, ShadowLayerRow } from "./ShadowLayerRow";
 import { UI_VARS as C } from "@/lib/uiTheme";
+import { useI18n, fmt } from "@/lib/i18n";
 
 
 type PanelProps = { instanceId: string; currentCss: string };
@@ -20,6 +21,7 @@ function ShadowPanelBase({
   instanceId: string;
   currentCss: string;
 }) {
+  const E = useI18n().t.inspector.editors;
   const layers = useMemo(() => parseLayers(currentCss, type), [currentCss, type]);
 
   const commit = (newLayers: ShadowLayer[]) =>
@@ -36,7 +38,7 @@ function ShadowPanelBase({
           {label}
           {layers.length > 0 && <span style={{ color: "rgba(255,255,255,0.2)", fontWeight: 400, marginLeft: 6 }}>{layers.length}</span>}
         </span>
-        <button onClick={addLayer} title={`Add ${label}`} style={{ width: 20, height: 20, border: `1px solid ${C.border}`, borderRadius: 3, background: "none", color: C.textMuted, fontSize: 15, lineHeight: "18px", cursor: "pointer", padding: 0 }}>+</button>
+        <button onClick={addLayer} title={fmt(E.addItem, { label })} style={{ width: 20, height: 20, border: `1px solid ${C.border}`, borderRadius: 3, background: "none", color: C.textMuted, fontSize: 15, lineHeight: "18px", cursor: "pointer", padding: 0 }}>+</button>
       </div>
       {layers.length > 0 && (
         <div style={{ padding: "4px 8px 8px", display: "flex", flexDirection: "column", gap: 4 }}>
@@ -50,11 +52,13 @@ function ShadowPanelBase({
 }
 
 export function BoxShadowPanel({ instanceId, currentCss }: PanelProps) {
-  return <ShadowPanelBase label="Box Shadow" cssProperty="boxShadow" type="box" instanceId={instanceId} currentCss={currentCss} />;
+  const E = useI18n().t.inspector.editors;
+  return <ShadowPanelBase label={E.boxShadow} cssProperty="boxShadow" type="box" instanceId={instanceId} currentCss={currentCss} />;
 }
 
 export function TextShadowPanel({ instanceId, currentCss }: PanelProps) {
-  return <ShadowPanelBase label="Text Shadow" cssProperty="textShadow" type="text" instanceId={instanceId} currentCss={currentCss} />;
+  const E = useI18n().t.inspector.editors;
+  return <ShadowPanelBase label={E.textShadow} cssProperty="textShadow" type="text" instanceId={instanceId} currentCss={currentCss} />;
 }
 
 // Kept for backward compatibility with any direct consumers.

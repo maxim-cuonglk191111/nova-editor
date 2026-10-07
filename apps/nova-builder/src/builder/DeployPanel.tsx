@@ -1,6 +1,7 @@
 ﻿"use client";
 import { useState, useRef, useEffect } from "react";
 import { UI_VARS as C } from "@/lib/uiTheme";
+import { useI18n, fmt } from "@/lib/i18n";
 
 
 type DeployProvider = "vercel" | "netlify" | "cloudflare";
@@ -12,6 +13,7 @@ export function DeployPanel({
   projectId: string;
   onClose: () => void;
 }) {
+  const L = useI18n().t.tools.deploy;
   const [provider, setProvider] = useState<DeployProvider>("vercel");
   const [form, setForm] = useState({ token: "", repoFullName: "", branch: "main", siteId: "", accountId: "", projectName: "" });
   const [status, setStatus] = useState<"idle" | "running" | "done" | "error">("idle");
@@ -43,8 +45,8 @@ export function DeployPanel({
         body: JSON.stringify(body),
       });
       const data = await res.json() as { ok: boolean; deployUrl?: string; error?: string };
-      if (data.ok) { setStatus("done"); setMessage(data.deployUrl ? `Deployed: ${data.deployUrl}` : "Deployment triggered!"); }
-      else { setStatus("error"); setMessage(data.error ?? "Deploy failed"); }
+      if (data.ok) { setStatus("done"); setMessage(data.deployUrl ? fmt(L.deployed, { url: data.deployUrl }) : L.triggered); }
+      else { setStatus("error"); setMessage(data.error ?? L.failed); }
     } catch (err) { setStatus("error"); setMessage(String(err)); }
   };
 
@@ -63,26 +65,26 @@ export function DeployPanel({
 
   return (
     <div ref={panelRef} style={{ position: "absolute", top: "calc(100% + 6px)", right: 0, width: 300, background: "#0f172a", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 8, padding: 14, zIndex: 200, display: "flex", flexDirection: "column", gap: 10, boxShadow: "0 8px 32px rgba(0,0,0,0.5)" }}>
-      <div style={{ fontSize: 12, fontWeight: 700, color: "#e5e7eb", fontFamily: C.font }}>Deploy Project</div>
+      <div style={{ fontSize: 12, fontWeight: 700, color: "#e5e7eb", fontFamily: C.font }}>{L.title}</div>
 
       <div style={{ display: "flex", gap: 4 }}>
         {(["vercel", "netlify", "cloudflare"] as DeployProvider[]).map((p) => (
           <button key={p} onClick={() => setProvider(p)} style={{ flex: 1, padding: "3px 0", fontSize: 12, fontFamily: C.font, fontWeight: 600, borderRadius: 4, border: `1px solid ${provider === p ? "rgba(124,58,237,0.5)" : "rgba(255,255,255,0.1)"}`, background: provider === p ? "rgba(124,58,237,0.15)" : "transparent", color: provider === p ? "#c4b5fd" : "rgba(255,255,255,0.4)", cursor: "pointer", textTransform: "capitalize" }}>
-            {p === "cloudflare" ? "CF Pages" : p.charAt(0).toUpperCase() + p.slice(1)}
+            {p === "cloudflare" ? "CF Pages" /* i18n-ignore — product name */ : p.charAt(0).toUpperCase() + p.slice(1)}
           </button>
         ))}
       </div>
 
-      {field("API Token", "token", provider === "vercel" ? "v_…" : provider === "netlify" ? "nfp_…" : "CF API token")}
-      {provider === "vercel" && field("GitHub Repo", "repoFullName", "owner/repo")}
-      {provider === "vercel" && field("Branch", "branch", "main")}
-      {provider === "netlify" && field("Site ID", "siteId", "xxxxxxxx-xxxx-…")}
-      {provider === "cloudflare" && field("Account ID", "accountId", "abcd1234…")}
-      {provider === "cloudflare" && field("Project Name", "projectName", "my-site")}
+      {field(L.apiToken, "token", provider === "vercel" ? "v_…" : provider === "netlify" ? "nfp_…" : "CF API token")}
+      {provider === "vercel" && field(L.repo, "repoFullName", "owner/repo")}
+      {provider === "vercel" && field(L.branch, "branch", "main")}
+      {provider === "netlify" && field(L.siteId, "siteId", "xxxxxxxx-xxxx-…")}
+      {provider === "cloudflare" && field(L.accountId, "accountId", "abcd1234…")}
+      {provider === "cloudflare" && field(L.projectName, "projectName", "my-site")}
 
       {status !== "idle" && (
         <div style={{ fontSize: 13, fontFamily: C.font, color: status === "error" ? "#f87171" : status === "done" ? "#6ee7b7" : "#a78bfa", wordBreak: "break-all" }}>
-          {status === "running" ? "Deploying…" : message}
+          {status === "running" ? L.deploying : message}
         </div>
       )}
 
@@ -91,7 +93,7 @@ export function DeployPanel({
         disabled={status === "running"}
         style={{ padding: "6px 0", borderRadius: 5, border: "none", background: status === "running" ? "rgba(255,255,255,0.06)" : "rgba(124,58,237,0.8)", color: "#fff", fontSize: 12, fontFamily: C.font, fontWeight: 600, cursor: status === "running" ? "default" : "pointer" }}
       >
-        {status === "running" ? "Deploying…" : "Deploy →"}
+        {status === "running" ? L.deploying : L.deploy}
       </button>
     </div>
   );

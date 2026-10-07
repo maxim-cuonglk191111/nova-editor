@@ -2,9 +2,11 @@
 import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { UI_VARS as C } from "@/lib/uiTheme";
+import { useI18n } from "@/lib/i18n";
 
 
 export default function BrandingPage() {
+  const B = useI18n().t.dashboard.branding;
   const router = useRouter();
   const [logo, setLogo] = useState("");
   const [name, setName] = useState("");
@@ -53,30 +55,30 @@ export default function BrandingPage() {
             style={{ background: "none", border: "none", color: C.textMuted, cursor: "pointer", fontSize: 18 }}>
             ←
           </button>
-          <h1 style={{ margin: 0, fontSize: 20, fontWeight: 700 }}>White-label Branding</h1>
+          <h1 style={{ margin: 0, fontSize: 20, fontWeight: 700 }}>{B.title}</h1>
         </div>
 
         {loading ? (
-          <div style={{ fontSize: 12, color: C.textMuted }}>Loading…</div>
+          <div style={{ fontSize: 12, color: C.textMuted }}>{B.loading}</div>
         ) : (
           <div style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 10, padding: 24, display: "flex", flexDirection: "column", gap: 20 }}>
             {/* Brand name */}
             <div>
-              <label style={labelStyle}>BRAND NAME</label>
+              <label style={labelStyle}>{B.brandName}</label>
               <input
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                placeholder="Your Company (replaces Nova in the editor)"
+                placeholder={B.brandNamePlaceholder}
                 style={inputStyle}
               />
               <div style={{ fontSize: 12, color: C.textMuted, marginTop: 6 }}>
-                Shown in the builder topbar and exported HTML instead of &quot;Nova&quot;.
+                {B.brandNameHint}
               </div>
             </div>
 
             {/* Logo URL */}
             <div>
-              <label style={labelStyle}>LOGO URL</label>
+              <label style={labelStyle}>{B.logoUrl}</label>
               <input
                 value={logo}
                 onChange={(e) => setLogo(e.target.value)}
@@ -84,18 +86,18 @@ export default function BrandingPage() {
                 style={inputStyle}
               />
               <div style={{ fontSize: 12, color: C.textMuted, marginTop: 6 }}>
-                Enter a public image URL. Displayed at 24px height in the builder topbar.
+                {B.logoHint}
               </div>
             </div>
 
             {/* Preview */}
             {(logo || name) && (
               <div style={{ background: "rgba(255,255,255,0.03)", borderRadius: 8, padding: "10px 14px", border: `1px solid ${C.border}` }}>
-                <div style={{ fontSize: 12, color: C.textMuted, marginBottom: 8, fontWeight: 600 }}>PREVIEW</div>
+                <div style={{ fontSize: 12, color: C.textMuted, marginBottom: 8, fontWeight: 600 }}>{B.preview}</div>
                 <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
                   {logo ? (
                     /* eslint-disable-next-line @next/next/no-img-element */
-                    <img src={logo} alt="Brand logo" style={{ height: 24, objectFit: "contain" }} />
+                    <img src={logo} alt={B.logoAlt} style={{ height: 24, objectFit: "contain" }} />
                   ) : null}
                   {name ? (
                     <span style={{ fontSize: 13, fontWeight: 800, color: "#a78bfa" }}>{name}</span>
@@ -115,14 +117,13 @@ export default function BrandingPage() {
                 transition: "background 0.2s", opacity: saving ? 0.7 : 1,
               }}
             >
-              {saving ? "Saving…" : saved ? "✓ Saved!" : "Save Branding"}
+              {saving ? B.saving : saved ? B.saved : B.save}
             </button>
           </div>
         )}
 
         <div style={{ marginTop: 20, fontSize: 13, color: C.textMuted, lineHeight: 1.6 }}>
-          White-label branding removes Nova references from the builder interface and exported HTML.
-          Available on Pro and higher plans.
+          {B.footer}
         </div>
       </div>
     </div>

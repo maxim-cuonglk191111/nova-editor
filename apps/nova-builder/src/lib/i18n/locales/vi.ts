@@ -1,4 +1,11 @@
 import { I18nDictionary } from "../types";
+import { viChrome } from "./vi/chrome";
+import { viAdmin } from "./vi/admin";
+import { viSite } from "./vi/site";
+import { viDashboard } from "./vi/dashboard";
+import { viTools } from "./vi/tools";
+import { viInspector } from "./vi/inspector";
+import { viSidebar } from "./vi/sidebar";
 
 export const viDictionary: I18nDictionary = {
   nav: {
@@ -58,6 +65,9 @@ export const viDictionary: I18nDictionary = {
     emailVerifiedBody: "Địa chỉ email của bạn đã được xác nhận. Cảm ơn bạn đã bảo mật tài khoản!",
     verifyFailedTitle: "Xác minh thất bại",
     continueToProjects: "Tiếp tục đến dự án của bạn",
+    passwordPlaceholder: "Mật khẩu của bạn",
+    invalidCredentials: "Email hoặc mật khẩu không đúng.",
+    signInFailed: "Đăng nhập thất bại. Vui lòng thử lại.",
   },
   common: {
     save: "Lưu",
@@ -391,5 +401,26 @@ export const viDictionary: I18nDictionary = {
     deleteInUse: "{count} thành phần đang dùng tài nguyên này.",
     deleteWarning: "Xóa sẽ làm hỏng các tham chiếu đó.",
     delete: "Xóa",
+    fileOne: "{count} tệp",
+    fileMany: "{count} tệp",
+    deleteFolder: "Xóa thư mục",
+    preview: "Xem trước",
+    insert: "Chèn",
+    closeEsc: "Đóng (Esc)",
+    zoomOut: "Thu nhỏ (-)",
+    zoomReset: "Đặt lại thu phóng (0)",
+    zoomIn: "Phóng to (+)",
+    fitScreen: "Vừa màn hình",
+    uploadFailed: "Tải lên thất bại",
+    createFolderFailed: "Không thể tạo thư mục",
+    deleteFailed: "Xóa thất bại",
+    confirmDeleteFolder: "Xóa thư mục \"{name}\"?",
   },
+  chrome: viChrome,
+  admin: viAdmin,
+  site: viSite,
+  dashboard: viDashboard,
+  tools: viTools,
+  inspector: viInspector,
+  sidebar: viSidebar,
 };

@@ -1,4 +1,11 @@
 import { I18nDictionary } from "../types";
+import { enChrome } from "./en/chrome";
+import { enAdmin } from "./en/admin";
+import { enSite } from "./en/site";
+import { enDashboard } from "./en/dashboard";
+import { enTools } from "./en/tools";
+import { enInspector } from "./en/inspector";
+import { enSidebar } from "./en/sidebar";
 
 export const enDictionary: I18nDictionary = {
   nav: {
@@ -58,6 +65,9 @@ export const enDictionary: I18nDictionary = {
     emailVerifiedBody: "Your email address is confirmed. Thanks for securing your account!",
     verifyFailedTitle: "Verification failed",
     continueToProjects: "Continue to your projects",
+    passwordPlaceholder: "Your password",
+    invalidCredentials: "Invalid email or password.",
+    signInFailed: "Sign-in failed. Please try again.",
   },
   common: {
     save: "Save",
@@ -391,5 +401,26 @@ export const enDictionary: I18nDictionary = {
     deleteInUse: "{count} instance(s) use this asset.",
     deleteWarning: "Deleting it will break those references.",
     delete: "Delete",
+    fileOne: "{count} file",
+    fileMany: "{count} files",
+    deleteFolder: "Delete folder",
+    preview: "Preview",
+    insert: "Insert",
+    closeEsc: "Close (Esc)",
+    zoomOut: "Zoom Out (-)",
+    zoomReset: "Reset Zoom (0)",
+    zoomIn: "Zoom In (+)",
+    fitScreen: "Fit to Screen",
+    uploadFailed: "Upload failed",
+    createFolderFailed: "Failed to create folder",
+    deleteFailed: "Delete failed",
+    confirmDeleteFolder: "Delete folder \"{name}\"?",
   },
+  chrome: enChrome,
+  admin: enAdmin,
+  site: enSite,
+  dashboard: enDashboard,
+  tools: enTools,
+  inspector: enInspector,
+  sidebar: enSidebar,
 };

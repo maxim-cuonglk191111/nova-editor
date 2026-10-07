@@ -7,7 +7,7 @@ import { $selectedInstanceId } from "@/lib/nano-states";
 import { updateData } from "@/lib/transactions";
 import type { NovaAsset } from "@/lib/r2";
 import type { AssetFolder } from "@/lib/db-folders";
-import { useI18n } from "@/lib/i18n";
+import { useI18n, fmt } from "@/lib/i18n";
 
 const CHUNK_SIZE = 4 * 1024 * 1024;
 
@@ -167,6 +167,7 @@ function FolderCard({
   onDelete: () => void;
   onDrop: (assetId: string) => void;
 }) {
+  const { t } = useI18n();
   const [dragOver, setDragOver] = useState(false);
   const [hovered, setHovered] = useState(false);
 
@@ -208,7 +209,7 @@ function FolderCard({
           {folder.name}
         </div>
         <div style={{ fontSize: 11, color: T.textMuted, marginTop: 1 }}>
-          {assetCount} {assetCount === 1 ? "file" : "files"}
+          {fmt(assetCount === 1 ? t.assets.fileOne : t.assets.fileMany, { count: assetCount })}
         </div>
       </div>
       {hovered && (
@@ -220,7 +221,7 @@ function FolderCard({
             width: 20, height: 20, cursor: "pointer", display: "flex",
             alignItems: "center", justifyContent: "center", color: T.textMuted,
           }}
-          title="Delete folder"
+          title={t.assets.deleteFolder}
         >
           <XIcon size={9} />
         </button>
@@ -237,6 +238,7 @@ function AssetCard({
   asset: NovaAsset; canInsert: boolean;
   onInsert: (a: NovaAsset) => void; onDelete: (a: NovaAsset) => void; onPreview: (a: NovaAsset) => void;
 }) {
+  const { t } = useI18n();
   const [hovered, setHovered] = useState(false);
   const isImage = asset.type === "image";
   const shortName = asset.name.length > 16 ? asset.name.slice(0, 14) + "..." : asset.name;
@@ -286,12 +288,12 @@ function AssetCard({
       {hovered && (
         <div style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.55)", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 5 }}>
           {isImage && (
-            <button onClick={(e) => { e.stopPropagation(); onPreview(asset); }} style={{ padding: "4px 12px", borderRadius: 6, background: "rgba(255,255,255,0.18)", color: "#fff", border: "1px solid rgba(255,255,255,0.25)", fontSize: 12, fontWeight: 600, cursor: "pointer", backdropFilter: "blur(4px)" }}>Preview</button>
+            <button onClick={(e) => { e.stopPropagation(); onPreview(asset); }} style={{ padding: "4px 12px", borderRadius: 6, background: "rgba(255,255,255,0.18)", color: "#fff", border: "1px solid rgba(255,255,255,0.25)", fontSize: 12, fontWeight: 600, cursor: "pointer", backdropFilter: "blur(4px)" }}>{t.assets.preview}</button>
           )}
           {canInsert && isImage && (
-            <button onClick={(e) => { e.stopPropagation(); onInsert(asset); }} style={{ padding: "4px 12px", borderRadius: 6, background: T.accent, color: "#fff", border: "none", fontSize: 12, fontWeight: 600, cursor: "pointer" }}>Insert</button>
+            <button onClick={(e) => { e.stopPropagation(); onInsert(asset); }} style={{ padding: "4px 12px", borderRadius: 6, background: T.accent, color: "#fff", border: "none", fontSize: 12, fontWeight: 600, cursor: "pointer" }}>{t.assets.insert}</button>
           )}
-          <button onClick={(e) => { e.stopPropagation(); onDelete(asset); }} style={{ padding: "3px 10px", borderRadius: 6, background: "rgba(239,68,68,0.2)", color: "#fca5a5", border: "1px solid rgba(239,68,68,0.3)", fontSize: 11, cursor: "pointer" }}>Delete</button>
+          <button onClick={(e) => { e.stopPropagation(); onDelete(asset); }} style={{ padding: "3px 10px", borderRadius: 6, background: "rgba(239,68,68,0.2)", color: "#fca5a5", border: "1px solid rgba(239,68,68,0.3)", fontSize: 11, cursor: "pointer" }}>{t.assets.delete}</button>
         </div>
       )}
     </div>
@@ -374,7 +376,7 @@ export function AssetsPanel() {
         if (activeFolderId) form.append("folderId", activeFolderId);
         const res = await fetch("/api/assets", { method: "POST", body: form });
         const json = (await res.json()) as { asset?: NovaAsset; error?: string };
-        if (!res.ok) throw new Error(json.error ?? "Upload failed");
+        if (!res.ok) throw new Error(json.error ?? L.uploadFailed);
         asset = json.asset!; setProgress(100);
       } else {
         const totalParts = Math.ceil(file.size / CHUNK_SIZE);
@@ -383,7 +385,7 @@ export function AssetsPanel() {
           body: JSON.stringify({ projectId, fileName: file.name, fileType: file.type, totalParts, folderId: activeFolderId }),
         });
         const init = (await initRes.json()) as { uploadId?: string; assetId?: string; error?: string };
-        if (!initRes.ok) throw new Error(init.error ?? "Upload init failed");
+        if (!initRes.ok) throw new Error(init.error ?? L.uploadFailed);
         const { uploadId, assetId } = init;
         for (let i = 0; i < totalParts; i++) {
           const form = new FormData();
@@ -397,12 +399,12 @@ export function AssetsPanel() {
           body: JSON.stringify({ uploadId, assetId, fileName: file.name, fileType: file.type, fileSize: file.size }),
         });
         const complete = (await completeRes.json()) as { asset?: NovaAsset; error?: string };
-        if (!completeRes.ok) throw new Error(complete.error ?? "Complete failed");
+        if (!completeRes.ok) throw new Error(complete.error ?? L.uploadFailed);
         asset = complete.asset!; setProgress(100);
       }
       updateData(({ assets: a }) => { a.set(asset.id, asset as Parameters<typeof a.set>[1]); });
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Upload failed");
+      setError(err instanceof Error ? err.message : L.uploadFailed);
     } finally {
       setUploading(false); setProgress(0);
       if (fileInputRef.current) fileInputRef.current.value = "";
@@ -450,22 +452,22 @@ export function AssetsPanel() {
         body: JSON.stringify({ name, projectId, parentId: null }),
       });
       const json = (await res.json()) as { folder?: AssetFolder; error?: string };
-      if (!res.ok) throw new Error(json.error ?? "Create failed");
+      if (!res.ok) throw new Error(json.error ?? L.createFolderFailed);
       setFolders((prev) => [...prev, json.folder!]);
       setActiveFolderId(json.folder!.id);
     } catch (err) {
-      setFolderError(err instanceof Error ? err.message : "Failed to create folder");
+      setFolderError(err instanceof Error ? err.message : L.createFolderFailed);
     }
   }
 
   async function handleDeleteFolder(folder: AssetFolder) {
-    if (!confirm(`Delete folder "${folder.name}"?`)) return;
+    if (!confirm(fmt(L.confirmDeleteFolder, { name: folder.name }))) return;
     try {
       await fetch(`/api/assets/folders/${folder.id}`, { method: "DELETE" });
       setFolders((prev) => prev.filter((f) => f.id !== folder.id));
       if (activeFolderId === folder.id) setActiveFolderId(null);
     } catch (err) {
-      setFolderError(err instanceof Error ? err.message : "Delete failed");
+      setFolderError(err instanceof Error ? err.message : L.deleteFailed);
     }
   }
 
@@ -752,6 +754,7 @@ export function AssetsPanel() {
 // ── AssetLightbox (full-screen preview) ───────────────────────────────────────
 
 function AssetLightbox({ asset, onClose }: { asset: NovaAsset; onClose: () => void }) {
+  const { t } = useI18n();
   const [isVisible, setIsVisible] = useState(false);
   const [scale, setScale] = useState(1);
   const [translate, setTranslate] = useState({ x: 0, y: 0 });
@@ -866,7 +869,7 @@ function AssetLightbox({ asset, onClose }: { asset: NovaAsset; onClose: () => vo
           }}
           onMouseEnter={(e) => { (e.currentTarget).style.background = "rgba(255,255,255,0.18)"; }}
           onMouseLeave={(e) => { (e.currentTarget).style.background = "rgba(255,255,255,0.08)"; }}
-          title="Close (Esc)"
+          title={t.assets.closeEsc}
         >
           ✕
         </button>
@@ -915,7 +918,7 @@ function AssetLightbox({ asset, onClose }: { asset: NovaAsset; onClose: () => vo
           pointerEvents: isVisible ? "auto" : "none", zIndex: 2,
         }}
       >
-        <LightboxBtn onClick={zoomOut} title="Zoom Out (-)">
+        <LightboxBtn onClick={zoomOut} title={t.assets.zoomOut}>
           <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
             <circle cx="7" cy="7" r="5.5" stroke="currentColor" strokeWidth="1.3" />
             <line x1="4.5" y1="7" x2="9.5" y2="7" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
@@ -924,7 +927,7 @@ function AssetLightbox({ asset, onClose }: { asset: NovaAsset; onClose: () => vo
         </LightboxBtn>
 
         <button
-          onClick={resetZoom} title="Reset Zoom (0)"
+          onClick={resetZoom} title={t.assets.zoomReset}
           style={{
             height: 30, minWidth: 52, border: "none", borderRadius: 8,
             background: "transparent", color: "rgba(255,255,255,0.85)",
@@ -938,7 +941,7 @@ function AssetLightbox({ asset, onClose }: { asset: NovaAsset; onClose: () => vo
           {Math.round(scale * 100)}%
         </button>
 
-        <LightboxBtn onClick={zoomIn} title="Zoom In (+)">
+        <LightboxBtn onClick={zoomIn} title={t.assets.zoomIn}>
           <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
             <circle cx="7" cy="7" r="5.5" stroke="currentColor" strokeWidth="1.3" />
             <line x1="4.5" y1="7" x2="9.5" y2="7" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
@@ -949,7 +952,7 @@ function AssetLightbox({ asset, onClose }: { asset: NovaAsset; onClose: () => vo
 
         <div style={{ width: 1, height: 20, background: "rgba(255,255,255,0.12)", margin: "0 4px" }} />
 
-        <LightboxBtn onClick={resetZoom} title="Fit to Screen">
+        <LightboxBtn onClick={resetZoom} title={t.assets.fitScreen}>
           <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
             <rect x="2" y="2" width="12" height="12" rx="2" stroke="currentColor" strokeWidth="1.3" />
             <rect x="4.5" y="4.5" width="7" height="7" rx="1" stroke="currentColor" strokeWidth="1" strokeDasharray="2 1.5" />

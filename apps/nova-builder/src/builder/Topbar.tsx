@@ -81,7 +81,7 @@ export function Topbar({ isDemo }: { isDemo?: boolean }) {
         <button onClick={() => router.push("/projects")} title={t.builder.backToMySites} style={{ background: "none", border: "none", cursor: "pointer", color: C.textMuted, fontSize: 16, padding: "2px 5px", lineHeight: 1, borderRadius: 4 }}>←</button>
         {brandingLogo ? (
           // eslint-disable-next-line @next/next/no-img-element
-          <img src={brandingLogo} alt={brandingName || "Logo"} style={{ height: 24, objectFit: "contain", flexShrink: 0 }} />
+          <img src={brandingLogo} alt={brandingName || t.tools.logoAlt} style={{ height: 24, objectFit: "contain", flexShrink: 0 }} />
         ) : (
           <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
             <LogoIcon width={20} height={20} />

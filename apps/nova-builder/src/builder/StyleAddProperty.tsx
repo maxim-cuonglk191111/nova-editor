@@ -5,6 +5,7 @@ import { updateData } from "@/lib/transactions";
 import { $selectedState } from "@/lib/nano-states";
 import { uid } from "@/lib/uid";
 import { UI_VARS as C } from "@/lib/uiTheme";
+import { useI18n } from "@/lib/i18n";
 
 
 type UnitValue = { type: "unit"; value: number; unit: string };
@@ -64,6 +65,7 @@ export function AddPropertyRow({
   instanceId: string;
   breakpointId: string | undefined;
 }) {
+  const { t } = useI18n();
   const [propName, setPropName] = useState("");
   const [propValue, setPropValue] = useState("");
   const activeState = useStore($selectedState);
@@ -117,14 +119,14 @@ export function AddPropertyRow({
       </datalist>
       <input
         list="nova-css-props"
-        placeholder="property"
+        placeholder={t.inspector.propertyPlaceholder}
         value={propName}
         onChange={(e) => setPropName(e.target.value)}
         onKeyDown={(e) => { if (e.key === "Enter") (e.currentTarget.nextElementSibling as HTMLInputElement | null)?.focus(); }}
         style={{ ...inputStyle, width: "45%" }}
       />
       <input
-        placeholder="value"
+        placeholder={t.inspector.valuePlaceholder}
         value={propValue}
         onChange={(e) => setPropValue(e.target.value)}
         onKeyDown={(e) => { if (e.key === "Enter") commit(); }}

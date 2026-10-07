@@ -89,14 +89,14 @@ export function LeftSidebar() {
   const startWidth = useRef(0);
 
   const tabs: TabItem[] = [
-    { id: "components", label: t.builder.components, short: "Add", icon: "⊞" },
+    { id: "components", label: t.builder.components, short: t.tools.rail.components, icon: "⊞" },
     // { id: "symbols",    label: t.builder.symbols,    short: "Sym",    icon: "◆" },
-    { id: "pages", label: t.builder.pages, short: "Pages", icon: "☰" },
-    { id: "navigator", label: t.builder.navigator, short: "Layers", icon: "◫" },
-    { id: "assets", label: t.builder.assets, short: "Assets", icon: "⊡" },
-    { id: "styles", label: t.builder.cssVars, short: "Tokens", icon: "§" },
-    { id: "css", label: t.builder.customCss, short: "CSS", icon: "♯" },
-    { id: "marketplace", label: t.builder.templates, short: "Tmpl", icon: "◈" },
+    { id: "pages", label: t.builder.pages, short: t.tools.rail.pages, icon: "☰" },
+    { id: "navigator", label: t.builder.navigator, short: t.tools.rail.navigator, icon: "◫" },
+    { id: "assets", label: t.builder.assets, short: t.tools.rail.assets, icon: "⊡" },
+    { id: "styles", label: t.builder.cssVars, short: t.tools.rail.styles, icon: "§" },
+    { id: "css", label: t.builder.customCss, short: t.tools.rail.css, icon: "♯" },
+    { id: "marketplace", label: t.builder.templates, short: t.tools.rail.marketplace, icon: "◈" },
     // { id: "comments",   label: t.builder.comments,   short: "Chat",   icon: "💬" },
     // { id: "activity",   label: t.builder.activity,   short: "Log",    icon: "◎" },
   ];
@@ -203,7 +203,7 @@ export function LeftSidebar() {
       {activeTab !== null && (
         <div
           onMouseDown={handleResizeMouseDown}
-          title="Drag to resize"
+          title={t.chrome.dragToResize}
           style={{
             position: "absolute",
             right: 0,

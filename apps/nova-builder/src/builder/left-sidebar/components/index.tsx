@@ -7,6 +7,7 @@ import { $pages, $instances, $breakpoints } from "@/lib/data-stores";
 import { ensureLocalSource } from "@/lib/style-object-model";
 import { useDraggable, type DropTarget } from "./useDraggable";
 import { getRegistry } from "./ComponentRegistry";
+import { useI18n } from "@/lib/i18n";
 
 // ── Lazy Render Component Preview ───────────────────────────────────────────
 function LazyComponentPreview({ children }: { children: React.ReactNode }) {
@@ -95,6 +96,7 @@ function ChevronIcon({ expanded }: { expanded: boolean }) {
 }
 
 export function ComponentsPanel() {
+  const L = useI18n().t.sidebar.components;
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [collapsedCategories, setCollapsedCategories] = useState<Record<string, boolean>>({});
@@ -302,13 +304,13 @@ export function ComponentsPanel() {
       {/* Header & Search (V0.dev / Figma assets style) */}
       <div className="p-4 flex flex-col gap-2.5 border-b border-border bg-background/60 backdrop-blur-md z-10">
         <div className="flex items-center justify-between">
-          <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Components Library</span>
+          <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">{L.title}</span>
         </div>
         <div className="relative flex items-center">
           <span className="absolute left-3 text-xs text-muted-foreground/70 pointer-events-none">🔍</span>
           <input
             type="text"
-            placeholder="Search components..."
+            placeholder={L.search}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="w-full pl-8 pr-10 py-1.5 bg-muted/40 hover:bg-muted/70 focus:bg-background border border-border/80 focus:border-primary/60 rounded-md text-xs text-foreground placeholder:text-muted-foreground/60 transition-all outline-none"
@@ -322,7 +324,7 @@ export function ComponentsPanel() {
             </button>
           ) : (
             <span className="absolute right-3 text-[9px] text-muted-foreground/50 border border-border/60 px-1 rounded select-none">
-              ⌘K
+              ⌘K{/* i18n-ignore — shortcut */}
             </span>
           )}
         </div>
@@ -343,7 +345,7 @@ export function ComponentsPanel() {
               >
                 <div className="flex items-center gap-2">
                   <ChevronIcon expanded={!isCollapsed} />
-                  <span className="text-xs font-semibold text-foreground/80 tracking-wide">{category}</span>
+                  <span className="text-xs font-semibold text-foreground/80 tracking-wide">{L.categories[category] ?? category}</span>
                 </div>
                 <span className="text-[9px] text-muted-foreground bg-muted/60 border border-border/50 px-1.5 py-0.5 rounded-full font-semibold">
                   {items.length}
@@ -390,7 +392,7 @@ export function ComponentsPanel() {
                             )}
                           </div>
                           <p className="text-[10px] text-muted-foreground line-clamp-1 mt-1 leading-normal font-medium">
-                            {item.description}
+                            {L.descriptions[item.id] ?? item.description}
                           </p>
                         </div>
                       </div>

@@ -2,6 +2,7 @@
 import { useMemo } from "react";
 import { writeStyleProperty } from "@/lib/styleWriteHelper";
 import { UI_VARS as C } from "@/lib/uiTheme";
+import { useI18n } from "@/lib/i18n";
 import {
   AnimationLayer,
   parseAnimationCss,
@@ -25,12 +26,13 @@ function AnimationLayerRow({ layer, onChange, onDelete }: {
   onChange: (l: AnimationLayer) => void;
   onDelete: () => void;
 }) {
+  const E = useI18n().t.inspector.editors;
   const upd = (patch: Partial<AnimationLayer>) => onChange({ ...layer, ...patch });
   return (
     <div style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 5, padding: "5px 7px", display: "flex", flexDirection: "column", gap: 5 }}>
       <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
         <div style={{ flex: 1 }}>
-          <FieldLabel text="Name" />
+          <FieldLabel text={E.name} />
           <input
             list="nova-animation-names"
             defaultValue={layer.name}
@@ -48,21 +50,21 @@ function AnimationLayerRow({ layer, onChange, onDelete }: {
       </div>
       <div style={{ display: "flex", gap: 5, flexWrap: "wrap", alignItems: "flex-end" }}>
         <div>
-          <FieldLabel text="Duration" />
+          <FieldLabel text={E.duration} />
           <div style={{ display: "flex", alignItems: "center", gap: 2 }}>
             <MsInput value={layer.duration} onChange={(n) => upd({ duration: n })} />
             <span style={{ fontSize: 9, color: C.textMuted, fontFamily: C.fontMono }}>ms</span>
           </div>
         </div>
         <div>
-          <FieldLabel text="Delay" />
+          <FieldLabel text={E.delay} />
           <div style={{ display: "flex", alignItems: "center", gap: 2 }}>
             <MsInput value={layer.delay} onChange={(n) => upd({ delay: n })} />
             <span style={{ fontSize: 9, color: C.textMuted, fontFamily: C.fontMono }}>ms</span>
           </div>
         </div>
         <div>
-          <FieldLabel text="Repeat" />
+          <FieldLabel text={E.repeat} />
           <input
             list="nova-iterations"
             defaultValue={layer.iterations}
@@ -77,11 +79,11 @@ function AnimationLayerRow({ layer, onChange, onDelete }: {
       </div>
       <div style={{ display: "flex", gap: 5, flexWrap: "wrap", alignItems: "flex-end" }}>
         <div>
-          <FieldLabel text="Easing" />
+          <FieldLabel text={E.easing} />
           <SelectField value={layer.easing} options={EASING_OPTIONS} onChange={(v) => upd({ easing: v })} width={92} />
         </div>
         <div>
-          <FieldLabel text="Direction" />
+          <FieldLabel text={E.direction} />
           <SelectField
             value={layer.direction}
             options={[...DIRECTION_KW]}
@@ -90,7 +92,7 @@ function AnimationLayerRow({ layer, onChange, onDelete }: {
           />
         </div>
         <div>
-          <FieldLabel text="Fill" />
+          <FieldLabel text={E.fill} />
           <SelectField
             value={layer.fillMode}
             options={[...FILL_KW]}
@@ -108,6 +110,7 @@ function AnimationLayerRow({ layer, onChange, onDelete }: {
 type PanelProps = { instanceId: string; currentCss: string };
 
 export function AnimationPanel({ instanceId, currentCss }: PanelProps) {
+  const E = useI18n().t.inspector.editors;
   const layers = useMemo(() => parseAnimationCss(currentCss), [currentCss]);
 
   const commit = (next: AnimationLayer[]) =>
@@ -120,7 +123,7 @@ export function AnimationPanel({ instanceId, currentCss }: PanelProps) {
 
   return (
     <div style={{ borderBottom: `1px solid ${C.border}` }}>
-      <PanelHeader label="Animation" count={layers.length} onAdd={addLayer} />
+      <PanelHeader label={E.animation} count={layers.length} onAdd={addLayer} />
       {layers.length > 0 && (
         <div style={{ padding: "4px 8px 8px", display: "flex", flexDirection: "column", gap: 4 }}>
           {layers.map((l, i) => (

@@ -281,7 +281,7 @@ export function Navigator() {
           flexShrink: 0,
         }}
       >
-        Navigator
+        {t.builder.navigator}
       </div>
 
       {/* Tree */}

@@ -2,6 +2,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { UI_VARS as C } from "@/lib/uiTheme";
+import { useI18n } from "@/lib/i18n";
 
 
 type Flag = {
@@ -14,6 +15,7 @@ type Flag = {
 };
 
 export default function FlagsPage() {
+  const A = useI18n().t.admin;
   const router = useRouter();
   const [flags, setFlags] = useState<Flag[]>([]);
   const [loading, setLoading] = useState(true);
@@ -26,7 +28,7 @@ export default function FlagsPage() {
     setLoading(true);
     try {
       const res = await fetch("/api/admin/flags");
-      if (res.status === 403) { setError("Access denied — admin only"); return; }
+      if (res.status === 403) { setError(A.accessDenied); return; }
       const json = await res.json() as { flags: Flag[] };
       setFlags(json.flags);
     } catch (err) { setError(String(err)); }
@@ -77,7 +79,7 @@ export default function FlagsPage() {
             style={{ background: "none", border: "none", color: C.textMuted, cursor: "pointer", fontSize: 18 }}>
             ←
           </button>
-          <h1 style={{ margin: 0, fontSize: 20, fontWeight: 700 }}>Feature Flags</h1>
+          <h1 style={{ margin: 0, fontSize: 20, fontWeight: 700 }}>{A.flagsTitle}</h1>
         </div>
 
         {error && <div style={{ color: C.danger, fontSize: 12, marginBottom: 16 }}>{error}</div>}
@@ -85,27 +87,27 @@ export default function FlagsPage() {
         {/* Create new flag */}
         <div style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 10, padding: "14px 16px", marginBottom: 20, display: "flex", gap: 8, alignItems: "flex-end", flexWrap: "wrap" }}>
           <div style={{ flex: 1, minWidth: 150 }}>
-            <label style={{ fontSize: 12, color: C.textMuted, fontWeight: 600, display: "block", marginBottom: 4 }}>FLAG KEY</label>
+            <label style={{ fontSize: 12, color: C.textMuted, fontWeight: 600, display: "block", marginBottom: 4 }}>{A.flagKey}</label>
             <input value={newKey} onChange={(e) => setNewKey(e.target.value.replace(/\s/g, "_"))}
-              placeholder="feature_name"
+              placeholder="feature_name" // i18n-ignore — identifier example
               style={{ width: "100%", padding: "6px 8px", background: "rgba(255,255,255,0.05)", border: `1px solid ${C.border}`, borderRadius: 4, color: C.text, fontSize: 13, fontFamily: "monospace", outline: "none", boxSizing: "border-box" }} />
           </div>
           <div style={{ flex: 2, minWidth: 200 }}>
-            <label style={{ fontSize: 12, color: C.textMuted, fontWeight: 600, display: "block", marginBottom: 4 }}>DESCRIPTION</label>
+            <label style={{ fontSize: 12, color: C.textMuted, fontWeight: 600, display: "block", marginBottom: 4 }}>{A.flagDescription}</label>
             <input value={newDesc} onChange={(e) => setNewDesc(e.target.value)}
-              placeholder="What does this flag control?"
+              placeholder={A.flagDescriptionPlaceholder}
               style={{ width: "100%", padding: "6px 8px", background: "rgba(255,255,255,0.05)", border: `1px solid ${C.border}`, borderRadius: 4, color: C.text, fontSize: 13, fontFamily: C.font, outline: "none", boxSizing: "border-box" }} />
           </div>
           <button onClick={create} disabled={creating || !newKey.trim()}
             style={{ padding: "6px 16px", borderRadius: 5, border: "none", background: "rgba(124,58,237,0.8)", color: "#fff", fontSize: 12, fontFamily: C.font, cursor: "pointer", fontWeight: 600, flexShrink: 0 }}>
-            {creating ? "Creating…" : "+ Add Flag"}
+            {creating ? A.creating : A.addFlag}
           </button>
         </div>
 
-        {loading && <div style={{ color: C.textMuted, fontSize: 13 }}>Loading…</div>}
+        {loading && <div style={{ color: C.textMuted, fontSize: 13 }}>{A.loading}</div>}
 
         {!loading && flags.length === 0 && (
-          <div style={{ textAlign: "center", padding: "40px 0", color: C.textMuted, fontSize: 13 }}>No feature flags yet. Create one above.</div>
+          <div style={{ textAlign: "center", padding: "40px 0", color: C.textMuted, fontSize: 13 }}>{A.flagsEmpty}</div>
         )}
 
         {!loading && flags.length > 0 && (
@@ -130,11 +132,11 @@ export default function FlagsPage() {
                   {f.description && <div style={{ fontSize: 13, color: C.textMuted, marginTop: 2 }}>{f.description}</div>}
                 </div>
                 <span style={{ fontSize: 12, color: f.enabled ? "#6ee7b7" : C.textMuted, fontWeight: 600 }}>
-                  {f.enabled ? "ON" : "OFF"}
+                  {f.enabled ? A.on : A.off}
                 </span>
                 <button onClick={() => remove(f.id)}
                   style={{ background: "none", border: "none", color: C.textMuted, cursor: "pointer", fontSize: 16, padding: "2px 6px" }}
-                  title="Delete flag">×</button>
+                  title={A.deleteFlag}>×</button>
               </div>
             ))}
           </div>

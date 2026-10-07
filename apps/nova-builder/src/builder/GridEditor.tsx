@@ -1,5 +1,6 @@
 import { writeStyleProperty } from "@/lib/styleWriteHelper";
 import { UI_VARS as C } from "@/lib/uiTheme";
+import { useI18n, fmt } from "@/lib/i18n";
 import { writeGridSpan, writeGridColumnStart, type AnyProp } from "@/lib/propWriteHelper";
 import { useStore } from "@nanostores/react";
 import { $props } from "@/lib/data-stores";
@@ -81,6 +82,7 @@ function TrackSection({
   tracks: string[];
   instanceId: string;
 }) {
+  const E = useI18n().t.inspector.editors;
   function updateTracks(next: string[]) {
     writeStyleProperty(instanceId, property, serializeTrackList(next));
   }
@@ -93,7 +95,7 @@ function TrackSection({
         </span>
         <button
           onClick={() => updateTracks([...tracks, "1fr"])}
-          title={`Add ${label.toLowerCase()} track`}
+          title={fmt(E.addTrack, { label: label.toLowerCase() })}
           style={{
             background: C.accent,
             border: `1px solid ${C.accentBorder}`,
@@ -113,7 +115,7 @@ function TrackSection({
       </div>
       {tracks.length === 0 && (
         <div style={{ fontSize: 12, color: C.textMuted, fontFamily: C.font, padding: "2px 0" }}>
-          No {label.toLowerCase()} defined
+          {fmt(E.noTracks, { label: label.toLowerCase() })}
         </div>
       )}
       {tracks.map((track, index) => (
@@ -145,7 +147,7 @@ function TrackSection({
           <button
             onClick={() => updateTracks(tracks.filter((_, i) => i !== index))}
             disabled={tracks.length <= 1}
-            title="Remove track"
+            title={E.removeTrack}
             style={{
               background: "none",
               border: "none",
@@ -173,6 +175,7 @@ export function GridContainerPanel({
   columnsCss: string;
   rowsCss: string;
 }) {
+  const E = useI18n().t.inspector.editors;
   const columns = parseTrackList(columnsCss);
   const rows = parseTrackList(rowsCss);
 
@@ -183,7 +186,7 @@ export function GridContainerPanel({
           fontSize: 12, color: C.textMuted, fontFamily: C.font,
           fontWeight: 700, letterSpacing: "0.07em", textTransform: "uppercase", flex: 1,
         }}>
-          Grid Tracks
+          {E.gridTracks}
           {(columns.length > 0 || rows.length > 0) && (
             <span style={{ color: "rgba(255,255,255,0.2)", fontWeight: 400, marginLeft: 6 }}>
               {columns.length}×{rows.length}
@@ -191,8 +194,8 @@ export function GridContainerPanel({
           )}
         </span>
       </div>
-      <TrackSection label="Columns" property="gridTemplateColumns" tracks={columns} instanceId={instanceId} />
-      <TrackSection label="Rows" property="gridTemplateRows" tracks={rows} instanceId={instanceId} />
+      <TrackSection label={E.columns} property="gridTemplateColumns" tracks={columns} instanceId={instanceId} />
+      <TrackSection label={E.rows} property="gridTemplateRows" tracks={rows} instanceId={instanceId} />
     </div>
   );
 }
@@ -206,6 +209,7 @@ export function GridChildPanel({
   instanceId: string;
   rowCss: string;
 }) {
+  const E = useI18n().t.inspector.editors;
   const props = useStore($props) as Map<string, AnyProp>;
   
   let colStart: number | null = null;
@@ -226,30 +230,30 @@ export function GridChildPanel({
           fontSize: 12, color: C.textMuted, fontFamily: C.font,
           fontWeight: 700, letterSpacing: "0.07em", textTransform: "uppercase",
         }}>
-          Grid Placement
+          {E.gridPlacement}
         </span>
       </div>
       <div style={{ padding: "6px 12px 8px", display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
         <div>
           <div style={{ fontSize: 9, color: C.textMuted, fontFamily: C.font, marginBottom: 3 }}>
-            Col start / span
+            {E.colStartSpan}
           </div>
           <div style={{ display: "flex", gap: 4 }}>
             <input
               type="number" min={1} value={colStart ?? ""} placeholder="auto"
               onChange={(e) => writeGridColumnStart(instanceId, parseInt(e.target.value) || null)}
-              style={numInputStyle} title="Column start line"
+              style={numInputStyle} title={E.columnStartLine}
             />
             <input
               type="number" min={1} value={span}
               onChange={(e) => writeGridSpan(instanceId, parseInt(e.target.value) || 1)}
-              style={numInputStyle} title="Column span"
+              style={numInputStyle} title={E.columnSpan}
             />
           </div>
         </div>
         <div>
           <div style={{ fontSize: 9, color: C.textMuted, fontFamily: C.font, marginBottom: 3 }}>
-            Row start / span
+            {E.rowStartSpan}
           </div>
           <div style={{ display: "flex", gap: 4 }}>
             <input
@@ -258,7 +262,7 @@ export function GridChildPanel({
                 writeStyleProperty(instanceId, "gridRow",
                   serializeGridLine(parseInt(e.target.value) || 1, row.span))
               }
-              style={numInputStyle} title="Row start line"
+              style={numInputStyle} title={E.rowStartLine}
             />
             <input
               type="number" min={1} value={row.span}
@@ -266,7 +270,7 @@ export function GridChildPanel({
                 writeStyleProperty(instanceId, "gridRow",
                   serializeGridLine(row.start, parseInt(e.target.value) || 1))
               }
-              style={numInputStyle} title="Row span"
+              style={numInputStyle} title={E.rowSpan}
             />
           </div>
         </div>

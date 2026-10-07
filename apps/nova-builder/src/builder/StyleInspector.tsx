@@ -38,7 +38,7 @@ import {
 } from "@/lib/nano-states";
 import { updateData } from "@/lib/transactions";
 import { UI_VARS as C, UI_VARS as DARK } from "@/lib/uiTheme";
-import { useI18n } from "@/lib/i18n";
+import { useI18n, fmt } from "@/lib/i18n";
 import { GridPositionControl } from "./GridPositionControl";
 import { writeGridColumnStyle } from "@/lib/styleWriteHelper";
 
@@ -91,7 +91,7 @@ function TokenChipsRow({ instanceId }: { instanceId: string }) {
     }}>
       <div style={{ display: "flex", alignItems: "center", gap: 6, flexWrap: "wrap" }}>
         <span style={{ fontSize: 11, color: DARK.textMuted, fontFamily: DARK.font }}>
-          Cascade: <strong style={{ color: DARK.text }}>{cascadeLabel}</strong>
+          {t.inspector.cascade} <strong style={{ color: DARK.text }}>{cascadeLabel}</strong>
         </span>
       </div>
 
@@ -116,7 +116,7 @@ function TokenChipsRow({ instanceId }: { instanceId: string }) {
               ◆ {tok.name ?? tok.id}
               <button
                 onClick={() => removeToken(tok.id)}
-                title="Remove token from instance"
+                title={t.inspector.removeToken}
                 style={{
                   background: "none",
                   border: "none",
@@ -145,6 +145,7 @@ const DEDICATED = new Set([
 ]);
 
 export function StyleInspector() {
+  const { t } = useI18n();
   const instanceId = useStore($selectedInstanceId);
   const multiSelectedIds = useStore($multiSelectedInstanceIds);
   const styles = useStore($styles);
@@ -159,7 +160,7 @@ export function StyleInspector() {
     return (
       <div style={{ height: "100%", background: C.bg, display: "flex", flexDirection: "column", overflow: "hidden" }}>
         <div style={{ padding: 16, fontSize: 13, color: "rgba(255,255,255,0.35)", fontFamily: "system-ui, sans-serif" }}>
-          Select an instance to inspect its styles.
+          {t.inspector.selectInstance}
         </div>
       </div>
     );
@@ -227,8 +228,8 @@ export function StyleInspector() {
   for (const entries of grouped.values()) entries.sort(([a], [b]) => a.localeCompare(b));
 
   const emptyMessage = isMultiSelect
-    ? "No shared styles across all selected instances."
-    : selectedState !== "" ? `No ${selectedState} styles at this breakpoint.` : "No styles at this breakpoint.";
+    ? t.inspector.noSharedStyles
+    : selectedState !== "" ? fmt(t.inspector.noStateStyles, { state: selectedState }) : t.inspector.noStyles;
 
   return (
     <div style={{ height: "100%", background: C.bg, display: "flex", flexDirection: "column", overflow: "hidden" }}>

@@ -1,5 +1,6 @@
 ﻿"use client";
 import { UI_VARS as C } from "@/lib/uiTheme";
+import { useI18n } from "@/lib/i18n";
 
 export type ShadowLayer = {
   x: number;
@@ -128,6 +129,7 @@ type LayerRowProps = {
 };
 
 export function ShadowLayerRow({ layer, type, onChange, onDelete }: LayerRowProps) {
+  const E = useI18n().t.inspector.editors;
   const upd = (patch: Partial<ShadowLayer>) => onChange({ ...layer, ...patch });
 
   return (
@@ -135,10 +137,10 @@ export function ShadowLayerRow({ layer, type, onChange, onDelete }: LayerRowProp
       <div style={{ display: "flex", alignItems: "flex-end", gap: 5, flexWrap: "wrap" }}>
         <div><FieldLabel text="X" /><NumInput value={layer.x} onChange={(n) => upd({ x: n })} /></div>
         <div><FieldLabel text="Y" /><NumInput value={layer.y} onChange={(n) => upd({ y: n })} /></div>
-        <div><FieldLabel text="Blur" /><NumInput value={layer.blur} onChange={(n) => upd({ blur: Math.max(0, n) })} /></div>
-        {type === "box" && <div><FieldLabel text="Spread" /><NumInput value={layer.spread} onChange={(n) => upd({ spread: n })} /></div>}
+        <div><FieldLabel text={E.blur} /><NumInput value={layer.blur} onChange={(n) => upd({ blur: Math.max(0, n) })} /></div>
+        {type === "box" && <div><FieldLabel text={E.spread} /><NumInput value={layer.spread} onChange={(n) => upd({ spread: n })} /></div>}
         <div>
-          <FieldLabel text="Color" />
+          <FieldLabel text={E.color} />
           <input
             type="color"
             value={colorToHex(layer.color)}
@@ -148,16 +150,16 @@ export function ShadowLayerRow({ layer, type, onChange, onDelete }: LayerRowProp
         </div>
         {type === "box" && (
           <div>
-            <FieldLabel text="Inset" />
+            <FieldLabel text={E.inset} />
             <button
               onClick={() => upd({ inset: !layer.inset })}
               style={{ width: 28, height: 22, padding: 0, border: `1px solid ${layer.inset ? C.accentBorder : C.border}`, borderRadius: 3, background: layer.inset ? C.accent : C.inputBg, color: layer.inset ? C.accentText : C.textMuted, fontSize: 9, cursor: "pointer", fontFamily: C.fontMono, display: "block" }}
             >
-              {layer.inset ? "in" : "out"}
+              {layer.inset ? E.insetIn : E.insetOut}
             </button>
           </div>
         )}
-        <button onClick={onDelete} style={{ marginLeft: "auto", padding: "0 4px", height: 22, border: "none", background: "none", color: "rgba(248,113,113,0.6)", fontSize: 16, lineHeight: 1, cursor: "pointer", alignSelf: "flex-end" }} title="Remove shadow">×</button>
+        <button onClick={onDelete} style={{ marginLeft: "auto", padding: "0 4px", height: 22, border: "none", background: "none", color: "rgba(248,113,113,0.6)", fontSize: 16, lineHeight: 1, cursor: "pointer", alignSelf: "flex-end" }} title={E.removeShadow}>×</button>
       </div>
     </div>
   );
