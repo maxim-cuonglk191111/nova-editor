@@ -1,6 +1,6 @@
-// B14 — the AI page's navbar stays one compact row (or collapses to a menu button)
-// on phones: builder breakpoint "Mobile P" and the preview at 390px.
-// Known bug at the time of writing: the header wraps into a stacked column.
+// B14 — the AI page's navbar does not stack into a column on phones (builder
+// "Mobile P" and the preview at 390px). Expected layout (packages/ai mobileNavbar.ts):
+// two compact rows — brand + call to action, then the links on one scrollable line.
 //   BASE_URL=... npx playwright test -c playwright.cloud.config.ts e2e/tier-b/b14-mobile-nav.spec.ts
 import { test, expect, type Locator } from "@playwright/test";
 import { mkdirSync } from "node:fs";
@@ -16,18 +16,19 @@ const navLayout = (header: Locator) =>
   header.evaluate((h) => {
     const links = [...h.querySelectorAll("nav a")].filter((a) => (a as HTMLElement).offsetParent !== null);
     const rows = new Set(links.map((a) => Math.round(a.getBoundingClientRect().top / 8)));
-    return { height: Math.round(h.getBoundingClientRect().height), visibleLinks: links.length, linkRows: rows.size };
+    const doc = h.ownerDocument.documentElement;
+    return { height: Math.round(h.getBoundingClientRect().height), visibleLinks: links.length, linkRows: rows.size, pageOverflowX: doc.scrollWidth > doc.clientWidth };
   });
 const expectCompact = async (header: Locator, where: string) => {
   const layout = await navLayout(header);
   console.log(`${where}: ${JSON.stringify(layout)}`);
-  expect.soft(layout.linkRows, `${where}: nav links on one row (or hidden)`).toBeLessThanOrEqual(1);
-  expect.soft(layout.height, `${where}: header is one compact row`).toBeLessThanOrEqual(90);
+  expect(layout.visibleLinks, `${where}: nav links still visible`).toBeGreaterThan(0);
+  expect(layout.linkRows, `${where}: nav links on one row`).toBe(1);
+  expect(layout.height, `${where}: header at most two compact rows`).toBeLessThanOrEqual(110);
+  expect(layout.pageOverflowX, `${where}: no horizontal page scroll`).toBe(false);
 };
 
 test("B14 navbar does not stack into a column on mobile", async ({ page, context }) => {
-  // The helper skips the tour ("nova-tour-done") but not the builder coach marks, whose overlay eats clicks.
-  await page.context().addInitScript(() => localStorage.setItem("nova-coachmarks-seen", "1"));
   acc = await freshAccount(page, "b14");
   const id = await seedProject(page, "B14 Mobile Nav");
   await openBuilder(page, id);
