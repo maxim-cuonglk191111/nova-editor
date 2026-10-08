@@ -114,7 +114,7 @@ export const enDictionary: I18nDictionary = {
     cms: "CMS",
     seo: "SEO",
     cookie: "Cookie",
-    exportHtml: "↓ HTML",
+    exportHtml: "Download as HTML",
     exportReact: "↓ React (.tsx)",
     export: "Export ▾",
     deploy: "Deploy ↗",

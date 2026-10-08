@@ -81,9 +81,10 @@ export const startSaveQueue = (
   let pending: SyncItem[] = [];
   let retries = 0;
   let inFlight = false;
+  dropPending = () => { pending = []; pendingExtras = {}; };
 
   const flush = async () => {
-    if (inFlight) return;
+    if (inFlight || fullSaveInFlight) return;
     if ($saveStatus.get() === "conflict") return;
     // Drop transactions that arrived from co-editing peers — the originator saves them.
     const drained = serverSyncStore.popAll().filter((item) => {
@@ -103,8 +104,10 @@ export const startSaveQueue = (
     inFlight = true;
     pendingExtras = {};
     $saveStatus.set("saving");
+    const request = persist(pending, $docVersion.get(), hasExtras ? extras : undefined);
+    patchInFlight = request.then(() => undefined, () => undefined);
     try {
-      const json = await persist(pending, $docVersion.get(), hasExtras ? extras : undefined);
+      const json = await request;
       $docVersion.set(json.version);
       pending = [];
       retries = 0;
@@ -131,4 +134,22 @@ export const startSaveQueue = (
 /** Discard queued patches (used after a successful FULL save). */
 export const discardQueuedPatches = () => {
   serverSyncStore.popAll();
+  dropPending();
 };
+
+// A full save and a patch flush both send the same baseVersion, so whichever
+// lands second got 409 ("Reload") — e.g. Import or Save → Update right after an
+// edit. Full saves wait for the in-flight patch and pause flushing meanwhile.
+let fullSaveInFlight = false;
+let patchInFlight: Promise<void> = Promise.resolve();
+let dropPending = () => {};
+
+export async function withFullSaveLock<T>(save: () => Promise<T>): Promise<T> {
+  fullSaveInFlight = true;
+  try {
+    await patchInFlight;
+    return await save();
+  } finally {
+    fullSaveInFlight = false;
+  }
+}

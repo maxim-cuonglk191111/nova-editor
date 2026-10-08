@@ -274,7 +274,7 @@ export function GradientPanel({ instanceId, currentCss }: GradientPanelProps) {
         }}>
           {E.gradient}
           {gradients.length > 0 && (
-            <span style={{ color: "rgba(255,255,255,0.2)", fontWeight: 400, marginLeft: 6 }}>
+            <span style={{ color: C.textMuted, fontWeight: 400, marginLeft: 6 }}>
               {gradients.length}
             </span>
           )}

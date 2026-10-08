@@ -240,7 +240,7 @@ export function TransformPanel({ instanceId, currentCss }: Props) {
         <span style={{ fontSize: 12, color: C.textMuted, fontFamily: C.font, fontWeight: 700, letterSpacing: "0.07em", textTransform: "uppercase" as const, flex: 1 }}>
           {E.transform}
           {activeCount > 0 && (
-            <span style={{ color: "rgba(255,255,255,0.2)", fontWeight: 400, marginLeft: 6 }}>{activeCount}</span>
+            <span style={{ color: C.textMuted, fontWeight: 400, marginLeft: 6 }}>{activeCount}</span>
           )}
         </span>
       </div>

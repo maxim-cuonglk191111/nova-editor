@@ -39,7 +39,7 @@ export function CollapsibleSection({
       >
         {title}
         {badge !== undefined && (
-          <span style={{ color: "rgba(255,255,255,0.25)", fontWeight: 400, marginLeft: "auto" }}>
+          <span style={{ color: C.textMuted, fontWeight: 400, marginLeft: "auto" }}>
             {badge}
           </span>
         )}

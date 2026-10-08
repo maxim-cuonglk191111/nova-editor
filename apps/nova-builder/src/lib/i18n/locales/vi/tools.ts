@@ -37,9 +37,9 @@ export const viTools: I18nToolsDictionary = {
     signUpFree: "Đăng ký miễn phí",
     tryAgain: "Thử lại",
     readyTitle: "Trang của bạn đã sẵn sàng để xem trước",
-    readyBody: "Đã tạo {count} phần tử. Nhấn Áp dụng để thêm vào khung vẽ.",
+    readyBody: "Đã tạo {count} phần tử. Áp dụng sẽ thay thế trang đang mở — nhấn Ctrl+Z để lấy lại.",
     discard: "Bỏ qua",
-    applyToPage: "Áp dụng vào trang",
+    applyToPage: "Thay thế trang này",
   },
   aiContent: {
     dialogLabel: "Điền nội dung bằng AI",

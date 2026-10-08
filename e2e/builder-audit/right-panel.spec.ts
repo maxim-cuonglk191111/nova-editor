@@ -187,6 +187,7 @@ test("right panel", async ({ page, context }) => {
   });
 
   await step("transform", async () => {
+    await openSection("Advanced effects");
     await page.locator('button[title="Add Rotate"]').click();
     const z = page.locator('button[title="Remove Rotate"]').locator("xpath=../following-sibling::div[1]").locator("input").nth(2);
     await z.fill("5");
@@ -198,6 +199,7 @@ test("right panel", async ({ page, context }) => {
   });
 
   await step("transition", async () => {
+    await openSection("Advanced effects");
     await page.locator('button[title="Add Transition"]').click();
     await expect.soft.poll(() => cs(sub, "transitionDuration")).toBe("0.3s");
     await page.locator('button[title="Add Transition"]').scrollIntoViewIfNeeded();
@@ -205,6 +207,7 @@ test("right panel", async ({ page, context }) => {
   });
 
   await step("animation", async () => {
+    await openSection("Advanced effects");
     await page.locator('button[title="Add Animation"]').click();
     await expect.soft.poll(() => cs(sub, "animationName")).toBe("fadeIn");
     const hasKeyframes = await sub.evaluate(() =>
@@ -216,6 +219,7 @@ test("right panel", async ({ page, context }) => {
   });
 
   await step("filter + backdrop filter", async () => {
+    await openSection("Advanced effects");
     await page.locator('button[title="Add Filter function"]').click();
     await expect.soft.poll(() => cs(sub, "filter")).toBe("blur(4px)");
     await page.locator('button[title="Add Backdrop Filter function"]').click();
@@ -256,6 +260,7 @@ test("right panel", async ({ page, context }) => {
     const colsBefore = await cs(grid, "gridTemplateColumns");
     const count = async () => (await cs(grid, "gridTemplateColumns")).split(" ").length;
     // The seeded grid is responsive (repeat(auto-fit, …)): "+" must not break it.
+    await openSection("Advanced effects");
     const addCol = page.locator('button[title="Add columns track"], button[title^="Responsive"]').first();
     log("add-column on an auto-fit grid disabled", await addCol.isDisabled());
     if (!(await addCol.isDisabled())) {
@@ -271,6 +276,7 @@ test("right panel", async ({ page, context }) => {
     log("track input keeps focus while typing", await track.evaluate((e) => e === document.activeElement).catch(() => false));
     await page.keyboard.press("Enter");
     await expect.soft.poll(count, "typed tracks apply").toBe(2);
+    await openSection("Advanced effects");
     await page.locator('button[title="Add columns track"]').click();
     await expect.soft.poll(count, "+ adds a column").toBe(3);
     await shot(page, "r16-grid-tracks");
@@ -279,6 +285,7 @@ test("right panel", async ({ page, context }) => {
     await expect.soft.poll(() => cs(grid, "gridTemplateColumns"), "undo restores tracks").toBe(colsBefore);
 
     await select(ID.card1, { x: 4, y: 4 });
+    await openSection("Advanced effects");
     const rowStart = page.locator('input[title="Row start line"]');
     await rowStart.fill("2");
     await expect.soft.poll(() => cs(card, "gridRowStart")).toBe("2");
@@ -293,10 +300,10 @@ test("right panel", async ({ page, context }) => {
 
   await step("state :hover only applies on hover", async () => {
     await select(ID.h1);
-    await page.getByRole("button", { name: ":hover", exact: true }).click();
+    await page.getByRole("button", { name: "Mouse over", exact: true }).click();
     await shot(page, "r18-hover-state-empty");
     await addProp("color", "#22c55e");
-    await page.getByRole("button", { name: "Default", exact: true }).click();
+    await page.getByRole("button", { name: "Normal", exact: true }).click();
     const h1 = el(ID.h1);
     await page.mouse.move(5, 5);
     await expect.soft.poll(() => cs(h1, "color"), "default color unchanged").not.toBe("rgb(34, 197, 94)");
@@ -492,17 +499,14 @@ test("right panel", async ({ page, context }) => {
     await select(ID.form, { x: 4, y: 4 });
     await tab(/^settings$/i).click();
     await shot(page, "r37-settings-form");
-    const action = page.locator("input").filter({ hasNot: page.locator("xx") });
-    const ai = await action.evaluateAll((els) => els.findIndex((e) => (e as HTMLInputElement).value === "#"));
-    log("form action field", ai);
-    if (ai >= 0) { await action.nth(ai).fill("https://example.com/hook"); }
-    await expect.soft.poll(() => el(ID.form).getAttribute("action")).toBe("https://example.com/hook");
+    await expect.soft(page.getByText(/appear under Leads/), "form explains where messages go").toBeVisible();
+    await expect.soft(page.getByText("Action URL"), "no raw action field").toHaveCount(0);
   });
 
   await step("props changes are saved", async () => {
     await waitSaved(page);
     const saved = await savedText(page, id);
-    for (const s of ["Audit alt text", "Full name", "https://example.com/menu", "_blank", "https://example.com/hook"]) {
+    for (const s of ["Audit alt text", "Full name", "https://example.com/menu", "_blank"]) {
       expect.soft(saved.includes(s), `saved has ${s}`).toBe(true);
     }
   });

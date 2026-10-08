@@ -2,6 +2,24 @@
 
 ---
 
+## [25.11.0] — 2026-10-08
+
+### Builder audit batches 4–5 (top bar, feedback & safety), batch 3 follow-ups, SOLID cleanup (Minor)
+
+Task 007, `e2e/builder-audit/top-bar.spec.ts` and `feedback-safety.spec.ts`.
+
+- **Breakpoint manager no longer crashes the builder** (opening ⚙ threw "Cannot access 'isBase' before initialization"). The raw "Condition" column is hidden; deleting a breakpoint removes its own styles (undoable) instead of applying phone-only styles to every screen.
+- **Import .nova is saved**: the import replaced the page but never reached the server, so a reload brought the old page back.
+- **No more "Project was changed elsewhere · Reload" after Save/Import**: a full save and an autosave flush raced on the same document version. Full saves now wait for the in-flight patch (`withFullSaveLock`).
+- **Save → Update stays in the editor** (it navigated to /projects).
+- **Unsaved-changes guard**: leaving with edits that are not saved yet asks first (back button and the browser's "Leave site?").
+- **Missing / failed project**: a readable message with Try again and Back to My Sites instead of "Error: HTTP 404".
+- **Top bar**: labelled "⧉ Duplicate" / "🗑 Delete" replace the ⎘ ⧉ ⊕ ⌫ glyphs; the Tools menu opens above the floating panels and only one panel is open at a time; "Download as HTML"; AI result button says "Replace this page".
+- **Right panel**: transform / transition / animation / filters / grid tracks live in a collapsed "Advanced effects" group (opens when used); state pills read Normal / Mouse over / Pressed…; "no styles" text was white on white; Form settings explain that messages go to Leads (Action URL / Method hidden); form fields show only hint text, kind of answer, field name and required (Yes/No).
+- **Hidden (Tier C)**: Tools → Performance and CSS Preview.
+- **SOLID**: the six files over 700 lines are split (builder page → `useCanvasMessages`; canvas effects → five `init*` modules; shadcn components by group; component registry by category; assets panel; landing page styles). `pnpm solid:audit`: 0 blocking (was 6).
+- **Docs**: per-item Works / Ease scores for batches 3–5 in `doc/VERIFIED.md`; batch-2 rows confirmed on production.
+
 ## [25.10.0] — 2026-10-08
 
 ### Builder audit batch 3 — right panel (Minor)

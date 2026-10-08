@@ -35,7 +35,7 @@ test("B7 templates insert and persist", async ({ page }) => {
   // Save + reload
   await page.getByRole("button", { name: /^save$/i }).click();
   await page.getByRole("button", { name: /^update$/i }).click();
-  await page.waitForURL(/\/projects/, { timeout: 60_000 });
+  await expect(page.getByRole("alert").filter({ hasText: /saved/i })).toBeVisible({ timeout: 60_000 }); // Update stays in the editor (25.11.0)
   await page.goto(`/builder/${id}`);
   await expect(canvas.getByText("Build Something Amazing")).toBeVisible({ timeout: 120_000 });
   await expect(canvas.getByRole("button", { name: "See a Demo" })).toBeVisible();

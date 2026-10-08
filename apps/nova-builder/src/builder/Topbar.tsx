@@ -5,13 +5,14 @@ import { useStore } from "@nanostores/react";
 import { $breakpoints } from "@/lib/data-stores";
 import {
   $selectedBreakpointId, $selectedBreakpoint,
-  $selectedInstanceId, $selectedInstanceSelector, $clipboard,
+  $selectedInstanceId, $selectedInstanceSelector,
   $brandingLogo, $brandingName,
 } from "@/lib/nano-states";
-import { copyInstance, pasteClipboard, duplicateInstanceById, deleteInstanceById } from "./commands";
+import { duplicateInstanceById, deleteInstanceById } from "./commands";
 import { BreakpointManager } from "./BreakpointManager";
 import { BreakpointPill } from "./BreakpointPills";
 import { TopbarActions } from "./TopbarActions";
+import { hasUnsavedWork } from "./hooks/useUnsavedChangesGuard";
 import { LogoIcon } from "@/components/LogoIcon";
 import { useI18n } from "@/lib/i18n";
 import { UI_VARS as C } from "@/lib/uiTheme";
@@ -23,17 +24,10 @@ export function Topbar({ isDemo }: { isDemo?: boolean }) {
   const breakpoints = useStore($breakpoints);
   const activeBreakpoint = useStore($selectedBreakpoint);
   const selectedId = useStore($selectedInstanceId);
-  const clipboard = useStore($clipboard);
   const brandingLogo = useStore($brandingLogo);
   const brandingName = useStore($brandingName);
 
   const [bpManagerOpen, setBpManagerOpen] = useState(false);
-
-  const handleCopy = useCallback(() => {
-    if (selectedId) copyInstance(selectedId);
-  }, [selectedId]);
-
-  const handlePaste = useCallback(() => pasteClipboard($clipboard.get(), $selectedInstanceId.get()), []);
 
   const handleDuplicate = useCallback(() => {
     if (!selectedId) return;
@@ -52,10 +46,10 @@ export function Topbar({ isDemo }: { isDemo?: boolean }) {
   });
 
   return (
-    <div style={{ gridArea: "topbar", height: 44, background: C.bg, borderBottom: `1px solid ${C.border}`, display: "flex", alignItems: "center", padding: "0 10px", gap: 6, fontFamily: C.font, flexShrink: 0, zIndex: 10 }}>
+    <div style={{ gridArea: "topbar", height: 44, background: C.bg, borderBottom: `1px solid ${C.border}`, display: "flex", alignItems: "center", padding: "0 10px", gap: 6, fontFamily: C.font, flexShrink: 0, zIndex: 150 /* above the floating tool panels (100) so its menus open on top */ }}>
       {/* Left: back + site name */}
       <div style={{ display: "flex", alignItems: "center", gap: 6, minWidth: 0, flexShrink: 0 }}>
-        <button onClick={() => router.push("/projects")} title={t.builder.backToMySites} style={{ background: "none", border: "none", cursor: "pointer", color: C.textMuted, fontSize: 16, padding: "2px 5px", lineHeight: 1, borderRadius: 4 }}>←</button>
+        <button onClick={() => { if (!hasUnsavedWork() || confirm(t.chrome.leaveUnsaved)) router.push("/projects"); }} title={t.builder.backToMySites} style={{ background: "none", border: "none", cursor: "pointer", color: C.textMuted, fontSize: 16, padding: "2px 5px", lineHeight: 1, borderRadius: 4 }}>←</button>
         {brandingLogo ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img src={brandingLogo} alt={brandingName || t.tools.logoAlt} style={{ height: 24, objectFit: "contain", flexShrink: 0 }} />
@@ -67,17 +61,17 @@ export function Topbar({ isDemo }: { isDemo?: boolean }) {
         )}
       </div>
 
-      {/* Edit toolbar: copy / paste / duplicate / delete */}
-      <div style={{ display: "flex", alignItems: "center", gap: 1, flexShrink: 0, marginLeft: 4 }}>
+      {/* Edit toolbar: labelled duplicate / delete for the selection. The bare
+          ⎘ ⧉ ⊕ ⌫ glyphs meant nothing to first-time users (task 007); copy and
+          paste stay in the right-click menu and the keyboard shortcuts. */}
+      <div style={{ display: "flex", alignItems: "center", gap: 2, flexShrink: 0, marginLeft: 4 }}>
         {(
           [
-            { label: "⎘", title: t.builder.copyTooltip, onClick: handleCopy, disabled: !selectedId },
-            { label: "⧉", title: t.builder.pasteTooltip, onClick: handlePaste, disabled: !clipboard },
-            { label: "⊕", title: t.builder.duplicateTooltip, onClick: handleDuplicate, disabled: !selectedId },
-            { label: "⌫", title: t.builder.deleteTooltip, onClick: handleDelete, disabled: !selectedId, danger: true },
+            { label: `⧉ ${t.commands.duplicate}`, title: t.builder.duplicateTooltip, onClick: handleDuplicate, disabled: !selectedId },
+            { label: `🗑 ${t.commands.delete}`, title: t.builder.deleteTooltip, onClick: handleDelete, disabled: !selectedId, danger: true },
           ] as Array<{ label: string; title: string; onClick: () => void; disabled: boolean; danger?: boolean }>
         ).map(({ label, title, onClick, disabled, danger }) => (
-          <button key={title} onClick={onClick} disabled={disabled} title={title} style={{ background: "none", border: "none", cursor: disabled ? "default" : "pointer", color: disabled ? C.border : danger ? C.danger : C.textMuted, fontSize: 13, padding: "3px 7px", borderRadius: 4, lineHeight: 1, fontFamily: C.font, transition: "color 0.1s" }}>
+          <button key={title} onClick={onClick} disabled={disabled} title={title} style={{ background: "none", border: `1px solid ${disabled ? "transparent" : C.border}`, cursor: disabled ? "default" : "pointer", color: disabled ? C.textMuted : danger ? C.danger : C.text, opacity: disabled ? 0.45 : 1, fontSize: 12, padding: "3px 8px", borderRadius: 4, lineHeight: 1.2, fontFamily: C.font, transition: "color 0.1s", whiteSpace: "nowrap" }}>
             {label}
           </button>
         ))}

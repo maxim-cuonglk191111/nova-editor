@@ -26,7 +26,10 @@ const SELECT_CONTROLS = new Set(["select", "tag", "radio"]);
 
 // Framework/optimizer props with no visible effect in a Nova site — hidden so the
 // Props tab only shows what a site owner can act on.
-const HIDDEN_META_PROPS = new Set(["prefetch", "preventScrollReset", "reloadDocument", "replace", "optimize", "quality"]);
+const HIDDEN_META_PROPS = new Set(["prefetch", "preventScrollReset", "reloadDocument", "replace", "optimize", "quality", "disabled"]);
+// HTML plumbing the AI/templates set on elements (button type, ids, form action…):
+// meaningless to a site owner and easy to break, so not listed under custom props.
+const HIDDEN_ADHOC_PROPS = new Set(["type", "id", "class", "className", "action", "method", "role", "tabIndex", "htmlFor", "for", "name", "autoComplete"]);
 
 // ── Image Source Control ─────────────────────────────────────────────────────
 // Dedicated UI for setting an Image component's src — URL paste + library button.
@@ -143,7 +146,9 @@ function PropControl({
   meta: MetaPropDef;
   current: AnyProp | undefined;
 }) {
-  const P = useI18n().t.inspector.props;
+  const { t } = useI18n();
+  const P = t.inspector.props;
+  const F = t.inspector.form;
   const value = current?.value;
   const displayValue = value !== undefined ? value : meta.defaultValue;
 
@@ -198,8 +203,8 @@ function PropControl({
         style={{ ...inputStyle, fontFamily: C.font }}
       >
         <option value="">{P.defaultOption}</option>
-        <option value="true">true</option>
-        <option value="false">false</option>
+        <option value="true">{F.yes}</option>
+        <option value="false">{F.no}</option>
       </select>
     );
   }
@@ -425,7 +430,7 @@ export function PropsEditorPanel() {
   const metaKeySet = new Set(metaKeys);
   for (const p of props.values()) {
     if (p.instanceId !== instanceId) continue;
-    if (p.name === "_legacyClasses" || p.name.startsWith("data-ws")) continue;
+    if (p.name === "_legacyClasses" || p.name.startsWith("data-ws") || HIDDEN_ADHOC_PROPS.has(p.name)) continue;
     if (!metaKeySet.has(p.name)) instanceProps.push(p);
   }
 

@@ -40,6 +40,9 @@ export function BreakpointManager({ onClose }: { onClose: () => void }) {
     return () => document.removeEventListener("keydown", handler);
   }, [onClose]);
 
+  // Declared before the sort that calls it (a TDZ error crashed the builder on open).
+  const isBase = (bp: Breakpoint) => bp.maxWidth == null && bp.minWidth == null;
+
   const sorted = [...bps.values()].sort((a, b) => {
     // Base (no min/max) first; then sort by minWidth desc so desktop → mobile
     if (isBase(a)) return -1;
@@ -48,8 +51,6 @@ export function BreakpointManager({ onClose }: { onClose: () => void }) {
     const bMin = b.minWidth ?? 0;
     return bMin - aMin;
   });
-
-  const isBase = (bp: Breakpoint) => bp.maxWidth == null && bp.minWidth == null;
 
   function updateLabel(id: string, label: string) {
     updateData(({ breakpoints }) => {
@@ -74,35 +75,16 @@ export function BreakpointManager({ onClose }: { onClose: () => void }) {
     });
   }
 
-  function updateCondition(id: string, raw: string) {
-    updateData(({ breakpoints }) => {
-      const bp = breakpoints.get(id);
-      if (bp) breakpoints.set(id, { ...bp, condition: raw || undefined });
-    });
-  }
-
   function deleteBp(id: string) {
     const bp = bps.get(id);
     if (!bp || isBase(bp)) return;
-    const baseBp = [...bps.values()].find((b) => isBase(b));
+    // The breakpoint's own styles go with it (one undoable step). Moving them to
+    // Base, as before, applied phone-only styles to every screen size.
     updateData(({ breakpoints, styles }) => {
       breakpoints.delete(id);
-      const stylesMap = styles as Map<string, any>;
-      // Migrate all StyleDecls from deleted breakpoint to base breakpoint
-      const toMigrate: any[] = [];
-      for (const [key, decl] of stylesMap.entries()) {
-        if (decl.breakpointId === id) {
-          stylesMap.delete(key);
-          if (baseBp) {
-            toMigrate.push({ ...decl, breakpointId: baseBp.id });
-          }
-        }
-      }
-      for (const decl of toMigrate) {
-        const newKey = `${decl.styleSourceId}:${decl.breakpointId}:${decl.state ?? ""}:${decl.property}`;
-        if (!stylesMap.has(newKey)) {
-          stylesMap.set(newKey, decl);
-        }
+      const stylesMap = styles as Map<string, { breakpointId: string }>;
+      for (const [key, decl] of [...stylesMap.entries()]) {
+        if (decl.breakpointId === id) stylesMap.delete(key);
       }
     });
   }
@@ -129,7 +111,7 @@ export function BreakpointManager({ onClose }: { onClose: () => void }) {
         borderRadius: 6,
         boxShadow: "0 8px 32px rgba(0,0,0,0.5)",
         padding: "10px 12px",
-        minWidth: 410,
+        minWidth: 340,
         fontFamily: C.font,
       }}
     >
@@ -138,16 +120,15 @@ export function BreakpointManager({ onClose }: { onClose: () => void }) {
       </div>
 
       {/* Header row */}
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 65px 65px 95px 24px", gap: 6, marginBottom: 4 }}>
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 80px 80px 24px", gap: 6, marginBottom: 4 }}>
         <span style={{ fontSize: 9, color: C.textMuted, textTransform: "uppercase" }}>{B.label}</span>
         <span style={{ fontSize: 9, color: C.textMuted, textTransform: "uppercase" }}>{B.min}</span>
         <span style={{ fontSize: 9, color: C.textMuted, textTransform: "uppercase" }}>{B.max}</span>
-        <span style={{ fontSize: 9, color: C.textMuted, textTransform: "uppercase" }}>{B.condition}</span>
         <span />
       </div>
 
       {sorted.map((bp) => (
-        <div key={bp.id} style={{ display: "grid", gridTemplateColumns: "1fr 65px 65px 95px 24px", gap: 6, marginBottom: 5, alignItems: "center" }}>
+        <div key={bp.id} style={{ display: "grid", gridTemplateColumns: "1fr 80px 80px 24px", gap: 6, marginBottom: 5, alignItems: "center" }}>
           <input
             value={bp.label}
             onChange={(e) => updateLabel(bp.id, e.target.value)}
@@ -171,14 +152,7 @@ export function BreakpointManager({ onClose }: { onClose: () => void }) {
             onChange={(e) => updateMaxWidth(bp.id, e.target.value)}
             style={{ ...inputSt, width: "100%", opacity: isBase(bp) ? 0.4 : 1 }}
           />
-          <input
-            type="text"
-            value={bp.condition ?? ""}
-            placeholder={isBase(bp) ? "—" : B.conditionPlaceholder}
-            disabled={isBase(bp)}
-            onChange={(e) => updateCondition(bp.id, e.target.value)}
-            style={{ ...inputSt, width: "100%", opacity: isBase(bp) ? 0.4 : 1 }}
-          />
+          {/* Raw media conditions are hidden (task 007: jargon); existing ones are kept. */}
           <button
             onClick={() => deleteBp(bp.id)}
             disabled={isBase(bp)}

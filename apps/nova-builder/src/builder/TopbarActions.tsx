@@ -114,6 +114,14 @@ type Props = {
   isDemo?: boolean;
 };
 
+// The AI, AI Content Fill, Accessibility and History panels float in the same
+// spot; opening one closes the others so they never stack on top of each other.
+const FLOATING_PANELS = [$aiPanelOpen, $aiContentPanelOpen, $a11yPanelOpen, $perfPanelOpen, $historyPanelOpen, $cssPreviewOpen];
+function openFloatingPanel(panel: (typeof FLOATING_PANELS)[number], open: boolean) {
+  if (open) for (const p of FLOATING_PANELS) if (p !== panel) p.set(false);
+  panel.set(open);
+}
+
 export function TopbarActions({ isDemo }: Props) {
   const { t } = useI18n();
   const router = useRouter();
@@ -212,8 +220,8 @@ export function TopbarActions({ isDemo }: Props) {
       await saveProject(meta.id);
       $isDirty.set(false);
       setLastSavedTime(Date.now());
+      // Stay in the editor: saving used to throw the user out to /projects.
       showToast(t.chrome.toastUpdated, "success");
-      router.push("/projects");
     } catch (err) {
       console.error(err);
       setSaveError(true);
@@ -501,13 +509,13 @@ export function TopbarActions({ isDemo }: Props) {
               open={toolsOpen}
               onToggle={() => { setToolsOpen((v) => !v); setExportOpen(false); }}
               onClose={() => setToolsOpen(false)}
+              // Tier C (task 007): Performance (scores without fixes a site owner can
+              // act on) and CSS Preview (raw CSS) are hidden.
               items={[
-                { label: t.builder.aiContentFill, active: isAIContentOpen, onClick: () => $aiContentPanelOpen.set(!isAIContentOpen) },
-                { label: t.builder.accessibility, active: isA11yOpen, onClick: () => $a11yPanelOpen.set(!isA11yOpen) },
-                { label: t.builder.performance, active: isPerfOpen, onClick: () => $perfPanelOpen.set(!isPerfOpen) },
-                { label: t.builder.history, active: isHistoryOpen, onClick: () => $historyPanelOpen.set(!isHistoryOpen) },
+                { label: t.builder.aiContentFill, active: isAIContentOpen, onClick: () => openFloatingPanel($aiContentPanelOpen, !isAIContentOpen) },
+                { label: t.builder.accessibility, active: isA11yOpen, onClick: () => openFloatingPanel($a11yPanelOpen, !isA11yOpen) },
+                { label: t.builder.history, active: isHistoryOpen, onClick: () => openFloatingPanel($historyPanelOpen, !isHistoryOpen) },
                 { label: t.builder.gridGuides, active: gridGuides, onClick: () => $gridGuidesVisible.set(!gridGuides) },
-                { label: t.builder.cssPreview, active: cssPreview, onClick: () => $cssPreviewOpen.set(!cssPreview) },
               ]}
             />
 
@@ -575,7 +583,7 @@ export function TopbarActions({ isDemo }: Props) {
 
             {/* 6 — ✦ Generate */}
             <button
-              onClick={() => $aiPanelOpen.set(!isAIPanelOpen)}
+              onClick={() => openFloatingPanel($aiPanelOpen, !isAIPanelOpen)}
               title={t.chrome.generateWithAI}
               style={{ padding: "4px 14px", borderRadius: 6, border: `1px solid ${isAIPanelOpen ? C.accentBorder : C.accent}`, background: isAIPanelOpen ? C.accentBg : `linear-gradient(135deg, ${C.accentBg} 0%, rgba(79,70,229,0.1) 100%)`, color: C.accentText, fontSize: 12, fontFamily: C.font, cursor: "pointer", fontWeight: 700 }}
             >

@@ -37,9 +37,9 @@ export const enTools: I18nToolsDictionary = {
     signUpFree: "Sign up free",
     tryAgain: "Try again",
     readyTitle: "Your page is ready to preview",
-    readyBody: "{count} elements generated. Click Apply to add it to your canvas.",
+    readyBody: "{count} elements generated. Applying replaces the page that is open now — Ctrl+Z brings it back.",
     discard: "Discard",
-    applyToPage: "Apply to page",
+    applyToPage: "Replace this page",
   },
   aiContent: {
     dialogLabel: "AI Content Fill",

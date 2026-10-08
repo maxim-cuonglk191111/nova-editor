@@ -106,6 +106,8 @@ export interface I18nChromeDictionary {
   importProjectTitle: string;
   unsavedTitle: string;
   unsavedBody: string;
+  /** Confirm shown by the builder's back button while autosave has unsent work. */
+  leaveUnsaved: string;
   cancel: string;
   import: string;
   language: string;
@@ -120,6 +122,9 @@ export interface I18nChromeDictionary {
   linkTitle: string;
   loadingProject: string;
   loadFailed: string;
+  loadNotFound: string;
+  loadFailedHint: string;
+  loadRetry: string;
   dragToResize: string;
   saveDialog: I18nSaveDialogDictionary;
   shortcuts: I18nShortcutsDictionary;

@@ -36,7 +36,7 @@ test("B6 CSS variables + Custom CSS reach preview and export", async ({ page }) 
   // Save
   await page.getByRole("button", { name: /^save$/i }).click();
   await page.getByRole("button", { name: /^update$/i }).click();
-  await page.waitForURL(/\/projects/, { timeout: 60_000 });
+  await expect(page.getByRole("alert").filter({ hasText: /saved/i })).toBeVisible({ timeout: 60_000 }); // Update stays in the editor (25.11.0)
   const saved = (await (await page.request.get(`/api/projects/${id}`)).json()) as { cssVars: Record<string, string>; customCss: string };
   expect(saved.cssVars).toEqual({ "qa-brand": PINK });
   expect(saved.customCss).toBe(RULE);
