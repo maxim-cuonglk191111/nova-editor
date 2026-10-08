@@ -2,6 +2,14 @@
 
 ---
 
+## [25.14.2] — 2026-10-08
+
+### AI provider check; Groq fallbacks; AI panel design draft (Patch)
+
+- **`GET /api/ai/providers`** (signed-in): the fallback chain, which provider keys are configured (never the keys), model / max-token overrides and the models the Groq key can actually use. Retired models only ever surfaced as "temporarily unavailable".
+- **Groq** tries `llama-3.3-70b-versatile`, `openai/gpt-oss-20b` and `qwen/qwen3.8-27b` after `gpt-oss-120b`, and reports every model's refusal (the log showed only the last one). Production 25.14.1: `llama-3.3-70b-versatile` answered 404 for this key.
+- **`doc/AI-PANEL.md`**: design of the chat assistant tab (task 009 batch 6) for the owner's review.
+
 ## [25.14.1] — 2026-10-08
 
 ### Task 009 batch 4 — what the visitor gets: images, AI page generation, nav links, exported buttons (Patch)
