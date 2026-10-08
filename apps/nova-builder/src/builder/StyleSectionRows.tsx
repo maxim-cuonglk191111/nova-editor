@@ -8,6 +8,7 @@ import { styleValueToString } from "@/lib/styleValueConversion";
 import { writeStyle, removeStyle } from "@/lib/styleInspectorWrite";
 import { UI_VARS as C } from "@/lib/uiTheme";
 import { useI18n, fmt } from "@/lib/i18n";
+import { componentName } from "@/lib/i18n/componentName";
 import { UnitInput, COMMON_UNITS } from "./controls/UnitInput";
 import { ColorControl } from "./controls/ColorControl";
 import { CollapsibleSection } from "./controls/CollapsibleSection";
@@ -176,18 +177,20 @@ export function StyleSection({
 // ─── Instance header ──────────────────────────────────────────────────────────
 
 export function InstanceHeader() {
+  const { t } = useI18n();
   const instanceId = useStore($selectedInstanceId);
   const instances = useStore($instances);
   if (!instanceId) return null;
   const instance = instances.get(instanceId);
   if (!instance) return null;
+  const type = componentName(instance.component, t.componentNames);
   return (
     <div style={{ padding: "8px 12px 6px", borderBottom: `1px solid ${C.border}`, flexShrink: 0 }}>
       <div style={{ fontSize: 12, color: C.text, fontFamily: C.font, fontWeight: 600 }}>
-        {(instance as { label?: string }).label || instance.component}
+        {(instance as { label?: string }).label || type}
       </div>
-      <div title={instanceId} style={{ fontSize: 12, color: C.textMuted, fontFamily: C.font, marginTop: 2 }}>
-        {instance.component.split(":").pop()}
+      <div title={instance.component} style={{ fontSize: 12, color: C.textMuted, fontFamily: C.font, marginTop: 2 }}>
+        {type}
       </div>
     </div>
   );

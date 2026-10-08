@@ -2,6 +2,18 @@
 
 ---
 
+## [25.13.0] — 2026-10-08
+
+### Task 009 batch 2 — AI on one section, AI Content Fill on the whole page, builder in Vietnamese (Minor)
+
+- **Change one section with AI**: AI Content Fill rewrites only the selected element / section ("Rewrites the 14 texts in the selected “Menu Section” only"); with nothing selected it rewrites the whole page. The Generate with AI panel says, once a page exists, that it replaces the page and points to this tool.
+- **AI Content Fill covers the whole page**: it silently stopped after the first 20 texts (a 42-text page kept 14 English texts after "translate to Vietnamese"). Texts go to the AI in batches of 20 (up to 120); the prompt follows the owner's instruction (translate / tone / topic) and keeps prices, numbers and names. The result lists "old → new" before Apply and says Ctrl+Z undoes it; errors are readable on the light theme.
+- **Accessibility check in plain language**: issues read "This image has no description, so screen readers…" with "How to fix: Select the image, open Props…"; the rule id / component type moved to a tooltip; the AI suggestion is written in the UI language, and the translated default is shown when the AI does not answer within 20 s.
+- **Builder in Vietnamese**: component names (Add panel, Layers, panel headers, command palette) and built-in templates are translated; the breakpoint manager shows the same names as the breakpoint buttons ("Máy tính bảng", not "Tablet") and no longer clips; Settings uses the Props labels (no raw "tag / type / size / variant", Yes/No instead of true/false); "Kiểu dáng", "Kiểm tra trợ năng", "Bọc trong một khối".
+- **Command palette** listed internal components ("Insert Global root / Element / Collection / Descendant…") and inserted empty elements into the home page. It now lists the Add panel's library and inserts exactly like a click in the Add panel (shared `insertComponent`).
+- **Add panel**: a drag that ends on the canvas no longer also counts as a click (two copies were inserted on the dev server).
+- **QA**: `e2e/builder-audit/vi-ui.spec.ts` (every panel in EN and VI: clipped text, untranslated strings), `e2e/builder-audit/ai-tools.spec.ts` (`QA_MOCK_AI=1` for a dev server without AI keys); B9 / B10 follow the new wording.
+
 ## [25.12.1] — 2026-10-08
 
 ### Task 009 batch 1 — regression after 25.11–25.12; restore no longer overwritten by other tabs (Patch)

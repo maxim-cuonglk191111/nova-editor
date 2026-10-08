@@ -6,6 +6,7 @@ import { updateData } from "@/lib/transactions";
 import { ensureLocalSource } from "@/lib/style-object-model";
 import { UI_VARS as C } from "@/lib/uiTheme";
 import { useI18n } from "@/lib/i18n";
+import { componentName } from "@/lib/i18n/componentName";
 import type { I18nSettingsPanelDictionary } from "@/lib/i18n";
 
 type AnyProp = {
@@ -151,7 +152,8 @@ function ObjectFitControl({ instanceId }: { instanceId: string }) {
 }
 
 export function SettingsPanel() {
-  const S = useI18n().t.inspector.settings;
+  const { t } = useI18n();
+  const S = t.inspector.settings;
   const instanceId = useStore($selectedInstanceId);
   const instances = useStore($instances);
   const props = useStore($props);
@@ -203,10 +205,10 @@ export function SettingsPanel() {
       {/* Header */}
       <div style={{ padding: "10px 14px 8px", borderBottom: `1px solid ${C.border}`, flexShrink: 0 }}>
         <div style={{ fontSize: 13, color: C.text, fontFamily: C.font, fontWeight: 700 }}>
-          {(instance as { label?: string }).label || component}
+          {(instance as { label?: string }).label || componentName(component, t.componentNames)}
         </div>
-        <div style={{ fontSize: 11, color: C.textMuted, fontFamily: C.fontMono, marginTop: 2 }}>
-          &lt;{component}&gt;
+        <div title={component} style={{ fontSize: 11, color: C.textMuted, marginTop: 2 }}>
+          {componentName(component, t.componentNames)}
         </div>
       </div>
 
@@ -221,7 +223,7 @@ export function SettingsPanel() {
           </div>
         ) : (
           instanceProps.map((p) => {
-            const label = S.propLabels[p.name] ?? p.name;
+            const label = S.propLabels[p.name] ?? t.inspector.props.propLabels[p.name] ?? p.name;
             const enumOpts = enumOptions(S)[p.name];
             const isEnum = enumOpts !== undefined;
             const isBool = p.type === "boolean";
@@ -235,7 +237,7 @@ export function SettingsPanel() {
                 key={p.id}
                 style={{ padding: "6px 14px", display: "flex", flexDirection: "column", gap: 4 }}
               >
-                <label style={labelStyle}>{label}</label>
+                <label style={labelStyle} title={p.name}>{label}</label>
 
                 {isEnum || isBool ? (
                   <select
@@ -245,8 +247,8 @@ export function SettingsPanel() {
                   >
                     {isBool ? (
                       <>
-                        <option value="true">true</option>
-                        <option value="false">false</option>
+                        <option value="true">{t.inspector.form.yes}</option>
+                        <option value="false">{t.inspector.form.no}</option>
                       </>
                     ) : (
                       (enumOpts ?? []).map((opt) => (

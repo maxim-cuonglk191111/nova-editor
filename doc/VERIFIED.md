@@ -2230,6 +2230,20 @@ Works / Ease. All screenshots reviewed.
 | R1-6 | Restore while an autosave is in flight: the edit does not land on the restored page (g06) | 🟡 9 (local) |
 | R1-7 | Error 1102 load probe (`scripts/load-probe.mjs`) | 🟡 0/150 (concurrency 10) and 0/300 (concurrency 20) on 25.12.0 — same as 2026-10-06 |
 
+R1-4…R1-6 confirmed on production 25.12.1 (`regression.spec.ts`, B3, B6, B8 pass after the Workers Build).
+
+## v25.13.0 — Task 009 batch 2: AI tools + builder in Vietnamese (2026-10-08, screenshots `a*.png`, `v*.png`, report `vi-ui-report.json`)
+Works / Ease. Baseline = production 25.12.1; after = local dev 25.13.0 (AI answers mocked with `QA_MOCK_AI`, the dev server has no AI keys) — real-AI production run after deploy.
+| ID | Behavior | Status |
+|----|----------|--------|
+| AI2-1 | Change one section with AI: select it, AI Content Fill rewrites only its texts; header untouched (a04, a05) | 🟡 9/8 (was 0/3: no way to change one section — Generate always replaces the page) |
+| AI2-2 | Generate with AI on an existing page explains it replaces the page and where to change one section (a06) | 🟡 9/8 (was 9/5) |
+| AI2-3 | AI Content Fill rewrites every text of the page; "old → new" preview; Ctrl+Z restores (a01–a03) | 🟡 9/8 (was 5/5 on production: 20 of 42 texts, 14 stayed English, no preview) |
+| AI2-4 | Accessibility: plain message, "How to fix", AI suggestion in the UI language, translated fallback (a07) | 🟡 9/8 (was 8/5: "img-alt", English-only, code-like fix) |
+| VI-1 | Every builder panel in Vietnamese: no clipped text (20 panels) | 🟡 9 (was: breakpoint manager inputs cut "Mobile landscap", "Mọi kích") |
+| VI-2 | Builder chrome translated: component names, templates, breakpoint names, Settings labels, Tools menu, tab names | 🟡 9/8 (was 6/5: ~60 English component names, "shadcn:Button", "TAG", "Bọc trong Box", "Breakpoint") — remaining same-as-EN strings are user content, CSS-name tooltips (technical hint) and key names |
+| VI-3 | Command palette lists only real components, translated, inserts like the Add panel (v19) | 🟡 9/8 (was 4/3: "Insert Global root / Element / Collection…", empty elements on the home page) |
+
 ## SOLID Audit — task 007 (v25.11.0)
 | Check | Severity | File | Fix |
 |-------|----------|------|-----|

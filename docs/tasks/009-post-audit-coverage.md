@@ -1,6 +1,6 @@
 # Task 009 — Close the gaps left after the builder audit (task 007)
 
-- **Status:** In progress — batch 1 done (v25.12.1)
+- **Status:** In progress — batches 1–2 done (v25.12.1, v25.13.0)
 - **Filed:** 2026-10-08
 - **Owner:** Claude Code
 - **Severity:** High (owner principle: if a feature exists, it must work well — and be easy for a non-technical user)
@@ -45,5 +45,7 @@ Continue after task 007 (builder audit, v25.8.0–25.12.0, scores in `doc/VERIFI
 ## Progress
 
 - **Batch 1 — regression (v25.12.1):** production 25.12.0: journey 19/19, every `builder-audit/*` and `tier-b/*` spec passes (B3, B6 and the journey updated for 25.11 UI changes); Error 1102 probe 0/150 and 0/300. Found: a snapshot restore was silently overwritten by any tab opened before it (no `version` bump) — fixed, plus clearer conflict messages (chip, Save → Update suggests Save As). New `e2e/builder-audit/regression.spec.ts`, `scripts/load-probe.mjs`. Carried to later batches: AI page had 3 of 7 requested sections and shadcn buttons lose styling in Export HTML (batch 4); AI Content Fill stops after 20 text elements (batch 2); Button Settings shows raw values "sm / button / primary" (batch 5); AI error "Try again" button has low contrast (batch 6).
+
+- **Batch 2 — AI tools + Vietnamese (v25.13.0):** "change one section" did not exist (Generate always replaces the page) — AI Content Fill now works on the selected section; it also stopped after 20 texts (fixed: batches of 20, preview, Ctrl+Z hint). Accessibility issues in plain language with a translated fallback. Vietnamese pass over 20 panels (`vi-ui.spec.ts`): component names, templates, breakpoint manager, Settings labels and the command palette (which listed internal components) fixed. Found outside the app: Worker *preview versions* uploaded from a local `build:cf` answer 500 on every route, so they cannot be used for pre-merge checks; the Vercel project `nova-editor-apps` deploys every PR but has no environment variables (sign-up / log-in fail there) — left as is, owner to decide. Supabase and production sign-up / log-in checked: healthy.
 
 Out of scope unless the owner provides input: task 002 (SePay go-live), task 003 (cards / Google Pay). No spending (no paid AI credits, no paid services).

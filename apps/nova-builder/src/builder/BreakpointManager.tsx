@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 import { useRef, useEffect } from "react";
 import { useStore } from "@nanostores/react";
 import { $breakpoints, $styles, $styleSourceSelections } from "@/lib/data-stores";
@@ -7,6 +7,7 @@ import { uid } from "@/lib/uid";
 import type { Breakpoint } from "@webstudio-is/sdk";
 import { UI_VARS as C } from "@/lib/uiTheme";
 import { useI18n } from "@/lib/i18n";
+import { bpFriendlyName } from "./BreakpointPills";
 
 const inputSt: React.CSSProperties = {
   background: C.inputBg,
@@ -20,7 +21,8 @@ const inputSt: React.CSSProperties = {
 };
 
 export function BreakpointManager({ onClose }: { onClose: () => void }) {
-  const B = useI18n().t.inspector.breakpoints;
+  const { t } = useI18n();
+  const B = t.inspector.breakpoints;
   const bps = useStore($breakpoints);
   const ref = useRef<HTMLDivElement>(null);
 
@@ -111,7 +113,7 @@ export function BreakpointManager({ onClose }: { onClose: () => void }) {
         borderRadius: 6,
         boxShadow: "0 8px 32px rgba(0,0,0,0.5)",
         padding: "10px 12px",
-        minWidth: 340,
+        minWidth: 420,
         fontFamily: C.font,
       }}
     >
@@ -120,7 +122,7 @@ export function BreakpointManager({ onClose }: { onClose: () => void }) {
       </div>
 
       {/* Header row */}
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 80px 80px 24px", gap: 6, marginBottom: 4 }}>
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 100px 100px 24px", gap: 6, marginBottom: 4 }}>
         <span style={{ fontSize: 9, color: C.textMuted, textTransform: "uppercase" }}>{B.label}</span>
         <span style={{ fontSize: 9, color: C.textMuted, textTransform: "uppercase" }}>{B.min}</span>
         <span style={{ fontSize: 9, color: C.textMuted, textTransform: "uppercase" }}>{B.max}</span>
@@ -128,9 +130,10 @@ export function BreakpointManager({ onClose }: { onClose: () => void }) {
       </div>
 
       {sorted.map((bp) => (
-        <div key={bp.id} style={{ display: "grid", gridTemplateColumns: "1fr 80px 80px 24px", gap: 6, marginBottom: 5, alignItems: "center" }}>
+        <div key={bp.id} style={{ display: "grid", gridTemplateColumns: "1fr 100px 100px 24px", gap: 6, marginBottom: 5, alignItems: "center" }}>
           <input
-            value={bp.label}
+            // Same name as the breakpoint buttons above (stored English defaults are shown translated).
+            value={bpFriendlyName(bp, t.tools.breakpointPills)}
             onChange={(e) => updateLabel(bp.id, e.target.value)}
             style={{ ...inputSt, width: "100%" }}
           />
@@ -147,7 +150,8 @@ export function BreakpointManager({ onClose }: { onClose: () => void }) {
             type="number"
             min={1}
             value={bp.maxWidth ?? ""}
-            placeholder={isBase(bp) ? B.allSizes : "px"}
+            placeholder={isBase(bp) ? "—" : "px"}
+            title={isBase(bp) ? B.allSizes : undefined}
             disabled={isBase(bp)}
             onChange={(e) => updateMaxWidth(bp.id, e.target.value)}
             style={{ ...inputSt, width: "100%", opacity: isBase(bp) ? 0.4 : 1 }}

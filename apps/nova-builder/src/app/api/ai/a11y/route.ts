@@ -24,6 +24,8 @@ export type A11yIssue = {
   rule: string;
   message: string;
   fix: string;
+  /** True when `fix` was written by the AI (otherwise it is the generic rule text). */
+  ai?: boolean;
 };
 
 function runRuleChecks(instances: InstanceNode[]): A11yIssue[] {
@@ -77,10 +79,12 @@ export async function POST(req: Request) {
   }
   void user;
 
-  const { instances, provider: clientProvider } = (await req.json()) as {
+  const { instances, provider: clientProvider, locale } = (await req.json()) as {
     instances: InstanceNode[];
     provider?: ProviderName;
+    locale?: string;
   };
+  const language = locale === "vi" ? "Vietnamese" : "English";
 
   if (!instances?.length) {
     return Response.json({ issues: [] });
@@ -93,7 +97,7 @@ export async function POST(req: Request) {
   if (issues.length > 0) {
     try {
       const summary = issues.map((i, n) => `${n + 1}. [${i.rule}] ${i.message}`).join("\n");
-      const prompt = `You are an accessibility expert. Given these detected issues in a web page, suggest concise, actionable fixes (max 80 chars each):
+      const prompt = `You are an accessibility expert helping a non-technical website owner who edits the page in a visual builder (Props tab of the selected element). Given these detected issues, write one concise, actionable fix per issue (max 100 chars each), in plain ${language}, without code:
 
 ${summary}
 
@@ -110,7 +114,10 @@ Reply with a JSON array of strings, one fix per issue (same order): ["fix1", "fi
       if (match) {
         const fixes = JSON.parse(match[0]) as string[];
         issues.forEach((issue, i) => {
-          if (fixes[i]) issue.fix = fixes[i];
+          if (typeof fixes[i] === "string" && fixes[i].trim()) {
+            issue.fix = fixes[i];
+            issue.ai = true;
+          }
         });
       }
     } catch {

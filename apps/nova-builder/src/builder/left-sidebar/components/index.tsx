@@ -1,13 +1,9 @@
-import React, { useState, useMemo, useEffect, useRef } from "react";
-import { useStore } from "@nanostores/react";
-import { nanoid } from "nanoid";
-import { $registeredComponentMetas, $selectedInstanceSelector, $selectedPage } from "@/lib/nano-states";
-import { updateData } from "@/lib/transactions";
-import { $pages, $instances, $breakpoints } from "@/lib/data-stores";
-import { ensureLocalSource } from "@/lib/style-object-model";
+import React, { useState, useMemo, useEffect, useRef, useCallback } from "react";
 import { useDraggable, type DropTarget } from "./useDraggable";
 import { getRegistry } from "./ComponentRegistry";
+import { insertComponent } from "./insertComponent";
 import { useI18n } from "@/lib/i18n";
+import { componentName } from "@/lib/i18n/componentName";
 
 // ── Lazy Render Component Preview ───────────────────────────────────────────
 function LazyComponentPreview({ children }: { children: React.ReactNode }) {
@@ -96,149 +92,24 @@ function ChevronIcon({ expanded }: { expanded: boolean }) {
 }
 
 export function ComponentsPanel() {
-  const L = useI18n().t.sidebar.components;
+  const { t } = useI18n();
+  const L = t.sidebar.components;
+  const nameOf = (item: { id: string; displayName: string }) => componentName(item.id, t.componentNames, item.displayName);
   const [searchQuery, setSearchQuery] = useState("");
   const [collapsedCategories, setCollapsedCategories] = useState<Record<string, boolean>>({});
 
-  // Insertion helper logic
-  function insertComponent(componentName: string, dropTarget: DropTarget = null) {
-    const instances = $instances.get();
-    const selector = $selectedInstanceSelector.get();
-    // The page open on the canvas, not always the home page.
-    const activePage = $selectedPage.get();
-    if (!activePage) {
-      console.error("[builder] insertComponent error: No page found!");
-      return;
-    }
-
-    let parentId: string | null = null;
-    let insertIdx: number | null = null;
-
-    if (dropTarget) {
-      if (dropTarget.position === "into") {
-        parentId = dropTarget.instanceId;
-      } else {
-        const targetInst = instances.get(dropTarget.instanceId);
-        if (targetInst) {
-          for (const [id, inst] of instances.entries()) {
-            const childIdx = inst.children.findIndex(
-              (c) => c.type === "id" && c.value === dropTarget.instanceId
-            );
-            if (childIdx !== -1) {
-              parentId = id;
-              insertIdx = dropTarget.position === "above" ? childIdx : childIdx + 1;
-              break;
-            }
-          }
-        }
-      }
-    } else if (selector && selector.length > 0) {
-      const selectedId = selector[0];
-      const targetInstance = instances.get(selectedId);
-      if (targetInstance) {
-        if (targetInstance.component === "shadcn:Col" || targetInstance.component === "shadcn:Row") {
-          parentId = selectedId;
-          insertIdx = targetInstance.children.length;
-        } else {
-          // Look up parent of the selected instance
-          for (const [id, inst] of instances.entries()) {
-            const childIdx = inst.children.findIndex((c) => c.type === "id" && c.value === selectedId);
-            if (childIdx !== -1) {
-              parentId = id;
-              insertIdx = childIdx + 1;
-              break;
-            }
-          }
-        }
-      }
-    }
-
-    if (!parentId) {
-      parentId = activePage.rootInstanceId;
-    }
-
-    if (parentId && insertIdx === null) {
-      const root = instances.get(parentId);
-      if (root) {
-        insertIdx = root.children.length;
-      }
-    }
-
-    const newId = nanoid();
-    const regEntry = getRegistry().find((r) => r.id === componentName);
-
-    // Build instance structure using single-source-of-truth registry
-    const creationResult = regEntry ? regEntry.createInstance(newId) : {
-      instance: {
-        type: "instance" as const,
-        id: newId,
-        component: componentName,
-        label: componentName.replace("shadcn:", ""),
-        children: [],
-      }
-    };
-
-    const newInstance = creationResult.instance;
-
-    updateData(({ instances: draft, props, styles, styleSources, styleSourceSelections, breakpoints }) => {
-      // 1. Insert main instance
-      draft.set(newId, newInstance as Parameters<typeof draft.set>[1]);
-
-      // 2. Insert child instances if composite component
-      if (creationResult.childInstances) {
-        creationResult.childInstances.forEach((child) => {
-          draft.set(child.id, child as Parameters<typeof draft.set>[1]);
-        });
-      }
-
-      // 3. Set default property metadata values if composite component
-      if (creationResult.props) {
-        Object.entries(creationResult.props).forEach(([propId, propVal]) => {
-          props.set(propId, propVal as Parameters<typeof props.set>[1]);
-        });
-      }
-
-      // 4. Update parent element's children list
-      if (parentId) {
-        const parent = draft.get(parentId);
-        if (parent) {
-          const newChildren = [...parent.children];
-          const child = { type: "id" as const, value: newId };
-          if (insertIdx !== null && insertIdx >= 0) {
-            newChildren.splice(insertIdx, 0, child);
-          } else {
-            newChildren.push(child);
-          }
-          draft.set(parentId, { ...parent, children: newChildren });
-        }
-      }
-
-      // 5. For Image components: inject object-fit: cover as a default CSS style
-      if (newInstance.component === "Image") {
-        // Find the base (smallest) breakpoint to attach the style to
-        const bps = [...(breakpoints as Map<string, { id: string; minWidth?: number }>).values()];
-        const baseBp = bps.sort((a, b) => (a.minWidth ?? 0) - (b.minWidth ?? 0))[0];
-        const bpId = baseBp?.id;
-        if (bpId) {
-          const sources = styleSources as Map<string, { id: string; type: string }>;
-          const selections = styleSourceSelections as Map<string, { instanceId: string; values: string[] }>;
-          const sourceId = ensureLocalSource(newId, sources, selections);
-          const declKey = `${sourceId}:${bpId}:objectFit:`;
-          (styles as Map<string, unknown>).set(declKey, {
-            styleSourceId: sourceId,
-            breakpointId: bpId,
-            property: "objectFit",
-            value: { type: "keyword", value: "cover" },
-          });
-        }
-      }
-    });
-
-    $selectedInstanceSelector.set([newId]);
-  }
-
   // Draggable hook integration
-  const { isDragging, ghostPos, draggedComponent, startDrag } = useDraggable(insertComponent);
+  // The card holds pointer capture during a drag, so releasing it fires a click on
+  // the card too; that click must not insert a second copy.
+  const lastDropAt = useRef(0);
+  const dropInsert = useCallback((name: string, target: DropTarget) => {
+    lastDropAt.current = Date.now();
+    insertComponent(name, target);
+  }, []);
+  const clickInsert = (name: string) => {
+    if (Date.now() - lastDropAt.current > 500) insertComponent(name);
+  };
+  const { isDragging, ghostPos, draggedComponent, startDrag } = useDraggable(dropInsert);
 
   const handleMouseDown = (e: React.MouseEvent, componentName: string) => {
     e.preventDefault();
@@ -254,12 +125,15 @@ export function ComponentsPanel() {
     return registryList.filter(
       (item) =>
         item.displayName.toLowerCase().includes(q) ||
+        nameOf(item).toLowerCase().includes(q) ||
         item.description.toLowerCase().includes(q) ||
+        (L.descriptions[item.id] ?? "").toLowerCase().includes(q) ||
         item.category.toLowerCase().includes(q) ||
         item.keywords.some((kw) => kw.toLowerCase().includes(q)) ||
         (item.tags && item.tags.some((tag) => tag.toLowerCase().includes(q)))
     );
-  }, [searchQuery]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- nameOf only reads t
+  }, [searchQuery, t]);
 
   // Group components by shadcn design system categories
   const categoriesMap = useMemo(() => {
@@ -351,9 +225,9 @@ export function ComponentsPanel() {
                       <div
                         key={item.id}
                         role="button"
-                        aria-label={item.displayName}
+                        aria-label={nameOf(item)}
                         className="group relative rounded-xl border transition-all duration-300 cursor-pointer overflow-hidden flex flex-col bg-card select-none border-border hover:shadow-md hover:border-primary/50 hover:scale-[1.02] transform active:scale-[0.98]"
-                        onClick={() => insertComponent(item.id)}
+                        onClick={() => clickInsert(item.id)}
                         onMouseDown={(e) => handleMouseDown(e, item.id)}
                       >
                         {/* Scaled visual preview element */}
@@ -364,7 +238,7 @@ export function ComponentsPanel() {
                         {/* Metadata Details */}
                         <div className="p-3.5 flex flex-col gap-0.5 bg-card/60 border-t border-border/10">
                           <div className="text-xs font-semibold flex items-center gap-1.5 text-foreground leading-none">
-                            {item.displayName}
+                            {nameOf(item)}
                           </div>
                           <p className="text-[10px] text-muted-foreground line-clamp-1 mt-1 leading-normal font-medium">
                             {L.descriptions[item.id] ?? item.description}
@@ -399,7 +273,7 @@ export function ComponentsPanel() {
             }}
           >
             <span>➕</span>
-            <span>{draggedComponent.replace("shadcn:", "")}</span>
+            <span>{componentName(draggedComponent, t.componentNames)}</span>
           </div>
         </>
       )}

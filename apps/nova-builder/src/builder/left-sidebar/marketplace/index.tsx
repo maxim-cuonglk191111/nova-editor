@@ -38,8 +38,8 @@ function TemplateCard({ template, onUse }: { template: Template; onUse: (t: Temp
       <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 8 }}>
         <span style={{ fontSize: 24, lineHeight: 1 }}>{template.previewIcon}</span>
         <div style={{ flex: 1, minWidth: 0 }}>
-          <div style={{ fontSize: 12, fontWeight: 600, color: C.text, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{template.name}</div>
-          <div style={{ fontSize: 12, color: C.textMuted, marginTop: 2, lineHeight: 1.4 }}>{template.description}</div>
+          <div style={{ fontSize: 12, fontWeight: 600, color: C.text, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{t.panels.builtInTemplates[template.id]?.name ?? template.name}</div>
+          <div style={{ fontSize: 12, color: C.textMuted, marginTop: 2, lineHeight: 1.4 }}>{t.panels.builtInTemplates[template.id]?.description ?? template.description}</div>
         </div>
       </div>
       <button onClick={handleUse} style={{ width: "100%", padding: "6px 0", borderRadius: 6, border: "none", background: applied ? C.success : C.accent, color: "#fff", fontSize: 13, fontWeight: 700, cursor: "pointer", fontFamily: C.font, transition: "background 0.2s" }}>

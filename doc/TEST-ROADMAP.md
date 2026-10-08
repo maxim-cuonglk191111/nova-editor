@@ -63,7 +63,9 @@ Run: `pwsh scripts/audit-run.ps1 e2e/builder-audit/<area>.spec.ts` (production b
 | 3 Right panel — every Style group, states, breakpoints, units, clear value, Props, Settings | `right-panel.spec.ts` | ✅ all ≥ 8 on production 25.10.0 and 25.11.0 (incl. Advanced effects group, plain state names, form settings) |
 | 4 Top bar — toolbar, breakpoints + manager, zoom, export/import, tools, preview, save dialog, autosave, Generate with AI | `top-bar.spec.ts` | ✅ production 25.11.0: all ≥ 8 after fixes (breakpoint manager crash, import not saved, save race, Update leaving the editor, stacked tool panels, glyph buttons); Performance + CSS Preview hidden (Tier C). ✅ Generate with AI 8/8 on production 25.12.0 (Groq fallback model; shared free quota is a known limit) |
 | 5 Feedback & safety — toasts, empty/loading/error states, undo, offline save, unsaved-changes guard | `feedback-safety.spec.ts` | ✅ production 25.11.0: all ≥ 8 after fixes (unsaved-changes guard added, missing-project page) |
-| 6 Saving under concurrency — two tabs, restore vs. stale tab, restore during autosave | `regression.spec.ts` | 🟡 25.12.1 local: all ≥ 8 (restore was 2/2 on production 25.12.0); production re-run after deploy |
+| 6 Saving under concurrency — two tabs, restore vs. stale tab, restore during autosave | `regression.spec.ts` | ✅ production 25.12.1: all ≥ 8 (restore was 2/2 on 25.12.0) |
+| 7 AI tools — one section via Content Fill, whole-page fill, Generate on an existing page, accessibility suggestion | `ai-tools.spec.ts` (`QA_MOCK_AI=1` on a dev server without keys) | 🟡 25.13.0 local (mocked AI): all ≥ 8; real-AI production run after deploy |
+| 8 Builder in Vietnamese — 20 panels, clipped text, untranslated strings (EN vs VI diff) | `vi-ui.spec.ts` | 🟡 25.13.0 local: no clipping, chrome translated |
 
 ## Tier C — cut (hidden or not linked; not tested)
 
