@@ -2233,7 +2233,7 @@ Works / Ease. All screenshots reviewed.
 R1-4…R1-6 confirmed on production 25.12.1 (`regression.spec.ts`, B3, B6, B8 pass after the Workers Build).
 
 ## v25.13.0 — Task 009 batch 2: AI tools + builder in Vietnamese (2026-10-08, screenshots `a*.png`, `v*.png`, report `vi-ui-report.json`)
-Works / Ease. Baseline = production 25.12.1; after = local dev 25.13.0 (AI answers mocked with `QA_MOCK_AI`, the dev server has no AI keys) — real-AI production run after deploy.
+Works / Ease. Baseline = production 25.12.1; after = local dev 25.13.0 (mocked AI) and **production 25.13.0 with the real AI** (`ai-tools`, `vi-ui`, `canvas`, `left-sidebar`, B9, B10 pass): whole page 42/42 texts rewritten (brand name and address kept on purpose), one section rewrote only its 14 texts, accessibility fix written by the AI in 4 s. Not covered yet: form field hint texts (props, not text) stay in the original language.
 | ID | Behavior | Status |
 |----|----------|--------|
 | AI2-1 | Change one section with AI: select it, AI Content Fill rewrites only its texts; header untouched (a04, a05) | 🟡 9/8 (was 0/3: no way to change one section — Generate always replaces the page) |
