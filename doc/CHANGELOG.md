@@ -2,6 +2,14 @@
 
 ---
 
+## [25.12.0] — 2026-10-08
+
+### AI generation works again on the free tier; CI i18n guard (Minor)
+
+- **Generate with AI** failed for everyone on production: Gemini is region-blocked from the Worker, Mistral returned 429, Groq's `gpt-oss-120b` refused the ~4.5k-token page prompt plus output (413, 8k tokens/min) and OpenRouter is out of paid credit. Groq now falls back to `llama-4-scout-17b-16e-instruct` (30k tokens/min on the free tier) on 413 / 429 / retired-model errors.
+- **CI**: the i18n guard skips the per-category component registry files split out in 25.11.0 (sample content, like the original file); PR #23 was merged with this check red.
+- **Docs**: batches 3–5 confirmed on production 25.11.0.
+
 ## [25.11.0] — 2026-10-08
 
 ### Builder audit batches 4–5 (top bar, feedback & safety), batch 3 follow-ups, SOLID cleanup (Minor)

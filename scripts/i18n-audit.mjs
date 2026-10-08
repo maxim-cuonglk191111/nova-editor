@@ -42,7 +42,8 @@ const CONFIG = {
     /^canvas\//,
     // Component thumbnails + default instance text: sample content the user drops on the canvas.
     // (Panel chrome for this file — categories, descriptions — is localised via t.componentCatalog.)
-    /^builder\/left-sidebar\/components\/ComponentRegistry\.tsx$/,
+    // Split per category into registry/ (task 007) — same sample content.
+    /^builder\/left-sidebar\/components\/(ComponentRegistry\.tsx$|registry\/)/,
   ],
   attributes: new Set(["placeholder", "title", "aria-label", "alt", "label"]),
   objectKeys: new Set(["label"]),
