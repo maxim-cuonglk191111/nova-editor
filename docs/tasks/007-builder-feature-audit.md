@@ -1,6 +1,6 @@
 # Task 007 — Builder feature audit: works + easy for a non-technical user
 
-- **Status:** In progress (batches 1–2 of 5 done; batch 3 running in parallel)
+- **Status:** Paused after batch 3 (owner: stop after batch 3); batches 4 (top bar) and 5 (feedback & safety) not run
 - **Filed:** 2026-10-07
 - **Owner:** Claude Code
 - **Severity:** High (owner principle: if a feature exists, it must work well)
@@ -37,3 +37,5 @@ Skip check: Tier B code (B2, B3, B5–B10) unchanged since `40b1666` (v25.7.0 on
 - **Batch 1 production check:** `canvas.spec.ts` passes on production 25.8.0 (PR #20).
 - **Batch 2 — Left sidebar (v25.9.0):** all ≥ 8 after fixes. Found: components always inserted into the home page and needed a double-click; no way to set the home page and rename only by double-click; selecting in Layers / inserting a template never scrolled the canvas (`data-ws-selector` lookup); unused assets deleted permanently without a prompt; panel resize stopped over the canvas; **CSS vars / custom CSS were never autosaved** while the chip said "All changes saved", and the Save button never returned to "Saved". Hidden (Tier C): CSS Variables + Custom CSS tabs, template bundles / publish / community.
 - **Batch 3 — Right panel:** run in parallel by a background agent in worktree `nova-editor-right` (branch `qa/builder-audit-right`), merged after review.
+- **Batch 3 — Right panel (v25.10.0):** readable style rows, remove-a-value, unitless numbers, grid placement/tracks fixed, Props selects (Heading level, Link target) and image library working, animation keyframes in export. State pills keep CSS names (ease 7).
+- **Not run (paused by owner):** batch 4 top bar (known from batches 1–2: Save dialog "Update" navigates away to /projects; top-left glyph icons ⎘ ⧉ ⊕ ⌫), batch 5 feedback & safety.

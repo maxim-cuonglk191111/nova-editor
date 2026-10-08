@@ -2,6 +2,19 @@
 
 ---
 
+## [25.10.0] — 2026-10-08
+
+### Builder audit batch 3 — right panel (Minor)
+
+Task 007, `e2e/builder-audit/right-panel.spec.ts` (every Style group, states, breakpoints, Props, Settings).
+
+- **Style rows read in plain language** (Max width, Margin top, Text color…; CSS name as tooltip) and each has a × to remove the value (undoable; active breakpoint only).
+- **Add a style** row moved to the top with a hint; accepts the shown label or kebab-case; bare numbers stay unitless for font weight, line height, opacity, z-index, flex grow/shrink (700 no longer became 700px).
+- Header drops the internal instance id; "Cascade: Local" shows only when tokens apply; state pills get plain-language tooltips.
+- **Grid**: Tracks only on grids, Placement only inside one; column start writes `grid-column` (had no effect); track inputs commit on blur/Enter; "+" disabled on responsive auto-fit grids (it broke the CSS).
+- **Props**: select controls with string options render (Heading level h1–h6 and Link "Open in" were broken); friendly labels; framework props hidden; "Choose from library" opens a picker of project images (was a "coming soon" alert); button variant explains when Style colours override it.
+- HTML export includes animation preset `@keyframes`; new Image object-fit default used the wrong style key.
+
 ## [25.9.0] — 2026-10-07
 
 ### Builder audit batch 2 — left sidebar (Minor)

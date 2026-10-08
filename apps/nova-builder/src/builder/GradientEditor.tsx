@@ -22,7 +22,7 @@ const writeGradient = (instanceId: string, cssValue: string) =>
 
 
 const numInputStyle: React.CSSProperties = {
-  width: 36,
+  width: 48,
   padding: "1px 3px",
   background: C.inputBg,
   border: `1px solid ${C.border}`,

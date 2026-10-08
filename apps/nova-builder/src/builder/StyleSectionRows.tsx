@@ -2,13 +2,13 @@
 import { useCallback } from "react";
 import { useStore } from "@nanostores/react";
 import { $instances, $styleSources } from "@/lib/data-stores";
-import { $selectedInstanceId } from "@/lib/nano-states";
+import { $selectedInstanceId, $selectedBreakpoint } from "@/lib/nano-states";
 import type { UnitValue, KeywordValue, ColorValue, RgbValue, StyleValue, AnyStyleDecl } from "@/lib/styleValueConversion";
 import { styleValueToString } from "@/lib/styleValueConversion";
-import { writeStyle } from "@/lib/styleInspectorWrite";
+import { writeStyle, removeStyle } from "@/lib/styleInspectorWrite";
 import { UI_VARS as C } from "@/lib/uiTheme";
 import { useI18n, fmt } from "@/lib/i18n";
-import { UnitInput } from "./controls/UnitInput";
+import { UnitInput, COMMON_UNITS } from "./controls/UnitInput";
 import { ColorControl } from "./controls/ColorControl";
 import { CollapsibleSection } from "./controls/CollapsibleSection";
 
@@ -27,10 +27,13 @@ export function StyleValueEditor({
 
   if (value.type === "unit") {
     const uv = value as UnitValue;
+    // Unitless numbers (font weight, line height, opacity…) get a "–" choice instead of a blank select.
+    const unitless = uv.unit === "" || uv.unit === "number";
     return (
       <UnitInput
         value={uv.value}
         unit={uv.unit}
+        units={unitless ? [uv.unit, ...COMMON_UNITS] : undefined}
         onCommit={(v, u) => onWrite({ type: "unit", value: v, unit: u })}
       />
     );
@@ -100,8 +103,12 @@ export function EditablePropRow({
 }) {
   const { t } = useI18n();
   const styleSources = useStore($styleSources) as Map<string, StyleSrc>;
+  const breakpoint = useStore($selectedBreakpoint);
   const src = styleSources.get(decl.styleSourceId);
   const isToken = src?.type === "token";
+  // Only a value set at the active breakpoint can be removed here; an inherited
+  // (base) value is overridden by editing, not deleted from all screen sizes.
+  const removable = !isToken && (!breakpoint || decl.breakpointId === breakpoint.id);
 
   const handleWrite = useCallback(
     (newValue: StyleValue) => writeStyle(instanceId, decl, newValue),
@@ -109,15 +116,28 @@ export function EditablePropRow({
   );
 
   return (
-    <tr style={{ verticalAlign: "middle" }}>
-      <td style={{ padding: "3px 8px 3px 12px", color: isToken ? "#a78bfa" : C.codeKey, fontFamily: C.fontMono, fontSize: 13, whiteSpace: "nowrap", width: "42%" }}>
-        {property}
+    <tr data-property={property} style={{ verticalAlign: "middle" }}>
+      <td
+        title={property}
+        style={{ padding: "3px 4px 3px 12px", color: isToken ? "#a78bfa" : C.text, fontFamily: C.font, fontSize: 13, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", maxWidth: 0, width: "46%" }}
+      >
+        {t.inspector.propNames[property] ?? property}
         {isToken && (
           <span title={fmt(t.inspector.fromToken, { name: src?.name ?? "" })} style={{ marginLeft: 4, fontSize: 8, background: "rgba(124,58,237,0.2)", color: "#c4b5fd", borderRadius: 3, padding: "1px 4px", verticalAlign: "middle", fontFamily: C.font, letterSpacing: "0.05em", textTransform: "uppercase" }}>T{/* i18n-ignore — token badge */}</span>
         )}
       </td>
-      <td style={{ padding: "3px 8px 3px 4px", width: "58%" }}>
+      <td style={{ padding: "3px 4px", width: "54%" }}>
         <StyleValueEditor decl={decl} onWrite={handleWrite} />
+      </td>
+      <td style={{ padding: "3px 8px 3px 0", width: 18 }}>
+        {removable && (
+          <button
+            onClick={() => removeStyle(instanceId, decl)}
+            title={t.inspector.removeValue}
+            aria-label={`${t.inspector.removeValue}: ${t.inspector.propNames[property] ?? property}`}
+            style={{ border: "none", background: "none", color: C.textMuted, fontSize: 15, lineHeight: 1, cursor: "pointer", padding: "0 2px" }}
+          >×</button>
+        )}
       </td>
     </tr>
   );
@@ -166,8 +186,8 @@ export function InstanceHeader() {
       <div style={{ fontSize: 12, color: C.text, fontFamily: C.font, fontWeight: 600 }}>
         {(instance as { label?: string }).label || instance.component}
       </div>
-      <div style={{ fontSize: 12, color: C.textMuted, fontFamily: C.fontMono, marginTop: 2 }}>
-        {instance.component} · {instanceId.slice(0, 8)}
+      <div title={instanceId} style={{ fontSize: 12, color: C.textMuted, fontFamily: C.font, marginTop: 2 }}>
+        {instance.component.split(":").pop()}
       </div>
     </div>
   );

@@ -20,7 +20,10 @@ const PSEUDO_STATES: { label: string; value: CSSState }[] = [
 export function StateSelector() {
   const { t } = useI18n();
   const selected = useStore($selectedState);
-  const states = [{ label: t.inspector.stateDefault, value: "" as CSSState }, ...PSEUDO_STATES];
+  const states = [
+    { label: t.inspector.stateDefault, value: "" as CSSState },
+    ...PSEUDO_STATES.map((s) => ({ ...s, title: t.inspector.stateHints[s.value] })),
+  ];
   const hasNonDefault = selected !== "";
 
   return (

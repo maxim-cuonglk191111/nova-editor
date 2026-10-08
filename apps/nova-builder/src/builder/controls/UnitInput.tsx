@@ -82,7 +82,7 @@ export function UnitInput({
       >
         {units.map((u) => (
           <option key={u} value={u}>
-            {u}
+            {u === "" || u === "number" ? "–" : u}
           </option>
         ))}
       </select>

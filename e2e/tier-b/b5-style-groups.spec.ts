@@ -39,7 +39,7 @@ test("B5 style panel groups reach canvas, preview and export", async ({ page, co
   await page.locator('[role="tab"]').filter({ hasText: /^style$/i }).first().click();
   await expect(page.getByText("Sub-heading text", { exact: true }).first()).toBeVisible();
 
-  const row = (prop: string) => page.locator("tr").filter({ has: page.locator("td:first-child", { hasText: new RegExp(`^${prop}$`) }) });
+  const row = (prop: string) => page.locator(`tr[data-property="${prop}"]`);
   const setNumber = async (prop: string, v: string) => {
     const input = row(prop).locator('input[type="number"]');
     await input.fill(v);

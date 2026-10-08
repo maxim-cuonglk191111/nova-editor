@@ -107,7 +107,7 @@ function ObjectFitControl({ instanceId }: { instanceId: string }) {
       const sources = styleSources as Map<string, { id: string; type: string }>;
       const selections = draftSels as Map<string, { instanceId: string; values: string[] }>;
       const sourceId = ensureLocalSource(instanceId, sources, selections);
-      const declKey = `${sourceId}:${bpId}:objectFit:`;
+      const declKey = `${sourceId}:${bpId}::objectFit`;
       (draftStyles as Map<string, unknown>).set(declKey, {
         styleSourceId: sourceId,
         breakpointId: bpId,
