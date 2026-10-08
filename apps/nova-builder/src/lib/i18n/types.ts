@@ -96,6 +96,7 @@ export interface I18nBuilderDictionary {
   syncError: string;
   syncConflict: string;
   syncConflictReload: string;
+  syncConflictHint: string;
   canvas: string;
   navigator: string;
   style: string;

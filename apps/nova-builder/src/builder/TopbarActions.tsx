@@ -33,7 +33,7 @@ import {
   $saveTriggerCount,
   showToast,
 } from "@/lib/nano-states";
-import { saveProject } from "@/lib/saveProject";
+import { saveProject, SaveConflictError } from "@/lib/saveProject";
 import { SaveProjectDialog } from "./SaveProjectDialog";
 import { DeployPanel } from "./DeployPanel";
 import { CollaboratorAvatars } from "./PresenceLayer";
@@ -64,7 +64,11 @@ function SyncStatusChip() {
   const entry = labels[status];
   if (!entry) return null;
   return (
-    <span style={{ display: "inline-flex", alignItems: "center", gap: 6, fontSize: 12, color: entry.color, fontFamily: C.font, padding: "0 4px", whiteSpace: "nowrap" }}>
+    <span
+      role={status === "conflict" ? "alert" : undefined}
+      title={status === "conflict" ? t.builder.syncConflictHint : undefined}
+      style={{ display: "inline-flex", alignItems: "center", gap: 6, fontSize: 12, color: entry.color, fontFamily: C.font, padding: "0 4px", whiteSpace: "nowrap" }}
+    >
       {t.builder[entry.key]}
       {status === "conflict" && (
         <button
@@ -225,7 +229,7 @@ export function TopbarActions({ isDemo }: Props) {
     } catch (err) {
       console.error(err);
       setSaveError(true);
-      showToast(err instanceof Error ? err.message : t.chrome.toastUpdateFailed, "error");
+      showToast(err instanceof SaveConflictError ? t.chrome.saveDialog.errorConflict : t.chrome.toastUpdateFailed, "error");
       throw err;
     } finally {
       setIsSaving(false);

@@ -1,4 +1,4 @@
-// B3 — Export project (.nova) from one project, import it into another, save: the page is reproduced.
+// B3 — Export project (.nova) from one project, import it into another (saved automatically): the page is reproduced.
 //   BASE_URL=... npx playwright test -c playwright.cloud.config.ts e2e/tier-b/b3-nova-roundtrip.spec.ts
 import { test, expect, type Page } from "@playwright/test";
 import { mkdirSync, readFileSync } from "node:fs";
@@ -54,12 +54,9 @@ test("B3 .nova export → import round trip", async ({ page }) => {
   await expect(canvas.locator("section, header, footer")).toHaveCount(sections);
   await page.screenshot({ path: `${OUT}/b3-03-imported.png` });
 
-  // Save → Update persists it into the target project
-  await page.getByRole("button", { name: /^save$/i }).click();
-  await page.screenshot({ path: `${OUT}/b3-04-save-dialog.png` });
-  await page.getByRole("button", { name: /^update$/i }).click();
-  await page.waitForTimeout(3000);
-  await page.screenshot({ path: `${OUT}/b3-05-after-update.png` });
+  // Import saves itself (25.11.0): the Save button reads "Saved", no dialog needed.
+  await expect(page.getByRole("button", { name: /^saved$/i })).toBeVisible({ timeout: 30_000 });
+  await page.screenshot({ path: `${OUT}/b3-05-after-import-saved.png` });
   const src = await getProject(page, srcId);
   const dst = await getProject(page, dstId);
   expect(dst.data.instances.length, "target now holds the source's instances").toBe(src.data.instances.length);

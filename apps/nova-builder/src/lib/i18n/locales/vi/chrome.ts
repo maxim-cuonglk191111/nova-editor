@@ -71,6 +71,7 @@ export const viChrome: I18nChromeDictionary = {
     untitled: "Dự án chưa đặt tên",
     copyName: "{name} (bản sao)",
     errorUpdate: "Không thể cập nhật dự án. Vui lòng thử lại.",
+    errorConflict: "Dự án đã được lưu từ một tab khác sau khi bạn mở nó, nên Cập nhật sẽ ghi đè lên phần đó. Hãy bấm “Lưu thành” để giữ phiên bản của bạn thành một bản sao, hoặc Hủy rồi tải lại.",
     errorCreate: "Không thể tạo dự án. Vui lòng thử lại.",
     errorSaveAs: "Không thể lưu bản sao. Vui lòng thử lại.",
     errorNameRequired: "Vui lòng nhập tên dự án.",

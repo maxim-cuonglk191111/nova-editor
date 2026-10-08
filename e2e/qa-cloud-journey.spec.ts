@@ -9,6 +9,7 @@
  */
 import { test, type Page, type Locator } from "@playwright/test";
 import { mkdirSync, readFileSync, writeFileSync } from "fs";
+import { deleteFreshAccount } from "./helpers/fresh-account";
 
 const OUT = process.env.QA_OUT ?? "qa-screenshots/cloud";
 mkdirSync(OUT, { recursive: true });
@@ -123,7 +124,7 @@ test("QA cloud journey", async ({ page, context, baseURL }) => {
   });
 
   await step("05 AI generates a page", async () => {
-    const dialog = page.locator('[role="dialog"][aria-label="Generate with AI"]');
+    const dialog = page.getByRole("dialog", { name: /generate with ai/i });
     if (!(await visible(dialog, 10_000))) {
       note("AI panel did not auto-open; opening manually");
       await page.locator('button[title="Generate with AI"]').click();
@@ -142,7 +143,7 @@ test("QA cloud journey", async ({ page, context, baseURL }) => {
       }
     });
     const t0 = Date.now();
-    const apply = page.getByRole("button", { name: /^apply/i }).first();
+    const apply = page.getByRole("button", { name: /^(apply|replace this page)/i }).first();
     const errorBox = dialog.getByText(/unavailable|failed|unauthorized|credits|error/i).first();
     await Promise.race([
       apply.waitFor({ timeout: 240_000 }),
@@ -437,4 +438,6 @@ test("QA cloud journey", async ({ page, context, baseURL }) => {
   writeFileSync(`${OUT}/report.json`, JSON.stringify({ email, projectId, report }, null, 2));
   console.log("\n══ SUMMARY ══");
   for (const s of report) console.log(`${s.ok ? "✓" : "✗"} ${s.step} (console errors: ${s.consoleErrors.length}, failed req: ${s.failedRequests.length})`);
+  // Throwaway account: removed when the Supabase keys are loaded (scripts/audit-run.ps1); QA_KEEP=1 keeps it.
+  if (!process.env.QA_KEEP) await deleteFreshAccount({ email, password });
 });

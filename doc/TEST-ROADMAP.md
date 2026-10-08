@@ -25,7 +25,9 @@ proof that the feature works.
 | G10 | Payments — VietQR via SePay (banking apps, MoMo, ZaloPay, ShopeePay) | payment probe: create order → decode QR (NAPAS GUID, BIN, account, amount, description, CRC) → signed SePay webhook → plan/credits granted once → history | ✅ 19/19 checks on production 2026-10-06; a real scan with each wallet is a manual check |
 | G10b | Payments — cards, Google Pay, Apple Pay, PayPal via Lemon Squeezy | not testable yet | ⛔ store not configured (needs store id, variant ids, webhook secret) |
 
-Infra checks per deploy: `load-1102` probe (0/150 failures on 2026-10-06), Worker log tail during the run.
+Infra checks per deploy: `node scripts/load-probe.mjs` (Error 1102 probe: 0/150 on 2026-10-06; 0/150 and 0/300 at concurrency 20 on 2026-10-08, v25.12.0), Worker log tail during the run.
+
+Regression run 2026-10-08 (task 009 batch 1, production 25.12.0): journey 19/19, all `builder-audit/*` and `tier-b/*` pass after spec updates (B3, B6). Found and fixed in 25.12.1: snapshot restore was silently overwritten by a tab opened before it (`builder-audit/regression.spec.ts`).
 
 ## Tier B — kept, functional specs (`e2e/tier-b/`, throwaway account + seeded page)
 
@@ -61,6 +63,7 @@ Run: `pwsh scripts/audit-run.ps1 e2e/builder-audit/<area>.spec.ts` (production b
 | 3 Right panel — every Style group, states, breakpoints, units, clear value, Props, Settings | `right-panel.spec.ts` | ✅ all ≥ 8 on production 25.10.0 and 25.11.0 (incl. Advanced effects group, plain state names, form settings) |
 | 4 Top bar — toolbar, breakpoints + manager, zoom, export/import, tools, preview, save dialog, autosave, Generate with AI | `top-bar.spec.ts` | ✅ production 25.11.0: all ≥ 8 after fixes (breakpoint manager crash, import not saved, save race, Update leaving the editor, stacked tool panels, glyph buttons); Performance + CSS Preview hidden (Tier C). ✅ Generate with AI 8/8 on production 25.12.0 (Groq fallback model; shared free quota is a known limit) |
 | 5 Feedback & safety — toasts, empty/loading/error states, undo, offline save, unsaved-changes guard | `feedback-safety.spec.ts` | ✅ production 25.11.0: all ≥ 8 after fixes (unsaved-changes guard added, missing-project page) |
+| 6 Saving under concurrency — two tabs, restore vs. stale tab, restore during autosave | `regression.spec.ts` | 🟡 25.12.1 local: all ≥ 8 (restore was 2/2 on production 25.12.0); production re-run after deploy |
 
 ## Tier C — cut (hidden or not linked; not tested)
 
