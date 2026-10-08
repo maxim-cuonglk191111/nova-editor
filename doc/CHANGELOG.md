@@ -2,6 +2,15 @@
 
 ---
 
+## [25.15.0] — 2026-10-08
+
+### Task 009 batch 9 — loose ends: profile page, field hints in AI rewrites, Welcome card, export without CDN (Minor)
+
+- **Profile & password** (`/settings/profile`, account menu): change your name (the menu updates at once) and your password (current password checked, rate-limited); Google / GitHub accounts without a password get a link to set one by email.
+- **AI Content Fill rewrites field hint texts too** (`placeholder` of inputs and text areas — "Your Name" stayed English after "translate the page").
+- **Welcome card** shows only on the first visit, before the first site (it stayed above the sites list).
+- **HTML export no longer loads the Tailwind play CDN** (≈ 300 KB script on every visitor's page, "not for production"): no exported element uses a class; the same base rules are inlined at the same place in the cascade — the exported page is pixel-identical (0 of 1,296,000 pixels differ).
+
 ## [25.14.3] — 2026-10-08
 
 ### AI page generation fits the free Groq budget (Patch)

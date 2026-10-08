@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import type { Instance } from "@webstudio-is/sdk";
+import type { Instance, Prop } from "@webstudio-is/sdk";
 import { collectTextInstances, isWithin, MAX_FILL_TEXTS } from "../textInstances";
 import { componentName } from "../i18n/componentName";
 
@@ -23,6 +23,14 @@ describe("collectTextInstances", () => {
 
   it("limits the fill to the selected section", () => {
     expect(collectTextInstances(instances, "menu").map((t) => t.instanceId)).toEqual(["item", "bold"]);
+  });
+
+  it("includes field placeholders when props are given", () => {
+    const props = new Map<string, Prop>([
+      ["p1", { id: "p1", instanceId: "item", name: "placeholder", type: "string", value: "Your name" }],
+      ["p2", { id: "p2", instanceId: "item", name: "name", type: "string", value: "name" }],
+    ]);
+    expect(collectTextInstances(instances, "menu", props).map((t) => t.instanceId)).toEqual(["item", "item::placeholder", "bold"]);
   });
 
   it("knows which elements belong to the page", () => {

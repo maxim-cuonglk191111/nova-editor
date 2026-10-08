@@ -213,6 +213,8 @@ export interface I18nSettingsDictionary {
   languageDesc: string;
   autoDetectIpLabel: string;
   autoDetectIpDesc: string;
+  /** Profile page (/settings/profile). */
+  profile: I18nProfileDictionary;
   englishLabel: string;
   englishSublabel: string;
   vietnameseLabel: string;
@@ -419,6 +421,30 @@ export interface I18nAssetsDictionary {
   deleteFailed: string;
   /** "{name}" is replaced with the folder name. */
   confirmDeleteFolder: string;
+}
+
+export interface I18nProfileDictionary {
+  menu: string;
+  title: string;
+  desc: string;
+  displayName: string;
+  displayNameHint: string;
+  email: string;
+  signInMethod: string;
+  providers: Record<string, string>;
+  saveName: string;
+  nameSaved: string;
+  passwordTitle: string;
+  passwordDesc: string;
+  currentPassword: string;
+  newPassword: string;
+  confirmPassword: string;
+  changePassword: string;
+  passwordChanged: string;
+  errors: Record<"wrong-current" | "weak" | "mismatch" | "no-password" | "generic", string>;
+  noPasswordBody: string;
+  setPasswordLink: string;
+  saving: string;
 }
 
 export interface I18nDictionary {

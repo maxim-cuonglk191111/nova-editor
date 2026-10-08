@@ -1,8 +1,8 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
 import { useStore } from "@nanostores/react";
-import { updateData } from "@/lib/transactions";
-import { $instances, $pages } from "@/lib/data-stores";
+import { applyTextFills } from "@/lib/textFills";
+import { $instances, $pages, $props } from "@/lib/data-stores";
 import { $aiContentPanelOpen, $selectedPageId, $selectedInstanceSelector } from "@/lib/nano-states";
 import { $projectMeta } from "@/lib/data-stores";
 import { collectTextInstances, isWithin } from "@/lib/textInstances";
@@ -22,6 +22,7 @@ export function AIContentPanel() {
   const L = useI18n().t.tools.aiContent;
   const isOpen = useStore($aiContentPanelOpen);
   const instances = useStore($instances);
+  const props = useStore($props);
   const pages = useStore($pages);
   const selectedPageId = useStore($selectedPageId);
   const selector = useStore($selectedInstanceSelector);
@@ -45,7 +46,7 @@ export function AIContentPanel() {
   const selectedId = selector?.[0];
   const scopeId = selectedId && page && selectedId !== page.rootInstanceId && isWithin(instances, page.rootInstanceId, selectedId) ? selectedId : page?.rootInstanceId;
   const scoped = scopeId !== page?.rootInstanceId ? instances.get(scopeId ?? "") : undefined;
-  const textInstances = scopeId ? collectTextInstances(instances, scopeId) : [];
+  const textInstances = scopeId ? collectTextInstances(instances, scopeId, props) : [];
   const found = scoped
     ? fmt(L.foundSelection, { count: textInstances.length, name: scoped.label ?? scoped.component })
     : fmt(L.found, { count: textInstances.length });
@@ -70,13 +71,7 @@ export function AIContentPanel() {
 
   const handleApply = () => {
     if (state.type !== "success") return;
-    updateData(({ instances: draft }) => {
-      for (const { instanceId, text } of state.fills) {
-        const inst = draft.get(instanceId);
-        if (!inst) continue;
-        draft.set(instanceId, { ...inst, children: [{ type: "text" as const, value: text }] } as Parameters<typeof draft.set>[1]);
-      }
-    });
+    applyTextFills(state.fills);
     $aiContentPanelOpen.set(false);
     setTopic("");
     setState({ type: "idle" });
