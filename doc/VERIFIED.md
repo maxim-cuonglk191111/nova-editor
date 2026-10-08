@@ -2132,13 +2132,29 @@ Scores are Works / Ease of use. "Prod" = production v25.7.1 before the fixes; fi
 | CA-2 | Click select: outline, "Heading 836 × 81" label, panel header, footer breadcrumb | ✅ 9/8 |
 | CA-3 | Breadcrumb / context menu "Select parent" | ✅ 9/8 |
 | CA-4 | Drag to reorder inside a section (drop indicator shown) | ✅ 9/8 |
-| CA-5 | Drag a link into another container | ❌ prod 3/3 (native link drag) → fixed 25.8.0, 🟡 9/8 local |
+| CA-5 | Drag a link into another container | ✅ 9/8 prod 25.8.0 (was 3/3: native link drag) |
 | CA-6 | Small nudge does not move | ✅ 9/9 |
-| CA-7 | Resize handles | ❌ prod 2/3 (inline width won, selection lost) → fixed 25.8.0, 🟡 9/8 local |
+| CA-7 | Resize handles | ✅ 9/8 prod 25.8.0 (was 2/3) |
 | CA-8 | Double-click edit: Enter commits (saved to server), Escape cancels | ✅ 9/8 |
 | CA-9 | Context menu copy/cut/paste/duplicate/wrap/select parent/delete | ✅ 9/9 (Ctrl labels on Windows 25.8.0) |
 | CA-10 | Shortcuts Ctrl+C/X/V/D, Delete, Ctrl+Z / Ctrl+Shift+Z | ✅ 9/8 |
 | CA-11 | Ctrl+K command palette (search "dupl" → Enter) | ✅ 9/8 |
-| CA-12 | Delete / drag off canvas → "Element deleted · Undo" toast | 🟡 9/9 local (prod had no feedback: 9/6) |
-| CA-13 | Style panel shows the selected element's values | ❌ prod 4/2 (stale inputs) → fixed 25.8.0, 🟡 local |
-| CA-14 | Images keep aspect ratio (no squash on phones / after resize) | ❌ prod 5 (distorted) → fixed 25.8.0, 🟡 local |
+| CA-12 | Delete / drag off canvas → "Element deleted · Undo" toast | ✅ 9/9 prod 25.8.0 (was 9/6) |
+| CA-13 | Style panel shows the selected element's values | ✅ 9/8 prod 25.8.0 (was 4/2) |
+| CA-14 | Images keep aspect ratio (no squash on phones / after resize) | ✅ 9 prod 25.8.0 (was 5) |
+
+## v25.9.0 — Builder audit batch 2: left sidebar (2026-10-07, `e2e/builder-audit/left-sidebar.spec.ts`, screenshots `s*.png`)
+Works / Ease. Baseline = production v25.8.0 reading + local run; after = local dev with the 25.9.0 fixes (production re-run after deploy).
+| ID | Behavior | Status |
+|----|----------|--------|
+| LS-1 | Components: search finds "Heading" | ✅ 9/8 |
+| LS-2 | Components: click inserts below the selection, on the open page | 🟡 9/8 (was 6/4: double-click only, always inserted into the home page) |
+| LS-3 | Components: drag onto the canvas (drop indicator "Insert below Paragraph") | ✅ 9/8 |
+| LS-4 | Pages: add, switch (empty page), rename ✎, make home ⌂ (saved, path "/"), delete (confirm) | 🟡 9/8 (was: rename by double-click only, no "set home": 6/4) |
+| LS-5 | Layers: expand, select (canvas scrolls to it), rename, drag to reorder, context menu Delete + Undo toast | 🟡 9/8 (scroll + toast new) |
+| LS-6 | Assets: upload, Insert into selected Image, delete with confirm | 🟡 9/8 (was 9/6: silent permanent delete) |
+| LS-7 | Templates: built-in template appends a section, canvas scrolls to it, "Applied!" | 🟡 9/8 (was 8/5: nothing visible changed) |
+| LS-8 | Panel resize (drag over canvas) and collapse (click active icon) | 🟡 9/8 (was 3/6: resize stopped over the canvas) |
+| LS-9 | Autosave includes CSS vars / custom CSS / interactions / symbols; Save button agrees with the chip | 🟡 9/9 (was 3/3: lost on reload, two indicators disagreed) |
+| LS-10 | CSS Variables, Custom CSS tabs | ⛔ Tier C (works 8, ease 4 for a non-technical user) — hidden |
+| LS-11 | Templates: bundle export/import, Publish current page, Community | ⛔ Tier C — hidden (public sharing without moderation, empty list, "bundle" jargon) |

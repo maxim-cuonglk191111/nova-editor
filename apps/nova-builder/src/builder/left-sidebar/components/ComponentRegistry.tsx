@@ -87,7 +87,7 @@ registerComponent({
       Save
     </button>
   ),
-  createInstance: (id) => defaultBuilder(id, "shadcn:Button", "Button", ["Save"]),
+  createInstance: (id) => defaultBuilder(id, "shadcn:Button", "Button", ["Click me"]),
 });
 
 registerComponent({
@@ -1216,10 +1216,10 @@ registerComponent({
   description: "Heading text block elements.",
   preview: () => (
     <h3 className="text-sm font-bold text-foreground leading-tight tracking-tight text-left">
-      Dashboard Analytics
+      Your heading
     </h3>
   ),
-  createInstance: (id) => defaultBuilder(id, "shadcn:Heading", "Heading", ["Dashboard Title"]),
+  createInstance: (id) => defaultBuilder(id, "shadcn:Heading", "Heading", ["Your heading"]),
 });
 
 registerComponent({

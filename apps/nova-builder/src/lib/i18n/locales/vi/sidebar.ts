@@ -19,6 +19,9 @@ export const viSidebar: I18nSidebarDictionary = {
     confirmDeletePage: "Xóa trang \"{name}\"?",
     seoSettings: "Cài đặt SEO",
     deletePage: "Xóa trang",
+    renamePage: "Đổi tên trang (hoặc nhấp đúp)",
+    setHomePage: "Đặt làm trang chủ",
+    homeBadge: "Trang chủ",
     deleteFolder: "Xóa thư mục (các trang được chuyển lên thư mục cha)",
     seoMeta: "SEO / Meta",
     browserTitle: "Tiêu đề trình duyệt",
@@ -52,12 +55,13 @@ export const viSidebar: I18nSidebarDictionary = {
   },
   customCss: {
     title: "CSS tùy chỉnh",
-    description: "Được chèn vào thẻ <head> của khung vẽ. Dùng bất kỳ quy tắc CSS hợp lệ nào.",
-    footer: "Thay đổi có hiệu lực ngay. Lưu dự án (Ctrl+S) để giữ lại.",
+    description: "Dành cho người dùng nâng cao: quy tắc CSS áp dụng cho toàn bộ trang (khung vẽ, xem trước và xuất).",
+    footer: "Thay đổi có hiệu lực ngay và được lưu tự động.",
   },
   components: {
     title: "Thư viện thành phần",
     search: "Tìm thành phần...",
+    hint: "Nhấp để thêm bên dưới phần tử đang chọn, hoặc kéo thả vào trang.",
     categories: {
       Inputs: "Nhập liệu",
       Navigation: "Điều hướng",

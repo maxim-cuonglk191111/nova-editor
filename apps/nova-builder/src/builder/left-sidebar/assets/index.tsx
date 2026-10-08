@@ -427,8 +427,8 @@ export function AssetsPanel() {
   }
 
   function handleDeleteRequest(asset: NovaAsset) {
-    const refCount = countAssetRefs(asset.id);
-    if (refCount > 0) { setDeleteConfirm({ asset, refCount }); } else { void doDelete(asset); }
+    // Always confirm: the file is removed from storage, so undo cannot bring it back.
+    setDeleteConfirm({ asset, refCount: countAssetRefs(asset.id) });
   }
 
   async function doDelete(asset: NovaAsset) {
@@ -735,7 +735,9 @@ export function AssetsPanel() {
           <div style={{ background: T.bg, borderRadius: 16, padding: "20px 22px", width: 280, boxShadow: "0 20px 60px rgba(0,0,0,0.25)" }}>
             <div style={{ fontSize: 15, fontWeight: 700, color: T.text, marginBottom: 8 }}>{L.deleteTitle}</div>
             <div style={{ fontSize: 12, color: T.textSub, lineHeight: 1.6, marginBottom: 16 }}>
-              {L.deleteInUse.replace("{count}", String(deleteConfirm.refCount))} {L.deleteWarning}
+              {deleteConfirm.refCount > 0
+                ? `${L.deleteInUse.replace("{count}", String(deleteConfirm.refCount))} ${L.deleteWarning}`
+                : L.deletePermanent}
             </div>
             <div style={{ display: "flex", gap: 8, justifyContent: "flex-end" }}>
               <button onClick={() => setDeleteConfirm(null)} style={{ padding: "7px 16px", borderRadius: 8, border: `1px solid ${T.border}`, background: "transparent", color: T.textSub, fontSize: 12, cursor: "pointer" }}>{L.cancel}</button>

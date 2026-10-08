@@ -1,6 +1,6 @@
 # Task 007 — Builder feature audit: works + easy for a non-technical user
 
-- **Status:** In progress (batch 1 of 5 done)
+- **Status:** In progress (batches 1–2 of 5 done; batch 3 running in parallel)
 - **Filed:** 2026-10-07
 - **Owner:** Claude Code
 - **Severity:** High (owner principle: if a feature exists, it must work well)
@@ -34,3 +34,6 @@ Specs: `e2e/builder-audit/` (shared helpers in `audit.ts`), runner `scripts/audi
 Skip check: Tier B code (B2, B3, B5–B10) unchanged since `40b1666` (v25.7.0 only removed `LangToggle`), but Tier B scored Works only — Ease is scored again here.
 
 - **Batch 1 — Canvas (v25.8.0):** every item ≥ 8 after fixes. Found on production: resize had no effect (Image inline width/height), links/images could not be dragged (native drag), Style panel showed the previous element's values, images squashed on phones, delete gave no feedback. Fixed; verified locally; production re-run after deploy. SOLID audit: 6 blocking, all pre-existing large files (none introduced).
+- **Batch 1 production check:** `canvas.spec.ts` passes on production 25.8.0 (PR #20).
+- **Batch 2 — Left sidebar (v25.9.0):** all ≥ 8 after fixes. Found: components always inserted into the home page and needed a double-click; no way to set the home page and rename only by double-click; selecting in Layers / inserting a template never scrolled the canvas (`data-ws-selector` lookup); unused assets deleted permanently without a prompt; panel resize stopped over the canvas; **CSS vars / custom CSS were never autosaved** while the chip said "All changes saved", and the Save button never returned to "Saved". Hidden (Tier C): CSS Variables + Custom CSS tabs, template bundles / publish / community.
+- **Batch 3 — Right panel:** run in parallel by a background agent in worktree `nova-editor-right` (branch `qa/builder-audit-right`), merged after review.

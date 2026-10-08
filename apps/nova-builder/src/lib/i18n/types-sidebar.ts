@@ -20,6 +20,9 @@ export interface I18nPagesPanelDictionary {
   confirmDeletePage: string;
   seoSettings: string;
   deletePage: string;
+  renamePage: string;
+  setHomePage: string;
+  homeBadge: string;
   deleteFolder: string;
   seoMeta: string;
   browserTitle: string;
@@ -65,6 +68,8 @@ export interface I18nCustomCssPanelDictionary {
 export interface I18nComponentsPanelDictionary {
   title: string;
   search: string;
+  /** One-line how-to under the search box. */
+  hint: string;
   /** Category headings, keyed by the registry's ComponentCategory. */
   categories: Record<string, string>;
   /**

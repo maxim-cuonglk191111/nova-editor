@@ -28,7 +28,7 @@ export function PagesPanel() {
   const L = useI18n().t.sidebar.pages;
   const pages = useStore($pages);
   const selectedPageId = useStore($selectedPageId);
-  const { createPage, renamePage, updatePageSeo, deletePage, createFolder, renameFolder, deleteFolder } = usePageCrud();
+  const { createPage, renamePage, updatePageSeo, deletePage, setHomePage, createFolder, renameFolder, deleteFolder } = usePageCrud();
 
   const [expandedFolders, setExpandedFolders] = useState<Set<string>>(new Set());
   const [showNewPage, setShowNewPage] = useState(false);
@@ -106,11 +106,12 @@ export function PagesPanel() {
             description: (page as any).meta?.description,
             noindex: (page as any).meta?.excludePageFromSearch === "true",
           }}
-          status={{ isActive: page.id === activePageId, canDelete }}
+          status={{ isActive: page.id === activePageId, isHome: page.id === pagesData.homePageId, canDelete }}
           handlers={{
             onClick: () => $selectedPageId.set(page.id),
             onRename: (name, path) => renamePage(page.id, name, path),
             onSeoChange: (seo: PageSeo) => updatePageSeo(page.id, seo),
+            onSetHome: () => setHomePage(page.id),
             onDelete: () => {
               if (confirm(fmt(L.confirmDeletePage, { name: page.name }))) deletePage(page.id);
             },

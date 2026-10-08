@@ -11,6 +11,13 @@
 
 ## Nova-builder decisions (ADR-NB-001 → …)
 
+### ADR-NB-029 — Project-level settings autosave as whole-value "extras" on the patch request
+**Status:** ✅ Active since v25.9.0
+
+**Decision:** CSS variables, custom CSS, interactions and symbols are plain atoms, not immerhin data namespaces, so the patch autosave never sent them. Each change is queued (`queueExtras`) and sent as `extras` on the next `POST /api/projects/:id/patch`; the server copies whitelisted keys into `schema_json` in the same versioned update. A confirmed flush clears `$isDirty`, so the Save button and the sync chip report the same state.
+
+**Why:** They were only persisted by the full-document Save dialog, while the chip said "All changes saved" — edits were lost on reload. A second, debounced full save would race the patch queue for the same version (409 conflicts); one request per flush keeps optimistic concurrency intact. The stored shape is unchanged; an older server ignores `extras`.
+
 ### ADR-NB-028 — Keep per-request Worker CPU low: static layout, client-only app shells, native password hashing
 **Status:** ✅ Active since v25.4.0 — **supersedes ADR-NB-016**
 

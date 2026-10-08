@@ -402,6 +402,7 @@ export const enDictionary: I18nDictionary = {
     deleteTitle: "Delete asset?",
     deleteInUse: "{count} instance(s) use this asset.",
     deleteWarning: "Deleting it will break those references.",
+    deletePermanent: "The file is removed permanently. This cannot be undone.",
     delete: "Delete",
     fileOne: "{count} file",
     fileMany: "{count} files",

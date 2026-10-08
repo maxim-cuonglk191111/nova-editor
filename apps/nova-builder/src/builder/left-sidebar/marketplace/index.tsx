@@ -10,6 +10,11 @@ import { $nestingWarning } from "@/lib/nano-states";
 import { UI_VARS as C } from "@/lib/uiTheme";
 import { useI18n } from "@/lib/i18n";
 
+// Tier C (task 007): bundle export/import, "Publish current page" and the
+// community list are hidden — public sharing without moderation, an empty list
+// and "bundle" files confused first-time users. Built-in templates stay.
+const SHOW_COMMUNITY = false;
+
 const cardStyle = (hovered: boolean): React.CSSProperties => ({
   background: hovered ? C.cardHover : C.card,
   border: `1px solid ${C.border}`,
@@ -92,6 +97,7 @@ export function MarketplacePanel() {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
+    if (!SHOW_COMMUNITY) return;
     let alive = true;
     browseMarketplace(search || undefined).then((items) => { if (alive) setCommunity(items); });
     return () => { alive = false; };
@@ -140,6 +146,7 @@ export function MarketplacePanel() {
       </div>
 
       <div style={{ flex: 1, overflowY: "auto", padding: "10px 10px" }}>
+        {SHOW_COMMUNITY && (<>
         {/* Import / Export bundle */}
         <div style={{ display: "flex", gap: 6, marginBottom: 4 }}>
           <button onClick={handleExport} style={btnStyle}>⬇ {t.builder.mktExport}</button>
@@ -170,6 +177,7 @@ export function MarketplacePanel() {
             </button>
           </div>
         )}
+        </>)}
 
         {/* Built-in templates */}
         <div style={sectionLabel}>{t.builder.mktBuiltInTemplates}</div>
@@ -177,6 +185,7 @@ export function MarketplacePanel() {
           <TemplateCard key={tpl.id} template={tpl} onUse={applyTemplate} />
         ))}
 
+        {SHOW_COMMUNITY && (<>
         {/* Community */}
         <div style={sectionLabel}>{t.builder.mktCommunity}</div>
         <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder={t.builder.mktSearch}
@@ -186,6 +195,7 @@ export function MarketplacePanel() {
         ) : (
           community.map((item) => <CommunityCard key={item.id} item={item} onInstall={handleInstall} />)
         )}
+        </>)}
       </div>
     </div>
   );
