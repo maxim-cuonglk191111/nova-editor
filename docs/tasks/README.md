@@ -15,4 +15,4 @@ screenshotted, reviewed and scored /10; a feature we cannot make work is hidden
 | [006](006-cut-tier-c-code.md) | Remove Tier C code that stays hidden | Open |
 | [007](007-builder-feature-audit.md) | Builder feature audit: works + ease of use, every feature >= 8/10 | Done — 5 areas, v25.8.0–25.11.0 |
 | [008](008-solid-warnings.md) | Resolve the 21 SOLID audit warnings | Open |
-| [009](009-post-audit-coverage.md) | Close the gaps after the builder audit: regression, VI UI, outside-builder ease, visitor output, presets + two-level labels, AI provider research, process | Open |
+| [009](009-post-audit-coverage.md) | Close the gaps after the builder audit: regression, VI UI, outside-builder ease, visitor output, presets + two-level labels, AI chat panel in the left sidebar, AI provider research, process | Open |
