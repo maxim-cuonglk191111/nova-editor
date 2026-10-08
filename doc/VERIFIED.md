@@ -2245,7 +2245,7 @@ Works / Ease. Baseline = production 25.12.1; after = local dev 25.13.0 (mocked A
 | VI-3 | Command palette lists only real components, translated, inserts like the Add panel (v19) | 🟡 9/8 (was 4/3: "Insert Global root / Element / Collection…", empty elements on the home page) |
 
 ## v25.14.0 — Task 009 batch 3: outside the builder (2026-10-08, `e2e/builder-audit/outside.spec.ts`, screenshots `o*.png`)
-Works / Ease. Baseline = production 25.13.0 (Tier B had scored Works only); after = local dev 25.14.0, production re-run after deploy.
+Works / Ease. Baseline = production 25.13.0 (Tier B had scored Works only); after = **production 25.14.0** (`outside`, B1, B11, B12, B13 pass; screenshots reviewed).
 | ID | Behavior | Status |
 |----|----------|--------|
 | OUT-1 | Sign up: "Create account" disabled until filled; a short password gets the browser's "lengthen this text to 8 characters" hint (o05); the mismatch message exists in code but was not reached in the run | 🟡 9/8 |
