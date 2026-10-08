@@ -1,0 +1,30 @@
+# Task 009 — Close the gaps left after the builder audit (task 007)
+
+- **Status:** Open
+- **Filed:** 2026-10-08
+- **Owner:** Claude Code
+- **Severity:** High (owner principle: if a feature exists, it must work well — and be easy for a non-technical user)
+
+The prompt below is meant to be pasted as the opening message of a session.
+
+---
+
+Continue after task 007 (builder audit, v25.8.0–25.12.0, scores in `doc/VERIFIED.md`). Production: https://nova-editor.maximi.workers.dev. Reply in Vietnamese. Read first: `CLAUDE.md`, `docs/tasks/007-builder-feature-audit.md`, `docs/tasks/README.md`, `doc/TEST-ROADMAP.md`, the Builder-audit and task-007 sections of `doc/VERIFIED.md`, `doc/ADR.md` (ADR-NB-029), `e2e/builder-audit/audit.ts`, `e2e/helpers/fresh-account.ts`, `scripts/audit-run.ps1`.
+
+**Working rules (learned in task 007)**
+- Work only in `C:/Users/Administrator/Code Github/nova-editor` — no extra worktrees or copies (disk is small). One branch per batch from `origin/main`; after merge, check out `main`, pull, delete the branch. Delete build output you created (`apps/nova-builder/.next`, `.open-next`, `test-results`) once a batch is done.
+- Background agents only if the owner asks; if used, they work on a branch in this same folder after you, never a new worktree, and you check their screenshots every ~10 min.
+- Before every push: `node scripts/i18n-audit.mjs --max=0`, typecheck, lint, `pnpm test`, `pnpm solid:audit` (0 blocking), `pnpm --filter @nova/builder build:cf`. **Merge only when the PR's CI check is green** (PR #23 was merged red once). After merge: wait for the `Workers Builds` check, then re-run the touched specs on production.
+- Specs: one per area, against production, throwaway accounts via `fresh-account.ts` (never touch `qa.cloud.1791213340319@testqa.dev`). Do not edit code while a spec is running against the local dev server (hot reload breaks the run). AI calls share one free Groq key (~30k tokens/min): leave ≥ 1 minute between AI-generating runs, and treat a single "temporarily unavailable" as a quota hit, not a bug, until repeated.
+- For every feature: real user action, assert the result (canvas DOM, `GET /api/projects/<id>`, preview, export), screenshot, **look at every screenshot**, score Works /10 and Ease /10 (find the control, understand its label, see feedback, undo). Target ≥ 8 on both; below that fix if small, else hide it (Tier C in `doc/TEST-ROADMAP.md`). Self-scores stay 🟡 in `doc/VERIFIED.md` until production confirms; human-QA'd rows are flipped to ✅ only by the owner.
+- Per batch: rows in `doc/VERIFIED.md`, `doc/TEST-ROADMAP.md`, `doc/CHANGELOG.md`, this task file, version bump per `CLAUDE.md`; report a table Feature | Works | Ease | Evidence | Fix or decision.
+
+**Batches (in this order; stop and report after each)**
+1. **Regression after 25.11–25.12** — run the golden-path journey (`e2e/qa-cloud-journey.spec.ts`, using a throwaway account if the spec allows, otherwise ask) and all `e2e/builder-audit/*` + `e2e/tier-b/*` specs on production. Specifically re-test version history snapshot/restore (B8) against the new full-save lock (`withFullSaveLock`), and two tabs editing one project (expect a clear conflict, no silent loss). Re-run the Worker CPU / Error 1102 load probe and compare with 2026-10-06.
+2. **Gaps in task 007's own list** — "Generate with AI → change one section" (not only a new page); AI Content Fill and the Accessibility AI suggestion under the shared quota; the whole builder in **Vietnamese** (screenshots of every panel: clipped or overflowing text, untranslated strings, the new 25.8–25.12 strings).
+3. **Outside the builder — Ease scores** (Tier B scored Works only): sign up, log in, forgot/reset password, verify email, onboarding; dashboard (create, open, rename, clone, delete, search, empty state); Leads; Analytics; Settings (profile, Display Language, subscription); pricing page and VietQR checkout up to the QR (no real payment). Each with Works/Ease.
+4. **What the end visitor gets** — AI pages for ≥ 6 different businesses, EN and VI prompts: subject-matched images, one h1, readable contrast, no overflow at 375 px, working nav links and contact form (submission appears in Leads); HTML export opened standalone and on a phone-width viewport; preview on Mobile P.
+5. **Operational risks** — (a) AI quota: propose and, if small, implement a per-user limit or a short queue with a clear "busy, retrying" message instead of an error; (b) security review of `POST /api/projects/:id/patch` `extras` (size limits, type checks on cssVars / customCss / interactions / symbols) and of custom CSS reaching published pages; (c) Firefox and WebKit runs of the canvas / left-sidebar / top-bar specs (Playwright projects), plus ⌘ shortcuts on WebKit; (d) builder at tablet width (1024 px).
+6. **Process** — make the production audit specs runnable as one command after each deploy (document it in `doc/TEST-ROADMAP.md` Cadence; no new paid CI); prepare a short human QA checklist in `doc/qa-nova-builder.md` for the owner to click through and flip rows to ✅; then pick up task 006 (delete Tier C code that stayed hidden a full release) and task 008 (21 SOLID warnings), one area per PR.
+
+Out of scope unless the owner provides input: task 002 (SePay go-live), task 003 (cards / Google Pay). No spending (no paid AI credits, no paid services).
