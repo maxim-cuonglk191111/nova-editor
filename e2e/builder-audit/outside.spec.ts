@@ -122,7 +122,8 @@ test("outside the builder: auth, dashboard, leads, analytics, settings, pricing,
   });
 
   await step(page, "forgot password", async () => {
-    const p = await page.context().newPage();
+    // A signed-out visitor (signed-in users are sent back to their sites).
+    const p = await (await page.context().browser()!.newContext({ baseURL: process.env.BASE_URL, viewport: { width: 1440, height: 900 } })).newPage();
     await p.goto("/forgot-password");
     await shot(p, "forgot-password");
     await p.locator('input[type="email"]').fill(email);
