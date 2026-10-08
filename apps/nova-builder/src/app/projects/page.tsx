@@ -5,146 +5,16 @@ import { useEffect, useState, useRef, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { WelcomeCard } from "@/components/WelcomeCard";
-import { useI18n, fmt, formatTimeAgo, type I18nTimeAgoDictionary } from "@/lib/i18n";
+import { useI18n, fmt } from "@/lib/i18n";
+import { SiteCard, type Site } from "@/components/dashboard/SiteCard";
 import { UI_VARS as C } from "@/lib/uiTheme";
 import { UserDropdown } from "@/components/UserDropdown";
 import { showToast } from "@/lib/nano-states";
 
-type Site = {
-  id: string;
-  name: string;
-  updatedAt: string | null;
-};
 
 // EXAMPLES removed — sourced from t.landing.examples via useI18n() (OCP fix: single source of truth).
 
 
-function timeAgo(iso: string | null, d: I18nTimeAgoDictionary): string {
-  if (!iso) return "";
-  const days = (Date.now() - new Date(iso).getTime()) / 86_400_000;
-  return days < 30 ? formatTimeAgo(iso, d) : new Date(iso).toLocaleDateString();
-}
-
-function SiteCard({ site, onOpen, onDelete, onAnalytics, onLeads, onClone, isCloning }: { site: Site; onOpen: () => void; onDelete: () => void; onAnalytics: () => void; onLeads: () => void; onClone: () => void; isCloning: boolean }) {
-  const { t } = useI18n();
-  const P = t.dashboard.projects;
-  const [hovered, setHovered] = useState(false);
-
-  return (
-    <div
-      style={{
-        background: C.surface,
-        border: `1px solid ${hovered ? C.borderHover : C.border}`,
-        borderRadius: 12,
-        padding: "0 0 14px",
-        display: "flex",
-        flexDirection: "column",
-        transition: "border-color 0.15s, box-shadow 0.15s",
-        boxShadow: hovered ? "0 4px 20px rgba(0,0,0,0.3)" : "none",
-        cursor: "pointer",
-        overflow: "hidden",
-      }}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-      onClick={onOpen}
-    >
-      {/* Thumbnail */}
-      <div
-        style={{
-          width: "100%",
-          height: 120,
-          background: `linear-gradient(135deg, rgba(124,58,237,0.12) 0%, rgba(79,70,229,0.06) 100%)`,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          marginBottom: 12,
-          flexShrink: 0,
-        }}
-      >
-        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" style={{ opacity: 0.2 }}>
-          <rect x="2" y="3" width="20" height="14" rx="2" stroke="white" strokeWidth="1.5" />
-          <path d="M8 21h8M12 17v4" stroke="white" strokeWidth="1.5" strokeLinecap="round" />
-          <path d="M5 7h14M5 11h8" stroke="white" strokeWidth="1.5" strokeLinecap="round" />
-        </svg>
-      </div>
-
-      <div style={{ padding: "0 14px", display: "flex", flexDirection: "column", gap: 4, flex: 1 }}>
-        <div style={{ fontSize: 13, fontWeight: 600, color: C.text, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}
-          title={site.name}>
-          {site.name}
-        </div>
-        <div style={{ fontSize: 13, color: C.textMuted }}>
-          {site.updatedAt ? fmt(P.edited, { time: timeAgo(site.updatedAt, t.tools.time) }) : P.neverSaved}
-        </div>
-
-        <div style={{ display: "flex", gap: 6, marginTop: 8 }} onClick={(e) => e.stopPropagation()}>
-          <button
-            onClick={onOpen}
-            style={{
-              flex: 1, padding: "5px 0", borderRadius: 6, border: "none",
-              background: C.accent, color: "#fff", fontSize: 13, fontFamily: C.font,
-              fontWeight: 600, cursor: "pointer",
-            }}
-          >
-            {P.edit}
-          </button>
-          <button
-            onClick={onAnalytics}
-            title={P.viewAnalytics}
-            style={{
-              padding: "5px 8px", borderRadius: 6, border: `1px solid ${C.border}`,
-              background: "transparent", color: C.textMuted, fontSize: 13,
-              fontFamily: C.font, cursor: "pointer",
-            }}
-          >
-            ◑
-          </button>
-          <button
-            onClick={onLeads}
-            title={P.viewSubmissions}
-            style={{
-              padding: "5px 8px", borderRadius: 6, border: `1px solid ${C.border}`,
-              background: "transparent", color: C.textMuted, fontSize: 13,
-              fontFamily: C.font, cursor: "pointer",
-            }}
-          >
-            ◧
-          </button>
-          <button
-            onClick={onClone}
-            disabled={isCloning}
-            title={P.duplicate}
-            style={{
-              padding: "5px 8px", borderRadius: 6, border: `1px solid ${C.border}`,
-              background: "transparent", color: C.textMuted, fontSize: 13,
-              fontFamily: C.font, cursor: isCloning ? "default" : "pointer", opacity: isCloning ? 0.5 : 1,
-            }}
-          >
-            ⊕
-          </button>
-          <button onClick={onDelete}
-            title={P.deleteSite}
-            style={{
-              padding: "5px 10px", borderRadius: 6, border: `1px solid ${C.border}`,
-              background: "transparent", color: C.textMuted, fontSize: 13,
-              fontFamily: C.font, cursor: "pointer", transition: "all 0.15s"
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.borderColor = C.danger;
-              e.currentTarget.style.color = "#ff8a8a";
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.borderColor = C.border;
-              e.currentTarget.style.color = C.textMuted;
-            }}
-          >
-            ×
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-}
 
 function NewSiteModal({ onCreate, onClose }: { onCreate: (prompt: string) => Promise<void>; onClose: () => void }) {
   const { t } = useI18n();
@@ -289,11 +159,9 @@ function SitesPage() {
   const [showCreate, setShowCreate] = useState(false);
   const [deleteSite, setDeleteSite] = useState<Site | null>(null);
   const [isFreeTier, setIsFreeTier] = useState(false);
-  // M13 — search, clone, notifications
+  // M13 — search, clone
   const [search, setSearch] = useState("");
   const [cloning, setCloning] = useState<string | null>(null);
-  const [notifOpen, setNotifOpen] = useState(false);
-  const [tokensCopied, setTokensCopied] = useState(false);
 
   useEffect(() => {
     fetch("/api/settings/account")
@@ -358,6 +226,22 @@ function SitesPage() {
     setSites((prev) => prev.filter((s) => s.id !== siteId));
   }
 
+  async function handleRename(siteId: string, name: string) {
+    const previous = sites;
+    setSites((prev) => prev.map((s) => (s.id === siteId ? { ...s, name } : s)));
+    const res = await fetch(`/api/projects/${siteId}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name }),
+    }).catch(() => null);
+    if (!res?.ok) {
+      setSites(previous);
+      showToast(P.renameFailed, "error");
+      return;
+    }
+    showToast(fmt(P.renamed, { name }), "success");
+  }
+
   async function handleClone(siteId: string) {
     if (cloning) return;
     setCloning(siteId);
@@ -376,22 +260,6 @@ function SitesPage() {
     }
   }
 
-  function handleShareTokens() {
-    const vars = Object.fromEntries(
-      Array.from(document.querySelectorAll<HTMLElement>("[data-theme]"))
-        .flatMap((el) => {
-          const style = getComputedStyle(el);
-          return ["--ui-bg", "--ui-surface", "--ui-card", "--ui-border", "--ui-border-hover",
-            "--ui-text", "--ui-text-muted", "--ui-accent", "--ui-accent-light", "--ui-danger",
-            "--ui-success", "--ui-warning", "--ui-overlay"].map((v) => [v, style.getPropertyValue(v).trim()]);
-        })
-    );
-    navigator.clipboard.writeText(JSON.stringify(vars, null, 2)).then(() => {
-      setTokensCopied(true);
-      setTimeout(() => setTokensCopied(false), 2000);
-    });
-  }
-
   const filteredSites = sites.filter((s) =>
     s.name.toLowerCase().includes(search.toLowerCase())
   );
@@ -399,7 +267,7 @@ function SitesPage() {
   return (
     <div style={{ minHeight: "100vh", background: C.bg, fontFamily: C.font, color: C.text }}>
       {/* Header */}
-      <div style={{ borderBottom: `1px solid ${C.border}`, padding: "0 28px", height: 54, display: "flex", alignItems: "center", gap: 10, background: C.bg }}>
+      <div style={{ borderBottom: `1px solid ${C.border}`, padding: "8px clamp(12px, 3vw, 28px)", minHeight: 54, boxSizing: "border-box", display: "flex", flexWrap: "wrap", alignItems: "center", gap: 10, background: C.bg }}>
         <Link href="/" style={{ fontSize: 14, fontWeight: 800, color: C.accentLight, letterSpacing: "-0.02em" }}>Nova</Link>
         <span style={{ color: "rgba(255,255,255,0.18)", fontSize: 14 }}>/</span>
         <span style={{ fontSize: 13, color: C.text }}>{P.mySites}</span>
@@ -413,7 +281,7 @@ function SitesPage() {
             style={{
               padding: "5px 10px 5px 30px", borderRadius: 7, border: `1px solid ${C.border}`,
               background: "rgba(255,255,255,0.04)", color: C.text, fontSize: 13,
-              fontFamily: C.font, outline: "none", width: 180,
+              fontFamily: C.font, outline: "none", width: 180, maxWidth: "40vw",
             }}
           />
           <span style={{ position: "absolute", left: 9, top: "50%", transform: "translateY(-50%)", color: C.textMuted, fontSize: 12, pointerEvents: "none" }}>⌕</span>
@@ -421,39 +289,8 @@ function SitesPage() {
 
         <div style={{ flex: 1 }} />
 
-        {/* Share style tokens */}
-        <button
-          onClick={handleShareTokens}
-          title={t.builder.shareTokens}
-          style={{ padding: "5px 10px", borderRadius: 7, border: `1px solid ${C.border}`, background: "transparent", color: tokensCopied ? C.success : C.textMuted, fontSize: 13, fontFamily: C.font, cursor: "pointer", flexShrink: 0 }}
-        >
-          {tokensCopied ? t.builder.shareTokensCopied : "{}"}
-        </button>
-
-        {/* Notification bell */}
-        <div style={{ position: "relative", flexShrink: 0 }}>
-          <button
-            onClick={() => setNotifOpen((v) => !v)}
-            title={t.builder.notifications}
-            style={{ padding: "5px 10px", borderRadius: 7, border: `1px solid ${C.border}`, background: "transparent", color: C.textMuted, fontSize: 14, fontFamily: C.font, cursor: "pointer" }}
-          >
-            🔔
-          </button>
-          {notifOpen && (
-            <div
-              style={{
-                position: "absolute", top: "calc(100% + 8px)", right: 0, width: 260,
-                background: C.surface, border: `1px solid ${C.border}`, borderRadius: 10,
-                boxShadow: "0 12px 32px rgba(0,0,0,0.4)", padding: "12px 16px", zIndex: 50,
-              }}
-              onBlur={() => setNotifOpen(false)}
-            >
-              <div style={{ fontSize: 13, fontWeight: 600, color: C.text, marginBottom: 10 }}>{t.builder.notifications}</div>
-              <div style={{ fontSize: 13, color: C.textMuted, textAlign: "center", padding: "16px 0" }}>{t.builder.noNotifications}</div>
-            </div>
-          )}
-        </div>
-
+        {/* The "{}" style-token export and the notification bell were removed from the
+            dashboard (task 009): developer-only, and notifications are not wired up. */}
         {isFreeTier && (
           <Link
             href="/settings/subscription"
@@ -472,7 +309,7 @@ function SitesPage() {
       </div>
 
       {/* Body */}
-      <div style={{ padding: "28px 28px 48px" }}>
+      <div style={{ padding: "28px clamp(12px, 3vw, 28px) 48px" }}>
         <WelcomeCard />
         {loading && (
           <div style={{ color: C.textMuted, fontSize: 13 }}>{P.loadingSites}</div>
@@ -555,11 +392,14 @@ function SitesPage() {
               <SiteCard
                 key={s.id}
                 site={s}
-                onOpen={() => router.push(`/builder/${s.id}`)}
-                onDelete={() => setDeleteSite(s)}
-                onAnalytics={() => router.push(`/analytics/${s.id}`)}
-                onLeads={() => router.push(`/submissions/${s.id}`)}
-                onClone={() => handleClone(s.id)}
+                actions={{
+                  open: () => router.push(`/builder/${s.id}`),
+                  rename: (name) => handleRename(s.id, name),
+                  analytics: () => router.push(`/analytics/${s.id}`),
+                  leads: () => router.push(`/submissions/${s.id}`),
+                  clone: () => handleClone(s.id),
+                  remove: () => setDeleteSite(s),
+                }}
                 isCloning={cloning === s.id}
               />
             ))}

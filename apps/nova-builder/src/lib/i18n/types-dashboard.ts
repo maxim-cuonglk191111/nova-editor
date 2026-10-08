@@ -19,6 +19,16 @@ export interface I18nProjectsDictionary {
   viewSubmissions: string;
   duplicate: string;
   deleteSite: string;
+  /** Short labels of the site card actions. */
+  rename: string;
+  renameLabel: string;
+  visits: string;
+  messages: string;
+  copy: string;
+  remove: string;
+  /** "{name}" is the new site name. */
+  renamed: string;
+  renameFailed: string;
   newSiteTitle: string;
   newSiteBody: string;
   newSitePlaceholder: string;

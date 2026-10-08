@@ -2,6 +2,16 @@
 
 ---
 
+## [25.14.0] — 2026-10-08
+
+### Task 009 batch 3 — outside the builder: rename, labelled site actions, dashboard on phones (Minor)
+
+- **Rename a site from the dashboard** ("✎ Rename" on the card, Enter saves, Escape cancels, toast "Renamed to …"); there was no way to rename a site.
+- **Site card actions have words**: "Visits", "Messages", "Duplicate", "Delete" next to the icons (◑ ◧ ⊕ × alone were not understood). `SiteCard` moved to `components/dashboard/SiteCard.tsx`.
+- **Dashboard on phones**: the header wraps instead of pushing "+ New Site" and the account menu off-screen (horizontal overflow at 390 px).
+- **Hidden (Tier C)**: the dashboard's "{}" button (copied the dashboard's own CSS variables) and the notification bell (always empty, notifications are not wired).
+- **QA**: `e2e/builder-audit/outside.spec.ts` — pricing, sign up, onboarding, new-site dialog, log out / in, forgot password, dashboard (rename, search), Leads, Analytics, Display Language, subscription and VietQR checkout up to the QR (order cleaned up), payment history, phone width.
+
 ## [25.13.0] — 2026-10-08
 
 ### Task 009 batch 2 — AI on one section, AI Content Fill on the whole page, builder in Vietnamese (Minor)
