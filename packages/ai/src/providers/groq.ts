@@ -8,7 +8,7 @@ import { capTokens, platformFetch, requireApiKey, resolveModel } from "./runtime
 // Groq model IDs (as of 2025). Updated via: https://console.groq.com/docs/models
 const MODELS = {
   planner: "llama-3.1-8b-instant",      // Fast 8B — ideal for short planning prompts
-  patcher: "openai/gpt-oss-120b",       // llama-3.3-70b-versatile was retired; strongest free JSON model
+  patcher: "openai/gpt-oss-120b",       // strongest free JSON model; llama-3.3-70b-versatile is the fallback
 } as const;
 
 // The free tier allows 8k tokens per minute and counts max_tokens against it
@@ -21,6 +21,8 @@ const MAX_TOKENS = 5000;
 // llama-3.3-70b-versatile is a production model with 12k TPM on the free tier.
 const BACKUP_MODELS: { id: string; maxTokens: number }[] = [
   { id: "llama-3.3-70b-versatile", maxTokens: 7000 },
+  { id: "openai/gpt-oss-20b", maxTokens: 5000 },
+  { id: "qwen/qwen3.8-27b", maxTokens: 5000 },
 ];
 const RETRYABLE = /\b(413|429|404)\b|too large|rate limit|decommissioned|does not exist/i;
 // gpt-oss models reason before answering and those tokens count against max_tokens:
@@ -59,7 +61,7 @@ export class GroqProvider implements AIProvider {
 
     const primary = { id: resolveModel(this.id, opts.tier, MODELS), maxTokens: MAX_TOKENS };
     const candidates = opts.tier === "patcher" ? [primary, ...BACKUP_MODELS.filter((m) => m.id !== primary.id)] : [primary];
-    let lastErr: unknown;
+    const errors: string[] = [];
     for (const model of candidates) {
       try {
         const response = await this.client.chat.completions.create({
@@ -70,10 +72,12 @@ export class GroqProvider implements AIProvider {
         });
         return response.choices[0]?.message?.content ?? "";
       } catch (err) {
-        lastErr = err;
-        if (!RETRYABLE.test(err instanceof Error ? err.message : String(err))) throw err;
+        const message = err instanceof Error ? err.message : String(err);
+        if (!RETRYABLE.test(message)) throw err;
+        // Keep every model's reason: the last one alone hid why the first was refused.
+        errors.push(`${model.id}: ${message.slice(0, 160)}`);
       }
     }
-    throw lastErr;
+    throw new Error(errors.join(" | "));
   }
 }
