@@ -15,6 +15,7 @@ import {
 } from "@webstudio-is/sdk";
 import { generateCss } from "./publish/cssGen";
 import { resolveProps } from "./publish/expressionGen";
+import { EXPORT_PREFLIGHT } from "./exportPreflight";
 import { animationKeyframesCss } from "./animationKeyframes";
 
 // Stable public attribute names — matching the generated CSS selectors (cssGen).
@@ -511,7 +512,6 @@ export function exportPageToHtml(data: WebstudioData, page: Page, opts: ExportOp
     '  <meta charset="UTF-8">',
     '  <meta name="viewport" content="width=device-width, initial-scale=1.0">',
     `  <title>${esc(title)}</title>`,
-    '  <script src="https://cdn.tailwindcss.com"></script>',
     "  <style>",
     "    *, *::before, *::after { box-sizing: border-box; }",
     // min-width:0 — the normalize preset makes <html> a 1fr grid, which would
@@ -525,6 +525,8 @@ export function exportPageToHtml(data: WebstudioData, page: Page, opts: ExportOp
     css.user,
     "  </style>",
     customCssBlock,
+    // Last in <head>, where the Tailwind play CDN used to inject it, so the cascade is unchanged.
+    `  <style id="nova-preflight">${EXPORT_PREFLIGHT}</style>`,
     "</head>",
     `<body ${idAttribute}="${page.rootInstanceId}" ${componentAttribute}="Body">`,
     bodyHtml.trimEnd(),

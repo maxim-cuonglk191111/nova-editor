@@ -6,7 +6,8 @@ import { UI_VARS as C } from "@/lib/uiTheme";
 
 const STORAGE_KEY = "nova-welcome-dismissed";
 
-export function WelcomeCard() {
+/** `firstVisit`: the dashboard has finished loading and the user has no site yet — the guide is for that moment only. */
+export function WelcomeCard({ firstVisit }: { firstVisit: boolean }) {
   const { t } = useI18n();
   const [visible, setVisible] = useState(false);
 
@@ -19,7 +20,7 @@ export function WelcomeCard() {
     setVisible(false);
   }
 
-  if (!visible) return null;
+  if (!visible || !firstVisit) return null;
 
   return (
     <div style={{ margin: "0 0 28px", padding: "24px 28px", borderRadius: 14, border: `1px solid ${C.border}`, background: C.card, fontFamily: C.font }}>

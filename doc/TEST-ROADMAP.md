@@ -66,7 +66,10 @@ Run: `pwsh scripts/audit-run.ps1 e2e/builder-audit/<area>.spec.ts` (production b
 | 6 Saving under concurrency — two tabs, restore vs. stale tab, restore during autosave | `regression.spec.ts` | ✅ production 25.12.1: all ≥ 8 (restore was 2/2 on 25.12.0) |
 | 7 AI tools — one section via Content Fill, whole-page fill, Generate on an existing page, accessibility suggestion | `ai-tools.spec.ts` (`QA_MOCK_AI=1` on a dev server without keys) | ✅ production 25.13.0 (real AI): all ≥ 8 |
 | 8 Builder in Vietnamese — 20 panels, clipped text, untranslated strings (EN vs VI diff) | `vi-ui.spec.ts` | ✅ production 25.13.0: no clipping, chrome translated |
-| 9 Outside the builder — auth, onboarding, dashboard (rename, actions, phone), Leads, Analytics, Settings, pricing, VietQR up to the QR | `outside.spec.ts` | ✅ production 25.14.0: all ≥ 8; profile settings missing (proposed) |
+| 9 Outside the builder — auth, onboarding, dashboard (rename, actions, phone), Leads, Analytics, Settings, pricing, VietQR up to the QR | `outside.spec.ts` | ✅ production 25.14.0: all ≥ 8; profile page added in 25.15.0 (`batch9.spec.ts`) |
+| 10 What the visitor gets — signed-out images, exported buttons (no AI) | `visitor-basics.spec.ts` | ✅ production 25.14.1 |
+| 11 What the visitor gets — six AI pages EN/VI → preview, phone, contrast, nav, form → Leads, export | `visitor.spec.ts` | 🟡 blocked by AI capacity on the free tier (2 of 6) — see `doc/AI-PROVIDERS.md` |
+| 12 Loose ends — profile & password, Welcome card, field hints in AI rewrites, export without CDN | `batch9.spec.ts` (`QA_MOCK_AI=1` locally) | 🟡 25.15.0 local: all ≥ 8; production run after deploy |
 
 ## Tier C — cut (hidden or not linked; not tested)
 

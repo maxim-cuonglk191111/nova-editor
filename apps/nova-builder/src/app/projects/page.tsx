@@ -310,7 +310,7 @@ function SitesPage() {
 
       {/* Body */}
       <div style={{ padding: "28px clamp(12px, 3vw, 28px) 48px" }}>
-        <WelcomeCard />
+        <WelcomeCard firstVisit={!loading && !pageError && sites.length === 0} />
         {loading && (
           <div style={{ color: C.textMuted, fontSize: 13 }}>{P.loadingSites}</div>
         )}

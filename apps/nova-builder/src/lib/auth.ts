@@ -245,7 +245,13 @@ export const authOptions: NextAuthOptions = {
       return canonical;
     },
 
-    async jwt({ token, account, user, profile }) {
+    async jwt({ token, account, user, profile, trigger, session }) {
+      // Profile page renamed the user: show the new name without signing in again.
+      const renamed = (session as { displayName?: unknown } | undefined)?.displayName;
+      if (trigger === "update" && typeof renamed === "string" && renamed.trim()) {
+        token.displayName = renamed.trim().slice(0, 80);
+        token.name = token.displayName as string;
+      }
       if (user?.id) {
         token.id = user.id;
         token.sub = user.id;
