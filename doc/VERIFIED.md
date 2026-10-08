@@ -2204,7 +2204,7 @@ Works / Ease. Baseline = production v25.10.0; after = production v25.11.0 (spec 
 | TB-11 | Ctrl+S dialog: Update saves and stays in the editor (t19) | ✅ 9/9 (was 9/4: Update threw the user out to /projects) |
 | TB-12 | Save As makes a copy listed on the dashboard (t20, t21) | ✅ 9/8 |
 | TB-13 | Saving while autosave is flushing | ✅ 9 (was 3: full save and patch raced on the same version → "Project was changed elsewhere · Reload") |
-| TB-14 | Generate with AI: generate, "Replace this page", Ctrl+Z restores (t22–t25) | 🟡 production 25.11.0: 0/8 — every provider failed (Gemini region-blocked from the Worker, Mistral 429, Groq 413 over its 8k tokens/min, OpenRouter 402 out of paid credit); the error message and Try again are clear. 25.12.0 adds a Groq fallback model with a 30k tokens/min free limit |
+| TB-14 | Generate with AI: generate, "Replace this page", Ctrl+Z restores (t22–t25) | ✅ 8/8 on production 25.12.0 (~20 s, page matches the prompt, undo restores). Was 0/8 on 25.11.0 (all providers failed). Risk: one shared Groq free key = 30k tokens/min for all users; a second request in the same minute can still fail with a clear "try again" |
 
 ## v25.11.0 — Builder audit batch 5: feedback & safety (2026-10-08, `e2e/builder-audit/feedback-safety.spec.ts`, screenshots `f*.png`)
 | ID | Behavior | Status |
