@@ -7,7 +7,7 @@ test.afterAll(async () => deleteFreshAccount(acc));
 test("ai probe", async ({ page }) => {
   test.setTimeout(300_000);
   acc = await freshAccount(page, "aiprobe");
-  console.log("providers", JSON.stringify(await (await page.request.get("/api/ai/providers")).json(), null, 1));
+  console.log("providers", JSON.stringify(await (await page.request.get(`/api/ai/providers${process.env.PROBE_LIVE ? "?live=1" : ""}`, { timeout: 120_000 })).json(), null, 1));
   if (process.env.PROBE_COMPOSE === "0") return;
   const id = await seedProject(page, "AI probe");
   const t0 = Date.now();
