@@ -3,7 +3,7 @@
 // models the Groq key can access — retired models showed up only as "temporarily unavailable".
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
-import { providerChain } from "@studio/ai";
+import { getProvider, providerChain, type ProviderName } from "@studio/ai";
 
 const KEYS: Record<string, string> = {
   groq: "GROQ_API_KEY",
@@ -27,11 +27,29 @@ async function groqModels(): Promise<string[] | string> {
   }
 }
 
-export async function GET() {
+/** ?live=1: one tiny completion per configured provider and tier (≈10 tokens each) to read the real error. */
+async function liveCheck(ids: string[]) {
+  const results: Record<string, unknown> = {};
+  for (const id of ids) {
+    for (const tier of ["planner", "patcher"] as const) {
+      const t0 = Date.now();
+      try {
+        const text = await getProvider(id as ProviderName).complete([{ role: "user", content: "Reply with the word OK." }], { tier, maxTokens: 16 });
+        results[`${id}/${tier}`] = { ok: true, ms: Date.now() - t0, text: text.slice(0, 20) };
+      } catch (err) {
+        results[`${id}/${tier}`] = { ok: false, ms: Date.now() - t0, error: String(err instanceof Error ? err.message : err).slice(0, 300) };
+      }
+    }
+  }
+  return results;
+}
+
+export async function GET(req: Request) {
   const session = await getServerSession(authOptions);
   if (!(session?.user as { id?: string } | undefined)?.id) {
     return Response.json({ error: "Unauthorized" }, { status: 401 });
   }
+  const live = new URL(req.url).searchParams.get("live") === "1";
   const providers = Object.entries(KEYS).map(([id, env]) => ({
     id,
     keyConfigured: Boolean(process.env[env]?.trim()),
@@ -42,5 +60,6 @@ export async function GET() {
     chain: providerChain([process.env.AI_PROVIDER], process.env.AI_FALLBACK_PROVIDERS),
     providers,
     groqModels: await groqModels(),
+    live: live ? await liveCheck(providers.filter((p) => p.keyConfigured).map((p) => p.id)) : undefined,
   });
 }

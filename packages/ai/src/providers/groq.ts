@@ -7,22 +7,23 @@ import { capTokens, platformFetch, requireApiKey, resolveModel } from "./runtime
 
 // Groq model IDs (as of 2025). Updated via: https://console.groq.com/docs/models
 const MODELS = {
-  planner: "llama-3.1-8b-instant",      // Fast 8B — ideal for short planning prompts
+  planner: "openai/gpt-oss-20b",        // llama-3.1-8b-instant is not available to this key (404)
   patcher: "openai/gpt-oss-120b",       // strongest free JSON model; llama-3.3-70b-versatile is the fallback
 } as const;
 
-// The free tier allows 8k tokens per minute and counts max_tokens against it
-// (12k → 413), so prompt + output must stay under that.
-const MAX_TOKENS = 5000;
+// The free tier allows 8k tokens per minute per model and counts prompt + max_tokens
+// against it (over → 413 "Request too large"), so max_tokens is sized to what is left.
+const MAX_TOKENS = 6000;
+const TPM = 8000;
+// ~3.5 characters per token for this mostly-English JSON prompt, 300 tokens of margin.
+const fitTokens = (cap: number, promptChars: number) => Math.max(1024, Math.min(cap, TPM - 300 - Math.ceil(promptChars / 3.5)));
 
-// The page-compose prompt (~4.5k tokens) + output often does not fit gpt-oss-120b's
-// 8k TPM (413 "Request too large"); the next model is tried when one refuses for
-// size, rate or retirement. Llama 4 Scout was removed from Groq (404, 2026-10-08);
-// llama-3.3-70b-versatile is a production model with 12k TPM on the free tier.
+// The next model is tried when one refuses for size, rate or retirement. Each model has
+// its own per-minute budget. Models this key can use (GET /api/ai/providers, 2026-10-08):
+// gpt-oss-120b, gpt-oss-20b, qwen3.8-27b — Llama 4 Scout and Llama 3.x answer 404.
 const BACKUP_MODELS: { id: string; maxTokens: number }[] = [
-  { id: "llama-3.3-70b-versatile", maxTokens: 7000 },
-  { id: "openai/gpt-oss-20b", maxTokens: 5000 },
-  { id: "qwen/qwen3.8-27b", maxTokens: 5000 },
+  { id: "openai/gpt-oss-20b", maxTokens: MAX_TOKENS },
+  { id: "qwen/qwen3.8-27b", maxTokens: MAX_TOKENS },
 ];
 const RETRYABLE = /\b(413|429|404)\b|too large|rate limit|decommissioned|does not exist/i;
 // gpt-oss models reason before answering and those tokens count against max_tokens:
@@ -60,13 +61,14 @@ export class GroqProvider implements AIProvider {
     ];
 
     const primary = { id: resolveModel(this.id, opts.tier, MODELS), maxTokens: MAX_TOKENS };
-    const candidates = opts.tier === "patcher" ? [primary, ...BACKUP_MODELS.filter((m) => m.id !== primary.id)] : [primary];
+    const candidates = [primary, ...BACKUP_MODELS.filter((m) => m.id !== primary.id)];
+    const promptChars = allMessages.reduce((n, m) => n + String(m.content ?? "").length, 0);
     const errors: string[] = [];
     for (const model of candidates) {
       try {
         const response = await this.client.chat.completions.create({
           model: model.id,
-          max_tokens: capTokens(this.id, opts.maxTokens, model.maxTokens),
+          max_tokens: fitTokens(capTokens(this.id, opts.maxTokens, model.maxTokens), promptChars),
           messages: allMessages,
           ...(REASONING_MODELS.test(model.id) ? { reasoning_effort: "low" as const } : {}),
         });
