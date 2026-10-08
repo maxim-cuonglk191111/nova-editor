@@ -2274,10 +2274,10 @@ Works / Ease. Baseline = production 25.13.0 (Tier B had scored Works only); afte
 | VIS-1 | Signed-out visitor of a shared preview sees every image | 🟡 9 production 25.14.1 (was 5: hero / about photos replaced by the login page) |
 | VIS-2 | Exported library buttons keep their background and padding | 🟡 9 production 25.14.1 (was 3: transparent, no padding) |
 | VIS-3 | AI pages for six businesses (EN/VI): requested sections, one h1, contrast, 375 px, nav links, form → Leads, export | 🟡 in progress — free Groq tier: 2 of 6 generated; those two: one h1, 0 broken images, 0 low-contrast texts, no overflow at 375 px, export OK, but FAQ / contact form cut off (dead #faq / #contact links). Waits for the owner's provider decision (`doc/AI-PROVIDERS.md`) |
-| B9-1 | Profile: rename (account menu updates at once), change password (wrong current / mismatch explained), log in with the new password (n03–n05) | 🟡 9/9 local 25.15.0 (was 0: no profile page) |
-| B9-2 | Welcome card only before the first site (n01, n02) | 🟡 9/9 local (was 8/6: stayed above the sites) |
-| B9-3 | AI Content Fill rewrites field hint texts (n06) | 🟡 9/8 local, mocked AI (was 5: "Your Name" stayed English) |
-| B9-4 | HTML export without the Tailwind play CDN, pixel-identical | 🟡 9 (0 of 1,296,000 pixels differ) |
+| B9-1 | Profile: rename (account menu updates at once), change password (wrong current / mismatch explained), log in with the new password (n03–n05) | ✅ 9/9 production 25.15.0 (was 0: no profile page) |
+| B9-2 | Welcome card only before the first site (n01, n02) | ✅ 9/9 production (was 8/6: stayed above the sites) |
+| B9-3 | AI Content Fill rewrites field hint texts (n06) | ✅ 9/8 production, real AI: "Your Name" → "Tên của bạn" (was 5: stayed English) |
+| B9-4 | HTML export without the Tailwind play CDN, pixel-identical | ✅ 9 production (0 of 1,296,000 pixels differ) |
 
 ## SOLID Audit — task 007 (v25.11.0)
 | Check | Severity | File | Fix |
