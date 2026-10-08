@@ -2,6 +2,14 @@
 
 ---
 
+## [25.14.3] — 2026-10-08
+
+### AI page generation fits the free Groq budget (Patch)
+
+- `GET /api/ai/providers` on production: the Groq key can use only `gpt-oss-120b`, `gpt-oss-20b` and `qwen3.8-27b` (8k tokens per minute each, prompt + `max_tokens` counted). Llama 3.x / 4 answer 404 — the planner model (`llama-3.1-8b-instant`) too; it is now `gpt-oss-20b`.
+- `max_tokens` is sized to what the 8k budget leaves after the prompt (it asked for 5k on top of a ~4.5k prompt → 413), every tier falls back to the other two models, and the compose prompt's second example section was removed (~800 tokens more for the page).
+- `GET /api/ai/providers?live=1`: one tiny completion per configured provider and tier, to read the real refusal (quota, region, model access).
+
 ## [25.14.2] — 2026-10-08
 
 ### AI provider check; Groq fallbacks; AI panel design draft (Patch)
