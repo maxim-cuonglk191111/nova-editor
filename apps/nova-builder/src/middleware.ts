@@ -9,9 +9,12 @@ import { getAppUrl } from "@/lib/appUrl";
 // /preview + /api/preview MUST be public: share links open in incognito.
 // /api/analytics/track + /api/submissions are called by anonymous visitors
 // on published sites. /api/billing/webhook is called by payment providers.
+// /cgi/image + /api/cgi/image serve the images of those pages (images only).
 const PUBLIC_PREFIXES = [
   "/canvas",
   "/preview",
+  "/cgi/image",
+  "/api/cgi/image",
   "/api/auth",
   "/api/ai",
   "/api/preview",

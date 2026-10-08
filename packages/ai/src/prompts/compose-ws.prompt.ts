@@ -144,6 +144,13 @@ HOW TO BUILD A GOOD PAGE:
   3. Then EVERY section the user asked for, in the order they listed it — do not
      skip any (e.g. a "menu with prices" needs item names AND prices).
   4. Footer — a Box with tag "footer". A copyright line uses the current year, ${new Date().getFullYear()}.
+- Navbar Links point inside the page: href "#menu", "#about"… and the section they
+  point to gets the same id in its props (e.g. "props": { "tag": "section", "id": "menu" }).
+- Any contact / booking / order / sign-up form the user asks for is a real Form:
+  Label + Input (props.name "name"), Label + Input (type "email", name "email"),
+  Label + Input (name "message"), and a Button with type "submit".
+- Keep it compact so every requested section fits: about 3–6 items per list or grid,
+  and only the style properties that change the look.
 - Each section is a top-level node of "tree"; never nest one section inside another.
 - Write real, specific copy (not "Lorem ipsum", not "Your headline here").
 - Use real semantic structure: wrap nav links in a Box with tag "nav", use

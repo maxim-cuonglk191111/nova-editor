@@ -2,6 +2,16 @@
 
 ---
 
+## [25.14.1] — 2026-10-08
+
+### Task 009 batch 4 — what the visitor gets: images, AI page generation, nav links, exported buttons (Patch)
+
+- **Images on shared previews were broken for visitors who are not signed in**: the image proxy (`/cgi/image`, `/api/cgi/image`) sat behind the login redirect, so anyone without a session got the login page instead of the hero / about photos (the owner, signed in, never saw it). Both routes are public now and serve images only: Unsplash images redirect to Unsplash with the requested width (no Worker CPU), other sources are forwarded only when the upstream really is an image. Shared logic in `lib/imageProxy.ts`.
+- **"Generate with AI" failed for full-page prompts** ("temporarily unavailable" every time): Gemini is region-blocked from the Worker, Mistral returns 429, and Groq's fallback model `llama-4-scout` was removed (404). Groq now falls back to `llama-3.3-70b-versatile` (12k tokens/min free), and `gpt-oss` runs with low reasoning effort so its reasoning no longer eats the output budget (pages came out cut short — 3 of 7 requested sections).
+- **Navbar links of AI pages go somewhere**: "#menu", "#about"… had no matching section ids. The composer now asks for them and a post-processing step gives the matching section the id (diacritics-insensitive, whole words). The prompt also asks for a real contact form when one is requested and for compact sections so every requested one fits.
+- **Exported library buttons keep their look**: the default style of shadcn buttons lost to Tailwind's preflight (`button { background: transparent; padding: 0 }`) in the HTML export; it now has specificity (0,1,0) before the element's own rules.
+- **QA**: `e2e/builder-audit/visitor.spec.ts` (six AI pages EN/VI → preview, phone, contrast, nav links, form → Leads, export; free plan's 3-project limit respected) and `visitor-basics.spec.ts` (signed-out images, exported buttons, no AI).
+
 ## [25.14.0] — 2026-10-08
 
 ### Task 009 batch 3 — outside the builder: rename, labelled site actions, dashboard on phones (Minor)

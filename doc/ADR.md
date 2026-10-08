@@ -11,6 +11,13 @@
 
 ## Nova-builder decisions (ADR-NB-001 → …)
 
+### ADR-NB-030 — The image proxy is public and serves images only
+**Status:** ✅ Active since v25.14.1
+
+**Decision:** `/cgi/image/*` and `/api/cgi/image` are public paths (like `/preview`). Both use `lib/imageProxy.ts`: trusted sources only; Unsplash and ImageKit get a 302 to the host's own resize URL; Cloudflare Images when configured; any other source is forwarded only if the upstream `content-type` is `image/*` (415 otherwise).
+
+**Why:** Shared previews are opened by visitors without a session; behind the login redirect every proxied image was replaced by the login page, so AI pages showed broken hero photos to everyone but the owner. Making the route public turns it into something anyone can call, so it must not become an open proxy for arbitrary content, and redirecting to Unsplash keeps Worker CPU and bandwidth (Workers Free, ADR-NB-028) out of it.
+
 ### ADR-NB-029 — Project-level settings autosave as whole-value "extras" on the patch request
 **Status:** ✅ Active since v25.9.0
 

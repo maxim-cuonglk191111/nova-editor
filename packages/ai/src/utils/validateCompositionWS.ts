@@ -13,6 +13,7 @@
 //   8. Rewrites fixed desktop sizes into fluid ones (makeResponsive)
 import { makeResponsive } from "./responsiveStyles.js";
 import { addMobileNavbarStyles } from "./mobileNavbar.js";
+import { linkNavAnchors } from "./navAnchors.js";
 
 // ─── WS type shapes (inline to avoid a runtime dep on ws-sdk in this package) ─
 
@@ -316,6 +317,7 @@ export function validateCompositionWS(raw: unknown): WSCompositionResult {
   const topIds = walk(tree);
   rootIds.push(...topIds);
   ensureSingleH1(instances, props, rootIds);
+  linkNavAnchors(instances, props, rootIds, genId);
   addMobileNavbarStyles({ instances, props, styleSources, styleSourceSelections, styles }, genId);
 
   return {
