@@ -371,6 +371,8 @@ export interface I18nPanelsDictionary {
   saveBtn: string;
   addVariable: string;
   useTemplate: string;
+  /** Built-in template id → translated name and description. */
+  builtInTemplates: Record<string, { name: string; description: string }>;
   applied: string;
   loading: string;
 }
@@ -442,6 +444,8 @@ export interface I18nDictionary {
   site: I18nSiteDictionary;
   billing: I18nBillingDictionary;
   admin: I18nAdminDictionary;
+  /** Component id → display name; see `componentName()`. */
+  componentNames: Record<string, string>;
 }
 
 export interface ILanguageDetector {

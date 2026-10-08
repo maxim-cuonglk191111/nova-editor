@@ -1,41 +1,22 @@
-﻿"use client";
+"use client";
 import { useState, useEffect, useRef } from "react";
 import { useStore } from "@nanostores/react";
 import { updateData } from "@/lib/transactions";
 import { $instances, $pages } from "@/lib/data-stores";
-import { $aiContentPanelOpen, $selectedPageId } from "@/lib/nano-states";
+import { $aiContentPanelOpen, $selectedPageId, $selectedInstanceSelector } from "@/lib/nano-states";
 import { $projectMeta } from "@/lib/data-stores";
-import type { Instance } from "@webstudio-is/sdk";
+import { collectTextInstances, isWithin } from "@/lib/textInstances";
 import { UI_VARS as C } from "@/lib/uiTheme";
 import { useI18n, fmt } from "@/lib/i18n";
 
-
+type Fill = { instanceId: string; text: string };
 type FillState =
   | { type: "idle" }
   | { type: "loading" }
-  | { type: "success"; fills: { instanceId: string; text: string }[] }
+  | { type: "success"; fills: Fill[] }
   | { type: "error"; message: string };
 
-function collectTextInstances(instances: Map<string, Instance>, rootId: string): { instanceId: string; currentText: string }[] {
-  const result: { instanceId: string; currentText: string }[] = [];
-  const visited = new Set<string>();
-
-  const walk = (id: string) => {
-    if (visited.has(id)) return;
-    visited.add(id);
-    const inst = instances.get(id);
-    if (!inst) return;
-    const textChild = inst.children.find((c) => c.type === "text");
-    if (textChild && !inst.children.some((c) => c.type === "id")) {
-      result.push({ instanceId: id, currentText: textChild.value as string });
-    }
-    for (const child of inst.children) {
-      if (child.type === "id") walk(child.value);
-    }
-  };
-  walk(rootId);
-  return result.slice(0, 20); // cap at 20 to control credits
-}
+const PREVIEW_ROWS = 4;
 
 export function AIContentPanel() {
   const L = useI18n().t.tools.aiContent;
@@ -43,6 +24,7 @@ export function AIContentPanel() {
   const instances = useStore($instances);
   const pages = useStore($pages);
   const selectedPageId = useStore($selectedPageId);
+  const selector = useStore($selectedInstanceSelector);
   const meta = useStore($projectMeta);
   const [topic, setTopic] = useState("");
   const [state, setState] = useState<FillState>({ type: "idle" });
@@ -59,7 +41,14 @@ export function AIContentPanel() {
   if (!isOpen) return null;
 
   const page = pages?.pages.get(selectedPageId ?? pages.homePageId) ?? pages?.pages.get(pages?.homePageId ?? "");
-  const textInstances = page ? collectTextInstances(instances, page.rootInstanceId) : [];
+  // A selected element on this page narrows the fill to its text ("change one section").
+  const selectedId = selector?.[0];
+  const scopeId = selectedId && page && selectedId !== page.rootInstanceId && isWithin(instances, page.rootInstanceId, selectedId) ? selectedId : page?.rootInstanceId;
+  const scoped = scopeId !== page?.rootInstanceId ? instances.get(scopeId ?? "") : undefined;
+  const textInstances = scopeId ? collectTextInstances(instances, scopeId) : [];
+  const found = scoped
+    ? fmt(L.foundSelection, { count: textInstances.length, name: scoped.label ?? scoped.component })
+    : fmt(L.found, { count: textInstances.length });
 
   const handleFill = async () => {
     if (!topic.trim() || !textInstances.length) return;
@@ -70,9 +59,10 @@ export function AIContentPanel() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ topic: topic.trim(), instances: textInstances, projectId: meta?.id }),
       });
-      const json = await res.json() as { fills?: { instanceId: string; text: string }[]; error?: string };
-      if (!res.ok) { setState({ type: "error", message: json.error ?? L.failed }); return; }
-      setState({ type: "success", fills: json.fills ?? [] });
+      const json = await res.json() as { fills?: Fill[]; error?: string };
+      if (!res.ok) { setState({ type: "error", message: res.status === 502 ? L.failed : json.error ?? L.failed }); return; }
+      const fills = json.fills ?? [];
+      setState(fills.length ? { type: "success", fills } : { type: "error", message: L.failed });
     } catch (err) {
       setState({ type: "error", message: String(err) });
     }
@@ -93,6 +83,7 @@ export function AIContentPanel() {
   };
 
   const isLoading = state.type === "loading";
+  const before = new Map(textInstances.map((t) => [t.instanceId, t.currentText]));
 
   return (
     <div
@@ -111,9 +102,7 @@ export function AIContentPanel() {
           style={{ background: "none", border: "none", color: C.textMuted, cursor: "pointer", fontSize: 18, padding: "2px 4px" }}>×</button>
       </div>
       <div style={{ padding: 16, display: "flex", flexDirection: "column", gap: 10 }}>
-        <div style={{ fontSize: 13, color: C.textMuted }}>
-          {fmt(L.found, { count: textInstances.length })}
-        </div>
+        <div style={{ fontSize: 13, color: C.textMuted }}>{found}</div>
         <textarea
           ref={textareaRef}
           value={topic}
@@ -134,21 +123,32 @@ export function AIContentPanel() {
           </button>
         </div>
         {state.type === "error" && (
-          <div style={{ padding: "9px 12px", borderRadius: 7, background: "rgba(239,68,68,0.07)", border: "1px solid rgba(239,68,68,0.2)", color: "#fca5a5", fontSize: 13 }}>
+          <div role="alert" style={{ padding: "9px 12px", borderRadius: 7, background: "rgba(239,68,68,0.07)", border: "1px solid rgba(239,68,68,0.3)", color: C.danger, fontSize: 13 }}>
             {state.message}
           </div>
         )}
         {state.type === "success" && (
-          <div style={{ padding: 12, borderRadius: 8, background: "rgba(5,150,105,0.07)", border: "1px solid rgba(5,150,105,0.18)", display: "flex", flexDirection: "column", gap: 8 }}>
-            <div style={{ color: "#6ee7b7", fontSize: 12, fontWeight: 600 }}>{fmt(L.filled, { count: state.fills.length })}</div>
-            <div style={{ display: "flex", gap: 6, justifyContent: "flex-end" }}>
-              <button onClick={() => setState({ type: "idle" })} style={{ padding: "4px 10px", borderRadius: 5, border: "1px solid rgba(255,255,255,0.1)", background: "transparent", color: C.textMuted, fontSize: 13, fontFamily: C.font, cursor: "pointer" }}>{L.discard}</button>
+          <div style={{ padding: 12, borderRadius: 8, background: "rgba(5,150,105,0.07)", border: "1px solid rgba(5,150,105,0.25)", display: "flex", flexDirection: "column", gap: 8 }}>
+            <div style={{ color: C.success, fontSize: 12, fontWeight: 600 }}>{fmt(L.filled, { count: state.fills.length })}</div>
+            <ul style={{ margin: 0, padding: 0, listStyle: "none", display: "flex", flexDirection: "column", gap: 4 }}>
+              {state.fills.slice(0, PREVIEW_ROWS).map((f) => (
+                <li key={f.instanceId} style={{ fontSize: 12, color: C.text, lineHeight: 1.4 }}>
+                  <span style={{ color: C.textMuted, textDecoration: "line-through" }}>{(before.get(f.instanceId) ?? "").slice(0, 60)}</span>
+                  {" → "}{f.text.slice(0, 80)}
+                </li>
+              ))}
+            </ul>
+            {state.fills.length > PREVIEW_ROWS && (
+              <div style={{ fontSize: 12, color: C.textMuted }}>{fmt(L.more, { count: state.fills.length - PREVIEW_ROWS })}</div>
+            )}
+            <div style={{ display: "flex", gap: 6, alignItems: "center", justifyContent: "flex-end" }}>
+              <span style={{ fontSize: 12, color: C.textMuted, marginRight: "auto" }}>{L.undoHint}</span>
+              <button onClick={() => setState({ type: "idle" })} style={{ padding: "4px 10px", borderRadius: 5, border: `1px solid ${C.border}`, background: "transparent", color: C.textMuted, fontSize: 13, fontFamily: C.font, cursor: "pointer" }}>{L.discard}</button>
               <button onClick={handleApply} style={{ padding: "4px 14px", borderRadius: 5, border: "none", background: C.success, color: "#fff", fontSize: 13, fontFamily: C.font, fontWeight: 700, cursor: "pointer" }}>{L.apply}</button>
             </div>
           </div>
         )}
       </div>
-      <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
     </div>
   );
 }

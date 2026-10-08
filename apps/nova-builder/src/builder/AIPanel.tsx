@@ -1,8 +1,8 @@
-﻿"use client";
+"use client";
 import { useState, useEffect, useRef } from "react";
 import { useStore } from "@nanostores/react";
 import { $aiPanelOpen, $aiInitialPrompt } from "@/lib/nano-states";
-import { $projectMeta } from "@/lib/data-stores";
+import { $projectMeta, $instances } from "@/lib/data-stores";
 import { applyWSComposition } from "@/lib/applyWSComposition";
 import type { WSCompositionResult } from "@studio/ai";
 import { UI_VARS as C } from "@/lib/uiTheme";
@@ -19,6 +19,8 @@ export function AIPanel() {
   const L = useI18n().t.tools.ai;
   const isOpen = useStore($aiPanelOpen);
   const meta = useStore($projectMeta);
+  // An existing page: this panel replaces it, so point to the tool that edits one section.
+  const hasPage = useStore($instances).size > 2;
   const [prompt, setPrompt] = useState("");
   const [state, setState] = useState<AIState>({ type: "idle" });
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -132,6 +134,9 @@ export function AIPanel() {
 
       {/* Body */}
       <div style={{ padding: 18, display: "flex", flexDirection: "column", gap: 12 }}>
+        {hasPage && state.type !== "success" && (
+          <div style={{ fontSize: 12, color: C.textMuted, lineHeight: 1.5 }}>{L.replacesHint}</div>
+        )}
         <textarea
           ref={textareaRef}
           value={prompt}
@@ -192,7 +197,7 @@ export function AIPanel() {
 
         {/* Error */}
         {state.type === "error" && (
-          <div style={{ padding: "11px 14px", borderRadius: 9, background: "rgba(239,68,68,0.07)", border: "1px solid rgba(239,68,68,0.2)", color: "#fca5a5", fontSize: 12, display: "flex", alignItems: "center", gap: 10 }}>
+          <div role="alert" style={{ padding: "11px 14px", borderRadius: 9, background: "rgba(239,68,68,0.07)", border: "1px solid rgba(239,68,68,0.3)", color: C.danger, fontSize: 12, display: "flex", alignItems: "center", gap: 10 }}>
             <span style={{ flex: 1 }}>{state.message}</span>
             {state.needsAccount ? (
               <a
@@ -204,7 +209,7 @@ export function AIPanel() {
             ) : (
             <button
               onClick={() => setState({ type: "idle" })}
-              style={{ background: "rgba(239,68,68,0.15)", border: "1px solid rgba(239,68,68,0.25)", borderRadius: 5, color: "#fca5a5", fontSize: 13, fontFamily: C.font, cursor: "pointer", padding: "3px 8px", whiteSpace: "nowrap" }}
+              style={{ background: C.danger, border: "none", borderRadius: 5, color: "#fff", fontSize: 13, fontFamily: C.font, fontWeight: 600, cursor: "pointer", padding: "3px 10px", whiteSpace: "nowrap" }}
             >
               {L.tryAgain}
             </button>

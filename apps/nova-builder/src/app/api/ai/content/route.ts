@@ -12,30 +12,35 @@ import {
 import type { getProvider, ProviderName } from "@studio/ai";
 import { withProviderFallback } from "@/lib/ai-fallback";
 import { dailyCreditCap, decideCreditSource } from "@/lib/tiers";
+import { MAX_FILL_TEXTS, type TextInstance } from "@/lib/textInstances";
 
-type TextInstance = { instanceId: string; currentText: string };
+type Fill = { instanceId: string; text: string };
+const BATCH = 20;
 
 async function generateContent(
   provider: ReturnType<typeof getProvider>,
   topic: string,
   instances: TextInstance[]
-): Promise<{ instanceId: string; text: string }[]> {
+): Promise<Fill[]> {
   const list = instances
     .map((i, idx) => `${idx + 1}. [${i.instanceId}] "${i.currentText || "(empty)"}"`)
     .join("\n");
 
-  const prompt = `You are filling placeholder text for a website about: "${topic}".
+  const prompt = `You rewrite the text of a web page. The site owner's instruction:
+"${topic}"
 
-Below are the text elements that need content. For each, write compelling, concise copy that fits the context.
-Reply ONLY with a JSON array: [{ "instanceId": "...", "text": "..." }, ...]
-Keep each text under 120 characters unless it's a paragraph element.
+Rewrite EVERY element below following that instruction (e.g. translate, change the tone, fit a new topic).
+If an element is a placeholder or empty, write fitting copy. Keep prices, numbers, phone numbers,
+addresses and brand names unless the instruction says to change them. Keep each text about as long
+as the original. Write in the language the instruction asks for; otherwise in the instruction's language.
+Reply ONLY with a JSON array containing one entry per element: [{ "instanceId": "...", "text": "..." }, ...]
 
-Elements to fill:
+Elements:
 ${list}`;
 
   const raw = await provider.complete(
     [{ role: "user", content: prompt }],
-    { tier: "patcher", maxTokens: 2000 }
+    { tier: "patcher", maxTokens: 3000 }
   );
   try {
     const match = raw.match(/\[[\s\S]*\]/);
@@ -69,6 +74,10 @@ export async function POST(req: Request) {
     return Response.json({ error: "topic and instances are required" }, { status: 400 });
   }
 
+  if (instances.length > MAX_FILL_TEXTS || !instances.every((i) => typeof i?.instanceId === "string" && typeof i.currentText === "string")) {
+    return Response.json({ error: "Too many or malformed text elements" }, { status: 400 });
+  }
+
   const creditCost = Math.max(1, Math.ceil(instances.length / 5));
 
   const cap = dailyCreditCap(user.tier);
@@ -84,13 +93,25 @@ export async function POST(req: Request) {
     return Response.json({ error: "Insufficient credits" }, { status: 402 });
   }
 
-  try {
-    const fills = await withProviderFallback(clientProvider, (p) => generateContent(p, topic, instances), (f) => f.length > 0);
-    if (fills.length > 0) {
-      await deductCredit(user.id, null, creditCost, decision.source === "topup");
+  // One AI call per batch keeps each answer within the model's output budget.
+  const fills: Fill[] = [];
+  let lastErr: unknown;
+  for (let i = 0; i < instances.length; i += BATCH) {
+    const batch = instances.slice(i, i + BATCH);
+    const ids = new Set(batch.map((b) => b.instanceId));
+    try {
+      const out = await withProviderFallback(clientProvider, (p) => generateContent(p, topic, batch), (f) => f.length > 0);
+      fills.push(...out.filter((f) => ids.has(f.instanceId) && typeof f.text === "string"));
+    } catch (err) {
+      lastErr = err;
     }
-    return Response.json({ fills, creditCost: fills.length > 0 ? creditCost : 0 });
-  } catch (err) {
-    return Response.json({ error: String(err) }, { status: 500 });
   }
+  if (fills.length === 0) {
+    console.error("[api/ai/content] no fills:", String(lastErr ?? "empty answers"));
+    return Response.json({ error: "AI is busy — try again in a minute." }, { status: 502 });
+  }
+  // Charge for what was filled, never more than the amount checked above.
+  const charged = Math.min(creditCost, Math.max(1, Math.ceil(fills.length / 5)));
+  await deductCredit(user.id, null, charged, decision.source === "topup");
+  return Response.json({ fills, creditCost: charged });
 }

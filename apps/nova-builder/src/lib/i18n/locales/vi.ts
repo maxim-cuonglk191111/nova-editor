@@ -7,6 +7,7 @@ import { viDashboard } from "./vi/dashboard";
 import { viTools } from "./vi/tools";
 import { viInspector } from "./vi/inspector";
 import { viSidebar } from "./vi/sidebar";
+import { viComponentNames } from "./vi/componentNames";
 
 export const viDictionary: I18nDictionary = {
   nav: {
@@ -87,7 +88,7 @@ export const viDictionary: I18nDictionary = {
     paste: "Dán",
     duplicate: "Nhân bản",
     delete: "Xoá",
-    wrapInBox: "Bọc trong Box",
+    wrapInBox: "Bọc trong một khối",
     openAI: "Mở AI",
     commandPalette: "Bảng lệnh",
     insertPrefix: "Chèn",
@@ -106,7 +107,7 @@ export const viDictionary: I18nDictionary = {
     syncConflictHint: "Dự án này đã được lưu từ một tab, cửa sổ hoặc thiết bị khác sau khi bạn mở nó. Để không ghi đè lên phần đó, các thay đổi mới nhất ở đây chưa được lưu. Hãy tải lại để tiếp tục từ phiên bản mới nhất.",
     canvas: "Khung vẽ",
     navigator: "Cấu trúc trang",
-    style: "Giao diện CSS",
+    style: "Kiểu dáng",
     props: "Thuộc tính",
     settings: "Cài đặt",
     tokens: "Biến thiết kế",
@@ -131,16 +132,16 @@ export const viDictionary: I18nDictionary = {
     demoNotice: "Bản dùng thử — không tự lưu",
     signUpFree: "Đăng ký miễn phí →",
     tools: "Công cụ ▾",
-    aiContentFill: "AI Điền nội dung",
-    accessibility: "Khả năng tiếp cận",
+    aiContentFill: "AI viết lại nội dung",
+    accessibility: "Kiểm tra trợ năng",
     performance: "Hiệu suất",
     history: "⏱ Lịch sử",
-    backToMySites: "Về trang My Sites",
+    backToMySites: "Về trang Website của tôi",
     copyTooltip: "Sao chép (Ctrl+C)",
     pasteTooltip: "Dán (Ctrl+V)",
     duplicateTooltip: "Nhân bản (Ctrl+D)",
     deleteTooltip: "Xóa (Del)",
-    manageBreakpoints: "Quản lý breakpoint",
+    manageBreakpoints: "Quản lý kích thước màn hình (breakpoint)",
     components: "Thành phần",
     symbols: "Mẫu dùng chung",
     pages: "Trang",
@@ -159,7 +160,7 @@ export const viDictionary: I18nDictionary = {
     cascadeToken: "Biến CSS",
     cascadePreset: "Mặc định mẫu",
     cascadeDefault: "Mặc định",
-    breakpointMinWidth: "Min Width",
+    breakpointMinWidth: "Chiều rộng tối thiểu",
     breakpointCondition: "Điều kiện",
     breakpointMigrateTitle: "Đã xóa breakpoint",
     breakpointMigrateDesc: "Các kiểu từ breakpoint đã xóa được chuyển về Base.",
@@ -378,6 +379,11 @@ export const viDictionary: I18nDictionary = {
     saveBtn: "+ Lưu",
     addVariable: "+ Thêm biến",
     useTemplate: "Sử dụng Mẫu",
+    builtInTemplates: {
+      hero: { name: "Phần mở đầu trang", description: "Phần đầu trang căn giữa: tiêu đề lớn, dòng mô tả và hai nút kêu gọi hành động" },
+      features: { name: "Thẻ tính năng", description: "Lưới ba cột, mỗi thẻ có biểu tượng, tiêu đề và mô tả" },
+      split: { name: "Chia hai cột", description: "Chữ bên trái, ảnh bên phải — hợp cho phần giới thiệu sản phẩm hoặc cửa hàng" },
+    },
     applied: "✓ Đã áp dụng!",
     loading: "Đang tải…",
   },
@@ -428,4 +434,5 @@ export const viDictionary: I18nDictionary = {
   tools: viTools,
   inspector: viInspector,
   sidebar: viSidebar,
+  componentNames: viComponentNames,
 };

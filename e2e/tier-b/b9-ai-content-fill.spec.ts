@@ -32,12 +32,12 @@ test("B9 AI content fill rewrites copy in Vietnamese", async ({ page }) => {
   await dialog.locator("textarea").fill(PROMPT);
   await page.screenshot({ path: `${OUT}/b9-01-prompt.png` });
   const res = page.waitForResponse((r) => r.url().includes("/api/ai/content"), { timeout: 300_000 });
-  await dialog.getByRole("button", { name: /fill/i }).click();
+  await dialog.getByRole("button", { name: /^(fill|rewrite)/i }).click();
   const r = await res;
   console.log(`/api/ai/content ${r.status()} ${(await r.text()).slice(0, 400)}`);
   if (!r.ok()) await page.screenshot({ path: `${OUT}/b9-02-error.png` });
   expect(r.status(), "AI content fill request").toBe(200);
-  await expect(dialog.getByText(/elements filled/)).toBeVisible({ timeout: 30_000 });
+  await expect(dialog.getByText(/elements filled|texts rewritten/)).toBeVisible({ timeout: 30_000 });
   await page.screenshot({ path: `${OUT}/b9-02-filled.png` });
   await dialog.getByRole("button", { name: "Apply" }).click();
   await expect(dialog).toBeHidden();

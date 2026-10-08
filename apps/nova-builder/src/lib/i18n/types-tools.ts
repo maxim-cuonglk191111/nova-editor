@@ -46,6 +46,8 @@ export interface I18nAIPanelDictionary {
   readyBody: string;
   discard: string;
   applyToPage: string;
+  /** Shown when the page already has content: generation replaces it; how to change one section. */
+  replacesHint: string;
 }
 
 export interface I18nAIContentDictionary {
@@ -53,12 +55,17 @@ export interface I18nAIContentDictionary {
   title: string;
   /** "{count}" is replaced with the number of text elements. */
   found: string;
+  /** "{count}" text elements inside the selected element "{name}". */
+  foundSelection: string;
   placeholder: string;
   generating: string;
   fill: string;
   failed: string;
   /** "{count}" is replaced with the number of filled elements. */
   filled: string;
+  /** "{count}" further changes not listed in the preview. */
+  more: string;
+  undoHint: string;
   discard: string;
   apply: string;
 }
@@ -76,6 +83,12 @@ export interface I18nA11yDictionary {
   select: string;
   noIssues: string;
   severity: Record<string, string>;
+  /** Rule id (img-alt, link-text…) → plain explanation of the issue. */
+  rules: Record<string, string>;
+  /** Prefix of the fix suggestion line. */
+  suggestion: string;
+  /** Rule id → fix shown when the AI suggestion is not available. */
+  fixes: Record<string, string>;
 }
 
 export interface I18nPerfDictionary {

@@ -2,17 +2,13 @@
 import { useState, useEffect, useRef, useMemo } from "react";
 import { createPortal } from "react-dom";
 import { useStore } from "@nanostores/react";
-import {
-  $commandPaletteOpen,
-  $selectedPageId,
-  $selectedInstanceSelector,
-  $registeredComponentMetas,
-} from "@/lib/nano-states";
+import { $commandPaletteOpen, $selectedPageId } from "@/lib/nano-states";
 import { $pages } from "@/lib/data-stores";
-import { updateData } from "@/lib/transactions";
-import { makeInstanceId } from "@/lib/edit-operations";
 import { getCommands, hotkeyHint } from "./commands";
+import { getRegistry } from "./left-sidebar/components/ComponentRegistry";
+import { insertComponent } from "./left-sidebar/components/insertComponent";
 import { useI18n, fmt } from "@/lib/i18n";
+import { componentName } from "@/lib/i18n/componentName";
 import { UI_VARS as C } from "@/lib/uiTheme";
 
 
@@ -33,37 +29,9 @@ function closePalette() {
   $commandPaletteOpen.set(false);
 }
 
-// Palette-specific: insert a component under the selection (or page root).
-// Runs inside an updateData transaction (undoable + canvas-synced, M1).
-function insertComponentCmd(componentName: string) {
-  const pages = $pages.get();
-  const selector = $selectedInstanceSelector.get();
-  const newId = makeInstanceId();
-  const selectedId = selector?.[0];
-  let parentId: string | null = selectedId ?? null;
-  if (!parentId && pages) {
-    const page = pages.pages.get(pages.homePageId);
-    parentId = page?.rootInstanceId ?? null;
-  }
-  updateData(({ instances }) => {
-    instances.set(newId, {
-      type: "instance" as const,
-      id: newId,
-      component: componentName,
-      label: componentName.split(":").pop() ?? componentName,
-      children: [],
-    } as Parameters<typeof instances.set>[1]);
-    if (parentId) {
-      const parent = instances.get(parentId);
-      if (parent) {
-        instances.set(parentId, {
-          ...parent,
-          children: [...parent.children, { type: "id" as const, value: newId }],
-        });
-      }
-    }
-  });
-  $selectedInstanceSelector.set([newId]);
+// Same insertion as the Add panel: below the selection, on the open page, undoable.
+function insertComponentCmd(componentId: string) {
+  insertComponent(componentId);
   closePalette();
 }
 
@@ -73,7 +41,6 @@ export function CommandPalette() {
   const { t } = useI18n();
   const isOpen = useStore($commandPaletteOpen);
   const pages = useStore($pages);
-  const metas = useStore($registeredComponentMetas);
 
   const [query, setQuery] = useState("");
   const [activeIdx, setActiveIdx] = useState(0);
@@ -111,22 +78,16 @@ export function CommandPalette() {
       }
     }
 
-    // Components group (first 40 to keep list manageable)
-    let componentCount = 0;
-    for (const [name, meta] of metas) {
-      if (componentCount >= 40) break;
-      const rawLabel = (meta as Record<string, unknown>).label;
-      const label = typeof rawLabel === "string" ? rawLabel : (name.split(":").pop() ?? name);
-      const rawCategory = (meta as Record<string, unknown>).category;
-      const category = typeof rawCategory === "string" ? rawCategory : "";
+    // Components group — the Add panel's library (internal components are not insertable).
+    for (const entry of getRegistry()) {
+      const label = componentName(entry.id, t.componentNames, entry.displayName);
       items.push({
-        id: `component:${name}`,
+        id: `component:${entry.id}`,
         label: `${t.commands.insertPrefix} ${label}`,
         group: "Components",
-        keywords: [label, name, "insert", "add", "component", category],
-        action: () => insertComponentCmd(name),
+        keywords: [label, entry.displayName, ...entry.keywords, "insert", "add", "component", entry.category],
+        action: () => insertComponentCmd(entry.id),
       });
-      componentCount++;
     }
 
     // Actions group — sourced from the command registry (one definition
@@ -147,7 +108,7 @@ export function CommandPalette() {
     }
 
     return items;
-  }, [pages, metas, t]);
+  }, [pages, t]);
 
   // Filter by query
   const filtered = useMemo<CommandItem[]>(() => {

@@ -11,6 +11,7 @@ import { VariantOverrideHint } from "./VariantOverrideHint";
 import { nanoid } from "nanoid";
 import { UI_VARS as C, FONT } from "@/lib/uiTheme";
 import { useI18n } from "@/lib/i18n";
+import { componentName } from "@/lib/i18n/componentName";
 import { writeProp, type AnyProp } from "@/lib/propWriteHelper";
 
 type MetaPropDef = {
@@ -402,7 +403,9 @@ function TextContentField({ instanceId, instance }: { instanceId: string; instan
 }
 
 export function PropsEditorPanel() {
-  const P = useI18n().t.inspector.props;
+  const { t } = useI18n();
+  const P = t.inspector.props;
+  const names = t.componentNames;
   const instanceId = useStore($selectedInstanceId);
   const instances = useStore($instances);
   const props = useStore($props) as Map<string, AnyProp>;
@@ -444,10 +447,10 @@ export function PropsEditorPanel() {
       {/* Instance header */}
       <div style={{ padding: "8px 12px 6px", borderBottom: `1px solid ${C.border}`, flexShrink: 0 }}>
         <div style={{ fontSize: 12, color: C.text, fontWeight: 600 }}>
-          {(instance as { label?: string }).label || instance.component}
+          {(instance as { label?: string }).label || componentName(instance.component, names)}
         </div>
-        <div style={{ fontSize: 12, color: C.textMuted, fontFamily: C.fontMono, marginTop: 2 }}>
-          {instance.component}
+        <div title={instance.component} style={{ fontSize: 12, color: C.textMuted, marginTop: 2 }}>
+          {componentName(instance.component, names)}
         </div>
       </div>
 

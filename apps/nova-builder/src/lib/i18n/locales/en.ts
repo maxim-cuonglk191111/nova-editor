@@ -7,6 +7,7 @@ import { enDashboard } from "./en/dashboard";
 import { enTools } from "./en/tools";
 import { enInspector } from "./en/inspector";
 import { enSidebar } from "./en/sidebar";
+import { enComponentNames } from "./en/componentNames";
 
 export const enDictionary: I18nDictionary = {
   nav: {
@@ -378,6 +379,11 @@ export const enDictionary: I18nDictionary = {
     saveBtn: "+ Save",
     addVariable: "+ Add variable",
     useTemplate: "Use Template",
+    builtInTemplates: {
+      hero: { name: "Landing Hero", description: "Centered hero section with headline, subtext and two CTA buttons" },
+      features: { name: "Feature Cards", description: "Three-column feature grid with icon, title and description" },
+      split: { name: "Two-Column Split", description: "Left copy + right image placeholder, great for product or about sections" },
+    },
     applied: "✓ Applied!",
     loading: "Loading…",
   },
@@ -428,4 +434,5 @@ export const enDictionary: I18nDictionary = {
   tools: enTools,
   inspector: enInspector,
   sidebar: enSidebar,
+  componentNames: enComponentNames,
 };

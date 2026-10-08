@@ -1,6 +1,8 @@
 ﻿"use client";
 import { useRef } from "react";
 import { UI_VARS as C } from "@/lib/uiTheme";
+import { useI18n } from "@/lib/i18n";
+import { componentName } from "@/lib/i18n/componentName";
 
 // Component-specific semantic tokens derived from the uiTheme palette
 // (ADR-NB-012/020 — base colors come from DARK, no independent palette).
@@ -58,7 +60,8 @@ export function TreeRow({ node, depth, state, dnd, handlers }: TreeRowProps) {
   const isDragging = draggedId === node.id;
   const isDropTarget = dropIndicatorId === node.id;
   const hasChildren = node.children.length > 0;
-  const label = node.label || node.component;
+  const type = componentName(node.component, useI18n().t.componentNames);
+  const label = node.label || type;
 
   const showChildren = hasChildren && isExpanded;
 
@@ -187,9 +190,9 @@ export function TreeRow({ node, depth, state, dnd, handlers }: TreeRowProps) {
             <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", flex: 1 }}>
               {label}
             </span>
-            {node.label && node.label !== node.component && (
-              <span style={{ color: isSelected ? "rgba(196,181,253,0.7)" : C.textMuted, fontSize: 11, flexShrink: 0 }}>
-                {node.component}
+            {node.label && node.label !== node.component && node.label !== type && (
+              <span title={node.component} style={{ color: isSelected ? "rgba(196,181,253,0.7)" : C.textMuted, fontSize: 11, flexShrink: 0 }}>
+                {type}
               </span>
             )}
           </>

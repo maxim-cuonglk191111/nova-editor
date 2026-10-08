@@ -10,7 +10,7 @@ mkdirSync(OUT, { recursive: true });
 let acc: FreshAccount | undefined;
 test.afterAll(async () => deleteFreshAccount(acc));
 
-const MISSING_ALT = "Image is missing alt text.";
+const MISSING_ALT = "This image has no description";
 
 async function runCheck(page: Page) {
   const panel = page.locator('[role="dialog"][aria-label="Accessibility Checker"]');
@@ -53,9 +53,8 @@ test("B10 accessibility check flags an image without alt", async ({ page }) => {
   await page.screenshot({ path: `${OUT}/b10-02-alt-cleared.png` });
 
   panel = await runCheck(page);
-  const issue = panel.locator("div", { hasText: MISSING_ALT }).filter({ hasText: /img-alt/ }).last();
-  await expect(issue).toBeVisible();
-  await expect(panel.locator("div", { hasText: MISSING_ALT }).filter({ hasText: /img-alt/ })).not.toHaveCount(0);
+  await expect(panel.getByText(MISSING_ALT).first()).toBeVisible();
+  await expect(panel.locator('[title*="img-alt"]')).not.toHaveCount(0); // rule id kept as the technical hint
   await expect(panel.getByText(/\d+ errors?/)).toBeVisible();
   await page.screenshot({ path: `${OUT}/b10-03-issue-listed.png` });
 });
