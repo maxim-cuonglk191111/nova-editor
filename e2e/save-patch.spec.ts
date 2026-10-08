@@ -87,7 +87,7 @@ test("autosave persists via patches; stale tab gets conflict UI", async ({
   if (versionSupported) {
     await editPadding(pageB, "77");
     await expect(
-      pageB.getByText(/changed elsewhere|bị sửa ở nơi khác/).first()
+      pageB.getByText(/changed in another tab|sửa ở tab khác/).first()
     ).toBeVisible({ timeout: 20_000 });
 
     // 8. And A's value must still be intact on the server.

@@ -29,29 +29,37 @@ export async function POST(
     return NextResponse.json({ error: "Snapshot not found" }, { status: 404 });
   }
 
+  const { data: current } = await getSupabaseAdmin()
+    .from("projects")
+    .select("schema_json, version")
+    .eq("id", projectId)
+    .eq("user_id", userId)
+    .single();
+  if (!current) return NextResponse.json({ error: "Project not found" }, { status: 404 });
+
   // Save a "before restore" snapshot so the user can undo the rollback
   try {
-    const { data: current } = await getSupabaseAdmin()
-      .from("projects")
-      .select("schema_json")
-      .eq("id", projectId)
-      .eq("user_id", userId)
-      .single();
     await getSupabaseAdmin().from("project_snapshots").insert({
       project_id: projectId,
       user_id: userId,
       label: "Before restore",
-      schema_json: current?.schema_json,
+      schema_json: current.schema_json,
     });
   } catch {/* non-fatal — checkpoint failure should not block restore */}
 
-  // Apply the snapshot
-  const { error: updateErr } = await getSupabaseAdmin()
+  // Bump the version so every tab still holding the pre-restore document gets
+  // 409 on its next save instead of writing its edits over the restored page.
+  const baseVersion = current.version as number | null;
+  const version = (baseVersion ?? 0) + 1;
+  let query = getSupabaseAdmin()
     .from("projects")
-    .update({ schema_json: snap.schema_json, updated_at: new Date().toISOString() })
+    .update({ schema_json: snap.schema_json, version, updated_at: new Date().toISOString() })
     .eq("id", projectId)
     .eq("user_id", userId);
+  if (typeof baseVersion === "number") query = query.eq("version", baseVersion);
+  const { data: updated, error: updateErr } = await query.select("version");
 
   if (updateErr) return NextResponse.json({ error: "Restore failed" }, { status: 500 });
-  return NextResponse.json({ ok: true });
+  if (!updated || updated.length === 0) return NextResponse.json({ error: "Version conflict" }, { status: 409 });
+  return NextResponse.json({ ok: true, version });
 }

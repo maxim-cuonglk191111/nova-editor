@@ -2218,6 +2218,18 @@ Works / Ease. Baseline = production v25.10.0; after = production v25.11.0 (spec 
 | FS-6 | Loading state "Loading project…" (f08) | ✅ 8/8 |
 | FS-7 | Missing project: explanation, Try again, Back to My Sites (f09) | ✅ 9/9 (was 5/2: red "Error: HTTP 404" on a blank page, no way back) |
 
+## v25.12.1 — Task 009 batch 1: regression after 25.11–25.12 (2026-10-08, production 25.12.0, screenshots `qa-screenshots/b1-journey/`, `builder-audit/`, `tier-b/`)
+Works / Ease. All screenshots reviewed.
+| ID | Behavior | Status |
+|----|----------|--------|
+| R1-1 | Golden-path journey (19 steps) on production, throwaway account | 🟡 19/19 — AI (Google) 77 elements but only 3 of 7 requested sections (→ batch 4); inserted shadcn Buttons lose their styling in Export HTML (→ batch 4) |
+| R1-2 | `builder-audit/*` (canvas, left sidebar, right panel, top bar, feedback & safety, landing) on production | 🟡 all pass; Generate with AI 8/8 on the second run (first run: one "temporarily unavailable" = shared free quota) |
+| R1-3 | `tier-b/*` B1–B14 on production | 🟡 all pass after spec updates (B3: import saves itself; B6: panels hidden, stored values still render in canvas / preview / export). B9 rewrites only the first 20 text elements — one card stayed English (→ batch 2) |
+| R1-4 | Two tabs on one project: stale tab shows the conflict, its autosave and Save → Update are refused, nothing overwritten (g01–g03) | 🟡 9/8 (was 9/5: "Project was changed elsewhere" + "Failed to update project. Please try again.") |
+| R1-5 | Restore a snapshot while another tab is open: the stale tab gets the conflict instead of writing over the restored page (g04, g05) | 🟡 9/8 local 25.12.1 (was 2/2 on production 25.12.0: silent merge, "All changes saved") |
+| R1-6 | Restore while an autosave is in flight: the edit does not land on the restored page (g06) | 🟡 9 (local) |
+| R1-7 | Error 1102 load probe (`scripts/load-probe.mjs`) | 🟡 0/150 (concurrency 10) and 0/300 (concurrency 20) on 25.12.0 — same as 2026-10-06 |
+
 ## SOLID Audit — task 007 (v25.11.0)
 | Check | Severity | File | Fix |
 |-------|----------|------|-----|

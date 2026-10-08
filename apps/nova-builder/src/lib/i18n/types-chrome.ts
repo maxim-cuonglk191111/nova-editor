@@ -25,6 +25,8 @@ export interface I18nSaveDialogDictionary {
   /** "{name}" is replaced with the original project name. */
   copyName: string;
   errorUpdate: string;
+  /** Update refused because another tab saved first. */
+  errorConflict: string;
   errorCreate: string;
   errorSaveAs: string;
   errorNameRequired: string;

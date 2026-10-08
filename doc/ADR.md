@@ -20,6 +20,8 @@
 
 **Addendum (v25.11.0):** a full-document save (Save → Update, Import) and a patch flush both send the current `baseVersion`, so whichever lands second got 409. `withFullSaveLock` pauses flushing and waits for the in-flight patch before a full save; the full save then drops the queued patches it already contains.
 
+**Addendum (v25.12.1):** every server-side write that replaces the document must bump `version`. Snapshot restore did not, so tabs opened before it patched (or fully saved) over the restored page without a conflict. Restore now bumps `version`, runs under `withFullSaveLock`, and the restoring tab adopts the returned version and drops its queued patches.
+
 ### ADR-NB-028 — Keep per-request Worker CPU low: static layout, client-only app shells, native password hashing
 **Status:** ✅ Active since v25.4.0 — **supersedes ADR-NB-016**
 

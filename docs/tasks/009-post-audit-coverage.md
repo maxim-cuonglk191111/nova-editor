@@ -1,6 +1,6 @@
 # Task 009 — Close the gaps left after the builder audit (task 007)
 
-- **Status:** Open
+- **Status:** In progress — batch 1 done (v25.12.1)
 - **Filed:** 2026-10-08
 - **Owner:** Claude Code
 - **Severity:** High (owner principle: if a feature exists, it must work well — and be easy for a non-technical user)
@@ -41,5 +41,9 @@ Continue after task 007 (builder audit, v25.8.0–25.12.0, scores in `doc/VERIFI
    - **Spec** `e2e/builder-audit/ai-panel.spec.ts`: new page from empty project, change a selected section, rewrite one heading, translate, Discard, Apply + Ctrl+Z, switch model, reopen a past thread after reload — Works/Ease for both audiences, ≥ 8. Leave ≥ 1 minute between AI calls (shared free quota).
 7. **Operational risks** — (a) **AI providers: research, don't restrict yet.** The owner uses free keys only and wants no limits or queues for now. Write `doc/AI-PROVIDERS.md`: a comparison of free and low-cost options worth considering later (free-tier limits — requests and tokens per minute/day, context and output size, JSON quality for page composition, region availability from Cloudflare Workers, Vietnamese quality, price per 1M tokens for the paid upgrade path), with sources and the date checked, and a recommendation for "when you start paying". Only cheap, non-behaviour-changing infrastructure may be built now, behind defaults that keep production exactly as it is: e.g. document the env switches that already exist (`AI_PROVIDER`, `AI_FALLBACK_PROVIDERS`, `AI_MODEL_<PROVIDER>_<TIER>`, `AI_MAX_TOKENS_<PROVIDER>`; note production currently includes the prepaid OpenRouter, which is out of credit), per-provider usage/error counters in logs so quota hits are visible, and a provider health check in the admin/diag route. No per-user limits, no queues, no new paid services. (b) security review of `POST /api/projects/:id/patch` `extras` (size limits, type checks on cssVars / customCss / interactions / symbols) and of custom CSS reaching published pages; (c) Firefox and WebKit runs of the canvas / left-sidebar / top-bar specs (Playwright projects), plus ⌘ shortcuts on WebKit; (d) builder at tablet width (1024 px).
 8. **Process** — make the production audit specs runnable as one command after each deploy (document it in `doc/TEST-ROADMAP.md` Cadence; no new paid CI); prepare a short human QA checklist in `doc/qa-nova-builder.md` for the owner to click through and flip rows to ✅; then pick up task 006 (delete Tier C code that stayed hidden a full release) and task 008 (21 SOLID warnings), one area per PR.
+
+## Progress
+
+- **Batch 1 — regression (v25.12.1):** production 25.12.0: journey 19/19, every `builder-audit/*` and `tier-b/*` spec passes (B3, B6 and the journey updated for 25.11 UI changes); Error 1102 probe 0/150 and 0/300. Found: a snapshot restore was silently overwritten by any tab opened before it (no `version` bump) — fixed, plus clearer conflict messages (chip, Save → Update suggests Save As). New `e2e/builder-audit/regression.spec.ts`, `scripts/load-probe.mjs`. Carried to later batches: AI page had 3 of 7 requested sections and shadcn buttons lose styling in Export HTML (batch 4); AI Content Fill stops after 20 text elements (batch 2); Button Settings shows raw values "sm / button / primary" (batch 5); AI error "Try again" button has low contrast (batch 6).
 
 Out of scope unless the owner provides input: task 002 (SePay go-live), task 003 (cards / Google Pay). No spending (no paid AI credits, no paid services).

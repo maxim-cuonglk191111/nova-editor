@@ -3,6 +3,7 @@
 import { useEffect, useState, useRef } from "react";
 import { UI_VARS as C } from "@/lib/uiTheme";
 import { useI18n, fmt } from "@/lib/i18n";
+import { SaveConflictError } from "@/lib/saveProject";
 
 type Step = "confirm" | "create" | "saveAs";
 
@@ -97,7 +98,7 @@ export function SaveProjectDialog({
       onClose();
     } catch (err) {
       console.error(err);
-      setErrorMsg(D.errorUpdate);
+      setErrorMsg(err instanceof SaveConflictError ? D.errorConflict : D.errorUpdate);
     } finally {
       setIsSubmitting(false);
     }

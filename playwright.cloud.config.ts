@@ -11,6 +11,8 @@ export default defineConfig({
   use: {
     baseURL: process.env.BASE_URL,
     viewport: { width: 1440, height: 900 },
+    // A missing control fails the step in 30 s instead of hanging until the 15-min test timeout.
+    actionTimeout: 30_000,
     screenshot: "only-on-failure",
     trace: "retain-on-failure",
   },

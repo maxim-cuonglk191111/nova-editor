@@ -3,6 +3,7 @@ import { useState, useEffect, useCallback } from "react";
 import { useStore } from "@nanostores/react";
 import { $projectMeta } from "@/lib/data-stores";
 import { $historyPanelOpen, $isDirty } from "@/lib/nano-states";
+import { $docVersion, discardQueuedPatches, withFullSaveLock } from "@/lib/saveQueue";
 import { UI_VARS as C } from "@/lib/uiTheme";
 import { useI18n } from "@/lib/i18n";
 
@@ -72,11 +73,15 @@ export function HistoryPanel() {
     if (!window.confirm(L.confirmRestore)) return;
     setRestoring(snapId);
     try {
-      const res = await fetch(`/api/projects/${meta.id}/snapshots/${snapId}/restore`, { method: "POST" });
+      // An autosave still in flight must land before the restore, not on top of it.
+      const res = await withFullSaveLock(() => fetch(`/api/projects/${meta.id}/snapshots/${snapId}/restore`, { method: "POST" }));
       if (res.ok) {
         setMessage({ type: "ok", text: L.restored });
         // The server copy now holds the snapshot; reload so the editor shows it
         // (the in-memory edits it replaced must not be autosaved back).
+        const { version } = (await res.json()) as { version?: number };
+        discardQueuedPatches();
+        if (typeof version === "number") $docVersion.set(version);
         $isDirty.set(false);
         setTimeout(() => window.location.reload(), 800);
         return;

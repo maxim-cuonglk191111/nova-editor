@@ -71,6 +71,7 @@ export const enChrome: I18nChromeDictionary = {
     untitled: "Untitled Project",
     copyName: "{name} (copy)",
     errorUpdate: "Failed to update project. Please try again.",
+    errorConflict: "This project was saved from another tab after you opened it, so Update would overwrite that work. Use Save As to keep your version as a copy, or Cancel and reload.",
     errorCreate: "Failed to create project. Please try again.",
     errorSaveAs: "Failed to save copy. Please try again.",
     errorNameRequired: "Project name is required.",

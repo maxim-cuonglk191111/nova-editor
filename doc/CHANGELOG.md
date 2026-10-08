@@ -2,6 +2,14 @@
 
 ---
 
+## [25.12.1] — 2026-10-08
+
+### Task 009 batch 1 — regression after 25.11–25.12; restore no longer overwritten by other tabs (Patch)
+
+- **Restoring a snapshot is safe with other tabs open**: restore did not bump the project `version`, so a tab opened before the restore kept saying "All changes saved" while its edits were written on top of the restored page — and its Save → Update could undo the restore entirely. Restore now bumps `version` (stale tabs get the conflict notice), waits for an in-flight autosave (`withFullSaveLock`) and drops queued edits it replaces.
+- **Conflict messages say what happened**: the chip reads "Changed in another tab — your last edit was not saved" (explanation on hover); Save → Update on a stale tab says to use Save As to keep this version as a copy instead of "Failed to update project. Please try again."; the toast no longer shows a raw English error.
+- **QA**: new `e2e/builder-audit/regression.spec.ts` (two tabs, restore vs. stale tab, restore during autosave); `scripts/load-probe.mjs` (Error 1102 probe, 0/150 and 0/300 on 25.12.0); journey spec follows the "Replace this page" button and deletes its throwaway account; B3 (import saves itself) and B6 (CSS Vars panel hidden — stored values checked) specs updated; cloud config `actionTimeout` 30 s so a missing control fails fast instead of hanging 15 min.
+
 ## [25.12.0] — 2026-10-08
 
 ### AI generation works again on the free tier; CI i18n guard (Minor)

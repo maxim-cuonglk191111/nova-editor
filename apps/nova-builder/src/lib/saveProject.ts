@@ -19,6 +19,9 @@ import { $cssVars, $interactions, $customCss } from "./nano-states";
 import { $symbols } from "./symbols";
 import { $docVersion, $saveStatus, discardQueuedPatches, withFullSaveLock } from "./saveQueue";
 
+/** The server holds a newer version (another tab saved first); Update would overwrite it. */
+export class SaveConflictError extends Error {}
+
 export function saveProject(projectId: string): Promise<void> {
   return withFullSaveLock(() => saveFullDocument(projectId));
 }
@@ -47,7 +50,7 @@ async function saveFullDocument(projectId: string): Promise<void> {
   });
   if (res.status === 409) {
     $saveStatus.set("conflict");
-    throw new Error("Save conflict: project changed elsewhere");
+    throw new SaveConflictError("Save conflict: project changed elsewhere");
   }
   if (!res.ok) throw new Error(`Save failed: HTTP ${res.status}`);
   const json = (await res.json()) as { version?: number };
