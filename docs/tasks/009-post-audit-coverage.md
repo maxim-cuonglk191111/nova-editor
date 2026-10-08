@@ -1,6 +1,6 @@
 # Task 009 — Close the gaps left after the builder audit (task 007)
 
-- **Status:** In progress — batches 1–3 and 9 done, 4 in progress (v25.12.1–25.15.0)
+- **Status:** Paused after batch 9 at the owner's request — batches 1–3 and 9 done (confirmed on production), batch 4 in progress (v25.12.1–25.15.0)
 - **Filed:** 2026-10-08
 - **Owner:** Claude Code
 - **Severity:** High (owner principle: if a feature exists, it must work well — and be easy for a non-technical user)
