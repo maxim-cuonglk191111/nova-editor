@@ -2160,7 +2160,7 @@ Works / Ease. Baseline = production v25.8.0; after = production v25.9.0 (spec pa
 | LS-11 | Templates: bundle export/import, Publish current page, Community | ⛔ Tier C — hidden (public sharing without moderation, empty list, "bundle" jargon) |
 
 ## v25.10.0 / v25.11.0 — Builder audit batch 3: right panel (2026-10-08, `e2e/builder-audit/right-panel.spec.ts`, screenshots `r*.png`)
-Works / Ease. Baseline = production v25.9.0 (before the batch-3 fixes); after = production v25.10.0 (spec passed), plus the 25.11.0 follow-ups re-scored on a local dev server.
+Works / Ease. Baseline = production v25.9.0 (before the batch-3 fixes); after = production v25.10.0 and v25.11.0 (spec passed on both).
 | ID | Behavior | Status |
 |----|----------|--------|
 | RP-1 | Header: element name + type, no internal id | ✅ 9/9 (was 9/6: "inst_xxx", "Cascade: Local") |
@@ -2176,46 +2176,47 @@ Works / Ease. Baseline = production v25.9.0 (before the batch-3 fixes); after = 
 | RP-11 | Transform, transition, animation, filter, backdrop filter (r11–r14) | ✅ 9/8 inside the collapsed "Advanced effects" group (25.11.0; was ease 6: CSS-shaped inputs always open); animation keyframes exported (25.10.0) |
 | RP-12 | Remove a value (×) + undo (r15) | ✅ 9/9 (was 3/2: no way to clear a value) |
 | RP-13 | Grid tracks (only on grids) + placement (only inside one) (r16, r17) | ✅ 8/8 (was 4/4: column start had no effect; "+" broke auto-fit grids) |
-| RP-14 | States: Normal / Mouse over / Pressed…; value only in that state; empty-state text visible (r18, r19) | 🟡 9/8 (25.11.0; was 9/6: ":focus-within" pills, empty-state text white on white) |
+| RP-14 | States: Normal / Mouse over / Pressed…; value only in that state; empty-state text visible (r18, r19) | ✅ 9/8 (25.11.0; was 9/6: ":focus-within" pills, empty-state text white on white) |
 | RP-15 | Per-breakpoint value on Mobile P; Desktop unchanged (r20, r21) | ✅ 9/8 |
 | RP-16 | Saved project, preview and export carry the styles (r22, r23) | ✅ 9 |
 | RP-17 | Props: Heading level h1→h2 (r24, r25) | ✅ 9/9 (was 2/2: empty select) |
 | RP-18 | Props: Link URL + "Open in" new tab (r26, r27) | ✅ 9/8 (was 3/3: empty select) |
 | RP-19 | Props: Image src, alt, "Choose from library" (r28, r29) | ✅ 9/8 (was 6/3: library was a "coming soon" alert) |
-| RP-20 | Props: Button style/size; hint when Style colours override the variant (r31, r32) | 🟡 8/8; Disabled and raw "Type: button" hidden (25.11.0) |
+| RP-20 | Props: Button style/size; hint when Style colours override the variant (r31, r32) | ✅ 8/8; Disabled and raw "Type: button" hidden (25.11.0) |
 | RP-21 | Settings: Image object fit (r30) | ✅ 9/8 |
-| RP-22 | Settings: form fields — hint text, kind of answer, field name (= Leads column), required Yes/No (r35) | 🟡 9/8 (25.11.0; was 8/5: autofocus/pattern/id, true/false) |
-| RP-23 | Settings: Form — explains that messages go to Leads; Action URL/Method hidden (r37) | 🟡 9/9 (25.11.0; was 8/3: "Action URL #" could break the form) |
+| RP-22 | Settings: form fields — hint text, kind of answer, field name (= Leads column), required Yes/No (r35) | ✅ 9/8 (25.11.0; was 8/5: autofocus/pattern/id, true/false) |
+| RP-23 | Settings: Form — explains that messages go to Leads; Action URL/Method hidden (r37) | ✅ 9/9 (25.11.0; was 8/3: "Action URL #" could break the form) |
 
 ## v25.11.0 — Builder audit batch 4: top bar (2026-10-08, `e2e/builder-audit/top-bar.spec.ts`, screenshots `t*.png`)
-Works / Ease. Baseline = production v25.10.0; after = local dev with the 25.11.0 fixes (production re-run after deploy).
+Works / Ease. Baseline = production v25.10.0; after = production v25.11.0 (spec passed except TB-14).
 | ID | Behavior | Status |
 |----|----------|--------|
-| TB-1 | "⧉ Duplicate" / "🗑 Delete" with labels; disabled when nothing is selected; Delete shows the Undo toast (t01, t02) | 🟡 9/9 (was 9/4: bare ⎘ ⧉ ⊕ ⌫ glyphs) |
-| TB-2 | Breakpoints Desktop / Tablet / Mobile L / Mobile P resize the canvas (t03) | 🟡 9/8 |
-| TB-3 | Breakpoint manager ⚙: add, delete, closes on outside click (t04, t05) | 🟡 9/8 (was 0/0: **opening it crashed the builder** — `isBase` used before its declaration; raw "Condition" column hidden; deleting no longer moves phone-only styles onto every screen) |
-| TB-4 | Zoom −/+/reset (t06) | 🟡 9/8 |
-| TB-5 | Export ▾: Download as HTML, Export project (.nova) + toast (t07) | 🟡 9/8 (label was "↓ HTML") |
-| TB-6 | Import .nova replaces the page and **is saved** (t09) | 🟡 9/8 (was 4/6: looked done but was never saved — a reload brought the old page back) |
-| TB-7 | Tools ▾: AI Content Fill, Accessibility, History, Grid Guides; one panel at a time; menu opens above panels (t10–t14) | 🟡 9/8 (was 7/4: panels stacked on each other and covered the Tools menu; "Run Check" looked disabled) |
+| TB-1 | "⧉ Duplicate" / "🗑 Delete" with labels; disabled when nothing is selected; Delete shows the Undo toast (t01, t02) | ✅ 9/9 (was 9/4: bare ⎘ ⧉ ⊕ ⌫ glyphs) |
+| TB-2 | Breakpoints Desktop / Tablet / Mobile L / Mobile P resize the canvas (t03) | ✅ 9/8 |
+| TB-3 | Breakpoint manager ⚙: add, delete, closes on outside click (t04, t05) | ✅ 9/8 (was 0/0: **opening it crashed the builder** — `isBase` used before its declaration; raw "Condition" column hidden; deleting no longer moves phone-only styles onto every screen) |
+| TB-4 | Zoom −/+/reset (t06) | ✅ 9/8 |
+| TB-5 | Export ▾: Download as HTML, Export project (.nova) + toast (t07) | ✅ 9/8 (label was "↓ HTML") |
+| TB-6 | Import .nova replaces the page and **is saved** (t09) | ✅ 9/8 (was 4/6: looked done but was never saved — a reload brought the old page back) |
+| TB-7 | Tools ▾: AI Content Fill, Accessibility, History, Grid Guides; one panel at a time; menu opens above panels (t10–t14) | ✅ 9/8 (was 7/4: panels stacked on each other and covered the Tools menu; "Run Check" looked disabled) |
 | TB-8 | Tools: Performance, CSS Preview | ⛔ Tier C — hidden (scores without fixes a site owner can act on; raw CSS) |
-| TB-9 | Preview opens the page in a new tab (t16) | 🟡 9/9 |
-| TB-10 | Autosave chip "Saving…" → "All changes saved"; Save button agrees (t17, t18) | 🟡 9/9 |
-| TB-11 | Ctrl+S dialog: Update saves and stays in the editor (t19) | 🟡 9/9 (was 9/4: Update threw the user out to /projects) |
-| TB-12 | Save As makes a copy listed on the dashboard (t20, t21) | 🟡 9/8 |
-| TB-13 | Saving while autosave is flushing | 🟡 9 (was 3: full save and patch raced on the same version → "Project was changed elsewhere · Reload") |
-| TB-14 | Generate with AI: generate, "Replace this page", Ctrl+Z restores (t22–t25) | 🟡 not scored yet — the dev server has no AI provider (clear error + Try again shown); production run decides. Button now says it replaces the page |
+| TB-9 | Preview opens the page in a new tab (t16) | ✅ 9/9 |
+| TB-10 | Autosave chip "Saving…" → "All changes saved"; Save button agrees (t17, t18) | ✅ 9/9 |
+| TB-11 | Ctrl+S dialog: Update saves and stays in the editor (t19) | ✅ 9/9 (was 9/4: Update threw the user out to /projects) |
+| TB-12 | Save As makes a copy listed on the dashboard (t20, t21) | ✅ 9/8 |
+| TB-13 | Saving while autosave is flushing | ✅ 9 (was 3: full save and patch raced on the same version → "Project was changed elsewhere · Reload") |
+| TB-14 | Generate with AI: generate, "Replace this page", Ctrl+Z restores (t22–t25) | 🟡 production 25.11.0: 0/8 — every provider failed (Gemini region-blocked from the Worker, Mistral 429, Groq 413 over its 8k tokens/min, OpenRouter 402 out of paid credit); the error message and Try again are clear. 25.12.0 adds a Groq fallback model with a 30k tokens/min free limit |
 
 ## v25.11.0 — Builder audit batch 5: feedback & safety (2026-10-08, `e2e/builder-audit/feedback-safety.spec.ts`, screenshots `f*.png`)
 | ID | Behavior | Status |
 |----|----------|--------|
-| FS-1 | Toasts: Element deleted · Undo, exported, imported, saved (all specs) | 🟡 9/9 |
-| FS-2 | Empty page: "Empty Page — Add Component" (f02) | 🟡 9/9 |
-| FS-3 | Undo after every destructive action: Delete key, Ctrl+X, toolbar Delete, page delete (asks first) (f03) | 🟡 9/8 |
-| FS-4 | Offline: chip "Reconnecting…", the edit is saved after reconnecting (f04, f05) | 🟡 9/8 |
-| FS-5 | Leaving with unsaved work: back button asks, browser "Leave site?" prompt; no prompt when saved (f06, f07) | 🟡 9/9 (was 0/0: no guard) |
-| FS-6 | Loading state "Loading project…" (f08) | 🟡 8/8 |
-| FS-7 | Missing project: explanation, Try again, Back to My Sites (f09) | 🟡 9/9 (was 5/2: red "Error: HTTP 404" on a blank page, no way back) |
+| FS-0 | Scope | Production v25.11.0, spec passed |
+| FS-1 | Toasts: Element deleted · Undo, exported, imported, saved (all specs) | ✅ 9/9 |
+| FS-2 | Empty page: "Empty Page — Add Component" (f02) | ✅ 9/9 |
+| FS-3 | Undo after every destructive action: Delete key, Ctrl+X, toolbar Delete, page delete (asks first) (f03) | ✅ 9/8 |
+| FS-4 | Offline: chip "Reconnecting…", the edit is saved after reconnecting (f04, f05) | ✅ 9/8 |
+| FS-5 | Leaving with unsaved work: back button asks, browser "Leave site?" prompt; no prompt when saved (f06, f07) | ✅ 9/9 (was 0/0: no guard) |
+| FS-6 | Loading state "Loading project…" (f08) | ✅ 8/8 |
+| FS-7 | Missing project: explanation, Try again, Back to My Sites (f09) | ✅ 9/9 (was 5/2: red "Error: HTTP 404" on a blank page, no way back) |
 
 ## SOLID Audit — task 007 (v25.11.0)
 | Check | Severity | File | Fix |

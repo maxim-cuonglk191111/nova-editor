@@ -1,6 +1,6 @@
 {
   "name": "@nova/builder",
-  "version": "25.11.0",
+  "version": "25.12.0",
   "private": true,
   "scripts": {
     "dev": "next dev --port 3001",
