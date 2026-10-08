@@ -53,7 +53,9 @@ test("AI tools: change one section, content fill, accessibility suggestion", asy
     await dialog.getByRole("button", { name: "Apply" }).click();
     await page.waitForTimeout(1_500);
     const after = await texts(canvas);
-    const english = after.filter((t) => t.length > 12 && !VIETNAMESE.test(t) && before.includes(t));
+    // Brand names and addresses are kept on purpose (the prompt says so).
+    const kept = (t: string) => /\d/.test(t) || t === "Da Lat Slow Coffee";
+    const english = after.filter((t) => t.length > 12 && !VIETNAMESE.test(t) && before.includes(t) && !kept(t));
     console.log(`texts ${before.length}, unchanged English after fill: ${english.length}`, english.slice(0, 12));
     await shot(page, "a02-fill-applied");
     await canvas.locator("footer, section").last().scrollIntoViewIfNeeded();
@@ -67,7 +69,9 @@ test("AI tools: change one section, content fill, accessibility suggestion", asy
   await page.waitForTimeout(QUOTA_GAP);
 
   await test.step("Change one section: select the menu section, rewrite only its text", async () => {
-    const menu = canvas.locator("section, div").filter({ has: canvas.locator("h2", { hasText: /menu/i }) }).last();
+    // Track the section by its element id: the AI may rewrite the "Menu" heading itself.
+    const menuId = await canvas.locator("section, div").filter({ has: canvas.locator("h2", { hasText: /menu/i }) }).last().getAttribute("data-ws-selector");
+    const menu = canvas.locator(`[data-ws-selector="${menuId}"]`);
     await canvas.locator("h2", { hasText: /menu/i }).first().click();
     await page.getByText("Menu Section", { exact: true }).last().click(); // breadcrumb / layers row of its section
     const outsideBefore = await texts(canvas, "header");
