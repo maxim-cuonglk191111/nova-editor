@@ -15,13 +15,17 @@ const MODELS = {
 // (12k → 413), so prompt + output must stay under that.
 const MAX_TOKENS = 5000;
 
-// The page-compose prompt (~4.5k tokens) + output no longer fits gpt-oss-120b's
-// 8k TPM (413 "Request too large"). Llama 4 Scout allows 30k TPM on the free
-// tier; it is tried when the first model refuses for size, rate or retirement.
+// The page-compose prompt (~4.5k tokens) + output often does not fit gpt-oss-120b's
+// 8k TPM (413 "Request too large"); the next model is tried when one refuses for
+// size, rate or retirement. Llama 4 Scout was removed from Groq (404, 2026-10-08);
+// llama-3.3-70b-versatile is a production model with 12k TPM on the free tier.
 const BACKUP_MODELS: { id: string; maxTokens: number }[] = [
-  { id: "meta-llama/llama-4-scout-17b-16e-instruct", maxTokens: 8000 },
+  { id: "llama-3.3-70b-versatile", maxTokens: 7000 },
 ];
 const RETRYABLE = /\b(413|429|404)\b|too large|rate limit|decommissioned|does not exist/i;
+// gpt-oss models reason before answering and those tokens count against max_tokens:
+// at the default effort a page JSON was cut short (thin pages, missing sections).
+const REASONING_MODELS = /^openai\/gpt-oss/;
 
 export class GroqProvider implements AIProvider {
   readonly name = "Groq (Llama 3)";
@@ -62,6 +66,7 @@ export class GroqProvider implements AIProvider {
           model: model.id,
           max_tokens: capTokens(this.id, opts.maxTokens, model.maxTokens),
           messages: allMessages,
+          ...(REASONING_MODELS.test(model.id) ? { reasoning_effort: "low" as const } : {}),
         });
         return response.choices[0]?.message?.content ?? "";
       } catch (err) {

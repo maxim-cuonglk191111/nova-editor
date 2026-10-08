@@ -240,15 +240,17 @@ export interface ExportOptions {
 
 // shadcn renderers emit their default look as an inline style, and inline styles
 // beat the instance's own CSS from generateCss — so a brown CTA exported black.
-// Move each shadcn root's inline style into a zero-specificity :where() rule so
-// it only fills in what the instance does not set itself.
+// Move each shadcn root's inline style into a rule of specificity (0,1,0) emitted
+// before the instance CSS: the instance's own rules (same specificity, later) still
+// win, while element resets such as Tailwind's preflight `button { background: transparent }`
+// (0,0,1) no longer wipe the default look (a zero-specificity :where() lost to them).
 function demoteShadcnInlineDefaults(html: string): { html: string; css: string } {
   const rules: string[] = [];
   const out = html.replace(
     /(<\w+ data-ws-id="([^"]+)" data-ws-component="shadcn:[^"]+"[^>]*?) style="([^"]*)"/g,
     (_m, head: string, id: string, style: string) => {
       const decls = style.replace(/&quot;/g, '"').replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&amp;/g, "&");
-      rules.push(`:where([${idAttribute}="${id}"]){${decls}}`);
+      rules.push(`[${componentAttribute}]:where([${idAttribute}="${id}"]){${decls}}`);
       return head;
     }
   );
