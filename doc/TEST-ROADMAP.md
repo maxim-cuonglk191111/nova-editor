@@ -58,7 +58,7 @@ Run: `pwsh scripts/audit-run.ps1 e2e/builder-audit/<area>.spec.ts` (production b
 |------|------|--------|
 | 1 Canvas — hover, select, label, breadcrumb, parent, drag reorder / into container / nudge, resize, inline edit, context menu, shortcuts, ⌘K, drag-off delete | `canvas.spec.ts` | ✅ all ≥ 8 on production 25.8.0 (fixed: resize, link/image drag, stale Style-panel inputs, image distortion, delete + Undo toast) |
 | 2 Left sidebar — components, pages, layers, assets, templates, resize/collapse | `left-sidebar.spec.ts` | 25.9.0: all ≥ 8 after fixes (click-to-insert on the open page, set home page, scroll to selection, asset delete confirm, resize over canvas, autosave of CSS vars/custom CSS); CSS Vars, Custom CSS and template community/bundles hidden (Tier C) — production re-run pending |
-| 3 Right panel | — | not run |
+| 3 Right panel — every Style group, states, breakpoints, units, clear value, Props, Settings | `right-panel.spec.ts` | 25.10.0: all ≥ 8 except state pill names (ease 7, tooltips added) — production re-run pending |
 | 4 Top bar | — | not run |
 | 5 Feedback & safety | — | not run |
 
