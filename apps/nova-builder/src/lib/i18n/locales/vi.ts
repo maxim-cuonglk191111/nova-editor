@@ -114,7 +114,7 @@ export const viDictionary: I18nDictionary = {
     cms: "CMS",
     seo: "SEO",
     cookie: "Cookie",
-    exportHtml: "↓ Xuất HTML",
+    exportHtml: "Tải về dạng HTML",
     exportReact: "↓ Xuất React (.tsx)",
     export: "Xuất ▾",
     deploy: "Triển khai ↗",

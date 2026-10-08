@@ -132,7 +132,7 @@ test("left sidebar", async ({ page }) => {
     await undo();
     await expect.soft.poll(sections).toEqual(before);
     await rowOf("Coffee Menu Title").click({ button: "right" });
-    await page.getByRole("button", { name: "Delete" }).click();
+    await page.getByRole("button", { name: "Delete", exact: true }).click();
     await expect.soft(page.getByRole("alert").filter({ hasText: "Element deleted" })).toBeVisible();
     await page.getByRole("alert").getByRole("button", { name: "Undo" }).click();
     await expect.soft(canvas.locator("h2", { hasText: "Our Specialty Coffee Menu" })).toHaveCount(1);

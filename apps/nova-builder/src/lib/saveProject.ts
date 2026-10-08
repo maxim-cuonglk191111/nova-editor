@@ -17,9 +17,13 @@ import {
 } from "./data-stores";
 import { $cssVars, $interactions, $customCss } from "./nano-states";
 import { $symbols } from "./symbols";
-import { $docVersion, $saveStatus, discardQueuedPatches } from "./saveQueue";
+import { $docVersion, $saveStatus, discardQueuedPatches, withFullSaveLock } from "./saveQueue";
 
-export async function saveProject(projectId: string): Promise<void> {
+export function saveProject(projectId: string): Promise<void> {
+  return withFullSaveLock(() => saveFullDocument(projectId));
+}
+
+async function saveFullDocument(projectId: string): Promise<void> {
   const data = {
     pages: $pages.get()!,
     assets: $assets.get(),

@@ -1,6 +1,6 @@
 # Task 007 — Builder feature audit: works + easy for a non-technical user
 
-- **Status:** Paused after batch 3 (owner: stop after batch 3); batches 4 (top bar) and 5 (feedback & safety) not run
+- **Status:** Done (2026-10-08, v25.11.0) — all 5 areas audited; scores per item in `doc/VERIFIED.md`
 - **Filed:** 2026-10-07
 - **Owner:** Claude Code
 - **Severity:** High (owner principle: if a feature exists, it must work well)
@@ -38,4 +38,7 @@ Skip check: Tier B code (B2, B3, B5–B10) unchanged since `40b1666` (v25.7.0 on
 - **Batch 2 — Left sidebar (v25.9.0):** all ≥ 8 after fixes. Found: components always inserted into the home page and needed a double-click; no way to set the home page and rename only by double-click; selecting in Layers / inserting a template never scrolled the canvas (`data-ws-selector` lookup); unused assets deleted permanently without a prompt; panel resize stopped over the canvas; **CSS vars / custom CSS were never autosaved** while the chip said "All changes saved", and the Save button never returned to "Saved". Hidden (Tier C): CSS Variables + Custom CSS tabs, template bundles / publish / community.
 - **Batch 3 — Right panel:** run in parallel by a background agent in worktree `nova-editor-right` (branch `qa/builder-audit-right`), merged after review.
 - **Batch 3 — Right panel (v25.10.0):** readable style rows, remove-a-value, unitless numbers, grid placement/tracks fixed, Props selects (Heading level, Link target) and image library working, animation keyframes in export. State pills keep CSS names (ease 7).
-- **Not run (paused by owner):** batch 4 top bar (known from batches 1–2: Save dialog "Update" navigates away to /projects; top-left glyph icons ⎘ ⧉ ⊕ ⌫), batch 5 feedback & safety.
+- **Batch 3 follow-ups (v25.11.0):** "Advanced effects" group for CSS-shaped editors, plain state names, empty-state text visible on the light theme, form settings in plain language, Action URL / Method hidden. The batch-3 agent was stopped before its report; its scores were re-done from the commit, a fresh production run and every screenshot.
+- **Batch 4 — Top bar (v25.11.0):** the breakpoint manager crashed the whole builder on open; import was never saved; Save → Update left the editor; a full save racing the autosave produced "Project was changed elsewhere"; tool panels stacked and hid the Tools menu; toolbar was bare glyphs. All fixed. Performance and CSS Preview hidden (Tier C).
+- **Batch 5 — Feedback & safety (v25.11.0):** no unsaved-changes guard (added); missing project showed a raw 404 (readable page with a way back). Undo, offline recovery, empty and loading states pass.
+- **SOLID:** 6 blocking → 0 (six large files split); 21 warnings filed as task 008.

@@ -13,6 +13,7 @@ import {
   GridChildPanel,
 } from "./style-panels/panelRegistry";
 import { StateSelector } from "./StyleStateSelector";
+import { AdvancedEffects } from "./style-panels/AdvancedEffects";
 import { AddPropertyRow } from "./StyleAddProperty";
 import {
   StyleSection,
@@ -163,7 +164,7 @@ export function StyleInspector() {
   if (!instanceId) {
     return (
       <div style={{ height: "100%", background: C.bg, display: "flex", flexDirection: "column", overflow: "hidden" }}>
-        <div style={{ padding: 16, fontSize: 13, color: "rgba(255,255,255,0.35)", fontFamily: "system-ui, sans-serif" }}>
+        <div style={{ padding: 16, fontSize: 13, color: C.textMuted, fontFamily: C.font }}>
           {t.inspector.selectInstance}
         </div>
       </div>
@@ -268,23 +269,28 @@ export function StyleInspector() {
       <div style={{ flex: 1, overflowY: "auto", display: "flex", flexDirection: "column" }}>
         <div style={{ flex: 1 }}>
           {byProperty.size === 0 ? (
-            <div style={{ padding: "12px", fontSize: 13, color: "rgba(255,255,255,0.35)", fontFamily: "system-ui, sans-serif" }}>{emptyMessage}</div>
+            <div style={{ padding: "12px", fontSize: 13, color: C.textMuted, fontFamily: C.font }}>{emptyMessage}</div>
           ) : (
             SECTION_ORDER.map((name) => (
               <StyleSection key={name} name={name} entries={grouped.get(name) ?? []} instanceId={instanceId} />
             ))
           )}
         </div>
-        <TransformPanel key={`${instanceId}-transform-${transformCss}`} instanceId={instanceId} currentCss={transformCss} />
         <BoxShadowPanel key={`${instanceId}-box-${boxShadowCss}`} instanceId={instanceId} currentCss={boxShadowCss} />
         <TextShadowPanel key={`${instanceId}-text-${textShadowCss}`} instanceId={instanceId} currentCss={textShadowCss} />
-        <TransitionPanel key={`${instanceId}-transition-${transitionCss}`} instanceId={instanceId} currentCss={transitionCss} />
-        <AnimationPanel key={`${instanceId}-animation-${animationCss}`} instanceId={instanceId} currentCss={animationCss} />
-        <FilterPanel key={`${instanceId}-filter-${filterCss}`} instanceId={instanceId} currentCss={filterCss} />
-        <BackdropFilterPanel key={`${instanceId}-backdrop-${backdropFilterCss}`} instanceId={instanceId} currentCss={backdropFilterCss} />
         <GradientPanel key={`${instanceId}-gradient-${backgroundImageCss}`} instanceId={instanceId} currentCss={backgroundImageCss} />
-        {isGrid && <GridContainerPanel key={`${instanceId}-grid-container`} instanceId={instanceId} columnsCss={gridTemplateColumnsCss} rowsCss={gridTemplateRowsCss} />}
-        {inGrid && <GridChildPanel key={`${instanceId}-grid-child`} instanceId={instanceId} rowCss={gridRowCss} columnCss={gridColumnCss} />}
+        <AdvancedEffects
+          key={`${instanceId}-advanced`}
+          inUse={!!(transformCss || transitionCss || animationCss || filterCss || backdropFilterCss || gridTemplateColumnsCss || gridTemplateRowsCss || gridColumnCss || gridRowCss)}
+        >
+          <TransformPanel key={`${instanceId}-transform-${transformCss}`} instanceId={instanceId} currentCss={transformCss} />
+          <TransitionPanel key={`${instanceId}-transition-${transitionCss}`} instanceId={instanceId} currentCss={transitionCss} />
+          <AnimationPanel key={`${instanceId}-animation-${animationCss}`} instanceId={instanceId} currentCss={animationCss} />
+          <FilterPanel key={`${instanceId}-filter-${filterCss}`} instanceId={instanceId} currentCss={filterCss} />
+          <BackdropFilterPanel key={`${instanceId}-backdrop-${backdropFilterCss}`} instanceId={instanceId} currentCss={backdropFilterCss} />
+          {isGrid && <GridContainerPanel key={`${instanceId}-grid-container`} instanceId={instanceId} columnsCss={gridTemplateColumnsCss} rowsCss={gridTemplateRowsCss} />}
+          {inGrid && <GridChildPanel key={`${instanceId}-grid-child`} instanceId={instanceId} rowCss={gridRowCss} columnCss={gridColumnCss} />}
+        </AdvancedEffects>
       </div>
     </div>
   );

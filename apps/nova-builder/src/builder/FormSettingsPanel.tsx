@@ -46,57 +46,39 @@ type FieldDef = {
   placeholder?: string;
 };
 
+// Only what a site owner needs (task 007). A Form posts to Leads by itself —
+// action/method/id are hidden so they cannot be changed into a broken form;
+// autofocus/min/max/pattern/ids are developer settings.
 const FIELDS: Record<string, FieldDef[]> = {
-  Form: [
-    { name: "action", labelKey: "actionUrl", control: "text", placeholder: "https://..." },
-    { name: "method", labelKey: "method", control: "select", options: ["get", "post"] },
-    { name: "id", labelKey: "id", control: "text", placeholder: "form-id" },
-  ],
+  Form: [],
   WebhookForm: [
     { name: "action", labelKey: "webhookUrl", control: "text", placeholder: "https://..." },
     { name: "state", labelKey: "state", control: "select", options: ["", "success", "error"] },
     { name: "id", labelKey: "id", control: "text", placeholder: "form-id" },
   ],
   Input: [
-    { name: "type", labelKey: "type", control: "select", options: ["text","email","password","number","tel","url","search","date","time","checkbox","radio","file","hidden"] },
-    { name: "name", labelKey: "name", control: "text", placeholder: "field-name" },
-    { name: "placeholder", labelKey: "placeholder", control: "text", placeholder: "Enter value…" },
-    { name: "value", labelKey: "defaultValue", control: "text" },
+    { name: "placeholder", labelKey: "placeholder", control: "text", placeholder: "Your name" },
+    { name: "type", labelKey: "type", control: "select", options: ["text", "email", "tel", "number", "url", "date"] },
+    { name: "name", labelKey: "name", control: "text", placeholder: "name" },
     { name: "required", labelKey: "required", control: "boolean" },
-    { name: "autofocus", labelKey: "autofocus", control: "boolean" },
-    { name: "min", labelKey: "min", control: "text", placeholder: "0" },
-    { name: "max", labelKey: "max", control: "text", placeholder: "100" },
-    { name: "pattern", labelKey: "pattern", control: "text", placeholder: "[A-Za-z]+" },
-    { name: "id", labelKey: "id", control: "text" },
   ],
   Textarea: [
-    { name: "name", labelKey: "name", control: "text", placeholder: "field-name" },
     { name: "placeholder", labelKey: "placeholder", control: "text" },
+    { name: "name", labelKey: "name", control: "text", placeholder: "message" },
     { name: "rows", labelKey: "rows", control: "number" },
     { name: "required", labelKey: "required", control: "boolean" },
-    { name: "id", labelKey: "id", control: "text" },
   ],
   Select: [
-    { name: "name", labelKey: "name", control: "text", placeholder: "field-name" },
+    { name: "name", labelKey: "name", control: "text", placeholder: "choice" },
     { name: "required", labelKey: "required", control: "boolean" },
-    { name: "multiple", labelKey: "multiple", control: "boolean" },
-    { name: "id", labelKey: "id", control: "text" },
   ],
-  Label: [
-    { name: "htmlFor", labelKey: "forField", control: "text", placeholder: "input-id" },
-  ],
+  Label: [],
   Checkbox: [
-    { name: "name", labelKey: "name", control: "text", placeholder: "field-name" },
-    { name: "value", labelKey: "value", control: "text", placeholder: "on" },
+    { name: "name", labelKey: "name", control: "text", placeholder: "agree" },
     { name: "checked", labelKey: "checked", control: "boolean" },
     { name: "required", labelKey: "required", control: "boolean" },
-    { name: "id", labelKey: "id", control: "text" },
   ],
-  Button: [
-    { name: "type", labelKey: "type", control: "select", options: ["submit","button","reset"] },
-    { name: "disabled", labelKey: "disabled", control: "boolean" },
-    { name: "id", labelKey: "id", control: "text" },
-  ],
+  Button: [],
 };
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
@@ -143,8 +125,8 @@ function FieldRow({ field, instanceId, propMap }: { field: FieldDef; instanceId:
           onChange={(e) => writeProp(instanceId, field.name, e.target.value, "boolean")}
           style={selectSt}
         >
-          <option value="false">false</option>
-          <option value="true">true</option>
+          <option value="false">{F.no}</option>
+          <option value="true">{F.yes}</option>
         </select>
       ) : field.control === "select" ? (
         <select
@@ -205,7 +187,11 @@ export function FormSettingsPanel() {
 
       {/* Fields */}
       <div style={{ flex: 1, overflowY: "auto", padding: "6px 0" }}>
-        {fields.length === 0 ? (
+        {instance.component === "Form" ? (
+          <div style={{ padding: "8px 12px", fontSize: 13, color: C.text, fontFamily: C.font, lineHeight: 1.5 }}>
+            {F.formNote}
+          </div>
+        ) : fields.length === 0 ? (
           <div style={{ padding: "8px 12px", fontSize: 13, color: C.textMuted, fontFamily: C.font }}>
             {F.noSettings}
           </div>

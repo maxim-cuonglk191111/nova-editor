@@ -94,7 +94,7 @@ export function A11yPanel() {
       </div>
       <div style={{ padding: "10px 14px", flexShrink: 0 }}>
         <button onClick={runCheck} disabled={loading}
-          style={{ padding: "6px 14px", borderRadius: 6, border: "1px solid rgba(96,165,250,0.4)", background: loading ? "rgba(96,165,250,0.1)" : "rgba(96,165,250,0.15)", color: "#93c5fd", fontSize: 13, fontFamily: C.font, fontWeight: 700, cursor: loading ? "default" : "pointer" }}>
+          style={{ padding: "6px 14px", borderRadius: 6, border: "none", background: "#2563eb", color: "#fff", opacity: loading ? 0.6 : 1, fontSize: 13, fontFamily: C.font, fontWeight: 700, cursor: loading ? "default" : "pointer" }}>
           {loading ? L.checking : L.run}
         </button>
         {ran && (

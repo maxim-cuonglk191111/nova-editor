@@ -113,6 +113,10 @@ export interface I18nFormSettingsDictionary {
   selectElement: string;
   noSettings: string;
   defaultOption: string;
+  /** Shown on a Form: where submissions go. */
+  formNote: string;
+  yes: string;
+  no: string;
   /** Field labels keyed by field id. */
   fields: Record<string, string>;
 }
@@ -133,6 +137,9 @@ export interface I18nBreakpointsDictionary {
 export interface I18nInspectorDictionary {
   cascade: string;
   removeToken: string;
+  /** Collapsed group holding transform, motion, filters and grid tracks. */
+  advancedEffects: string;
+  advancedEffectsHint: string;
   /** "{name}" is replaced with the token name. */
   fromToken: string;
   selectInstance: string;
@@ -157,6 +164,8 @@ export interface I18nInspectorDictionary {
   propNames: Record<string, string>;
   /** Plain-language tooltips for the pseudo-state pills, keyed by state (":hover"). */
   stateHints: Record<string, string>;
+  /** Plain-language pill label per pseudo-state (the CSS name is the tooltip). */
+  stateLabels: Record<string, string>;
   editors: I18nStyleEditorsDictionary;
   props: I18nPropsPanelDictionary;
   settings: I18nSettingsPanelDictionary;

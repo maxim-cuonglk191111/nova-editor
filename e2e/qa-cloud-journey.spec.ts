@@ -359,7 +359,7 @@ test("QA cloud journey", async ({ page, context, baseURL }) => {
       await update.click();
       const r = await resp;
       note(r ? `save → ${r.status()} ${r.request().method()} ${rel(r.url())}` : "no save request observed");
-      await page.waitForURL(/\/projects/, { timeout: 30_000 }).catch(() => note("did not return to /projects"));
+      await page.waitForTimeout(2_000); // Update stays in the editor (25.11.0)
     } else {
       note("Save disabled — relying on autosave");
       await page.waitForTimeout(4_000);

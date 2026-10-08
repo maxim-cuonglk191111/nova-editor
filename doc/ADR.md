@@ -18,6 +18,8 @@
 
 **Why:** They were only persisted by the full-document Save dialog, while the chip said "All changes saved" — edits were lost on reload. A second, debounced full save would race the patch queue for the same version (409 conflicts); one request per flush keeps optimistic concurrency intact. The stored shape is unchanged; an older server ignores `extras`.
 
+**Addendum (v25.11.0):** a full-document save (Save → Update, Import) and a patch flush both send the current `baseVersion`, so whichever lands second got 409. `withFullSaveLock` pauses flushing and waits for the in-flight patch before a full save; the full save then drops the queued patches it already contains.
+
 ### ADR-NB-028 — Keep per-request Worker CPU low: static layout, client-only app shells, native password hashing
 **Status:** ✅ Active since v25.4.0 — **supersedes ADR-NB-016**
 
