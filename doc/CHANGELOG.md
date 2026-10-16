@@ -2,6 +2,39 @@
 
 ---
 
+## [25.16.3] — 2026-10-17
+
+### Task 013 — Desktop canvas artboard framing & viewport squeeze prevention (Patch)
+
+- **Standard Desktop Artboard Width (1280px)**: The base breakpoint now renders with a fixed desktop artboard width of 1280px instead of fluid 100%, preventing severe layout squeezing down to 712px when sidebars and inspector are open.
+- **Proportional Fit-to-Screen (`fitZoom`)**: When container space is narrower than 1280px, the canvas automatically calculates and scales the view to fit available space without triggering mobile/tablet CSS media queries.
+- **Topbar Fit Button (`⊡`) & Shortcut**: Added quick fit-to-screen button in the topbar zoom control group, wired to `Ctrl+Shift+1`.
+- **Artboard Elevation Framing**: Framed canvas with clean studio shadows, rounded corners, and proportional margin compensation to eliminate ghost scrollbars.
+
+## [25.16.2] — 2026-10-17
+
+### Task 012 — Pages slug auto-generation, route collision validation & inline edit fix (Patch)
+
+- **Auto-Slug Generation with Vietnamese Diacritics**: Typing a page name automatically generates URL-safe slugs with full NFD diacritics removal (e.g., "Giới thiệu công ty" → `/gioi-thieu-cong-ty`).
+- **Route Collision Prevention**: Added real-time collision detection that blocks duplicate routes and reserves root `/` for the Home page, with localized error messaging and disabled Create button.
+- **Inline Edit Focus Fix**: Moved `onBlur` handling to parent wrapper in `PageItem.tsx` using `relatedTarget`, allowing fluid focus switching between Name and Path inputs without closing the editor.
+- **Accessible Action Tooltips**: Added descriptive tooltips and aria-labels for Rename, Set as Home, Delete, and SEO settings.
+
+## [25.16.1] — 2026-10-17
+
+### Task 011 — Visual & interactive state verification via Chrome DevTools MCP (Patch)
+
+- **Live State Verification**: Verified 100% demo-product parity and action interceptors directly in Chrome DevTools MCP.
+- **Screenshot Storage Budget**: Enforced 30MB / 25 files limit via `pnpm prune:screenshots` and updated `.gitignore`.
+
+## [25.16.0] — 2026-10-17
+
+### Task 010 — 100% Demo-Product parity with Capability Gate System (ADR-NB-022) (Minor)
+
+- **Unified Builder Surface**: Eliminated UI stripping between demo and registered users; demo runs 100% full builder chrome.
+- **Action Interceptor (`FeatureGateModal`)**: Replaced UI branching with modal paywall gate for Save, Pro Export, and AI operations.
+- **Seamless Draft Handover**: Demo edits cached to `localStorage["nova-demo-draft"]` and transferred to Supabase on signup.
+
 ## [25.15.0] — 2026-10-08
 
 ### Task 009 batch 9 — loose ends: profile page, field hints in AI rewrites, Welcome card, export without CDN (Minor)
