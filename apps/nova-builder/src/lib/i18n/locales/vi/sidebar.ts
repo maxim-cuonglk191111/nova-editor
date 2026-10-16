@@ -28,6 +28,8 @@ export const viSidebar: I18nSidebarDictionary = {
     metaDescription: "Mô tả meta",
     metaDescriptionPlaceholder: "Mô tả trang này cho công cụ tìm kiếm…",
     noindex: "Ẩn khỏi công cụ tìm kiếm (noindex)",
+    pathCollisionError: "Đường dẫn này đã được dùng cho một trang khác",
+    rootPathReserved: "Đường dẫn gốc / chỉ dành riêng cho trang chủ",
   },
   cssVars: {
     title: "Biến CSS",

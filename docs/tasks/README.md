@@ -18,6 +18,6 @@ screenshotted, reviewed and scored /10; a feature we cannot make work is hidden
 | [009](009-post-audit-coverage.md) | Close the gaps after the builder audit: regression, VI UI, outside-builder ease, visitor output, presets + two-level labels, AI chat panel in the left sidebar, AI provider research, process | In progress — batches 1–3 done (v25.12.1–25.14.0) |
 | [010](010-demo-product-parity-locks.md) | Demo & Product 100% UI Parity with Capability Gate / Lock System | Closed |
 | [011](011-visual-interactive-mcp-verification.md) | Visual & Interactive State Verification via Chrome DevTools MCP | Closed |
-| [012](012-pages-slug-autogen-and-routing-validation.md) | Pages Slug Auto-Generation, Route Collision Validation & Inline Edit Fix | Open |
+| [012](012-pages-slug-autogen-and-routing-validation.md) | Pages Slug Auto-Generation, Route Collision Validation & Inline Edit Fix | Closed |
 | [013](013-desktop-canvas-artboard-framing.md) | Desktop Canvas Artboard Framing & Viewport Squeeze Prevention | Open |
 

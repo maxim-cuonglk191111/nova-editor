@@ -1,5 +1,14 @@
 # Nova — Verified Feature Ledger
 
+## nova-builder / v25.16.2 — Pages Slug Auto-Generation, Route Collision Validation & Inline Edit Fix (Task 012) (2026-10-17)
+
+| ID | Feature | Status | Visual Evidence |
+|---|---|---|---|
+| PAGES-SLUG1 | Auto-slug generation: typing page name automatically generates URL-friendly slug with full diacritics removal (e.g. "Giới thiệu" → `/gioi-thieu`) | 🟢 | `doc/screenshots/08-pages-panel-slug-validation.png` |
+| PAGES-COLL1 | Route collision validation: blocks duplicate routes (e.g. `/` reserved for Home) and disables Create button with localized error | 🟢 | `doc/screenshots/08-pages-panel-slug-validation.png` |
+| PAGES-EDIT1 | Inline edit container blur fix: moving focus between Name and Path inputs does not dismiss editor | 🟢 | `doc/screenshots/08-pages-panel-slug-validation.png` |
+| PAGES-TIP1 | Accessible action button tooltips: Rename, Make Home, Delete, and SEO settings include descriptive localized labels | 🟢 | `doc/screenshots/08-pages-panel-slug-validation.png` |
+
 ## nova-builder / v25.16.1 — Visual & Interactive State Verification via Chrome DevTools MCP (Task 011) (2026-10-17)
 
 | ID | Feature | Status | Visual Evidence |

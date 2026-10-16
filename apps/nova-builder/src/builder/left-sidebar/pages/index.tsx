@@ -1,11 +1,11 @@
-﻿"use client";
+"use client";
 import { useState } from "react";
 import { useStore } from "@nanostores/react";
 import { $pages } from "@/lib/data-stores";
 import { $selectedPageId } from "@/lib/nano-states";
 import { PageItem } from "./PageItem";
 import { FolderItem } from "./FolderItem";
-import { usePageCrud } from "./usePageCrud";
+import { usePageCrud, toSlug } from "./usePageCrud";
 import type { PageSeo } from "./usePageCrud";
 import { UI_VARS as C } from "@/lib/uiTheme";
 import { useI18n, fmt } from "@/lib/i18n";
@@ -35,6 +35,7 @@ export function PagesPanel() {
   const [showNewFolder, setShowNewFolder] = useState(false);
   const [newName, setNewName] = useState("");
   const [newPath, setNewPath] = useState("/");
+  const [isPathManual, setIsPathManual] = useState(false);
   const [newFolderName, setNewFolderName] = useState("");
 
   if (!pages) {
@@ -46,6 +47,15 @@ export function PagesPanel() {
   const activePageId = selectedPageId ?? pagesData.homePageId;
   const canDelete = pagesData.pages.size > 1;
 
+  // Path normalization & duplicate validation
+  const rawPath = newPath.trim();
+  const normalizedNewPath = rawPath ? (rawPath.startsWith("/") ? rawPath : `/${rawPath}`) : "/";
+  const isDuplicatePath = Array.from(pagesData.pages.values()).some((p) => p.path === normalizedNewPath);
+  const pathError = isDuplicatePath
+    ? (normalizedNewPath === "/" ? L.rootPathReserved : L.pathCollisionError)
+    : null;
+  const canSubmitPage = Boolean(newName.trim()) && !pathError;
+
   function toggleFolder(fid: string) {
     setExpandedFolders(prev => {
       const next = new Set(prev);
@@ -54,10 +64,32 @@ export function PagesPanel() {
     });
   }
 
+  function handleNameChange(val: string) {
+    setNewName(val);
+    if (!isPathManual) {
+      const slug = toSlug(val);
+      setNewPath(slug ? `/${slug}` : "/");
+    }
+  }
+
+  function handlePathChange(val: string) {
+    setNewPath(val);
+    setIsPathManual(true);
+  }
+
+  function handleCancelNewPage() {
+    setShowNewPage(false);
+    setNewName("");
+    setNewPath("/");
+    setIsPathManual(false);
+  }
+
   function handleCreatePage() {
-    if (!newName.trim()) return;
-    createPage(newName.trim(), newPath.trim() || "/");
-    setNewName(""); setNewPath("/"); setShowNewPage(false);
+    if (!canSubmitPage) return;
+    const ok = createPage(newName.trim(), normalizedNewPath);
+    if (ok) {
+      handleCancelNewPage();
+    }
   }
 
   function handleCreateFolder() {
@@ -142,20 +174,70 @@ export function PagesPanel() {
       {/* New page form */}
       {showNewPage && (
         <div style={{ padding: "8px 10px", borderTop: `1px solid ${C.border}`, display: "flex", flexDirection: "column", gap: 4, flexShrink: 0 }}>
-          <input autoFocus value={newName} onChange={(e) => setNewName(e.target.value)} placeholder={L.pageName}
-            onKeyDown={(e) => { if (e.key === "Enter") handleCreatePage(); if (e.key === "Escape") { setShowNewPage(false); setNewName(""); setNewPath("/"); } }}
-            style={inputStyle} />
-          <input value={newPath} onChange={(e) => setNewPath(e.target.value)} placeholder={L.pathPlaceholder}
-            onKeyDown={(e) => { if (e.key === "Enter") handleCreatePage(); if (e.key === "Escape") { setShowNewPage(false); } }}
-            style={{ ...inputStyle, border: "1px solid rgba(255,255,255,0.1)", color: C.textMuted, fontFamily: C.fontMono, fontSize: 13 }} />
-          {newPath.includes("[") && (
+          <input
+            autoFocus
+            value={newName}
+            onChange={(e) => handleNameChange(e.target.value)}
+            placeholder={L.pageName}
+            onKeyDown={(e) => { if (e.key === "Enter") handleCreatePage(); if (e.key === "Escape") handleCancelNewPage(); }}
+            style={inputStyle}
+          />
+          <input
+            value={newPath}
+            onChange={(e) => handlePathChange(e.target.value)}
+            placeholder={L.pathPlaceholder}
+            onKeyDown={(e) => { if (e.key === "Enter") handleCreatePage(); if (e.key === "Escape") handleCancelNewPage(); }}
+            style={{
+              ...inputStyle,
+              border: pathError ? `1px solid ${C.danger}` : "1px solid rgba(255,255,255,0.1)",
+              color: pathError ? C.danger : C.textMuted,
+              fontFamily: C.fontMono,
+              fontSize: 13,
+            }}
+          />
+          {pathError && (
+            <div style={{ fontSize: 11, color: C.danger, fontFamily: C.font, marginTop: -2 }}>
+              {pathError}
+            </div>
+          )}
+          {newPath.includes("[") && !pathError && (
             <div style={{ fontSize: 10, color: C.accentText, fontFamily: C.font, marginTop: -2 }}>
               {L.pathParamHintBefore} <code style={{ fontFamily: C.fontMono }}>/[slug]</code> {L.pathParamHintAfter}
             </div>
           )}
           <div style={{ display: "flex", gap: 6, marginTop: 2 }}>
-            <button onClick={handleCreatePage} style={{ flex: 1, padding: "4px 0", background: "rgba(139,92,246,0.25)", border: "1px solid rgba(139,92,246,0.5)", borderRadius: 4, color: "#c4b5fd", fontSize: 13, fontFamily: C.font, cursor: "pointer" }}>{L.create}</button>
-            <button onClick={() => { setShowNewPage(false); setNewName(""); setNewPath("/"); }} style={{ padding: "4px 10px", background: "none", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 4, color: C.textMuted, fontSize: 13, fontFamily: C.font, cursor: "pointer" }}>{L.cancel}</button>
+            <button
+              onClick={handleCreatePage}
+              disabled={!canSubmitPage}
+              style={{
+                flex: 1,
+                padding: "4px 0",
+                background: canSubmitPage ? "rgba(139,92,246,0.25)" : "rgba(255,255,255,0.05)",
+                border: `1px solid ${canSubmitPage ? "rgba(139,92,246,0.5)" : "rgba(255,255,255,0.1)"}`,
+                borderRadius: 4,
+                color: canSubmitPage ? "#c4b5fd" : C.textMuted,
+                fontSize: 13,
+                fontFamily: C.font,
+                cursor: canSubmitPage ? "pointer" : "not-allowed",
+              }}
+            >
+              {L.create}
+            </button>
+            <button
+              onClick={handleCancelNewPage}
+              style={{
+                padding: "4px 10px",
+                background: "none",
+                border: "1px solid rgba(255,255,255,0.1)",
+                borderRadius: 4,
+                color: C.textMuted,
+                fontSize: 13,
+                fontFamily: C.font,
+                cursor: "pointer",
+              }}
+            >
+              {L.cancel}
+            </button>
           </div>
         </div>
       )}

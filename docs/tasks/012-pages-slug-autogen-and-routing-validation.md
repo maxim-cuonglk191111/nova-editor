@@ -1,7 +1,8 @@
 # Task 012 — Pages Slug Auto-Generation, Route Collision Validation & Inline Edit Fix
 
-- **Status:** Open
+- **Status:** Closed
 - **Filed:** 2026-10-17
+- **Resolved:** 2026-10-17
 - **Owner:** Antigravity / Claude Code
 - **Severity:** High (Routing & Data Integrity: Prevents duplicate `/` routes, auto-generates SEO-friendly slugs, fixes path editing UX)
 
@@ -46,8 +47,11 @@
 
 ## 3. Acceptance Criteria
 
-- [ ] Typing "About Us" in New Page automatically sets path to `/about-us`.
-- [ ] Attempting to set path to an existing page path displays an inline validation error and blocks creation.
-- [ ] Double-clicking a page item allows seamlessly editing both Name and Path before saving on outside click or Enter.
-- [ ] 0 hardcoded strings (`node scripts/i18n-audit.mjs --max=0`).
-- [ ] Typecheck passes with 0 errors (`pnpm --filter @nova/builder typecheck`).
+- [x] Typing "About Us" in New Page automatically sets path to `/about-us`.
+- [x] Typing Vietnamese strings with diacritics (e.g., "Giới thiệu công ty") auto-slugs cleanly to `/gioi-thieu-cong-ty`.
+- [x] Attempting to set path to an existing page path displays an inline validation error and blocks creation.
+- [x] Double-clicking a page item allows seamlessly editing both Name and Path before saving on outside click or Enter.
+- [x] 0 hardcoded strings (`node scripts/i18n-audit.mjs --max=0`).
+- [x] Typecheck passes with 0 errors (`pnpm --filter @nova/builder typecheck`).
+- [x] Unit tests pass (`vitest run` on `pages-slug.test.ts`).
+- [x] Visual verification via Chrome DevTools MCP completed and recorded in `doc/screenshots/08-pages-panel-slug-validation.png`.

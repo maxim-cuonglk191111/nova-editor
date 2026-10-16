@@ -6,8 +6,15 @@ import type { Page } from "@webstudio-is/sdk";
 import { updateData } from "@/lib/transactions";
 import { uid } from "@/lib/uid";
 
-function toSlug(name: string): string {
-  return name.toLowerCase().replace(/[^a-z0-9-]/g, "-").replace(/-+/g, "-").replace(/^-|-$/g, "");
+export function toSlug(name: string): string {
+  return name
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[đĐ]/g, "d")
+    .toLowerCase()
+    .replace(/[^a-z0-9-]/g, "-")
+    .replace(/-+/g, "-")
+    .replace(/^-|-$/g, "");
 }
 
 export type PageSeo = {
@@ -31,10 +38,16 @@ export type PageBasicAuth = {
 };
 
 export function usePageCrud() {
-  function createPage(name: string, path: string): void {
+  function createPage(name: string, path: string): boolean {
+    const normalizedPath = path.startsWith("/") ? path : `/${path}`;
     const pageId = uid("page_");
     const rootInstId = uid("inst_");
+    let success = false;
+
     updateData(({ pages, instances }) => {
+      const isDuplicate = Array.from(pages.pages.values()).some((p) => p.path === normalizedPath);
+      if (isDuplicate) return;
+
       instances.set(rootInstId, {
         type: "instance" as const,
         id: rootInstId,
@@ -46,7 +59,7 @@ export function usePageCrud() {
         id: pageId,
         name,
         title: name,
-        path: path.startsWith("/") ? path : `/${path}`,
+        path: normalizedPath,
         rootInstanceId: rootInstId,
         meta: {},
       } as Page);
@@ -57,19 +70,34 @@ export function usePageCrud() {
           rootFolder.children = [...(rootFolder.children ?? []), pageId];
         }
       }
+      success = true;
     });
+
+    return success;
   }
 
-  function renamePage(pageId: string, name: string, path: string): void {
+  function renamePage(pageId: string, name: string, path: string): boolean {
+    const normalizedPath = path.startsWith("/") ? path : `/${path}`;
+    let success = false;
+
     updateData(({ pages }) => {
       const page = pages.pages.get(pageId);
       if (!page) return;
+
+      const isDuplicate = Array.from(pages.pages.values()).some(
+        (p) => p.id !== pageId && p.path === normalizedPath
+      );
+      if (isDuplicate) return;
+
       pages.pages.set(pageId, {
         ...page,
         name,
-        path: path.startsWith("/") ? path : `/${path}`,
+        path: normalizedPath,
       } as Page);
+      success = true;
     });
+
+    return success;
   }
 
   function updatePageSeo(pageId: string, seo: PageSeo): void {

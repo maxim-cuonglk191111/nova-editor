@@ -29,6 +29,8 @@ export interface I18nPagesPanelDictionary {
   metaDescription: string;
   metaDescriptionPlaceholder: string;
   noindex: string;
+  pathCollisionError: string;
+  rootPathReserved: string;
 }
 
 export interface I18nCssVarsPanelDictionary {

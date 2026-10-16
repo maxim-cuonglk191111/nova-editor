@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 import { useState, useRef } from "react";
 import type { PageSeo } from "./usePageCrud";
 import { UI_VARS as C } from "@/lib/uiTheme";
@@ -48,8 +48,11 @@ const actionStyle: React.CSSProperties = {
   cursor: "pointer",
   fontSize: 13,
   lineHeight: 1,
-  padding: "2px 4px",
-  borderRadius: 3,
+  padding: "3px 6px",
+  borderRadius: 4,
+  display: "inline-flex",
+  alignItems: "center",
+  justifyContent: "center",
 };
 
 type PageItemProps = {
@@ -72,7 +75,8 @@ export function PageItem({ page, status, handlers }: PageItemProps) {
 
   function commitEdit() {
     const newName = nameRef.current?.value.trim() || name;
-    const newPath = pathRef.current?.value.trim() || path;
+    let newPath = pathRef.current?.value.trim() || path;
+    if (!newPath.startsWith("/")) newPath = `/${newPath}`;
     setIsEditing(false);
     if (newName !== name || newPath !== path) onRename(newName, newPath);
   }
@@ -84,11 +88,38 @@ export function PageItem({ page, status, handlers }: PageItemProps) {
 
   if (isEditing) {
     return (
-      <div style={{ padding: "6px 10px", display: "flex", flexDirection: "column", gap: 4, background: "rgba(255,255,255,0.04)", borderLeft: `2px solid ${C.activeBorder}` }}>
-        <input ref={nameRef} autoFocus defaultValue={name} placeholder={L.pageName} onKeyDown={handleKeyDown} onBlur={commitEdit}
-          style={{ ...inputStyle, border: `1px solid rgba(139,92,246,0.4)` }} />
-        <input ref={pathRef} defaultValue={path} placeholder={L.pathShortPlaceholder} onKeyDown={handleKeyDown} onBlur={commitEdit}
-          style={{ ...inputStyle, fontFamily: C.fontMono, color: C.textMuted }} />
+      <div
+        tabIndex={-1}
+        onBlur={(e) => {
+          if (!e.currentTarget.contains(e.relatedTarget as Node | null)) {
+            commitEdit();
+          }
+        }}
+        style={{
+          padding: "6px 10px",
+          display: "flex",
+          flexDirection: "column",
+          gap: 4,
+          background: "rgba(255,255,255,0.04)",
+          borderLeft: `2px solid ${C.activeBorder}`,
+          outline: "none",
+        }}
+      >
+        <input
+          ref={nameRef}
+          autoFocus
+          defaultValue={name}
+          placeholder={L.pageName}
+          onKeyDown={handleKeyDown}
+          style={{ ...inputStyle, border: `1px solid rgba(139,92,246,0.4)` }}
+        />
+        <input
+          ref={pathRef}
+          defaultValue={path}
+          placeholder={L.pathShortPlaceholder}
+          onKeyDown={handleKeyDown}
+          style={{ ...inputStyle, fontFamily: C.fontMono, color: C.textMuted }}
+        />
       </div>
     );
   }

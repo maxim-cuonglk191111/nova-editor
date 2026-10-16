@@ -28,6 +28,8 @@ export const enSidebar: I18nSidebarDictionary = {
     metaDescription: "Meta description",
     metaDescriptionPlaceholder: "Describe this page for search engines…",
     noindex: "Exclude from search engines (noindex)",
+    pathCollisionError: "Path already exists on another page",
+    rootPathReserved: "Root path / is reserved for the home page",
   },
   cssVars: {
     title: "CSS Variables",
