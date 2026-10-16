@@ -1,7 +1,8 @@
 # Task 013 — Desktop Canvas Artboard Framing & Viewport Squeeze Prevention
 
-- **Status:** Open
+- **Status:** Closed
 - **Filed:** 2026-10-17
+- **Resolved:** 2026-10-17
 - **Owner:** Antigravity / Claude Code
 - **Severity:** High (Core WYSIWYG Integrity: Fixes canvas viewport being squeezed below standard Desktop dimensions when sidebars are expanded)
 
@@ -27,22 +28,27 @@
 
 ### A. Desktop Artboard Base Width
 - Desktop breakpoint should represent a genuine desktop screen width:
-  - Standard Desktop artboard width: `1280px` (or configurable in breakpoint manager, minimum `1200px`).
-  - Instead of `canvasMaxWidth = "100%"`, use a defined base desktop width (e.g. `1280px` or `min(100%, 1280px)` with fit-zoom).
+  - Standard Desktop artboard width: `1280px` (`const DESKTOP_CANVAS_WIDTH = 1280`).
+  - Instead of `canvasMaxWidth = "100%"`, use standard base desktop width (`1280px`).
 
-### B. Auto-Fit Scaling or Horizontal Canvas Scroll
+### B. Auto-Fit Scaling & Screen Framing
 - When available container space between sidebars is smaller than `1280px`:
-  - Provide an automatic **Fit to Width** toggle or scale the canvas cleanly using the existing `scale(zoom)` transform (e.g. scaling down proportionally so the 1280px layout stays completely intact without media-query triggering premature mobile styles).
-  - Alternatively, keep `1280px` fixed and allow horizontal panning/scrolling, preserving exact desktop media queries (`@media (min-width: 1024px)`).
+  - Canvas automatically computes `fitZoom = Math.min(1, containerWidth / targetWidth)` and applies `scale(fitZoom)`.
+  - Added dedicated Fit button (`⊡`) in Topbar zoom controls and wired to `Ctrl+Shift+1`.
+  - Scaled wrapper adjusts horizontal/vertical margins proportionally (`margin: calc(W * (zoom-1)/2)`) so ghost scrollbars are eliminated.
+  - Artboard styled with modern elevated drop shadow (`box-shadow: 0 10px 30px -5px rgba(0,0,0,0.15)`), rounded corners, and padding.
 
 ### C. Visual Non-Regression
-- Verify with Chrome DevTools MCP: Desktop breakpoint renders true 1280px artboard with zero Hero text wrapping or button clipping.
+- Verified with Chrome DevTools MCP: Desktop breakpoint renders true 1280px artboard with zero Hero text wrapping or button clipping.
 
 ---
 
 ## 3. Acceptance Criteria
 
-- [ ] Canvas in Desktop mode retains standard desktop artboard width ($\ge 1200\text{px}$) instead of shrinking to available sidebar deficit.
-- [ ] Responsive text and hero sections render as true desktop layouts without premature wrapping.
-- [ ] Fit-to-screen zoom button works seamlessly to fit 1280px canvas into narrower viewports.
-- [ ] Tested and verified with Chrome DevTools MCP visual captures.
+- [x] Canvas in Desktop mode retains standard desktop artboard width ($\ge 1200\text{px}$) instead of shrinking to available sidebar deficit.
+- [x] Responsive text and hero sections render as true desktop layouts without premature wrapping.
+- [x] Fit-to-screen zoom button (`⊡`) and `Ctrl+Shift+1` work seamlessly to fit 1280px canvas into narrower viewports.
+- [x] Switching between breakpoints dynamically auto-fits to available screen width (e.g. 100% on Mobile, proportional fit on Desktop).
+- [x] 0 hardcoded strings (`node scripts/i18n-audit.mjs --max=0`).
+- [x] Typecheck passes with 0 errors (`pnpm --filter @nova/builder typecheck`).
+- [x] Visual verification via Chrome DevTools MCP completed and recorded in `doc/screenshots/09-desktop-artboard-framing.png`.

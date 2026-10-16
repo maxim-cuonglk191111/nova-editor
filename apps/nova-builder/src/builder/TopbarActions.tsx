@@ -24,6 +24,7 @@ import {
   $perfPanelOpen,
   $historyPanelOpen,
   $canvasZoom,
+  $fitToWidthTrigger,
   $gridGuidesVisible,
   $cssPreviewOpen,
   $cssVars,
@@ -406,6 +407,7 @@ export function TopbarActions({ isDemo }: Props) {
           {Math.round(canvasZoom * 100)}%
         </button>
         <button onClick={handleZoomIn} title={t.chrome.zoomIn} style={{ background: "none", border: "none", cursor: "pointer", color: C.textMuted, fontSize: 14, lineHeight: 1, padding: "2px 7px", fontFamily: C.font }}>+</button>
+        <button onClick={() => $fitToWidthTrigger.set($fitToWidthTrigger.get() + 1)} title={t.chrome.zoomFit} style={{ background: "none", border: "none", borderLeft: `1px solid ${C.border}`, cursor: "pointer", color: C.textMuted, fontSize: 12, lineHeight: 1, padding: "2px 7px", fontFamily: C.font }}>⊡</button>
       </div>
 
       {/* Right action area — unified controls (ADR-NB-022: zero JSX branching on isDemo) */}

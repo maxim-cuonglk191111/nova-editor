@@ -171,6 +171,9 @@ export const $multiSelectedInstanceIds = atom<string[]>([]);
 // Applied as transform: scale() on the wrapper div around the iframe.
 export const $canvasZoom = atom<number>(1);
 
+// Fit-to-width trigger — incremented when user clicks the Fit button or triggers fit shortcut
+export const $fitToWidthTrigger = atom<number>(0);
+
 // Command palette open/close (⌘K trigger)
 export const $commandPaletteOpen = atom<boolean>(false);
 

@@ -4,6 +4,7 @@ export const enChrome: I18nChromeDictionary = {
   zoomOut: "Zoom out",
   zoomReset: "Reset zoom (Ctrl+0)",
   zoomIn: "Zoom in",
+  zoomFit: "Fit to screen (Ctrl+Shift+1)",
   preview: "Preview",
   saving: "Saving...",
   saveFailedRetry: "Failed. Retry?",

@@ -4,6 +4,7 @@ export const viChrome: I18nChromeDictionary = {
   zoomOut: "Thu nhỏ",
   zoomReset: "Đặt lại thu phóng (Ctrl+0)",
   zoomIn: "Phóng to",
+  zoomFit: "Vừa màn hình (Ctrl+Shift+1)",
   preview: "Xem trước",
   saving: "Đang lưu...",
   saveFailedRetry: "Lỗi. Thử lại?",

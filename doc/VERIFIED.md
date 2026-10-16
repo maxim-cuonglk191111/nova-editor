@@ -1,5 +1,14 @@
 # Nova — Verified Feature Ledger
 
+## nova-builder / v25.16.3 — Desktop Canvas Artboard Framing & Viewport Squeeze Prevention (Task 013) (2026-10-17)
+
+| ID | Feature | Status | Visual Evidence |
+|---|---|---|---|
+| CANVAS-BASE1 | Desktop artboard standard width: base breakpoint defaults to 1280px rather than fluid 100% collapse | 🟢 | `doc/screenshots/09-desktop-artboard-framing.png` |
+| CANVAS-SQUEEZE1 | Anti-squeeze responsive protection: available container deficit triggers proportional fitZoom rather than collapsing layout to mobile | 🟢 | `doc/screenshots/09-desktop-artboard-framing.png` |
+| CANVAS-FIT1 | Topbar Fit-to-screen button (`⊡`) & `Ctrl+Shift+1`: dynamically fits canvas artboard to container width | 🟢 | `doc/screenshots/09-desktop-artboard-framing.png` |
+| CANVAS-FRAME1 | Elevated artboard styling: studio dark/light background, subtle elevation shadow, rounded corners, zero ghost scrollbars | 🟢 | `doc/screenshots/09-desktop-artboard-framing.png` |
+
 ## nova-builder / v25.16.2 — Pages Slug Auto-Generation, Route Collision Validation & Inline Edit Fix (Task 012) (2026-10-17)
 
 | ID | Feature | Status | Visual Evidence |

@@ -81,6 +81,7 @@ export interface I18nChromeDictionary {
   zoomOut: string;
   zoomReset: string;
   zoomIn: string;
+  zoomFit: string;
   preview: string;
   saving: string;
   saveFailedRetry: string;

@@ -19,5 +19,5 @@ screenshotted, reviewed and scored /10; a feature we cannot make work is hidden
 | [010](010-demo-product-parity-locks.md) | Demo & Product 100% UI Parity with Capability Gate / Lock System | Closed |
 | [011](011-visual-interactive-mcp-verification.md) | Visual & Interactive State Verification via Chrome DevTools MCP | Closed |
 | [012](012-pages-slug-autogen-and-routing-validation.md) | Pages Slug Auto-Generation, Route Collision Validation & Inline Edit Fix | Closed |
-| [013](013-desktop-canvas-artboard-framing.md) | Desktop Canvas Artboard Framing & Viewport Squeeze Prevention | Open |
+| [013](013-desktop-canvas-artboard-framing.md) | Desktop Canvas Artboard Framing & Viewport Squeeze Prevention | Closed |
 

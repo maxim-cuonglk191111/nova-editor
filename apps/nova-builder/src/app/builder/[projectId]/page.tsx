@@ -34,7 +34,7 @@ import {
   $styleSourceSelections,
 } from "@/lib/data-stores";
 import {
-  $selectedBreakpoint, $aiPanelOpen, $aiInitialPrompt, $canvasZoom, $gridGuidesVisible,
+  $selectedBreakpoint, $aiPanelOpen, $aiInitialPrompt, $canvasZoom, $fitToWidthTrigger, $gridGuidesVisible,
   $selectedInstanceSelector, $pendingCanvasMsg,
   $cssVars, $interactions, $customCss, $isDirty, $saveTriggerCount, $importKey,
 } from "@/lib/nano-states";
@@ -69,6 +69,8 @@ import { SafeModeBanner } from "@/builder/SafeModeBanner";
 import { NestingToast } from "@/builder/NestingToast";
 import { FeatureGateModal } from "@/builder/FeatureGateModal";
 
+const DESKTOP_CANVAS_WIDTH = 1280;
+
 function BuilderPage() {
   const { t } = useI18n();
   const params = useParams<{ projectId: string }>();
@@ -87,7 +89,9 @@ function BuilderPage() {
 
   const selectedBreakpoint = useStore($selectedBreakpoint);
   const canvasZoom = useStore($canvasZoom);
-  const canvasMaxWidth = selectedBreakpoint?.maxWidth ? `${selectedBreakpoint.maxWidth}px` : "100%";
+  const canvasMaxWidth = selectedBreakpoint?.maxWidth
+    ? `${selectedBreakpoint.maxWidth}px`
+    : `${DESKTOP_CANVAS_WIDTH}px`;
   const gridGuidesVisible = useStore($gridGuidesVisible);
   const builderTheme = useStore($builderTheme);
 
@@ -213,15 +217,36 @@ function BuilderPage() {
   const fitToWidth = useCallback(() => {
     const container = canvasAreaRef.current;
     const bp = $selectedBreakpoint.get();
-    if (!container || !bp?.maxWidth) {
-      // Desktop (no maxWidth): canvas fills container naturally → 100%
-      $canvasZoom.set(1);
-      return;
-    }
-    const containerW = container.clientWidth;
-    const fitZoom = Math.min(1, containerW / bp.maxWidth);
-    $canvasZoom.set(Math.round(fitZoom * 100) / 100);
+    const targetWidth = bp?.maxWidth ?? DESKTOP_CANVAS_WIDTH;
+    if (!container) return;
+    const padding = 32;
+    const containerW = container.clientWidth - padding;
+    if (containerW <= 0) return;
+    const fitZoom = Math.min(1, containerW / targetWidth);
+    $canvasZoom.set(Math.max(0.2, Math.round(fitZoom * 100) / 100));
   }, []);
+
+  // Listen for external trigger from TopbarActions Fit button
+  useEffect(() => {
+    return $fitToWidthTrigger.subscribe((count) => {
+      if (count > 0) fitToWidth();
+    });
+  }, [fitToWidth]);
+
+  // Auto-fit on breakpoint change or initial project load
+  useEffect(() => {
+    if (loadState !== "ready") return;
+    const container = canvasAreaRef.current;
+    if (!container) return;
+    const targetWidth = selectedBreakpoint?.maxWidth ?? DESKTOP_CANVAS_WIDTH;
+    const containerW = container.clientWidth - 32;
+    if (containerW > 0 && containerW < targetWidth) {
+      const fitZoom = Math.min(1, containerW / targetWidth);
+      $canvasZoom.set(Math.max(0.2, Math.round(fitZoom * 100) / 100));
+    } else {
+      $canvasZoom.set(1);
+    }
+  }, [selectedBreakpoint, loadState]);
 
   // ── Auto-open AI panel with pending prompt for new empty sites ───────────────
   useEffect(() => {
@@ -311,12 +336,13 @@ function BuilderPage() {
         ref={canvasAreaRef}
         style={{
           gridArea: "main",
-          background: "#e5e7eb",
+          background: builderTheme === "dark" ? "#0b0f19" : "#e5e7eb",
           display: "flex",
           alignItems: "flex-start",
-          justifyContent: "center",
+          justifyContent: "safe center",
           overflow: "auto",
           position: "relative",
+          padding: "16px",
         }}
       >
         {/* Live collaborator cursors (P56) */}
@@ -353,13 +379,14 @@ function BuilderPage() {
               transformOrigin: "top center",
               flexShrink: 0,
               width: canvasMaxWidth,
-              // Extend the layout footprint to match the visual size at zoom > 1,
-              // so the outer container gains a real scrollable area.
-              // Formula: visual height = H * zoom; layout height = H; deficit = H*(zoom-1)
-              marginBottom: canvasZoom > 1
-                ? `calc((100vh - 80px) * ${canvasZoom - 1})`
-                : 0,
-              transition: "transform 0.12s ease",
+              marginLeft: `calc(${canvasMaxWidth} * ${(canvasZoom - 1) / 2})`,
+              marginRight: `calc(${canvasMaxWidth} * ${(canvasZoom - 1) / 2})`,
+              marginBottom: `calc((100vh - 112px) * ${canvasZoom - 1})`,
+              boxShadow: "0 10px 30px -5px rgba(0, 0, 0, 0.15), 0 4px 10px -2px rgba(0, 0, 0, 0.08)",
+              borderRadius: 6,
+              overflow: "hidden",
+              background: "#ffffff",
+              transition: "transform 0.12s ease, width 0.2s ease",
             }}
           >
             <iframe
@@ -368,10 +395,8 @@ function BuilderPage() {
               src={`/canvas?theme=${builderTheme}${canvasKey > 0 ? `&v=${canvasKey}` : ""}`}
               onLoad={onIframeLoad}
               style={{
-                // Explicit pixel height so the scale wrapper has known dimensions.
-                // 80px = topbar (44px) + footer (36px).
                 width: "100%",
-                height: "calc(100vh - 80px)",
+                height: "calc(100vh - 112px)",
                 border: "none",
                 display: "block",
                 transition: "width 0.2s ease",
