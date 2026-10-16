@@ -2,6 +2,17 @@
 
 ---
 
+## [25.16.4] — 2026-10-17
+
+### Task 009 batch 5 — presets & two-level labels for dual audience ease (Patch)
+
+- **Two-Level Labels**: Each style and effect control renders a friendly plain-language localized label on top and a subtle monospace CSS property tag underneath (`margin`, `padding`, `box-shadow`, `text-shadow`, `background-image`, `transform`, `transition`, `animation`, `filter`, `backdrop-filter`).
+- **Breakpoint Device Presets & Media Query Hints**: Added 1-click device presets bar in the Breakpoint Manager (`Phone ≤479px`, `Phone Landscape ≤767px`, `Tablet ≤991px`, `Laptop ≤1280px`) and real-time `@media (...)` condition preview for every breakpoint.
+- **Spacing Scale Presets (`[0] [S] [M] [L] [XL]`)**: Added instant 1-click preset scale buttons (0px, 8px, 16px, 24px, 32px) directly underneath numeric inputs for margin, padding, gap, and border radius.
+- **Box Shadow Presets**: Added 1-click shadow presets (`Subtle`, `Card`, `Elevated`, `Glow`) for instant elevation modeling.
+- **Grid Layout Presets**: Added common grid layout presets (`2 Columns`, `3 Cards`, `Sidebar + Content`, `Auto Cards`) in GridContainerPanel.
+- **100% Bilingual & Zero Hardcoded Strings**: Full en and vi translations added across all preset bars, tooltips, and hints (`node scripts/i18n-audit.mjs --max=0`).
+
 ## [25.16.3] — 2026-10-17
 
 ### Task 013 — Desktop canvas artboard framing & viewport squeeze prevention (Patch)

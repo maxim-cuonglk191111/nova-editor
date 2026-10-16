@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 import { useMemo } from "react";
 import { writeStyleProperty } from "@/lib/styleWriteHelper";
 import {
@@ -268,17 +268,21 @@ export function GradientPanel({ instanceId, currentCss }: GradientPanelProps) {
       <div style={{
         display: "flex", alignItems: "center", padding: "5px 12px", background: C.sectionBg,
       }}>
-        <span style={{
-          fontSize: 12, color: C.textMuted, fontFamily: C.font,
-          fontWeight: 700, letterSpacing: "0.07em", textTransform: "uppercase", flex: 1,
-        }}>
-          {E.gradient}
-          {gradients.length > 0 && (
-            <span style={{ color: C.textMuted, fontWeight: 400, marginLeft: 6 }}>
-              {gradients.length}
+        <div style={{ display: "flex", flexDirection: "column", flex: 1, lineHeight: 1.2 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+            <span style={{ fontSize: 12, color: C.textMuted, fontFamily: C.font, fontWeight: 700, letterSpacing: "0.07em", textTransform: "uppercase" }}>
+              {E.gradient}
             </span>
-          )}
-        </span>
+            {gradients.length > 0 && (
+              <span style={{ color: C.textMuted, fontWeight: 400 }}>
+                {gradients.length}
+              </span>
+            )}
+          </div>
+          <span style={{ fontSize: 10, color: C.textMuted, fontFamily: C.fontMono, opacity: 0.65 }}>
+            background-image
+          </span>
+        </div>
         <button
           onClick={addGradient}
           title={E.addGradient}

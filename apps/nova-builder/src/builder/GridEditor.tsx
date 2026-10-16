@@ -184,6 +184,17 @@ export function GridContainerPanel({
   const columns = parseTrackList(columnsCss);
   const rows = parseTrackList(rowsCss);
 
+  const layoutPresets = [
+    { label: E.twoColumns, value: "1fr 1fr", hint: "1fr 1fr" },
+    { label: E.threeColumns, value: "1fr 1fr 1fr", hint: "1fr 1fr 1fr" },
+    { label: E.sidebarContent, value: "260px 1fr", hint: "260px 1fr" },
+    { label: E.autoGrid, value: "repeat(auto-fit, minmax(240px, 1fr))", hint: "auto-fit" },
+  ];
+
+  function applyPreset(val: string) {
+    writeStyleProperty(instanceId, "gridTemplateColumns", val);
+  }
+
   return (
     <div style={{ borderBottom: `1px solid ${C.border}` }}>
       <div style={{ display: "flex", alignItems: "center", padding: "5px 12px", background: C.sectionBg }}>
@@ -199,6 +210,42 @@ export function GridContainerPanel({
           )}
         </span>
       </div>
+
+      {/* Layout Presets bar */}
+      <div style={{ padding: "6px 8px 4px", borderBottom: `1px solid ${C.border}`, background: "rgba(255,255,255,0.02)" }}>
+        <div style={{ fontSize: 10, color: C.textMuted, marginBottom: 4, fontWeight: 600 }}>
+          {E.layoutPresets}:
+        </div>
+        <div style={{ display: "flex", gap: 3, flexWrap: "wrap" }}>
+          {layoutPresets.map((lp) => {
+            const active = columnsCss.trim() === lp.value;
+            return (
+              <button
+                key={lp.hint}
+                onClick={() => applyPreset(lp.value)}
+                title={`${lp.label} (${lp.hint})`}
+                style={{
+                  padding: "2px 6px",
+                  borderRadius: 3,
+                  border: `1px solid ${active ? C.accentBorder : C.border}`,
+                  background: active ? "rgba(124,58,237,0.2)" : "transparent",
+                  color: active ? C.accentText : C.text,
+                  fontSize: 10,
+                  fontFamily: C.font,
+                  cursor: "pointer",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 3,
+                }}
+              >
+                <span>{lp.label}</span>
+                <span style={{ fontSize: 9, color: C.textMuted, fontFamily: C.fontMono }}>{lp.hint}</span>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
       <TrackSection label={E.columns} property="gridTemplateColumns" tracks={columns} instanceId={instanceId} />
       <TrackSection label={E.rows} property="gridTemplateRows" tracks={rows} instanceId={instanceId} />
     </div>

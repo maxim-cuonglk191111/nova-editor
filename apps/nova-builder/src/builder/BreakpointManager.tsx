@@ -99,6 +99,34 @@ export function BreakpointManager({ onClose }: { onClose: () => void }) {
     });
   }
 
+  function addPresetBreakpoint(name: string, minWidth?: number, maxWidth?: number) {
+    const id = uid("bp_");
+    updateData(({ breakpoints }) => {
+      breakpoints.set(id, { id, label: name, minWidth, maxWidth });
+    });
+  }
+
+  function getMediaCondition(bp: Breakpoint) {
+    if (isBase(bp)) return `@media (all)`;
+    if (bp.minWidth != null && bp.maxWidth != null) {
+      return `@media (min-width: ${bp.minWidth}px) and (max-width: ${bp.maxWidth}px)`;
+    }
+    if (bp.maxWidth != null) {
+      return `@media (max-width: ${bp.maxWidth}px)`;
+    }
+    if (bp.minWidth != null) {
+      return `@media (min-width: ${bp.minWidth}px)`;
+    }
+    return `@media (all)`;
+  }
+
+  const devicePresets = [
+    { key: "phone", label: B.presetPhone, minWidth: undefined, maxWidth: 479, query: "≤479px" },
+    { key: "phoneLand", label: B.presetPhoneLand, minWidth: 480, maxWidth: 767, query: "≤767px" },
+    { key: "tablet", label: B.presetTablet, minWidth: 768, maxWidth: 991, query: "≤991px" },
+    { key: "laptop", label: B.presetLaptop, minWidth: 992, maxWidth: 1280, query: "≤1280px" },
+  ];
+
   return (
     <div
       ref={ref}
@@ -113,7 +141,7 @@ export function BreakpointManager({ onClose }: { onClose: () => void }) {
         borderRadius: 6,
         boxShadow: "0 8px 32px rgba(0,0,0,0.5)",
         padding: "10px 12px",
-        minWidth: 420,
+        minWidth: 440,
         fontFamily: C.font,
       }}
     >
@@ -130,54 +158,93 @@ export function BreakpointManager({ onClose }: { onClose: () => void }) {
       </div>
 
       {sorted.map((bp) => (
-        <div key={bp.id} style={{ display: "grid", gridTemplateColumns: "1fr 100px 100px 24px", gap: 6, marginBottom: 5, alignItems: "center" }}>
-          <input
-            // Same name as the breakpoint buttons above (stored English defaults are shown translated).
-            value={bpFriendlyName(bp, t.tools.breakpointPills)}
-            onChange={(e) => updateLabel(bp.id, e.target.value)}
-            style={{ ...inputSt, width: "100%" }}
-          />
-          <input
-            type="number"
-            min={0}
-            value={bp.minWidth ?? ""}
-            placeholder={isBase(bp) ? "—" : "px"}
-            disabled={isBase(bp)}
-            onChange={(e) => updateMinWidth(bp.id, e.target.value)}
-            style={{ ...inputSt, width: "100%", opacity: isBase(bp) ? 0.4 : 1 }}
-          />
-          <input
-            type="number"
-            min={1}
-            value={bp.maxWidth ?? ""}
-            placeholder={isBase(bp) ? "—" : "px"}
-            title={isBase(bp) ? B.allSizes : undefined}
-            disabled={isBase(bp)}
-            onChange={(e) => updateMaxWidth(bp.id, e.target.value)}
-            style={{ ...inputSt, width: "100%", opacity: isBase(bp) ? 0.4 : 1 }}
-          />
-          {/* Raw media conditions are hidden (task 007: jargon); existing ones are kept. */}
-          <button
-            onClick={() => deleteBp(bp.id)}
-            disabled={isBase(bp)}
-            title={isBase(bp) ? B.baseCannotDelete : B.deleteBreakpoint}
-            style={{
-              background: "none",
-              border: "none",
-              color: isBase(bp) ? "rgba(255,255,255,0.1)" : C.danger,
-              cursor: isBase(bp) ? "default" : "pointer",
-              fontSize: 16,
-              lineHeight: 1,
-              padding: "0 2px",
-            }}
-          >×</button>
+        <div key={bp.id} style={{ marginBottom: 6 }}>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 100px 100px 24px", gap: 6, alignItems: "center" }}>
+            <input
+              // Same name as the breakpoint buttons above (stored English defaults are shown translated).
+              value={bpFriendlyName(bp, t.tools.breakpointPills)}
+              onChange={(e) => updateLabel(bp.id, e.target.value)}
+              style={{ ...inputSt, width: "100%" }}
+            />
+            <input
+              type="number"
+              min={0}
+              value={bp.minWidth ?? ""}
+              placeholder={isBase(bp) ? "—" : "px"}
+              disabled={isBase(bp)}
+              onChange={(e) => updateMinWidth(bp.id, e.target.value)}
+              style={{ ...inputSt, width: "100%", opacity: isBase(bp) ? 0.4 : 1 }}
+            />
+            <input
+              type="number"
+              min={1}
+              value={bp.maxWidth ?? ""}
+              placeholder={isBase(bp) ? "—" : "px"}
+              title={isBase(bp) ? B.allSizes : undefined}
+              disabled={isBase(bp)}
+              onChange={(e) => updateMaxWidth(bp.id, e.target.value)}
+              style={{ ...inputSt, width: "100%", opacity: isBase(bp) ? 0.4 : 1 }}
+            />
+            <button
+              onClick={() => deleteBp(bp.id)}
+              disabled={isBase(bp)}
+              title={isBase(bp) ? B.baseCannotDelete : B.deleteBreakpoint}
+              style={{
+                background: "none",
+                border: "none",
+                color: isBase(bp) ? "rgba(255,255,255,0.1)" : C.danger,
+                cursor: isBase(bp) ? "default" : "pointer",
+                fontSize: 16,
+                lineHeight: 1,
+                padding: "0 2px",
+              }}
+            >×</button>
+          </div>
+          {/* Two-level hint: technical CSS media condition */}
+          <div style={{ paddingLeft: 2, marginTop: 2 }}>
+            <span style={{ fontSize: 10, color: C.textMuted, fontFamily: C.fontMono, opacity: 0.65 }}>
+              {getMediaCondition(bp)}
+            </span>
+          </div>
         </div>
       ))}
+
+      {/* Device Presets quick bar */}
+      <div style={{ marginTop: 8, paddingTop: 6, borderTop: `1px solid ${C.border}` }}>
+        <div style={{ fontSize: 10, color: C.textMuted, marginBottom: 4, fontWeight: 600 }}>
+          {B.presets}:
+        </div>
+        <div style={{ display: "flex", gap: 4, flexWrap: "wrap", marginBottom: 6 }}>
+          {devicePresets.map((dp) => (
+            <button
+              key={dp.key}
+              onClick={() => addPresetBreakpoint(dp.label, dp.minWidth, dp.maxWidth)}
+              title={`${dp.label} (${dp.query})`}
+              style={{
+                padding: "2px 8px",
+                background: "rgba(255,255,255,0.04)",
+                border: `1px solid ${C.border}`,
+                borderRadius: 4,
+                color: C.text,
+                fontSize: 11,
+                fontFamily: C.font,
+                cursor: "pointer",
+                display: "flex",
+                alignItems: "center",
+                gap: 4,
+              }}
+            >
+              <span>{dp.label}</span>
+              <span style={{ fontSize: 9, color: C.textMuted, fontFamily: C.fontMono }}>{dp.query}</span>
+            </button>
+          ))}
+        </div>
+      </div>
 
       <button
         onClick={addBreakpoint}
         style={{
-          marginTop: 6,
+          marginTop: 4,
           width: "100%",
           padding: "4px 0",
           background: "rgba(124,58,237,0.12)",

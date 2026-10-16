@@ -1,5 +1,17 @@
 # Nova — Verified Feature Ledger
 
+## nova-builder / v25.16.4 — Presets & Two-Level Labels for Dual Audience Ease (Task 009 Batch 5) (2026-10-17)
+
+| ID | Feature | Status | Visual Evidence |
+|---|---|---|---|
+| PRESET-BP1 | Breakpoint device presets: Phone (≤479px), Phone Landscape (≤767px), Tablet (≤991px), Laptop (≤1280px) with 1-click addition | 🟢 | `doc/screenshots/10-presets-and-two-level-labels.png` |
+| PRESET-MEDIA1 | Media query two-level condition hint: displays subtle `@media (...)` under each breakpoint row | 🟢 | `doc/screenshots/10-presets-and-two-level-labels.png` |
+| PRESET-SCALE1 | Spacing scale presets: `[0] [S] [M] [L] [XL]` (0px, 8px, 16px, 24px, 32px) for instant 1-click styling next to numeric inputs | 🟢 | `doc/screenshots/10-presets-and-two-level-labels.png` |
+| PRESET-SHADOW1 | Box Shadow presets: Subtle, Card, Elevated, Glow with instant multi-layer elevation setup | 🟢 | `doc/screenshots/10-presets-and-two-level-labels.png` |
+| PRESET-GRID1 | Grid layout presets: 2 Columns, 3 Cards, Sidebar + Content, Auto Cards in GridContainerPanel | 🟢 | `doc/screenshots/10-presets-and-two-level-labels.png` |
+| LABEL-DUAL1 | Two-level labeling: Friendly localized label on top with subtle monospace CSS property tag underneath across Style rows, Shadow, Gradient, Transform, Transition, Animation, Filter, and Backdrop Filter | 🟢 | `doc/screenshots/10-presets-and-two-level-labels.png` |
+| I18N-BATCH5 | 100% bilingual dictionary (en/vi) for all presets and hints, 0 hardcoded strings verified via `node scripts/i18n-audit.mjs --max=0` | 🟢 | `doc/screenshots/10-presets-and-two-level-labels.png` |
+
 ## nova-builder / v25.16.3 — Desktop Canvas Artboard Framing & Viewport Squeeze Prevention (Task 013) (2026-10-17)
 
 | ID | Feature | Status | Visual Evidence |

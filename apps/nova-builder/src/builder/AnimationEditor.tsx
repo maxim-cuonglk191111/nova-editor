@@ -123,7 +123,7 @@ export function AnimationPanel({ instanceId, currentCss }: PanelProps) {
 
   return (
     <div style={{ borderBottom: `1px solid ${C.border}` }}>
-      <PanelHeader label={E.animation} count={layers.length} onAdd={addLayer} />
+      <PanelHeader label={E.animation} subLabel="animation" count={layers.length} onAdd={addLayer} />
       {layers.length > 0 && (
         <div style={{ padding: "4px 8px 8px", display: "flex", flexDirection: "column", gap: 4 }}>
           {layers.map((l, i) => (

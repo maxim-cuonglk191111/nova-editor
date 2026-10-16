@@ -71,6 +71,17 @@ export interface I18nStyleEditorsDictionary {
   gpcColumn: string;
   /** "{start}" / "{end}" are replaced with column numbers. */
   gpcRange: string;
+  layoutPresets: string;
+  twoColumns: string;
+  threeColumns: string;
+  sidebarContent: string;
+  autoGrid: string;
+  shadowPresets: string;
+  shadowSubtle: string;
+  shadowMedium: string;
+  shadowElevated: string;
+  shadowGlow: string;
+  scalePresets: string;
 }
 
 export interface I18nPropsPanelDictionary {
@@ -132,6 +143,13 @@ export interface I18nBreakpointsDictionary {
   baseCannotDelete: string;
   deleteBreakpoint: string;
   add: string;
+  presets: string;
+  presetPhone: string;
+  presetPhoneLand: string;
+  presetTablet: string;
+  presetLaptop: string;
+  presetDesktop: string;
+  mediaQueryHint: string;
 }
 
 export interface I18nInspectorDictionary {

@@ -1,6 +1,6 @@
 # Task 009 — Close the gaps left after the builder audit (task 007)
 
-- **Status:** Paused after batch 9 at the owner's request — batches 1–3 and 9 done (confirmed on production), batch 4 in progress (v25.12.1–25.15.0)
+- **Status:** Batches 1–3, 5, 9 done (v25.12.1–25.16.4), batch 4 in progress (AI provider quota decision pending)
 - **Filed:** 2026-10-08
 - **Owner:** Claude Code
 - **Severity:** High (owner principle: if a feature exists, it must work well — and be easy for a non-technical user)
@@ -52,6 +52,8 @@ Continue after task 007 (builder audit, v25.8.0–25.12.0, scores in `doc/VERIFI
 - **Batch 3 — outside the builder (v25.14.0):** everything works; ease fixes: rename a site (was impossible), labelled card actions (icons only), dashboard header on phones (New Site off-screen); "{}" and the empty notification bell hidden. Missing: a profile page (display name, change password while signed in) — proposed, not built.
 
 - **Batch 4 — what the visitor gets (v25.14.1–25.14.3, in progress):** fixed: images broken for signed-out visitors of a preview (image proxy behind the login), exported library buttons transparent (Tailwind preflight), navbar links pointing nowhere (section ids), and the AI provider setup (Groq fallback models retired; requests too large for the free 8k tokens/min). `doc/AI-PROVIDERS.md` compares options; with the free Groq tier only 2 of 6 pages generated and both lost their last sections — a full re-run waits for the owner's decision on a paid provider.
+
+- **Batch 5 — presets & two-level labels for dual audience ease (v25.16.4):** breakpoint device presets bar (Phone ≤479px, Phone Landscape ≤767px, Tablet ≤991px, Laptop ≤1280px) + live `@media (...)` hints; spacing/radius scale presets `[0] [S] [M] [L] [XL]` (0px, 8px, 16px, 24px, 32px); grid layout presets (2 Columns, 3 Cards, Sidebar + Content, Auto Cards); box shadow presets (Subtle, Card, Elevated, Glow); two-level labels (friendly localized label + subtle monospace CSS property name) across Style rows, Shadow, Gradient, Transform, Transition, Animation, Filter, Backdrop Filter. 0 hardcoded strings verified with `node scripts/i18n-audit.mjs --max=0`. Verified via Chrome DevTools MCP with screenshot `doc/screenshots/10-presets-and-two-level-labels.png`.
 
 - **Batch 9 — loose ends (v25.15.0):** profile & password page, field hints in AI Content Fill, Welcome card only before the first site, export without the Tailwind CDN (pixel-identical). Infrastructure, owner to decide: the Vercel project `nova-editor-apps` deploys every PR with no environment variables (log-in / sign-up fail there — disable it or add env); Worker preview versions uploaded with `wrangler versions upload` from a local build answered 500 on every route (not investigated further; noted in `CLAUDE.md`).
 

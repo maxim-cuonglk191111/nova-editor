@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 import { useMemo } from "react";
 import { writeStyleProperty } from "@/lib/styleWriteHelper";
 import { UI_VARS as C } from "@/lib/uiTheme";
@@ -237,14 +237,23 @@ export function DeleteBtn({ onClick }: { onClick: () => void }) {
 
 // ── Panel header ──────────────────────────────────────────────────────────────
 
-export function PanelHeader({ label, count, onAdd }: { label: string; count: number; onAdd: () => void }) {
+export function PanelHeader({ label, subLabel, count, onAdd }: { label: string; subLabel?: string; count: number; onAdd: () => void }) {
   const E = useI18n().t.inspector.editors;
   return (
     <div style={{ display: "flex", alignItems: "center", padding: "5px 12px", background: C.sectionBg }}>
-      <span style={{ fontSize: 12, color: C.textMuted, fontFamily: C.font, fontWeight: 700, letterSpacing: "0.07em", textTransform: "uppercase" as const, flex: 1 }}>
-        {label}
-        {count > 0 && <span style={{ color: C.textMuted, fontWeight: 400, marginLeft: 6 }}>{count}</span>}
-      </span>
+      <div style={{ display: "flex", flexDirection: "column", flex: 1, lineHeight: 1.2 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+          <span style={{ fontSize: 12, color: C.textMuted, fontFamily: C.font, fontWeight: 700, letterSpacing: "0.07em", textTransform: "uppercase" }}>
+            {label}
+          </span>
+          {count > 0 && <span style={{ color: C.textMuted, fontWeight: 400 }}>{count}</span>}
+        </div>
+        {subLabel && (
+          <span style={{ fontSize: 10, color: C.textMuted, fontFamily: C.fontMono, opacity: 0.65 }}>
+            {subLabel}
+          </span>
+        )}
+      </div>
       <button
         onClick={onAdd}
         title={fmt(E.addItem, { label })}

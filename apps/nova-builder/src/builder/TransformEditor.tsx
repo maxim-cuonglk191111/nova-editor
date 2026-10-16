@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 import { useMemo } from "react";
 import { writeStyleProperty } from "@/lib/styleWriteHelper";
 import { UI_VARS as C } from "@/lib/uiTheme";
@@ -237,12 +237,19 @@ export function TransformPanel({ instanceId, currentCss }: Props) {
     <div style={{ borderBottom: `1px solid ${C.border}` }}>
       {/* Panel header */}
       <div style={{ display: "flex", alignItems: "center", padding: "5px 12px", background: C.sectionBg }}>
-        <span style={{ fontSize: 12, color: C.textMuted, fontFamily: C.font, fontWeight: 700, letterSpacing: "0.07em", textTransform: "uppercase" as const, flex: 1 }}>
-          {E.transform}
-          {activeCount > 0 && (
-            <span style={{ color: C.textMuted, fontWeight: 400, marginLeft: 6 }}>{activeCount}</span>
-          )}
-        </span>
+        <div style={{ display: "flex", flexDirection: "column", flex: 1, lineHeight: 1.2 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+            <span style={{ fontSize: 12, color: C.textMuted, fontFamily: C.font, fontWeight: 700, letterSpacing: "0.07em", textTransform: "uppercase" }}>
+              {E.transform}
+            </span>
+            {activeCount > 0 && (
+              <span style={{ color: C.textMuted, fontWeight: 400 }}>{activeCount}</span>
+            )}
+          </div>
+          <code style={{ fontSize: 10, color: C.textMuted, fontFamily: C.fontMono, opacity: 0.65 }}>
+            transform
+          </code>
+        </div>
       </div>
 
       {/* Translate */}

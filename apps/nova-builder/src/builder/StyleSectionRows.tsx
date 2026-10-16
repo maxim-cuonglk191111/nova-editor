@@ -93,6 +93,21 @@ export function getSection(property: string): SectionName {
 
 // ─── Editable prop row ────────────────────────────────────────────────────────
 
+const SPACING_PRESET_PROPS = new Set([
+  "padding", "paddingTop", "paddingRight", "paddingBottom", "paddingLeft",
+  "margin", "marginTop", "marginRight", "marginBottom", "marginLeft",
+  "gap", "rowGap", "columnGap",
+  "borderRadius", "borderTopLeftRadius", "borderTopRightRadius", "borderBottomLeftRadius", "borderBottomRightRadius",
+]);
+
+const SPACING_SCALE_PRESETS = [
+  { tag: "0", value: 0 },
+  { tag: "S", value: 8 },
+  { tag: "M", value: 16 },
+  { tag: "L", value: 24 },
+  { tag: "XL", value: 32 },
+];
+
 export function EditablePropRow({
   property,
   decl,
@@ -116,26 +131,68 @@ export function EditablePropRow({
     [instanceId, decl]
   );
 
+  const friendlyName = t.inspector.propNames[property] ?? property;
+  const showCssHint = friendlyName !== property;
+
   return (
     <tr data-property={property} style={{ verticalAlign: "middle" }}>
       <td
-        title={property}
+        title={`${friendlyName} (${property})`}
         style={{ padding: "3px 4px 3px 12px", color: isToken ? "#a78bfa" : C.text, fontFamily: C.font, fontSize: 13, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", maxWidth: 0, width: "46%" }}
       >
-        {t.inspector.propNames[property] ?? property}
-        {isToken && (
-          <span title={fmt(t.inspector.fromToken, { name: src?.name ?? "" })} style={{ marginLeft: 4, fontSize: 8, background: "rgba(124,58,237,0.2)", color: "#c4b5fd", borderRadius: 3, padding: "1px 4px", verticalAlign: "middle", fontFamily: C.font, letterSpacing: "0.05em", textTransform: "uppercase" }}>T{/* i18n-ignore — token badge */}</span>
-        )}
+        <div style={{ display: "flex", flexDirection: "column", minWidth: 0, lineHeight: 1.15 }}>
+          <span style={{ fontSize: 12, fontWeight: 500, color: isToken ? "#a78bfa" : C.text, overflow: "hidden", textOverflow: "ellipsis" }}>
+            {friendlyName}
+            {isToken && (
+              <span title={fmt(t.inspector.fromToken, { name: src?.name ?? "" })} style={{ marginLeft: 4, fontSize: 8, background: "rgba(124,58,237,0.2)", color: "#c4b5fd", borderRadius: 3, padding: "1px 4px", verticalAlign: "middle", fontFamily: C.font, letterSpacing: "0.05em", textTransform: "uppercase" }}>T{/* i18n-ignore — token badge */}</span>
+            )}
+          </span>
+          {showCssHint && (
+            <span style={{ fontSize: 10, color: C.textMuted, fontFamily: C.fontMono, opacity: 0.65, overflow: "hidden", textOverflow: "ellipsis" }}>
+              {property}
+            </span>
+          )}
+        </div>
       </td>
       <td style={{ padding: "3px 4px", width: "54%" }}>
-        <StyleValueEditor decl={decl} onWrite={handleWrite} />
+        <div style={{ display: "flex", flexDirection: "column", gap: 3 }}>
+          <StyleValueEditor decl={decl} onWrite={handleWrite} />
+          {SPACING_PRESET_PROPS.has(property) && decl.value.type === "unit" && (
+            <div style={{ display: "flex", gap: 2, alignItems: "center", marginTop: 1 }}>
+              {SPACING_SCALE_PRESETS.map((p) => {
+                const uv = decl.value as UnitValue;
+                const active = uv.value === p.value && (uv.unit === "px" || uv.unit === "" || uv.unit === "number");
+                return (
+                  <button
+                    key={p.tag}
+                    onClick={() => handleWrite({ type: "unit", value: p.value, unit: "px" })}
+                    title={`${p.tag}: ${p.value}px`}
+                    style={{
+                      background: active ? "rgba(124,58,237,0.2)" : "transparent",
+                      border: `1px solid ${active ? C.accentBorder : C.border}`,
+                      color: active ? C.accentText : C.textMuted,
+                      borderRadius: 3,
+                      fontSize: 9,
+                      padding: "1px 4px",
+                      lineHeight: "12px",
+                      cursor: "pointer",
+                      fontFamily: C.fontMono,
+                    }}
+                  >
+                    {p.tag}
+                  </button>
+                );
+              })}
+            </div>
+          )}
+        </div>
       </td>
       <td style={{ padding: "3px 8px 3px 0", width: 18 }}>
         {removable && (
           <button
             onClick={() => removeStyle(instanceId, decl)}
             title={t.inspector.removeValue}
-            aria-label={`${t.inspector.removeValue}: ${t.inspector.propNames[property] ?? property}`}
+            aria-label={`${t.inspector.removeValue}: ${friendlyName}`}
             style={{ border: "none", background: "none", color: C.textMuted, fontSize: 15, lineHeight: 1, cursor: "pointer", padding: "0 2px" }}
           >×</button>
         )}
