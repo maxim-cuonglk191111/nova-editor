@@ -32,8 +32,10 @@ import {
   $isDirty,
   $saveTriggerCount,
   showToast,
+  openFeatureGate,
 } from "@/lib/nano-states";
-import { saveProject, SaveConflictError } from "@/lib/saveProject";
+import { saveProject, SaveConflictError, getSerializedProjectSchema } from "@/lib/saveProject";
+import { DEMO_DRAFT_KEY } from "@/builder/hooks/useDemoDraftSync";
 import { SaveProjectDialog } from "./SaveProjectDialog";
 import { DeployPanel } from "./DeployPanel";
 import { CollaboratorAvatars } from "./PresenceLayer";
@@ -184,8 +186,18 @@ export function TopbarActions({ isDemo }: Props) {
 
   const handleSaveClick = useCallback(() => {
     if (isSaving) return;
+    if (isDemo && !isLoggedIn) {
+      try {
+        const schema = getSerializedProjectSchema();
+        localStorage.setItem(DEMO_DRAFT_KEY, JSON.stringify(schema));
+      } catch (e) {
+        console.warn("[TopbarActions] Failed to cache demo draft:", e);
+      }
+      openFeatureGate("save");
+      return;
+    }
     setSaveDialogOpen(true);
-  }, [isSaving]);
+  }, [isSaving, isDemo, isLoggedIn]);
 
   // Sync keyboard Ctrl+S / trigger count to show dialog
   useEffect(() => {
@@ -347,6 +359,38 @@ export function TopbarActions({ isDemo }: Props) {
     $canvasZoom.set(Math.max(0.1, Math.round(($canvasZoom.get() - 0.1) * 100) / 100));
   }, []);
 
+  const handlePreview = useCallback(() => {
+    if (isDemo) {
+      const data = {
+        pages: $pages.get()!,
+        assets: $assets.get(),
+        instances: $instances.get(),
+        props: $props.get(),
+        dataSources: $dataSources.get(),
+        resources: $resources.get(),
+        breakpoints: $breakpoints.get(),
+        styles: $styles.get(),
+        styleSources: $styleSources.get(),
+        styleSourceSelections: $styleSourceSelections.get(),
+      };
+      const serialized = serializeWebstudioData(data);
+      const demoPayload = {
+        id: "demo",
+        name: "Demo — Nova Builder",
+        schemaVersion: "5.0",
+        data: serialized,
+        cssVars: $cssVars.get(),
+        interactions: $interactions.get(),
+        customCss: $customCss.get(),
+        updatedAt: new Date().toISOString(),
+      };
+      localStorage.setItem("nova-demo-project-data", JSON.stringify(demoPayload));
+      window.open("/preview/demo", "_blank");
+    } else if (meta) {
+      window.open(`/preview/${meta.id}`, "_blank");
+    }
+  }, [isDemo, meta]);
+
   const btnBase = {
     padding: "3px 10px", borderRadius: 4, border: `1px solid ${C.border}`,
     background: "transparent", color: C.textMuted, fontSize: 13, fontFamily: C.font,
@@ -364,236 +408,177 @@ export function TopbarActions({ isDemo }: Props) {
         <button onClick={handleZoomIn} title={t.chrome.zoomIn} style={{ background: "none", border: "none", cursor: "pointer", color: C.textMuted, fontSize: 14, lineHeight: 1, padding: "2px 7px", fontFamily: C.font }}>+</button>
       </div>
 
-      {/* Right action area — 7 logical controls */}
+      {/* Right action area — unified controls (ADR-NB-022: zero JSX branching on isDemo) */}
       <div style={{ display: "flex", alignItems: "center", gap: 5, flexShrink: 0 }}>
         <CollaboratorAvatars />
 
-        {/* 1 — Mode pills: Design / Content */}
-        {/* <div style={{ display: "flex", alignItems: "center", background: C.inputBg, border: `1px solid ${C.border}`, borderRadius: 5, overflow: "hidden", flexShrink: 0 }}>
-          {(["design", "content"] as const).map((m) => (
-            <button
-              key={m}
-              onClick={() => $builderMode.set(m)}
-              title={m === "design" ? "Design mode" : "Content-edit mode"}
-              style={{
-                background: mode === m ? C.accentBg : "none",
-                border: "none",
-                borderRight: m !== "content" ? `1px solid ${C.border}` : "none",
-                cursor: "pointer",
-                color: mode === m ? C.accentText : C.textMuted,
-                fontSize: 12,
-                fontFamily: C.font,
-                fontWeight: mode === m ? 700 : 400,
-                padding: "3px 9px",
-                lineHeight: 1,
-                textTransform: "capitalize",
-              }}
-            >
-              {m}
-            </button>
-          ))}
-        </div> */}
-
+        {/* Sync status chip (patch autosave) or Demo status badge */}
         {isDemo ? (
-          <>
-            {/* <span style={{ fontSize: 13, color: C.textMuted, fontFamily: C.font, padding: "0 4px" }}>{t.builder.demoNotice}</span> */}
-            {!isLoggedIn && (
-              <button onClick={() => router.push("/signup")} style={{ padding: "4px 14px", borderRadius: 6, border: "none", background: "linear-gradient(135deg, rgba(124,58,237,0.9) 0%, rgba(79,70,229,0.85) 100%)", color: "#fff", fontSize: 12, fontFamily: C.font, cursor: "pointer", fontWeight: 700 }}>{t.builder.signUpFree}</button>
-            )}
-            <button
-              onClick={() => {
-                const data = {
-                  pages: $pages.get()!,
-                  assets: $assets.get(),
-                  instances: $instances.get(),
-                  props: $props.get(),
-                  dataSources: $dataSources.get(),
-                  resources: $resources.get(),
-                  breakpoints: $breakpoints.get(),
-                  styles: $styles.get(),
-                  styleSources: $styleSources.get(),
-                  styleSourceSelections: $styleSourceSelections.get(),
-                };
-                const serialized = serializeWebstudioData(data);
-                const demoPayload = {
-                  id: "demo",
-                  name: "Demo — Nova Builder",
-                  schemaVersion: "5.0",
-                  data: serialized,
-                  cssVars: $cssVars.get(),
-                  interactions: $interactions.get(),
-                  customCss: $customCss.get(),
-                  updatedAt: new Date().toISOString(),
-                };
-                localStorage.setItem("nova-demo-project-data", JSON.stringify(demoPayload));
-                window.open("/preview/demo", "_blank");
-              }}
-              style={{ ...btnBase, transition: "all 0.15s" }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.borderColor = C.borderHover;
-                e.currentTarget.style.color = C.text;
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.borderColor = C.border;
-                e.currentTarget.style.color = C.textMuted;
-              }}
-            >
-              {t.chrome.preview}
-            </button>
-            <button
-              onClick={handleSaveClick}
-              disabled={isSaving || (!isDirty && !saveError)}
-              style={{
-                padding: "4px 12px",
-                borderRadius: 5,
-                border: "none",
-                background: isSaving
-                  ? C.inputBg
-                  : saveError
-                    ? C.danger
-                    : isDirty
-                      ? C.success
-                      : C.inputBg,
-                color: isSaving || (!isDirty && !saveError) ? C.textMuted : "#fff",
-                fontSize: 12,
-                fontFamily: C.font,
-                cursor: isSaving || (!isDirty && !saveError) ? "default" : "pointer",
-                fontWeight: 600,
-                transition: "all 0.15s",
-              }}
-            >
-              {isSaving
-                ? t.chrome.saving
-                : saveError
-                  ? t.chrome.saveFailedRetry
-                  : isDirty
-                    ? t.chrome.save
-                    : lastSavedTime !== null
-                      ? timeLabel
-                      : t.chrome.save}
-            </button>
-
-            {/* ✦ Generate — also in demo mode */}
-            <button
-              onClick={() => $aiPanelOpen.set(!isAIPanelOpen)}
-              title={t.chrome.generateWithAI}
-              style={{ padding: "4px 14px", borderRadius: 6, border: `1px solid ${isAIPanelOpen ? C.accentBorder : C.accent}`, background: isAIPanelOpen ? C.accentBg : `linear-gradient(135deg, ${C.accentBg} 0%, rgba(79,70,229,0.1) 100%)`, color: C.accentText, fontSize: 12, fontFamily: C.font, cursor: "pointer", fontWeight: 700 }}
-            >
-              {t.builder.generate}
-            </button>
-          </>
+          <span
+            style={{
+              fontSize: 11,
+              fontFamily: C.font,
+              color: C.textMuted,
+              padding: "2px 8px",
+              borderRadius: 4,
+              background: C.inputBg,
+              border: `1px solid ${C.border}`,
+              whiteSpace: "nowrap",
+            }}
+          >
+            {t.builder.demoNotice}
+          </span>
         ) : (
-          <>
-            <SyncStatusChip />
-            {/* 2 — Export ▾ (HTML + React + Deploy + Import) */}
-            <TopbarMenu
-              trigger={t.builder.export}
-              open={exportOpen}
-              onToggle={() => { setExportOpen((v) => !v); setToolsOpen(false); }}
-              onClose={() => setExportOpen(false)}
-              items={[
-                { label: t.builder.exportHtml, title: t.chrome.exportHtmlTitle, href: meta ? `/api/export/${meta.id}` : "#", download: true },
-                // { label: t.builder.exportReact, title: "Download as React component", href: meta ? `/api/export/${meta.id}/react` : "#", download: true },
-                // { label: t.builder.deploy, title: "Deploy to hosting", onClick: () => setDeployOpen((v) => !v) },
-                { label: t.builder.exportProject, title: t.chrome.exportProjectTitle, onClick: () => exportProject(meta ? meta.name : "untitled") },
-                { label: t.builder.importProject, title: t.chrome.importProjectTitle, onClick: () => { setExportOpen(false); handleImportClick(); } },
-              ]}
-            />
+          <SyncStatusChip />
+        )}
 
-            {/* Deploy panel (opens from Export menu) */}
-            {deployOpen && meta && (
-              <div style={{ position: "relative" }}>
-                <DeployPanel projectId={meta.id} onClose={() => setDeployOpen(false)} />
-              </div>
-            )}
+        {/* 1 — Export ▾ (HTML + Export Project + Import Project) */}
+        <TopbarMenu
+          trigger={t.builder.export}
+          open={exportOpen}
+          onToggle={() => { setExportOpen((v) => !v); setToolsOpen(false); }}
+          onClose={() => setExportOpen(false)}
+          items={[
+            {
+              label: t.builder.exportHtml,
+              title: t.chrome.exportHtmlTitle,
+              href: meta && !isDemo ? `/api/export/${meta.id}` : undefined,
+              download: meta && !isDemo,
+              onClick: isDemo
+                ? () => {
+                    setExportOpen(false);
+                    openFeatureGate("export-html");
+                  }
+                : undefined,
+            },
+            {
+              label: t.builder.exportProject,
+              title: t.chrome.exportProjectTitle,
+              onClick: () => exportProject(meta ? meta.name : "untitled"),
+            },
+            {
+              label: t.builder.importProject,
+              title: t.chrome.importProjectTitle,
+              onClick: () => { setExportOpen(false); handleImportClick(); },
+            },
+          ]}
+        />
 
-            {/* 3 — Tools ▾ (Fill, A11y, Perf, History) */}
-            <TopbarMenu
-              trigger={t.builder.tools}
-              open={toolsOpen}
-              onToggle={() => { setToolsOpen((v) => !v); setExportOpen(false); }}
-              onClose={() => setToolsOpen(false)}
-              // Tier C (task 007): Performance (scores without fixes a site owner can
-              // act on) and CSS Preview (raw CSS) are hidden.
-              items={[
-                { label: t.builder.aiContentFill, active: isAIContentOpen, onClick: () => openFloatingPanel($aiContentPanelOpen, !isAIContentOpen) },
-                { label: t.builder.accessibility, active: isA11yOpen, onClick: () => openFloatingPanel($a11yPanelOpen, !isA11yOpen) },
-                { label: t.builder.history, active: isHistoryOpen, onClick: () => openFloatingPanel($historyPanelOpen, !isHistoryOpen) },
-                { label: t.builder.gridGuides, active: gridGuides, onClick: () => $gridGuidesVisible.set(!gridGuides) },
-              ]}
-            />
+        {/* Deploy panel (opens from Export menu if active) */}
+        {deployOpen && meta && !isDemo && (
+          <div style={{ position: "relative" }}>
+            <DeployPanel projectId={meta.id} onClose={() => setDeployOpen(false)} />
+          </div>
+        )}
 
-            {/* 4 — Publish */}
-            {/* {meta && (
-              <button
-                onClick={handlePublish}
-                style={{ ...btnBase, border: `1px solid ${published ? "rgba(5,150,105,0.45)" : "rgba(255,255,255,0.1)"}`, background: published ? "rgba(5,150,105,0.12)" : "transparent", color: published ? "#6ee7b7" : C.textMuted, transition: "all 0.15s" }}
-              >
-                {published ? t.builder.copied : t.builder.publish}
-              </button>
-            )} */}
+        {/* 2 — Tools ▾ (Fill, A11y, Perf, History, Grid Guides) */}
+        <TopbarMenu
+          trigger={t.builder.tools}
+          open={toolsOpen}
+          onToggle={() => { setToolsOpen((v) => !v); setExportOpen(false); }}
+          onClose={() => setToolsOpen(false)}
+          items={[
+            {
+              label: t.builder.aiContentFill,
+              active: isAIContentOpen,
+              onClick: () => {
+                if (isDemo && !isLoggedIn) {
+                  openFeatureGate("ai");
+                } else {
+                  openFloatingPanel($aiContentPanelOpen, !isAIContentOpen);
+                }
+              },
+            },
+            { label: t.builder.accessibility, active: isA11yOpen, onClick: () => openFloatingPanel($a11yPanelOpen, !isA11yOpen) },
+            { label: t.builder.history, active: isHistoryOpen, onClick: () => openFloatingPanel($historyPanelOpen, !isHistoryOpen) },
+            { label: t.builder.gridGuides, active: gridGuides, onClick: () => $gridGuidesVisible.set(!gridGuides) },
+          ]}
+        />
 
-            {/* Preview Button */}
-            {meta && (
-              <button
-                onClick={() => window.open(`/preview/${meta.id}`, "_blank")}
-                style={{ ...btnBase, transition: "all 0.15s" }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.borderColor = C.borderHover;
-                  e.currentTarget.style.color = C.text;
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.borderColor = C.border;
-                  e.currentTarget.style.color = C.textMuted;
-                }}
-              >
-                {t.chrome.preview}
-              </button>
-            )}
+        {/* 3 — Preview Button */}
+        <button
+          onClick={handlePreview}
+          style={{ ...btnBase, transition: "all 0.15s" }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.borderColor = C.borderHover;
+            e.currentTarget.style.color = C.text;
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.borderColor = C.border;
+            e.currentTarget.style.color = C.textMuted;
+          }}
+        >
+          {t.chrome.preview}
+        </button>
 
-            {/* 5 — Save */}
-            <button
-              onClick={handleSaveClick}
-              disabled={isSaving || (!isDirty && !saveError)}
-              style={{
-                padding: "4px 12px",
-                borderRadius: 5,
-                border: "none",
-                background: isSaving
-                  ? C.inputBg
-                  : saveError
-                    ? C.danger
-                    : isDirty
-                      ? C.success
-                      : C.inputBg,
-                color: isSaving || (!isDirty && !saveError) ? C.textMuted : "#fff",
-                fontSize: 12,
-                fontFamily: C.font,
-                cursor: isSaving || (!isDirty && !saveError) ? "default" : "pointer",
-                fontWeight: 600,
-                transition: "all 0.15s",
-              }}
-            >
-              {isSaving
-                ? t.chrome.saving
-                : saveError
-                  ? t.chrome.saveFailedRetry
-                  : isDirty
-                    ? t.chrome.save
-                    : lastSavedTime !== null
-                      ? timeLabel
-                      : t.chrome.saved}
-            </button>
+        {/* 4 — Save Button */}
+        <button
+          onClick={handleSaveClick}
+          disabled={isSaving || (!isDemo && !isDirty && !saveError)}
+          style={{
+            padding: "4px 12px",
+            borderRadius: 5,
+            border: "none",
+            background: isSaving
+              ? C.inputBg
+              : saveError
+                ? C.danger
+                : (isDirty || isDemo)
+                  ? C.success
+                  : C.inputBg,
+            color: isSaving || (!isDirty && !saveError && !isDemo) ? C.textMuted : "#fff",
+            fontSize: 12,
+            fontFamily: C.font,
+            cursor: isSaving || (!isDirty && !saveError && !isDemo) ? "default" : "pointer",
+            fontWeight: 600,
+            transition: "all 0.15s",
+          }}
+        >
+          {isSaving
+            ? t.chrome.saving
+            : saveError
+              ? t.chrome.saveFailedRetry
+              : (isDirty || isDemo)
+                ? t.chrome.save
+                : lastSavedTime !== null
+                  ? timeLabel
+                  : t.chrome.saved}
+        </button>
 
-            {/* 6 — ✦ Generate */}
-            <button
-              onClick={() => openFloatingPanel($aiPanelOpen, !isAIPanelOpen)}
-              title={t.chrome.generateWithAI}
-              style={{ padding: "4px 14px", borderRadius: 6, border: `1px solid ${isAIPanelOpen ? C.accentBorder : C.accent}`, background: isAIPanelOpen ? C.accentBg : `linear-gradient(135deg, ${C.accentBg} 0%, rgba(79,70,229,0.1) 100%)`, color: C.accentText, fontSize: 12, fontFamily: C.font, cursor: "pointer", fontWeight: 700 }}
-            >
-              {t.builder.generate}
-            </button>
-          </>
+        {/* 5 — ✦ Generate Button */}
+        <button
+          onClick={() => {
+            if (isDemo && !isLoggedIn) {
+              openFeatureGate("ai");
+            } else {
+              openFloatingPanel($aiPanelOpen, !isAIPanelOpen);
+            }
+          }}
+          title={t.chrome.generateWithAI}
+          style={{ padding: "4px 14px", borderRadius: 6, border: `1px solid ${isAIPanelOpen ? C.accentBorder : C.accent}`, background: isAIPanelOpen ? C.accentBg : `linear-gradient(135deg, ${C.accentBg} 0%, rgba(79,70,229,0.1) 100%)`, color: C.accentText, fontSize: 12, fontFamily: C.font, cursor: "pointer", fontWeight: 700 }}
+        >
+          {t.builder.generate}
+        </button>
+
+        {/* In Demo mode: subtle sign up button if not logged in */}
+        {isDemo && !isLoggedIn && (
+          <button
+            onClick={() => router.push("/signup")}
+            style={{
+              padding: "4px 12px",
+              borderRadius: 6,
+              border: "none",
+              background: "linear-gradient(135deg, rgba(124,58,237,0.9) 0%, rgba(79,70,229,0.85) 100%)",
+              color: "#fff",
+              fontSize: 12,
+              fontFamily: C.font,
+              cursor: "pointer",
+              fontWeight: 700,
+              marginLeft: 4,
+            }}
+          >
+            {t.builder.signUpFree}
+          </button>
         )}
       </div>
 

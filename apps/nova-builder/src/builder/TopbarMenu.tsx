@@ -75,7 +75,7 @@ export function TopbarMenu({ trigger, items, open, onToggle, onClose }: Props) {
             };
             if (item.href) {
               return (
-                <a key={item.label} href={item.href} download={item.download} role="menuitem" style={sharedStyle} onClick={onClose}>
+                <a key={item.label} href={item.href} download={item.download} role="menuitem" style={sharedStyle} onClick={() => { item.onClick?.(); onClose(); }}>
                   {item.label}
                 </a>
               );

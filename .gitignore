@@ -54,6 +54,12 @@ apps/nova-builder/scripts/check-supabase.js
 test-results/
 playwright-report/
 qa-screenshots/
+doc/screenshots/.temp/
+doc/screenshots/temp/
+doc/screenshots/debug-*
 
 # TypeScript incremental build state
 *.tsbuildinfo
+
+# Local junction alias
+docs/task

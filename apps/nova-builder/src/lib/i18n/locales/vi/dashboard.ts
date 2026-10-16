@@ -40,6 +40,7 @@ export const viDashboard: I18nDashboardDictionary = {
     createFailed: "Không thể tạo dự án",
     deleteFailed: "Xóa thất bại. Vui lòng thử lại.",
     cloneFailed: "Nhân bản thất bại. Vui lòng thử lại.",
+    demoImported: "Bản nháp mẫu đã được lưu vào tài khoản của bạn!",
   },
   analytics: {
     title: "Thống kê",

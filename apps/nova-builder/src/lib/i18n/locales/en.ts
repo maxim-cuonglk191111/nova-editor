@@ -137,6 +137,7 @@ export const enDictionary: I18nDictionary = {
     performance: "Performance",
     history: "⏱ History",
     backToMySites: "Back to My Sites",
+    backToHome: "Back to Home",
     copyTooltip: "Copy (Ctrl+C)",
     pasteTooltip: "Paste (Ctrl+V)",
     duplicateTooltip: "Duplicate (Ctrl+D)",

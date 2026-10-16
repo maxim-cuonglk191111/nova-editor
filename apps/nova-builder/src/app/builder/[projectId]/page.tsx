@@ -46,6 +46,7 @@ import type { SyncEmitter } from "@/lib/sync-client";
 import { useProjectLoad } from "@/builder/hooks/useProjectLoad";
 import { useBuilderKeyboard } from "@/builder/hooks/useBuilderKeyboard";
 import { useAutosaveExtras } from "@/builder/hooks/useAutosaveExtras";
+import { useDemoDraftSync } from "@/builder/hooks/useDemoDraftSync";
 import { useUnsavedChangesGuard } from "@/builder/hooks/useUnsavedChangesGuard";
 import { useCanvasMessages } from "@/builder/hooks/useCanvasMessages";
 import { Topbar } from "@/builder/Topbar";
@@ -66,6 +67,7 @@ import { CoachMarks } from "@/builder/CoachMarks";
 import { ThemeProvider, $builderTheme } from "@/builder/ThemeProvider";
 import { SafeModeBanner } from "@/builder/SafeModeBanner";
 import { NestingToast } from "@/builder/NestingToast";
+import { FeatureGateModal } from "@/builder/FeatureGateModal";
 
 function BuilderPage() {
   const { t } = useI18n();
@@ -92,7 +94,8 @@ function BuilderPage() {
   // ── Load project + seed atoms + SyncClient (leader) ─────────────────────────
   const { loadState, errorMessage, syncEmitterRef } = useProjectLoad(projectId, isDemo);
   useAutosaveExtras(loadState === "ready" && !isDemo);
-  useUnsavedChangesGuard(loadState === "ready" && !isDemo);
+  useDemoDraftSync(loadState === "ready" && isDemo);
+  useUnsavedChangesGuard(loadState === "ready");
 
   // ── Track dirty state (isDirty) ─────────────────────────────────────────────
   useEffect(() => {
@@ -422,6 +425,9 @@ function BuilderPage() {
 
       {/* Content-model warning toast (M5) */}
       <NestingToast />
+
+      {/* Feature gate / paywall modal */}
+      <FeatureGateModal />
     </ThemeProvider>
   );
 }

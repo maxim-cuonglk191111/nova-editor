@@ -137,6 +137,7 @@ export const viDictionary: I18nDictionary = {
     performance: "Hiệu suất",
     history: "⏱ Lịch sử",
     backToMySites: "Về trang Website của tôi",
+    backToHome: "Về trang chủ",
     copyTooltip: "Sao chép (Ctrl+C)",
     pasteTooltip: "Dán (Ctrl+V)",
     duplicateTooltip: "Nhân bản (Ctrl+D)",

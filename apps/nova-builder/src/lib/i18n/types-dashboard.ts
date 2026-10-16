@@ -44,6 +44,7 @@ export interface I18nProjectsDictionary {
   createFailed: string;
   deleteFailed: string;
   cloneFailed: string;
+  demoImported: string;
 }
 
 export interface I18nAnalyticsDictionary {

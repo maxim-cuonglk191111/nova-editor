@@ -10,6 +10,7 @@ import { SiteCard, type Site } from "@/components/dashboard/SiteCard";
 import { UI_VARS as C } from "@/lib/uiTheme";
 import { UserDropdown } from "@/components/UserDropdown";
 import { showToast } from "@/lib/nano-states";
+import { DEMO_DRAFT_KEY } from "@/builder/hooks/useDemoDraftSync";
 
 
 // EXAMPLES removed — sourced from t.landing.examples via useI18n() (OCP fix: single source of truth).
@@ -186,6 +187,43 @@ function SitesPage() {
   }, [router]);
 
   useEffect(() => { loadSites(); }, [loadSites]);
+
+  // Recover demo draft saved during anonymous session
+  useEffect(() => {
+    const demoDraftRaw = localStorage.getItem(DEMO_DRAFT_KEY);
+    if (demoDraftRaw) {
+      try {
+        const draft = JSON.parse(demoDraftRaw);
+        localStorage.removeItem(DEMO_DRAFT_KEY);
+        if (draft && (draft.data || draft.pages)) {
+          fetch("/api/projects", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              name: P.defaultSiteName,
+              schema_json: draft,
+            }),
+          })
+            .then((r) => {
+              if (!r.ok) throw new Error(`HTTP ${r.status}`);
+              return r.json();
+            })
+            .then((data: { id?: string }) => {
+              if (data?.id) {
+                showToast(P.demoImported, "success");
+                router.push(`/builder/${data.id}`);
+              }
+            })
+            .catch((err) => {
+              console.error("[projects] failed to import demo draft:", err);
+            });
+        }
+      } catch (e) {
+        console.error("[projects] corrupt demo draft:", e);
+        localStorage.removeItem(DEMO_DRAFT_KEY);
+      }
+    }
+  }, [router, P]);
 
   // Recover a prompt saved from the landing page
   useEffect(() => {

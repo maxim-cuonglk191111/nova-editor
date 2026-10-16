@@ -131,4 +131,26 @@ export interface I18nChromeDictionary {
   saveDialog: I18nSaveDialogDictionary;
   shortcuts: I18nShortcutsDictionary;
   palette: I18nPaletteDictionary;
+  featureGate: I18nFeatureGateDictionary;
+}
+
+export interface I18nFeatureGateDictionary {
+  titleSave: string;
+  descSave: string;
+  ctaSave: string;
+  titleExportHtml: string;
+  descExportHtml: string;
+  ctaExportHtml: string;
+  titleDeploy: string;
+  descDeploy: string;
+  ctaDeploy: string;
+  titleAssets: string;
+  descAssets: string;
+  ctaAssets: string;
+  titleAI: string;
+  descAI: string;
+  ctaAI: string;
+  badgePro: string;
+  badgeFree: string;
+  cancel: string;
 }

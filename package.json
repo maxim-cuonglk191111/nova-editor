@@ -12,6 +12,7 @@
     "solid:audit": "node scripts/solid-audit.mjs",
     "i18n:audit": "node scripts/i18n-audit.mjs",
     "test:e2e": "playwright test",
+    "prune:screenshots": "node scripts/prune-screenshots.mjs",
     "cf:secrets": "node scripts/cf-push-secrets.mjs"
   },
   "devDependencies": {

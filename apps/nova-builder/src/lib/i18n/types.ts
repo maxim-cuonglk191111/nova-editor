@@ -129,6 +129,7 @@ export interface I18nBuilderDictionary {
   performance: string;
   history: string;
   backToMySites: string;
+  backToHome: string;
   copyTooltip: string;
   pasteTooltip: string;
   duplicateTooltip: string;

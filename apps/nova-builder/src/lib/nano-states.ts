@@ -267,3 +267,20 @@ export function showDeletedToast(onUndo: () => void) {
 // Incrementing this value causes the builder page to reload the canvas iframe
 // with fresh data after a project import.
 export const $importKey = atom<number>(0);
+
+// ─── Feature Gate Modal State ────────────────────────────────────────────────
+export type FeatureGateType = "save" | "export-html" | "deploy" | "assets" | "ai";
+export interface FeatureGateState {
+  isOpen: boolean;
+  type: FeatureGateType;
+}
+export const $featureGate = atom<FeatureGateState>({ isOpen: false, type: "save" });
+
+export function openFeatureGate(type: FeatureGateType) {
+  $featureGate.set({ isOpen: true, type });
+}
+
+export function closeFeatureGate() {
+  $featureGate.set({ isOpen: false, type: "save" });
+}
+

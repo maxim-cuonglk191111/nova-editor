@@ -26,7 +26,7 @@ export function saveProject(projectId: string): Promise<void> {
   return withFullSaveLock(() => saveFullDocument(projectId));
 }
 
-async function saveFullDocument(projectId: string): Promise<void> {
+export function getSerializedProjectSchema() {
   const data = {
     pages: $pages.get()!,
     assets: $assets.get(),
@@ -40,12 +40,24 @@ async function saveFullDocument(projectId: string): Promise<void> {
     styleSourceSelections: $styleSourceSelections.get(),
   };
   const serialized = serializeWebstudioData(data);
+  return {
+    schemaVersion: "5.0",
+    data: serialized,
+    cssVars: $cssVars.get(),
+    interactions: $interactions.get(),
+    customCss: $customCss.get(),
+    symbols: $symbols.get(),
+  };
+}
+
+async function saveFullDocument(projectId: string): Promise<void> {
+  const schema_json = getSerializedProjectSchema();
   const res = await fetch(`/api/projects/${projectId}`, {
     method: "PATCH",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       baseVersion: $docVersion.get(),
-      schema_json: { schemaVersion: "5.0", data: serialized, cssVars: $cssVars.get(), interactions: $interactions.get(), customCss: $customCss.get(), symbols: $symbols.get() },
+      schema_json,
     }),
   });
   if (res.status === 409) {

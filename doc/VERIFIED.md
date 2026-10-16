@@ -1,5 +1,28 @@
 # Nova — Verified Feature Ledger
 
+## nova-builder / v25.16.1 — Visual & Interactive State Verification via Chrome DevTools MCP (Task 011) (2026-10-17)
+
+| ID | Feature | Status | Visual Evidence |
+|---|---|---|---|
+| VIS-BASE1 | Topbar & Canvas Parity Baseline: Zero UI stripping on `/builder/demo`, identical chrome | 🟢 | `doc/screenshots/01-demo-baseline.png` |
+| VIS-GATE1 | FeatureGateModal Save Interception: Backdrop blur, Free Account badge, Sign up CTA, 0 errors | 🟢 | `doc/screenshots/02-save-feature-gate-modal.png` |
+| VIS-MENU1 | Export Dropdown Menu: HTML, .nova export & import floating menu with clean elevation | 🟢 | `doc/screenshots/03-export-menu-open.png` |
+| VIS-PRO1 | Pro Paywall Gate Interception: Download as HTML opens Pro Feature modal with pricing CTA | 🟢 | `doc/screenshots/04-export-pro-paywall-modal.png` |
+| VIS-TOOL1 | Tools Dropdown Menu: AI Fill, Accessibility, History, Grid Guides items correctly aligned | 🟢 | `doc/screenshots/05-tools-menu-open.png` |
+| VIS-GRID1 | Grid Guides Canvas Overlay: 12-column lavender alignment guides rendered on canvas | 🟢 | `doc/screenshots/06-canvas-grid-guides.png` |
+| VIS-MOBI1 | Mobile Viewport Ergonomics (390x844): Responsive topbar, touch targets >= 44px, no overflow | 🟢 | `doc/screenshots/07-mobile-demo-viewport.png` |
+
+## nova-builder / v25.16.0 — Demo & Product 100% UI Parity with Capability Gate System (ADR-NB-022) (2026-10-17)
+
+| ID | Feature | Status |
+|---|---|---|
+| PARITY-DOM1 | Unified builder chrome: Topbar, menus, left rail render identically for Demo and Product (ADR-NB-022) | 🟡 |
+| GATE-SAVE1 | Clicking Save in Demo caches state to `localStorage["nova-demo-draft"]` and triggers FeatureGateModal without 401 error | 🟡 |
+| GATE-HTML1 | Clicking Export HTML in Demo triggers Pro capability paywall gate with upgrade link | 🟡 |
+| GATE-HAND1 | Seamless state handover: Demo draft in `localStorage` is auto-provisioned to Supabase on login/signup | 🟡 |
+| TOOLS-DEMO1 | Accessibility, History, and Grid Guides function without crashing on `/builder/demo` | 🟡 |
+| I18N-GATE1 | 100% bilingual translation dictionary (en/vi) for Feature Gate modal, zero hardcoded strings | 🟡 |
+
 ## nova-builder / v25.3.0 — Save Project (Create / Update / Save As) (2026-07-18)
 
 | ID | Feature | Status |

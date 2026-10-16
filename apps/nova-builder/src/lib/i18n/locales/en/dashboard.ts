@@ -40,6 +40,7 @@ export const enDashboard: I18nDashboardDictionary = {
     createFailed: "Failed to create project",
     deleteFailed: "Failed to delete. Please try again.",
     cloneFailed: "Clone failed. Please try again.",
+    demoImported: "Your demo draft has been saved to your account!",
   },
   analytics: {
     title: "Analytics",
