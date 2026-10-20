@@ -26,7 +26,7 @@
 
   /* Origin Financial Typography Fonts */
   --font-suisseintltrial: var(--font-inter), ui-sans-serif, system-ui, -apple-system, sans-serif;
-  --font-lyon-display: var(--font-dm-serif), serif;
+  --font-lyon-display: var(--font-montserrat), var(--font-inter), sans-serif;
   --font-suisse-intl: var(--font-inter), sans-serif;
   --font-suisse-intl-trial: var(--font-inter), sans-serif;
   --font-roboto-mono: var(--font-roboto-mono), monospace;

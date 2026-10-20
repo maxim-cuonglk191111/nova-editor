@@ -2,6 +2,14 @@
 
 ---
 
+## [25.16.11] — 2026-10-20
+
+### Task 020 — Landing Page Rebranding & Vietnamese Typography Refresh (Patch)
+
+- **Removed Irrelevant Finance Cards**: Eliminated the personal finance spend/budget templates from the landing page, aligning product positioning strictly around modern AI website generation.
+- **Vietnamese Typography Harmony**: Configured `Montserrat` with `["latin", "vietnamese"]` unicode diacritics in `layout.tsx` and mapped landing display headings to `Montserrat`, ensuring graceful, native accent mark rendering for Vietnamese content.
+- **Corporate Tech Atmosphere**: Modernized the hero section with a deep radial mesh gradient (`rgba(124, 58, 237, 0.22)`) over dark agency tones, replacing dated video styling with an enterprise-grade visual aesthetic.
+
 ## [25.16.10] — 2026-10-20
 
 ### Task 019 — Empty Text Element Canvas Placeholder & Clean HTML Export (Patch)

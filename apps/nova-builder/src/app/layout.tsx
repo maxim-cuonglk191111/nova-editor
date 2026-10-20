@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter, DM_Serif_Display, Roboto_Mono } from "next/font/google";
+import { Inter, Montserrat, Roboto_Mono } from "next/font/google";
 import "./globals.css";
 import { Providers } from "./providers";
 import { ToastNotification } from "@/components/ToastNotification";
@@ -12,11 +12,10 @@ const inter = Inter({
   variable: "--font-inter",
 });
 
-const dmSerifDisplay = DM_Serif_Display({
-  weight: "400",
-  subsets: ["latin"],
+const montserrat = Montserrat({
+  subsets: ["latin", "vietnamese"],
   display: "swap",
-  variable: "--font-dm-serif",
+  variable: "--font-montserrat",
 });
 
 const robotoMono = Roboto_Mono({
@@ -39,7 +38,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     // suppressHydrationWarning: browser extensions (e.g. Katalon) may inject
     // attributes onto <html> after SSR, causing a harmless hydration mismatch.
-    <html lang={lang} className={`${inter.variable} ${dmSerifDisplay.variable} ${robotoMono.variable}`} suppressHydrationWarning>
+    <html lang={lang} className={`${inter.variable} ${montserrat.variable} ${robotoMono.variable}`} suppressHydrationWarning>
       <body>
         <Providers>
           {children}

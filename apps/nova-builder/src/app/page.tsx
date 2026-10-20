@@ -148,37 +148,10 @@ export default function Home() {
             </div>
           </FadeSection>
 
-          {/* Track cards grid */}
-          <FadeSection>
-            <div className="origin-track-grid">
-              {t.landing.features.slice(0, 2).map((feat, i) => (
-                <div key={i} className="origin-track-card">
-                  <div className="origin-track-card__image-wrapper">
-                    <div className="origin-image-blur-bg">
-                      <img
-                        src={[
-                          "https://cdn.prod.website-files.com/68acbc076b672f730e0c77b9/68bf6605b4df5f9a02f2489b_spend-this-month.avif",
-                          "https://cdn.prod.website-files.com/68acbc076b672f730e0c77b9/68c02b1aa2d9315689379726_budgetcard.avif",
-                        ][i]}
-                        alt={feat.title}
-                        loading="lazy"
-                        className="origin-track-card__img"
-                      />
-                    </div>
-                  </div>
-                  <div className="origin-track-card__text">
-                    <p className="origin-body-white">{feat.title}</p>
-                    <p className="origin-p60">{feat.body}</p>
-                  </div>
-                  <div className="origin-track-card__gradient" />
-                </div>
-              ))}
-            </div>
-          </FadeSection>
         </div>
       </div>
 
-      {/* ═══════════════ ASK ANYTHING — AI SECTION ═══════════════ */}
+            {/* ═══════════════ ASK ANYTHING — AI SECTION ═══════════════ */}
       <div className="origin-divider" />
       <div className="origin-ai-section">
         <div className="origin-intro origin-aigradient">

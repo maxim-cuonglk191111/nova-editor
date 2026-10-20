@@ -1,5 +1,13 @@
 # Nova — Verified Feature Ledger
 
+## nova-builder / v25.16.11 — Landing Page Rebranding & Vietnamese Typography Refresh (Task 020) (2026-10-20)
+
+| ID | Feature | Status | Visual Evidence |
+|---|---|---|---|
+| LANDING-CLEAN1 | Personal finance spend and budget cards completely removed from landing page | 🟢 | doc/screenshots/17-landing-rebranding-and-vietnamese-font.png |
+| FONT-VIET1 | Montserrat Google font configured with full latin and vietnamese unicode subsets for pristine diacritic display | 🟢 | doc/screenshots/17-landing-rebranding-and-vietnamese-font.png |
+| HERO-ATMOS1 | High-taste corporate dark agency atmosphere with radial purple mesh gradient | 🟢 | doc/screenshots/17-landing-rebranding-and-vietnamese-font.png |
+
 ## nova-builder / v25.16.10 — Empty Text Element Canvas Placeholder & Clean HTML Export (Task 019) (2026-10-20)
 
 | ID | Feature | Status | Visual Evidence |

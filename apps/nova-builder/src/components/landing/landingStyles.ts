@@ -134,7 +134,7 @@ export const LANDING_CSS = `
         .origin-hero__overlay {
           position: absolute;
           inset: 0;
-          background: linear-gradient(rgba(15,16,17,0.3), rgba(15,16,17,0.8));
+          background: radial-gradient(circle at 50% 20%, rgba(124, 58, 237, 0.22) 0%, rgba(15, 23, 42, 0.65) 55%, rgba(5, 5, 10, 0.95) 100%), linear-gradient(180deg, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.85) 100%);
           z-index: 1;
           pointer-events: none;
         }
