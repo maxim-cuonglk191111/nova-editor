@@ -17,6 +17,7 @@ import {
 } from "./data-stores";
 import { $cssVars, $interactions, $customCss } from "./nano-states";
 import { $symbols } from "./symbols";
+import { captureCurrentProjectThumbnail } from "./thumbnailCapture";
 import { $docVersion, $saveStatus, discardQueuedPatches, withFullSaveLock } from "./saveQueue";
 
 /** The server holds a newer version (another tab saved first); Update would overwrite it. */
@@ -40,8 +41,15 @@ export function getSerializedProjectSchema() {
     styleSourceSelections: $styleSourceSelections.get(),
   };
   const serialized = serializeWebstudioData(data);
+  let thumbnail: string | undefined = undefined;
+  try {
+    thumbnail = captureCurrentProjectThumbnail();
+  } catch {}
   return {
     schemaVersion: "5.0",
+    metadata: {
+      thumbnail,
+    },
     data: serialized,
     cssVars: $cssVars.get(),
     interactions: $interactions.get(),

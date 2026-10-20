@@ -15,11 +15,21 @@ export async function GET() {
 
   const projects = await getUserProjects(userId);
   return NextResponse.json(
-    projects.map((p) => ({
-      id: p.id,
-      name: p.project_name ?? "Untitled",
-      updatedAt: p.updated_at ?? null,
-    }))
+    projects.map((p) => {
+      let thumbnail: string | null = null;
+      if (p.schema_json && typeof p.schema_json === "object") {
+        const metadata = (p.schema_json as Record<string, any>).metadata;
+        if (metadata?.thumbnail && typeof metadata.thumbnail === "string") {
+          thumbnail = metadata.thumbnail;
+        }
+      }
+      return {
+        id: p.id,
+        name: p.project_name ?? "Untitled",
+        updatedAt: p.updated_at ?? null,
+        thumbnail,
+      };
+    })
   );
 }
 

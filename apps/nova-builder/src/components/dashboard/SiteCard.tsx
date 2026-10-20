@@ -5,7 +5,7 @@ import { useState } from "react";
 import { useI18n, fmt, formatTimeAgo, type I18nTimeAgoDictionary } from "@/lib/i18n";
 import { UI_VARS as C } from "@/lib/uiTheme";
 
-export type Site = { id: string; name: string; updatedAt: string | null };
+export type Site = { id: string; name: string; updatedAt: string | null; thumbnail?: string | null };
 
 export type SiteCardActions = {
   open: () => void;
@@ -52,12 +52,20 @@ export function SiteCard({ site, actions, isCloning }: { site: Site; actions: Si
       onMouseLeave={() => setHovered(false)}
       onClick={renaming ? undefined : actions.open}
     >
-      <div style={{ width: "100%", height: 120, background: "linear-gradient(135deg, rgba(124,58,237,0.12) 0%, rgba(79,70,229,0.06) 100%)", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 12, flexShrink: 0 }}>
-        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" style={{ opacity: 0.2 }}>
-          <rect x="2" y="3" width="20" height="14" rx="2" stroke="white" strokeWidth="1.5" />
-          <path d="M8 21h8M12 17v4" stroke="white" strokeWidth="1.5" strokeLinecap="round" />
-          <path d="M5 7h14M5 11h8" stroke="white" strokeWidth="1.5" strokeLinecap="round" />
-        </svg>
+      <div style={{ width: "100%", height: 120, background: "linear-gradient(135deg, rgba(124,58,237,0.12) 0%, rgba(79,70,229,0.06) 100%)", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 12, flexShrink: 0, overflow: "hidden", position: "relative" }}>
+        {site.thumbnail ? (
+          <img
+            src={site.thumbnail}
+            alt={site.name}
+            style={{ width: "100%", height: "100%", objectFit: "cover" }}
+          />
+        ) : (
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" style={{ opacity: 0.2 }}>
+            <rect x="2" y="3" width="20" height="14" rx="2" stroke="white" strokeWidth="1.5" />
+            <path d="M8 21h8M12 17v4" stroke="white" strokeWidth="1.5" strokeLinecap="round" />
+            <path d="M5 7h14M5 11h8" stroke="white" strokeWidth="1.5" strokeLinecap="round" />
+          </svg>
+        )}
       </div>
 
       <div style={{ padding: "0 14px", display: "flex", flexDirection: "column", gap: 4, flex: 1 }}>

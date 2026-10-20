@@ -2,6 +2,15 @@
 
 ---
 
+## [25.16.7] — 2026-10-20
+
+### Task 016 — Automatic Project Thumbnail Capture & Dashboard Preview Cards (Minor)
+
+- **Automated Thumbnail Capture**: Implemented lightweight, high-fidelity SVG preview thumbnail generation in thumbnailCapture.ts, encoding real project instance titles, subtitles, branding names, and style themes.
+- **Auto-Persistence on Save**: Embedded project thumbnails into metadata.thumbnail in serialized schemas on save, update, and demo draft caching.
+- **Dashboard Preview Cards**: Updated SiteCard.tsx and GET /api/projects to render live project thumbnail previews on the /projects dashboard with graceful SVG wireframe fallback.
+- **Save Project Dialog Live Preview**: Replaced manual text URL input in SaveProjectDialog.tsx with an auto-updating live project preview card.
+
 ## [25.16.6] — 2026-10-20
 
 ### Task 015 — Canvas artboard full-height expansion & center zoom (Patch)

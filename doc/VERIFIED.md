@@ -1,5 +1,14 @@
 # Nova — Verified Feature Ledger
 
+## nova-builder / v25.16.7 — Automatic Project Thumbnail Capture & Dashboard Preview Cards (Task 016) (2026-10-20)
+
+| ID | Feature | Status | Visual Evidence |
+|---|---|---|---|
+| THUMB-GEN1 | Automatic SVG project thumbnail generation encoding project instances, titles, brand, and theme | 🟢 | doc/screenshots/13-project-thumbnails.png |
+| THUMB-SAVE1 | Project thumbnails auto-persisted in schema metadata during save, update, and demo draft caching | 🟢 | doc/screenshots/13-project-thumbnails.png |
+| THUMB-CARD1 | SiteCard and /api/projects rendering live SVG preview thumbnails on /projects dashboard | 🟢 | doc/screenshots/13-project-thumbnails.png |
+| THUMB-DLG1 | SaveProjectDialog auto-updating live preview card replacing manual URL input | 🟢 | doc/screenshots/13-project-thumbnails.png |
+
 ## nova-builder / v25.16.6 — Canvas Artboard Full-Height Expansion & Center Zoom (Task 015) (2026-10-20)
 
 | ID | Feature | Status | Visual Evidence |

@@ -36,6 +36,7 @@ import {
   openFeatureGate,
 } from "@/lib/nano-states";
 import { saveProject, SaveConflictError, getSerializedProjectSchema } from "@/lib/saveProject";
+import { captureCurrentProjectThumbnail } from "@/lib/thumbnailCapture";
 import { DEMO_DRAFT_KEY } from "@/builder/hooks/useDemoDraftSync";
 import { SaveProjectDialog } from "./SaveProjectDialog";
 import { DeployPanel } from "./DeployPanel";
@@ -284,7 +285,8 @@ export function TopbarActions({ isDemo }: Props) {
     setIsSaving(true);
     setSaveError(false);
     try {
-      const payload = getProjectPayload(name, description, thumbnail);
+      const finalThumb = thumbnail || captureCurrentProjectThumbnail();
+      const payload = getProjectPayload(name, description, finalThumb);
       const res = await fetch("/api/projects", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -316,7 +318,8 @@ export function TopbarActions({ isDemo }: Props) {
     setIsSaving(true);
     setSaveError(false);
     try {
-      const payload = getProjectPayload(newName);
+      const copyThumb = captureCurrentProjectThumbnail();
+      const payload = getProjectPayload(newName, "", copyThumb);
       const res = await fetch("/api/projects", {
         method: "POST",
         headers: { "Content-Type": "application/json" },

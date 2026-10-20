@@ -4,6 +4,7 @@ import { useEffect, useState, useRef } from "react";
 import { UI_VARS as C } from "@/lib/uiTheme";
 import { useI18n, fmt } from "@/lib/i18n";
 import { SaveConflictError } from "@/lib/saveProject";
+import { captureCurrentProjectThumbnail } from "@/lib/thumbnailCapture";
 
 type Step = "confirm" | "create" | "saveAs";
 
@@ -44,7 +45,7 @@ export function SaveProjectDialog({
       setStep(isDemo ? "create" : "confirm");
       setName(projectName || D.untitled);
       setDescription("");
-      setThumbnail("");
+      try { setThumbnail(captureCurrentProjectThumbnail()); } catch { setThumbnail(""); }
       setSaveAsName(fmt(D.copyName, { name: projectName || D.untitled }));
       setIsSubmitting(false);
       setErrorMsg(null);
@@ -313,14 +314,30 @@ export function SaveProjectDialog({
 
             <div>
               <label style={labelStyle}>{D.thumbnailLabel}</label>
-              <input
-                type="text"
-                value={thumbnail}
-                onChange={(e) => setThumbnail(e.target.value)}
-                placeholder={D.thumbnailPlaceholder}
-                disabled={isSubmitting}
-                style={inputStyle}
-              />
+              <div
+                style={{
+                  width: "100%",
+                  height: 120,
+                  borderRadius: 8,
+                  border: `1px solid ${C.border}`,
+                  background: C.bg,
+                  overflow: "hidden",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  position: "relative",
+                }}
+              >
+                {thumbnail ? (
+                  <img
+                    src={thumbnail}
+                    alt={name}
+                    style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                  />
+                ) : (
+                  <span style={{ fontSize: 12, color: C.textMuted }}>{D.thumbnailPlaceholder}</span>
+                )}
+              </div>
             </div>
 
             <div style={{ display: "flex", gap: 8, justifyContent: "flex-end", marginTop: 8 }}>
