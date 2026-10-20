@@ -13,11 +13,17 @@ export function initPointerSelection(): (() => void) | undefined {
     if ($textEditingInstance.get()) return;
     // Releasing a resize handle clicks the selection chrome — keep the selection.
     if ((e.target as Element)?.closest?.("[data-nova-overlay]")) return;
-    const el = (e.target as Element)?.closest(`[${selectorIdAttribute}]`);
-    if (!el) {
+    const target = e.target instanceof Element ? e.target : null;
+    const el = target?.closest(`[${selectorIdAttribute}]`);
+    const isRootBodyBackground = el && (() => {
+      const iid = el.getAttribute(selectorIdAttribute)?.split(",")[0];
+      const inst = iid ? $instances.get().get(iid) : null;
+      return inst?.component === "Body" && target === el;
+    })();
+    if (!el || isRootBodyBackground) {
       $selectedInstanceSelector.set(undefined);
       $multiSelectedInstanceIds.set([]);
-      window.parent.postMessage({ type: "nova:select", selector: undefined }, window.location.origin);
+      window.parent.postMessage({ type: "nova:select", selector: null }, window.location.origin);
       return;
     }
     const raw = el.getAttribute(selectorIdAttribute);
@@ -78,7 +84,8 @@ export function initPointerSelection(): (() => void) | undefined {
   const dblClickHandler = (e: MouseEvent) => {
     // ── Image preview on double-click (canvas mode) ─────────────────────────
     if (!$isPreviewMode.get()) {
-      const imgTarget = (e.target as Element)?.closest(`[${selectorIdAttribute}]`);
+      const target = e.target instanceof Element ? e.target : null;
+      const imgTarget = target?.closest(`[${selectorIdAttribute}]`);
       if (imgTarget instanceof HTMLElement) {
         const raw = imgTarget.getAttribute(selectorIdAttribute);
         const iid = raw?.split(",")[0];

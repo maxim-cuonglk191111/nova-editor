@@ -6,7 +6,8 @@ import { $isPreviewMode } from "@/lib/nano-states";
 export function initDesignInterceptors(): (() => void) | undefined {
   const interceptLink = (e: MouseEvent) => {
     if ($isPreviewMode.get()) return;
-    const anchor = (e.target as Element)?.closest("a");
+    const target = e.target instanceof Element ? e.target : null;
+    const anchor = target?.closest("a");
     if (anchor) {
       e.preventDefault();
     }

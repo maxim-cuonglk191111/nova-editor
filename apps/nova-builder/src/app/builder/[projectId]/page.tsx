@@ -35,7 +35,7 @@ import {
 } from "@/lib/data-stores";
 import {
   $selectedBreakpoint, $aiPanelOpen, $aiInitialPrompt, $canvasZoom, $fitToWidthTrigger, $gridGuidesVisible,
-  $selectedInstanceSelector, $pendingCanvasMsg,
+  $selectedInstanceSelector, $multiSelectedInstanceIds, $pendingCanvasMsg,
   $cssVars, $interactions, $customCss, $isDirty, $saveTriggerCount, $importKey,
 } from "@/lib/nano-states";
 import { $symbols } from "@/lib/symbols";
@@ -86,6 +86,18 @@ function BuilderPage() {
   const [textEditingInstanceId, setTextEditingInstanceId] = useState<string | null>(null);
   // canvasKey: bumped after a project import to reload the iframe and re-inject emitter
   const [canvasKey, setCanvasKey] = useState(0);
+  const isWheelZoomRef = useRef(false);
+
+  useEffect(() => {
+    const onMsg = (e: MessageEvent) => {
+      if (e.data?.type === "nova:select") {
+        $selectedInstanceSelector.set(e.data.selector);
+        $multiSelectedInstanceIds.set([]);
+      }
+    };
+    window.addEventListener("message", onMsg);
+    return () => window.removeEventListener("message", onMsg);
+  }, []);
 
   const selectedBreakpoint = useStore($selectedBreakpoint);
   const canvasZoom = useStore($canvasZoom);
@@ -192,7 +204,7 @@ function BuilderPage() {
     );
   }, [gridGuidesVisible]);
 
-  // ── Canvas zoom: Ctrl+scroll / pinch (passive:false required to preventDefault) ──
+  // ── Canvas zoom: Ctrl+scroll with cursor-anchored positioning ──
   useEffect(() => {
     const container = canvasAreaRef.current;
     if (!container) return;
@@ -200,17 +212,52 @@ function BuilderPage() {
       if (!e.ctrlKey && !e.metaKey) return;
       e.preventDefault();
       const current = $canvasZoom.get();
-      // Trackpad pinch delivers small deltaY; mouse wheel delivers large steps.
       const rawDelta = e.deltaY;
-      // Use a proportional factor capped so one wheel click ≈ 10%.
       const step = Math.min(0.1, Math.abs(rawDelta) * 0.001);
       const next = rawDelta > 0
         ? Math.max(0.1, current - step)
         : Math.min(3, current + step);
-      $canvasZoom.set(Math.round(next * 100) / 100);
+      const newZoom = Math.round(next * 100) / 100;
+      if (newZoom === current) return;
+
+      const rect = container.getBoundingClientRect();
+      const mouseX = e.clientX - rect.left;
+      const mouseY = e.clientY - rect.top;
+      const contentX = container.scrollLeft + mouseX;
+      const contentY = container.scrollTop + mouseY;
+      const factor = newZoom / current;
+
+      isWheelZoomRef.current = true;
+      $canvasZoom.set(newZoom);
+      container.scrollLeft = contentX * factor - mouseX;
+      container.scrollTop = contentY * factor - mouseY;
+      isWheelZoomRef.current = false;
     };
     container.addEventListener("wheel", onWheel, { passive: false });
     return () => container.removeEventListener("wheel", onWheel);
+  }, []);
+
+  // Center-anchored zoom when triggered by topbar buttons or shortcuts
+  useEffect(() => {
+    const container = canvasAreaRef.current;
+    if (!container) return;
+    let prevZoom = $canvasZoom.get();
+    return $canvasZoom.subscribe((newZoom) => {
+      if (isWheelZoomRef.current) {
+        prevZoom = newZoom;
+        return;
+      }
+      if (prevZoom > 0 && newZoom !== prevZoom) {
+        const factor = newZoom / prevZoom;
+        const cx = container.clientWidth / 2;
+        const cy = container.clientHeight / 2;
+        const x = container.scrollLeft + cx;
+        const y = container.scrollTop + cy;
+        container.scrollLeft = x * factor - cx;
+        container.scrollTop = y * factor - cy;
+      }
+      prevZoom = newZoom;
+    });
   }, []); // canvasAreaRef is stable — register once on mount
 
   // ── Fit-to-width: zoom out (or reset) so breakpoint canvas fits container ──
@@ -334,6 +381,16 @@ function BuilderPage() {
       {/* Canvas — centered, constrained by active breakpoint, scalable */}
       <div
         ref={canvasAreaRef}
+        onClick={(e) => {
+          if (
+            e.target === canvasAreaRef.current ||
+            (e.target as HTMLElement)?.getAttribute?.("data-artboard-outer") === "true"
+          ) {
+            $selectedInstanceSelector.set(undefined);
+            $multiSelectedInstanceIds.set([]);
+            iframeRef.current?.contentWindow?.postMessage({ type: "nova:select", selector: null }, "*");
+          }
+        }}
         style={{
           gridArea: "main",
           background: builderTheme === "dark" ? "#0b0f19" : "#e5e7eb",
@@ -371,41 +428,51 @@ function BuilderPage() {
         {/* Text format toolbar — appears during double-click text editing */}
         {textEditingInstanceId && <TextFormatToolbar iframeRef={iframeRef} />}
 
-        {loadState === "ready" && (
-          // Scale wrapper — zoom applied here, not on the iframe, so iframe stays interactive
-          <div
-            style={{
-              transform: `scale(${canvasZoom})`,
-              transformOrigin: "top center",
-              flexShrink: 0,
-              width: canvasMaxWidth,
-              marginLeft: `calc(${canvasMaxWidth} * ${(canvasZoom - 1) / 2})`,
-              marginRight: `calc(${canvasMaxWidth} * ${(canvasZoom - 1) / 2})`,
-              marginBottom: `calc((100vh - 112px) * ${canvasZoom - 1})`,
-              boxShadow: "0 10px 30px -5px rgba(0, 0, 0, 0.15), 0 4px 10px -2px rgba(0, 0, 0, 0.08)",
-              borderRadius: 6,
-              overflow: "hidden",
-              background: "#ffffff",
-              transition: "transform 0.12s ease, width 0.2s ease",
-            }}
-          >
-            <iframe
-              key={canvasKey}
-              ref={iframeRef}
-              src={`/canvas?theme=${builderTheme}${canvasKey > 0 ? `&v=${canvasKey}` : ""}`}
-              onLoad={onIframeLoad}
+        {loadState === "ready" && (() => {
+          const artboardHeight = canvasZoom < 1
+            ? `calc((100vh - 112px) / ${canvasZoom})`
+            : "calc(100vh - 112px)";
+          return (
+            // Scale wrapper — zoom applied here; height expands inversely to zoom so it fills available viewport without trapped scrollbars
+            <div
+              data-artboard-outer="true"
               style={{
-                width: "100%",
-                height: "calc(100vh - 112px)",
-                border: "none",
-                display: "block",
-                transition: "width 0.2s ease",
+                transform: `scale(${canvasZoom})`,
+                transformOrigin: "top center",
+                flexShrink: 0,
+                width: canvasMaxWidth,
+                height: artboardHeight,
+                marginLeft: `calc(${canvasMaxWidth} * ${(canvasZoom - 1) / 2})`,
+                marginRight: `calc(${canvasMaxWidth} * ${(canvasZoom - 1) / 2})`,
+                marginBottom: canvasZoom > 1
+                  ? `calc((100vh - 112px) * ${canvasZoom - 1} + 32px)`
+                  : "0px",
+                boxShadow: "0 10px 30px -5px rgba(0, 0, 0, 0.15), 0 4px 10px -2px rgba(0, 0, 0, 0.08)",
+                borderRadius: 6,
+                overflow: "hidden",
+                background: "#ffffff",
+                transition: "transform 0.12s ease, width 0.2s ease",
               }}
-              // i18n-ignore — stable selector used by useDraggable + e2e specs
-              title="Canvas"
-            />
-          </div>
-        )}
+            >
+              <iframe
+                key={canvasKey}
+                ref={iframeRef}
+                src={`/canvas?theme=${builderTheme}${canvasKey > 0 ? `&v=${canvasKey}` : ""}`}
+                onLoad={onIframeLoad}
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  minHeight: "100%",
+                  border: "none",
+                  display: "block",
+                  transition: "width 0.2s ease",
+                }}
+                // i18n-ignore — stable selector used by useDraggable + e2e specs
+                title="Canvas"
+              />
+            </div>
+          );
+        })()}
       </div>
 
       {/* Right panel — Style + Settings tabs */}

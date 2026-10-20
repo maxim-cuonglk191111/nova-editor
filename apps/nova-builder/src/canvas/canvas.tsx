@@ -33,6 +33,7 @@ import {
   $isPreviewMode,
   $registeredComponents,
   $selectedInstanceSelector,
+  $multiSelectedInstanceIds,
   $textEditingInstance,
   registerComponentLibrary,
   assetBaseUrl,
@@ -255,9 +256,6 @@ export const Canvas = () => {
   // Expose canvas API.
   useEffect(() => {
     initCanvasApi();
-    // Webstudio's normalize makes <html> a 1fr grid; 1fr = minmax(auto, 1fr), so
-    // <body> could never be narrower than its widest content and every
-    // width:100% resolved against that — pages overflowed on phone breakpoints.
     injectStyleEl("nova-canvas-base", "body { min-width: 0; }");
   }, []);
 
@@ -439,6 +437,11 @@ export const Canvas = () => {
   useEffect(() => {
     const onMessage = (e: MessageEvent) => {
       if ($isPreviewMode.get()) return;
+      if (e.data?.type === "nova:select") {
+        $selectedInstanceSelector.set(e.data.selector);
+        $multiSelectedInstanceIds.set([]);
+        return;
+      }
       if (e.data?.type !== "nova:instanceChildren") return;
       const { instanceId, children } = e.data as {
         instanceId: string;

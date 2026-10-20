@@ -2,6 +2,16 @@
 
 ---
 
+## [25.16.6] — 2026-10-20
+
+### Task 015 — Canvas artboard full-height expansion & center zoom (Patch)
+
+- **Canvas Full-Height Expansion**: Artboard height scales inversely with zoom when scaled down (`calc((100vh - 112px) / zoom)`), allowing the artboard to naturally expand and fill the available vertical viewport without being trapped in an inner scrollbar or leaving a giant empty gray gap below.
+- **Cursor-Anchored Wheel Zoom**: Ctrl+wheel zooming calculates mouse cursor container coordinates and compensates `scrollLeft` and `scrollTop` proportionally, keeping the point under cursor stable even at 210%–300% zoom.
+- **Center-Anchored Action Zoom**: Zoom triggered from topbar buttons (`+`, `-`, `100%`, `Fit`) anchors around the visible container viewport center.
+- **Canvas Empty Area Click Deselect**: Clicking on empty canvas backdrop or clicking the outer container clears active selection, dismissing selection boxes and automatically disabling contextual actions in the topbar.
+- **Robust Non-Element Target Interceptors**: Hardened pointer selection and design interceptors against non-Element targets (`Document`, `window`), eliminating uncaught TypeError exceptions.
+
 ## [25.16.5] — 2026-10-20
 
 ### Task 014 — Auth navigation loop, deploy cache invalidation & post-login return flow (Patch)

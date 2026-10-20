@@ -1,6 +1,6 @@
 # Task 015 — Canvas Artboard Full-Height Expansion & Center Zoom
 
-- **Status:** Open
+- **Status:** Closed
 - **Filed:** 2026-10-20
 - **Owner:** Antigravity / Claude Code
 - **Severity:** High (Core WYSIWYG Usability: Content trapped in artificial scroll area; canvas zoom pushes content offscreen)
@@ -33,9 +33,9 @@
 
 ## 2. Solution Checklist
 
-- [ ] Inspect and fix iframe / body height constraints so canvas content expands naturally to fill vertical space without nested scrollbars.
-- [ ] Implement cursor/center-anchored zoom in `page.tsx` wheel event handler.
-- [ ] Implement click-outside deselect on canvas backdrop in `pointerSelection.ts`.
-- [ ] Run `node scripts/i18n-audit.mjs --max=0`.
-- [ ] Run `pnpm --filter @nova/builder typecheck`.
-- [ ] Verify live in Chrome DevTools MCP.
+- [x] Inspect and fix iframe / body height constraints so canvas content expands naturally to fill vertical space without nested scrollbars.
+- [x] Implement cursor/center-anchored zoom in `page.tsx` wheel event handler.
+- [x] Implement click-outside deselect on canvas backdrop in `pointerSelection.ts`.
+- [x] Run `node scripts/i18n-audit.mjs --max=0`.
+- [x] Run `pnpm --filter @nova/builder typecheck`.
+- [x] Verify live in Chrome DevTools MCP.

@@ -1,5 +1,15 @@
 # Nova — Verified Feature Ledger
 
+## nova-builder / v25.16.6 — Canvas Artboard Full-Height Expansion & Center Zoom (Task 015) (2026-10-20)
+
+| ID | Feature | Status | Visual Evidence |
+|---|---|---|---|
+| CANVAS-EXPAND1 | Canvas artboard inverse-zoom height expansion: when scaled down, artboard fills 100% of available viewport without empty gray gap below or trapped inner scrollbar | 🟢 | doc/screenshots/12-canvas-expansion-and-zoom.png |
+| CANVAS-ZOOM1 | Cursor-anchored wheel zoom (Ctrl+wheel): maintains point under cursor during zoom in/out (up to 300%) | 🟢 | doc/screenshots/12-canvas-expansion-and-zoom.png |
+| CANVAS-CENTER1 | Viewport center-anchored zoom for topbar buttons (+, -, 100%, Fit) and keyboard shortcuts | 🟢 | doc/screenshots/12-canvas-expansion-and-zoom.png |
+| CANVAS-DESEL1 | Empty canvas & backdrop click deselect: clicking outside elements or on empty canvas clears selection and disables contextual actions | 🟢 | doc/screenshots/12-canvas-expansion-and-zoom.png |
+| CANVAS-SAFE1 | Safe non-Element event target guarding in pointerSelection and designInterceptors preventing uncaught exceptions | 🟢 | doc/screenshots/12-canvas-expansion-and-zoom.png |
+
 ## nova-builder / v25.16.5 — Auth Navigation Loop, Deploy Cache Invalidation & Post-Login Return Flow (Task 014) (2026-10-20)
 
 | ID | Feature | Status | Visual Evidence |
