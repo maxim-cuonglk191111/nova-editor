@@ -326,6 +326,25 @@ function renderInstance(
     return `${pad}<${tag} ${attrs.join(" ")}>\n${inner}${pad}</${tag}>\n`;
   }
 
+  // ── Task 019: Strip empty text/heading elements from export ───────────────
+  const isTextElement =
+    inst.component === "Heading" ||
+    inst.component === "Paragraph" ||
+    inst.component === "Text" ||
+    inst.component === "shadcn:Heading" ||
+    inst.component === "shadcn:Text";
+
+  const hasChildInstances = inst.children.some((c) => c.type === "id");
+  const rawText = inst.children
+    .filter((c) => c.type === "text")
+    .map((c) => (c as { type: "text"; value: string }).value)
+    .join("")
+    .trim();
+
+  if (isTextElement && !hasChildInstances && !rawText) {
+    return "";
+  }
+
   // ── Standard component rendering ──────────────────────────────────────────
   let tag = TAG[inst.component] ?? "div";
   if (inst.component === "Heading") {

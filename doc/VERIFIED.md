@@ -1,5 +1,13 @@
 # Nova — Verified Feature Ledger
 
+## nova-builder / v25.16.10 — Empty Text Element Canvas Placeholder & Clean HTML Export (Task 019) (2026-10-20)
+
+| ID | Feature | Status | Visual Evidence |
+|---|---|---|---|
+| TEXT-COLLAPSE1 | Empty text element collapse prevention: min-height 1.25em and min-width 48px prevent elements from vanishing | 🟢 | doc/screenshots/16-empty-text-placeholder-and-export-cleaner.png |
+| TEXT-HINT1 | Localized ::before italic placeholder ("Empty Heading…" / "Tiêu đề trống…") on empty text elements | 🟢 | doc/screenshots/16-empty-text-placeholder-and-export-cleaner.png |
+| EXPORT-CLEAN1 | htmlExporter strips empty heading and paragraph tags from production HTML output | 🟢 | doc/screenshots/16-empty-text-placeholder-and-export-cleaner.png |
+
 ## nova-builder / v25.16.9 — Inspector Numeric Bounds Clamping & High-Contrast Dialog Buttons (Task 018) (2026-10-20)
 
 | ID | Feature | Status | Visual Evidence |

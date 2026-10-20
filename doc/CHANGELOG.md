@@ -2,6 +2,14 @@
 
 ---
 
+## [25.16.10] — 2026-10-20
+
+### Task 019 — Empty Text Element Canvas Placeholder & Clean HTML Export (Patch)
+
+- **Canvas Empty Text Collapse Prevention**: Added `min-height: 1.25em` and `min-width: 48px` to empty headings, paragraphs, and text tags inside the canvas, preventing zero-height visual collapse when elements are cleared.
+- **Localized Italic Placeholders**: Rendered faint italic `::before` placeholders (`"Empty Heading…"` / `"Tiêu đề trống…"`) when text elements are empty, ensuring they remain visible and clickable while auto-suppressing in preview mode.
+- **HTML Export Cleaner**: Enhanced `htmlExporter.ts` to strip empty headings and paragraph tags from exported production HTML, improving SEO and accessibility audit compliance.
+
 ## [25.16.9] — 2026-10-20
 
 ### Task 018 — Inspector Numeric Bounds Clamping, Decimal Formatting & High-Contrast Dialog Buttons (Patch)

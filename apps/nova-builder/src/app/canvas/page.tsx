@@ -28,6 +28,69 @@ const canvasStyles = `
     outline: 1px dashed rgba(124,58,237,0.5) !important;
     outline-offset: 1px;
   }
+  /* Empty text elements placeholder & collapse prevention (Task 019) */
+  body:not(.preview) h1:empty,
+  body:not(.preview) h2:empty,
+  body:not(.preview) h3:empty,
+  body:not(.preview) h4:empty,
+  body:not(.preview) h5:empty,
+  body:not(.preview) h6:empty,
+  body:not(.preview) p:empty,
+  body:not(.preview) a:empty,
+  body:not(.preview) button:empty,
+  body:not(.preview) [data-ws-component="Heading"]:empty,
+  body:not(.preview) [data-ws-component="Paragraph"]:empty,
+  body:not(.preview) [data-ws-component="Text"]:empty {
+    min-height: 1.25em !important;
+    min-width: 48px !important;
+    display: inline-block;
+  }
+  body:not(.preview) h1:empty::before,
+  body:not(.preview) h2:empty::before,
+  body:not(.preview) h3:empty::before,
+  body:not(.preview) h4:empty::before,
+  body:not(.preview) h5:empty::before,
+  body:not(.preview) h6:empty::before,
+  body:not(.preview) [data-ws-component="Heading"]:empty::before {
+    content: "Empty Heading…";
+    color: rgba(148, 163, 184, 0.45);
+    font-style: italic;
+    pointer-events: none;
+    font-weight: normal;
+  }
+  body:not(.preview) p:empty::before,
+  body:not(.preview) [data-ws-component="Paragraph"]:empty::before {
+    content: "Empty Paragraph…";
+    color: rgba(148, 163, 184, 0.45);
+    font-style: italic;
+    pointer-events: none;
+  }
+  body:not(.preview) a:empty::before,
+  body:not(.preview) button:empty::before,
+  body:not(.preview) [data-ws-component="Text"]:empty::before {
+    content: "Empty Text…";
+    color: rgba(148, 163, 184, 0.45);
+    font-style: italic;
+    pointer-events: none;
+  }
+  html[lang="vi"] body:not(.preview) h1:empty::before,
+  html[lang="vi"] body:not(.preview) h2:empty::before,
+  html[lang="vi"] body:not(.preview) h3:empty::before,
+  html[lang="vi"] body:not(.preview) h4:empty::before,
+  html[lang="vi"] body:not(.preview) h5:empty::before,
+  html[lang="vi"] body:not(.preview) h6:empty::before,
+  html[lang="vi"] body:not(.preview) [data-ws-component="Heading"]:empty::before {
+    content: "Tiêu đề trống…";
+  }
+  html[lang="vi"] body:not(.preview) p:empty::before,
+  html[lang="vi"] body:not(.preview) [data-ws-component="Paragraph"]:empty::before {
+    content: "Đoạn văn trống…";
+  }
+  html[lang="vi"] body:not(.preview) a:empty::before,
+  html[lang="vi"] body:not(.preview) button:empty::before,
+  html[lang="vi"] body:not(.preview) [data-ws-component="Text"]:empty::before {
+    content: "Văn bản trống…";
+  }
   ${animationKeyframesCss()}
 `;
 
@@ -113,6 +176,10 @@ function CanvasPage() {
       setTheme(t);
     }
   }, []);
+
+  useEffect(() => {
+    document.body.classList.toggle("preview", isPreview);
+  }, [isPreview]);
 
   // Build className after hydration to avoid SSR/client mismatch.
   // On the server, isPreview and theme are not yet resolved from the URL,
