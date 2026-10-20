@@ -85,6 +85,15 @@ async function getSessionToken(req: NextRequest) {
   return token;
 }
 
+function applyAntiCacheHeaders(res: NextResponse, pathname: string) {
+  // Ensure dynamic HTML pages and API routes never get stuck in stale edge/browser cache across deploys
+  if (!pathname.startsWith("/_next") && !pathname.match(/\.(png|jpg|jpeg|gif|webp|svg|ico|css|js|woff2?|ttf|otf|eot|mp4|mp3|pdf|csv|zip)$/)) {
+    res.headers.set("Cache-Control", "private, no-cache, no-store, max-age=0, must-revalidate");
+    res.headers.set("Pragma", "no-cache");
+    res.headers.set("Expires", "0");
+  }
+}
+
 export async function middleware(req: NextRequest) {
   // Custom-domain host routing (P41): requests arriving on a host other than
   // the app's canonical host are forwarded to the domain resolver, which maps
@@ -122,16 +131,18 @@ export async function middleware(req: NextRequest) {
     return NextResponse.rewrite(url);
   }
 
-  // Redirect authenticated users trying to access auth pages to /
+  // Redirect authenticated users trying to access auth pages to /projects
   if (AUTH_PAGES.has(pathname)) {
     const token = await getSessionToken(req);
     if (token) {
-      return NextResponse.redirect(new URL("/", getAppUrl(req)));
+      return NextResponse.redirect(new URL("/projects", getAppUrl(req)));
     }
   }
 
   if (isPublic(pathname)) {
-    return NextResponse.next();
+    const res = NextResponse.next();
+    applyAntiCacheHeaders(res, pathname);
+    return res;
   }
 
   const token = await getSessionToken(req);
@@ -142,7 +153,9 @@ export async function middleware(req: NextRequest) {
     return NextResponse.redirect(loginUrl);
   }
 
-  return NextResponse.next();
+  const res = NextResponse.next();
+  applyAntiCacheHeaders(res, pathname);
+  return res;
 }
 
 export const config = {

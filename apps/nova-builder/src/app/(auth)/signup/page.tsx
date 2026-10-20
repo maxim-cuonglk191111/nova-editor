@@ -11,7 +11,9 @@ function SignupForm() {
   const { t } = useI18n();
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl") ?? "/projects";
-  const backHref = callbackUrl.startsWith("/builder/") ? callbackUrl : "/";
+  const returnTo = searchParams.get("returnTo");
+  const backHref = returnTo || (callbackUrl.startsWith("/builder/") ? callbackUrl : "/");
+  const loginHref = `/login?callbackUrl=${encodeURIComponent(callbackUrl)}${returnTo ? `&returnTo=${encodeURIComponent(returnTo)}` : ""}`;
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -53,7 +55,7 @@ function SignupForm() {
     const sameHost = callbackUrl.startsWith("/") && !callbackUrl.startsWith("//");
     window.location.href = login?.ok && !login.error
       ? (sameHost ? callbackUrl : "/projects")
-      : `/login?registered=true&callbackUrl=${encodeURIComponent(callbackUrl)}`;
+      : `/login?registered=true&callbackUrl=${encodeURIComponent(callbackUrl)}${returnTo ? `&returnTo=${encodeURIComponent(returnTo)}` : ""}`;
   }
 
   return (
@@ -170,7 +172,7 @@ function SignupForm() {
 
           <p style={{ textAlign: "center", fontSize: 14, color: "#64748b", margin: "20px 0 0" }}>
             {t.auth.alreadyHaveAccount}{" "}
-            <Link href="/login" style={{ color: "#6d28d9", fontWeight: 600, textDecoration: "none" }}>{t.nav.login}</Link>
+            <Link href={loginHref} style={{ color: "#6d28d9", fontWeight: 600, textDecoration: "none" }}>{t.nav.login}</Link>
           </p>
         </div>
 

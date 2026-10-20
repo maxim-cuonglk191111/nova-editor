@@ -11,9 +11,11 @@ function AuthForm() {
   const { t } = useI18n();
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl") ?? "/projects";
+  const returnTo = searchParams.get("returnTo");
   const authError = searchParams.get("error");
   const registered = searchParams.get("registered") === "true";
-  const backHref = callbackUrl.startsWith("/builder/") ? callbackUrl : "/";
+  const backHref = returnTo || (callbackUrl.startsWith("/builder/") ? callbackUrl : "/");
+  const signupHref = `/signup?callbackUrl=${encodeURIComponent(callbackUrl)}${returnTo ? `&returnTo=${encodeURIComponent(returnTo)}` : ""}`;
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -155,7 +157,7 @@ function AuthForm() {
           <div style={{ marginTop: 24, paddingTop: 20, borderTop: "1px solid #f1f5f9", textAlign: "center" }}>
             <p style={{ fontSize: 14, color: "#64748b", margin: "0 0 8px" }}>
               {t.auth.dontHaveAccount}{" "}
-              <Link href="/signup" style={{ color: "#6d28d9", fontWeight: 600, textDecoration: "none" }}>
+              <Link href={signupHref} style={{ color: "#6d28d9", fontWeight: 600, textDecoration: "none" }}>
                 {t.auth.signUpTitle}
               </Link>
             </p>

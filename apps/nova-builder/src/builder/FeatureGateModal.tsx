@@ -30,7 +30,7 @@ export function FeatureGateModal() {
       cta: G.ctaSave,
       badge: G.badgeFree,
       isPro: false,
-      url: "/signup?callbackUrl=%2Fprojects",
+      url: "/signup?callbackUrl=%2Fprojects&returnTo=%2Fbuilder%2Fdemo",
       icon: "💾",
     },
     "export-html": {
@@ -57,7 +57,7 @@ export function FeatureGateModal() {
       cta: G.ctaAssets,
       badge: G.badgeFree,
       isPro: false,
-      url: "/signup?callbackUrl=%2Fprojects",
+      url: "/signup?callbackUrl=%2Fprojects&returnTo=%2Fbuilder%2Fdemo",
       icon: "🖼️",
     },
     ai: {
@@ -66,7 +66,7 @@ export function FeatureGateModal() {
       cta: G.ctaAI,
       badge: G.badgeFree,
       isPro: false,
-      url: "/signup?callbackUrl=%2Fprojects",
+      url: "/signup?callbackUrl=%2Fprojects&returnTo=%2Fbuilder%2Fdemo",
       icon: "✦",
     },
   };

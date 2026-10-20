@@ -27,7 +27,7 @@ export default function Home() {
     if (!trimmed || creating) return;
     if (!session) {
       sessionStorage.setItem("nova-pending-prompt", trimmed);
-      router.push("/login");
+      router.push("/login?callbackUrl=%2Fprojects");
       return;
     }
     setCreating(true);
@@ -85,8 +85,8 @@ export default function Home() {
               </div>
 
               {/* CTA Button */}
-              <Link href="/signup" className="origin-button origin-button--nav">
-                <span>{t.landing.getStartedFree}</span>
+              <Link href={session ? "/projects" : "/signup"} className="origin-button origin-button--nav">
+                <span>{session ? t.nav.projects : t.landing.getStartedFree}</span>
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
               </Link>
 
@@ -141,8 +141,8 @@ export default function Home() {
                 <div className="origin-hero__sub-wrapper">
                   <p className="origin-p60">{t.landing.buildEverythingDesc}</p>
                 </div>
-                <Link href="/signup" className="origin-button origin-button--dark">
-                  {t.landing.getStartedFree.toUpperCase()}
+                <Link href={session ? "/projects" : "/signup"} className="origin-button origin-button--dark">
+                  {(session ? t.nav.projects : t.landing.getStartedFree).toUpperCase()}
                 </Link>
               </div>
             </div>
@@ -303,7 +303,7 @@ export default function Home() {
                 {t.site.connectBody}
               </p>
             </div>
-            <Link href="/signup" className="origin-button origin-button--dark" style={{ marginTop: 24 }}>
+            <Link href={session ? "/projects" : "/signup"} className="origin-button origin-button--dark" style={{ marginTop: 24 }}>
               {t.site.exploreIntegrations}
             </Link>
           </div>
@@ -353,8 +353,8 @@ export default function Home() {
                   <p className="origin-p60" style={{ color: "rgba(255,255,255,0.7)" }}>{t.landing.ctaSubtitle}</p>
                 </div>
                 <div style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap", marginTop: 32 }}>
-                  <Link href="/signup" className="origin-button origin-button--nav">
-                    <span>{t.landing.getStartedFree}</span>
+                  <Link href={session ? "/projects" : "/signup"} className="origin-button origin-button--nav">
+                    <span>{session ? t.nav.projects : t.landing.getStartedFree}</span>
                     <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
                   </Link>
                   <Link href="/builder/demo" className="origin-button origin-button--dark">

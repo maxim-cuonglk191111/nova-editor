@@ -50,15 +50,23 @@ export function Topbar({ isDemo }: { isDemo?: boolean }) {
       {/* Left: back + site name */}
       <div style={{ display: "flex", alignItems: "center", gap: 6, minWidth: 0, flexShrink: 0 }}>
         <button onClick={() => { if (!hasUnsavedWork() || confirm(t.chrome.leaveUnsaved)) router.push(isDemo ? "/" : "/projects"); }} title={isDemo ? t.builder.backToHome : t.builder.backToMySites} style={{ background: "none", border: "none", cursor: "pointer", color: C.textMuted, fontSize: 16, padding: "2px 5px", lineHeight: 1, borderRadius: 4 }}>←</button>
-        {brandingLogo ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img src={brandingLogo} alt={brandingName || t.tools.logoAlt} style={{ height: 24, objectFit: "contain", flexShrink: 0 }} />
-        ) : (
-          <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-            <LogoIcon width={20} height={20} />
-            <span style={{ fontSize: 13, fontWeight: 800, color: "#a78bfa", letterSpacing: "-0.02em", flexShrink: 0 }}>{brandingName || "Nova"}</span>
-          </div>
-        )}
+        <button
+          type="button"
+          onClick={() => { if (!hasUnsavedWork() || confirm(t.chrome.leaveUnsaved)) router.push(isDemo ? "/" : "/projects"); }}
+          title={isDemo ? t.builder.backToHome : t.builder.backToMySites}
+          aria-label={isDemo ? t.builder.backToHome : t.builder.backToMySites}
+          style={{ background: "none", border: "none", padding: 0, margin: 0, cursor: "pointer", display: "flex", alignItems: "center", gap: 6 }}
+        >
+          {brandingLogo ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={brandingLogo} alt={brandingName || t.tools.logoAlt} style={{ height: 24, objectFit: "contain", flexShrink: 0 }} />
+          ) : (
+            <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+              <LogoIcon width={20} height={20} />
+              <span style={{ fontSize: 13, fontWeight: 800, color: "#a78bfa", letterSpacing: "-0.02em", flexShrink: 0 }}>{brandingName || "Nova"}</span>
+            </div>
+          )}
+        </button>
       </div>
 
       {/* Edit toolbar: labelled duplicate / delete for the selection. The bare

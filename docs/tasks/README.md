@@ -15,9 +15,22 @@ screenshotted, reviewed and scored /10; a feature we cannot make work is hidden
 | [006](006-cut-tier-c-code.md) | Remove Tier C code that stays hidden | Open |
 | [007](007-builder-feature-audit.md) | Builder feature audit: works + ease of use, every feature >= 8/10 | Done — 5 areas, v25.8.0–25.11.0 |
 | [008](008-solid-warnings.md) | Resolve the 21 SOLID audit warnings | Open |
-| [009](009-post-audit-coverage.md) | Close the gaps after the builder audit: regression, VI UI, outside-builder ease, visitor output, presets + two-level labels, AI chat panel in the left sidebar, AI provider research, process | In progress — batches 1–3 done (v25.12.1–25.14.0) |
+| [009](009-post-audit-coverage.md) | Close the gaps after the builder audit: regression, VI UI, outside-builder ease, visitor output, presets + two-level labels, AI chat panel in the left sidebar, AI provider research, process | In progress — batches 1–3, 5, 9 done (v25.12.1–25.16.4) |
 | [010](010-demo-product-parity-locks.md) | Demo & Product 100% UI Parity with Capability Gate / Lock System | Closed |
 | [011](011-visual-interactive-mcp-verification.md) | Visual & Interactive State Verification via Chrome DevTools MCP | Closed |
 | [012](012-pages-slug-autogen-and-routing-validation.md) | Pages Slug Auto-Generation, Route Collision Validation & Inline Edit Fix | Closed |
 | [013](013-desktop-canvas-artboard-framing.md) | Desktop Canvas Artboard Framing & Viewport Squeeze Prevention | Closed |
-
+| [014](014-auth-nav-and-deploy-cache-invalidation.md) | Auth Navigation Loop, Deploy Cache Invalidation & Post-Login Return Flow | Open |
+| [015](015-canvas-height-expansion-and-center-zoom.md) | Canvas Artboard Full-Height Expansion, Center Zoom & Canvas Deselect | Open |
+| [016](016-project-thumbnail-auto-capture.md) | Automatic Project Thumbnail Capture & Dashboard Preview Cards | Open |
+| [017](017-topbar-action-state-and-contextual-toolbar.md) | Topbar Action State Management & Contextual Toolbar | Open |
+| [018](018-inspector-numeric-bounds-and-dialog-contrast.md) | Inspector Numeric Bounds Clamping, Decimal Formatting & High-Contrast Dialog Buttons | Open |
+| [019](019-empty-text-placeholder-and-export-cleaner.md) | Empty Text Element Canvas Placeholder & Clean HTML Export | Open |
+| [020](020-landing-rebranding-and-vietnamese-font.md) | Landing Page Rebranding & Vietnamese Typography Refresh | Open |
+| [021](021-interactive-draggable-image-crop.md) | Interactive Draggable Image Crop Area | Open |
+| [022](022-pages-panel-inline-form-and-path-editing.md) | Pages Panel UX: Inline Form Placement, Blur Validation & Dual Inline Edit (Name + Path) | Open |
+| [023](023-canvas-drag-reparent-smoothness-and-snapping.md) | Canvas Drag & Drop Reparenting Target Snapping & Smooth Nesting | Open |
+| [024](024-multi-page-generation-and-prompt-structure.md) | Multi-Page Website Generation & Page Structure from Prompt | Open |
+| [025](025-pre-generate-auth-guard-and-instruction-sync.md) | Pre-Generate Auth Guard & Dialog Instruction Sync | Open |
+| [026](026-builder-error-boundary-and-crash-protection.md) | Builder Error Boundary & React Error #310 Crash Protection | Open |
+| [027](027-vietqr-real-payment-info-configuration.md) | VietQR Real Payment Account Configuration | Open |

@@ -63,3 +63,5 @@ doc/screenshots/debug-*
 
 # Local junction alias
 docs/task
+
+*.pdf

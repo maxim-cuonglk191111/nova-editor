@@ -2,6 +2,16 @@
 
 ---
 
+## [25.16.5] — 2026-10-20
+
+### Task 014 — Auth navigation loop, deploy cache invalidation & post-login return flow (Patch)
+
+- **Auth Navigation Bounce Elimination**: Authenticated users visiting auth routes (/signup, /login) are redirected to /projects instead of /, preventing infinite auth bounce loops.
+- **Dynamic Landing CTAs**: Updated all Home page CTA buttons to detect active user session, routing authenticated users straight to /projects while preserving unauthenticated /signup onboarding.
+- **Anti-Stale Deploy Caching**: Injected explicit Cache-Control: private, no-cache, no-store, must-revalidate and Pragma: no-cache headers across dynamic documents and API routes, eliminating stale client caching across deploys.
+- **Demo FeatureGate Return Flow**: Appended &returnTo=%2Fbuilder%2Fdemo across FeatureGateModal signup links, enabling users to cancel or navigate back directly to their demo draft.
+- **Topbar Logo Navigation**: Wrapped builder topbar logo and brand title in accessible button navigating back to / (in demo) or /projects (in user projects) with unsaved changes confirmation guard.
+
 ## [25.16.4] — 2026-10-17
 
 ### Task 009 batch 5 — presets & two-level labels for dual audience ease (Patch)

@@ -1,5 +1,15 @@
 # Nova — Verified Feature Ledger
 
+## nova-builder / v25.16.5 — Auth Navigation Loop, Deploy Cache Invalidation & Post-Login Return Flow (Task 014) (2026-10-20)
+
+| ID | Feature | Status | Visual Evidence |
+|---|---|---|---|
+| AUTH-LOOP1 | Fixed infinite auth loop: Authenticated users visiting /signup or /login redirect to /projects instead of / | 🟢 | doc/screenshots/11-auth-nav-and-deploy-cache.png |
+| CACHE-HEADER1 | Injected anti-cache headers (Cache-Control: private, no-cache, no-store, must-revalidate) for dynamic documents and APIs to eliminate stale deploy caching | 🟢 | doc/screenshots/11-auth-nav-and-deploy-cache.png |
+| CTA-DYN1 | Home page CTAs dynamically check user session and route authenticated users to /projects rather than /signup | 🟢 | doc/screenshots/11-auth-nav-and-deploy-cache.png |
+| RETURN-FLOW1 | Demo FeatureGateModal appends &returnTo=%2Fbuilder%2Fdemo allowing cancel/back navigation directly back to active editor draft | 🟢 | doc/screenshots/11-auth-nav-and-deploy-cache.png |
+| TOPBAR-LOGO1 | Topbar logo and brand name wrapped in accessible navigation button redirecting back to / (demo) or /projects | 🟢 | doc/screenshots/11-auth-nav-and-deploy-cache.png |
+
 ## nova-builder / v25.16.4 — Presets & Two-Level Labels for Dual Audience Ease (Task 009 Batch 5) (2026-10-17)
 
 | ID | Feature | Status | Visual Evidence |
