@@ -2,6 +2,15 @@
 
 ---
 
+## [25.16.12] — 2026-10-20
+
+### Task 021 — Interactive Draggable Image Crop Area (Patch)
+
+- **Interactive Draggable Crop Box**: Added an interactive, draggable crop selection frame over images in the lightbox modal with rule-of-thirds grid, 8 resize handles, and live aspect ratio preservation.
+- **Smooth Pan & Bound Clamping**: Supported vertical and horizontal dragging within rendered image boundaries, allowing users to frame subjects (e.g. lamps, portraits) precisely.
+- **Normalized Position Calculation**: Automatically calculated normalized `object-position` (0%..100% on X and Y) and committed `objectPosition` and `objectFit: cover` directly into the instance's CSS styles on apply.
+- **Multi-Surface Access**: Surfaced image crop triggers across canvas double-click, the contextual selection overlay pill, and a dedicated "Crop / Reposition" button in the inspector props panel.
+
 ## [25.16.11] — 2026-10-20
 
 ### Task 020 — Landing Page Rebranding & Vietnamese Typography Refresh (Patch)

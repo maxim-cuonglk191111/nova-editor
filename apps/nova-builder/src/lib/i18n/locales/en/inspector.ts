@@ -154,6 +154,11 @@ export const enInspector: I18nInspectorDictionary = {
     pickFromLibrary: "Choose from library",
     assetManagerSoon: "Asset Manager coming soon! Paste a URL above for now.",
     previewAlt: "preview",
+    cropImage: "Crop / Reposition",
+    applyCrop: "Apply Crop",
+    cropArea: "Crop Area",
+    cropHint: "Drag selection up and down to adjust",
+    resetCrop: "Reset Position",
     libraryEmpty: "No images yet. Upload one in Assets (left sidebar), then pick it here.",
     variantOverridden: "This element has its own colours in the Style tab, so they win over this style. Remove them there (×) to see it.",
     propLabels: {

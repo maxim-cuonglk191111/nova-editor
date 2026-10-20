@@ -96,7 +96,16 @@ export function initPointerSelection(): (() => void) | undefined {
             e.stopPropagation();
             const imgEl = imgTarget.tagName === "IMG" ? imgTarget as HTMLImageElement : imgTarget.querySelector("img");
             if (imgEl) {
-              $lightboxImage.set({ src: imgEl.src, alt: imgEl.alt || "Image" });
+              const r = imgTarget.getBoundingClientRect();
+              const comp = window.getComputedStyle(imgEl);
+              $lightboxImage.set({
+                src: imgEl.src,
+                alt: imgEl.alt || "Image",
+                instanceId: iid,
+                targetWidth: r.width,
+                targetHeight: r.height,
+                objectPosition: comp.objectPosition || "50% 50%",
+              });
             }
             return;
           }

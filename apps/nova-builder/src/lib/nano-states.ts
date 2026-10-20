@@ -246,7 +246,8 @@ export const $safeModeActive = computed(
 // posts direct messages to the canvas iframe for specific mutations.
 // The builder page forwards each entry to iframeRef on change.
 export type CanvasMsg =
-  | { type: "nova:instanceChildren"; instanceId: string; children: { type: string; value: string }[] };
+  | { type: "nova:instanceChildren"; instanceId: string; children: { type: string; value: string }[] }
+  | { type: "nova:openCrop"; instanceId: string; src?: string; alt?: string };
 export const $pendingCanvasMsg = atom<CanvasMsg | null>(null);
 
 // Global Toast Notifications

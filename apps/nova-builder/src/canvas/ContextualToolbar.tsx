@@ -7,10 +7,14 @@ export function ContextualToolbar({
   box,
   instanceId,
   isRoot,
+  isImage,
+  onCrop,
 }: {
   box: Rect;
   instanceId?: string;
   isRoot: boolean;
+  isImage?: boolean;
+  onCrop?: () => void;
 }) {
   const { t } = useI18n();
 
@@ -35,6 +39,32 @@ export function ContextualToolbar({
         pointerEvents: "auto",
       }}
     >
+      {isImage && (
+        <button
+          type="button"
+          title={t.inspector.props.cropImage}
+          aria-label={t.inspector.props.cropImage}
+          onClick={(e) => {
+            e.stopPropagation();
+            onCrop?.();
+          }}
+          style={{
+            background: "transparent",
+            border: "none",
+            color: "#c084fc",
+            cursor: "pointer",
+            fontSize: 12,
+            padding: "1px 4px",
+            borderRadius: 3,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            lineHeight: 1,
+          }}
+        >
+          ✂
+        </button>
+      )}
       <button
         type="button"
         title={t.commands.duplicate}

@@ -49,7 +49,7 @@ import { Slot, slotMeta } from "./slot";
 import { shadcnComponents, shadcnMetas } from "./shadcn-components";
 import { SelectionOverlay } from "./SelectionOverlay";
 import { TextEditOverlay } from "./TextEditOverlay";
-import { ImageLightbox } from "./ImageLightbox";
+import { ImageLightbox, $lightboxImage } from "./ImageLightbox";
 import { initDragReparent } from "./dragReparent";
 import { initGridGuides } from "./gridGuides";
 import { initSidebarDropIndicator } from "./sidebarDropIndicator";
@@ -437,6 +437,22 @@ export const Canvas = () => {
   useEffect(() => {
     const onMessage = (e: MessageEvent) => {
       if ($isPreviewMode.get()) return;
+      if (e.data?.type === "nova:openCrop") {
+        const { instanceId, src, alt } = e.data as { instanceId: string; src?: string; alt?: string };
+        const el = document.querySelector(`[${selectorIdAttribute}^="${instanceId}"]`) as HTMLElement | null;
+        const imgEl = el?.tagName === "IMG" ? el as HTMLImageElement : el?.querySelector("img");
+        const r = el?.getBoundingClientRect() ?? { width: 300, height: 200 };
+        const comp = imgEl ? window.getComputedStyle(imgEl) : null;
+        $lightboxImage.set({
+          src: src || imgEl?.src || "",
+          alt: alt || imgEl?.alt || "Image",
+          instanceId,
+          targetWidth: r.width,
+          targetHeight: r.height,
+          objectPosition: comp?.objectPosition || "50% 50%",
+        });
+        return;
+      }
       if (e.data?.type === "nova:select") {
         $selectedInstanceSelector.set(e.data.selector);
         $multiSelectedInstanceIds.set([]);

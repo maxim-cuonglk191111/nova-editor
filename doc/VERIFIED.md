@@ -1,5 +1,14 @@
 # Nova — Verified Feature Ledger
 
+## nova-builder / v25.16.12 — Interactive Draggable Image Crop Area (Task 021) (2026-10-20)
+
+| ID | Feature | Status | Visual Evidence |
+|---|---|---|---|
+| CROP-DRAG1 | Interactive draggable crop frame with aspect-ratio constraint and boundary clamping | 🟢 | doc/screenshots/18-draggable-image-crop.png |
+| CROP-MATH1 | Normalized focal coordinate calculation mapping to CSS object-position (X% Y%) and object-fit: cover | 🟢 | doc/screenshots/18-draggable-image-crop.png |
+| CROP-UI1 | Glassmorphic floating control bar with live Y% badge, reset button, and WCAG AAA apply button | 🟢 | doc/screenshots/18-draggable-image-crop.png |
+| CROP-ACCESS1 | Accessible via canvas double-click, contextual toolbar pill (✂), and right-panel props editor | 🟢 | doc/screenshots/18-draggable-image-crop.png |
+
 ## nova-builder / v25.16.11 — Landing Page Rebranding & Vietnamese Typography Refresh (Task 020) (2026-10-20)
 
 | ID | Feature | Status | Visual Evidence |

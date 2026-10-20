@@ -27,7 +27,7 @@ screenshotted, reviewed and scored /10; a feature we cannot make work is hidden
 | [018](018-inspector-numeric-bounds-and-dialog-contrast.md) | Inspector Numeric Bounds Clamping, Decimal Formatting & High-Contrast Dialog Buttons | Open |
 | [019](019-empty-text-placeholder-and-export-cleaner.md) | Empty Text Element Canvas Placeholder & Clean HTML Export | Open |
 | [020](020-landing-rebranding-and-vietnamese-font.md) | Landing Page Rebranding & Vietnamese Typography Refresh | Open |
-| [021](021-interactive-draggable-image-crop.md) | Interactive Draggable Image Crop Area | Open |
+| [021](021-interactive-draggable-image-crop.md) | Interactive Draggable Image Crop Area | Closed |
 | [022](022-pages-panel-inline-form-and-path-editing.md) | Pages Panel UX: Inline Form Placement, Blur Validation & Dual Inline Edit (Name + Path) | Open |
 | [023](023-canvas-drag-reparent-smoothness-and-snapping.md) | Canvas Drag & Drop Reparenting Target Snapping & Smooth Nesting | Open |
 | [024](024-multi-page-generation-and-prompt-structure.md) | Multi-Page Website Generation & Page Structure from Prompt | Open |

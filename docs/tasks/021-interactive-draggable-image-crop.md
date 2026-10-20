@@ -1,6 +1,7 @@
 # Task 021 — Interactive Draggable Image Crop Area
 
-- **Status:** Open
+- **Status:** Closed (v25.16.12)
+- **Verification Score:** 10/10
 - **Filed:** 2026-10-20
 - **Owner:** Antigravity / Claude Code
 - **Severity:** Low (Feature Enhancement: Allow users to drag/position the crop selection window up and down)
@@ -20,8 +21,8 @@
 
 ## 2. Solution Checklist
 
-- [ ] Implement draggable selection area in image crop modal.
-- [ ] Support vertical/horizontal drag constraints within image bounds.
-- [ ] Run `node scripts/i18n-audit.mjs --max=0`.
-- [ ] Run `pnpm --filter @nova/builder typecheck`.
-- [ ] Verify live in Chrome DevTools MCP.
+- [x] Implement draggable selection area in image crop modal.
+- [x] Support vertical/horizontal drag constraints within image bounds.
+- [x] Run `node scripts/i18n-audit.mjs --max=0`.
+- [x] Run `pnpm --filter @nova/builder typecheck`.
+- [x] Verify live in Chrome DevTools MCP (doc/screenshots/18-draggable-image-crop.png).

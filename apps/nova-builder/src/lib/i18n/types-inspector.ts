@@ -95,6 +95,11 @@ export interface I18nPropsPanelDictionary {
   pickFromLibrary: string;
   assetManagerSoon: string;
   previewAlt: string;
+  cropImage: string;
+  applyCrop: string;
+  cropArea: string;
+  cropHint: string;
+  resetCrop: string;
   /** Shown in the image picker when the project has no uploaded images. */
   libraryEmpty: string;
   /** Under a variant select when the element has its own colours in the Style tab. */

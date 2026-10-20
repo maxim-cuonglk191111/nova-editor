@@ -154,6 +154,11 @@ export const viInspector: I18nInspectorDictionary = {
     pickFromLibrary: "Chọn từ thư viện",
     assetManagerSoon: "Trình quản lý tài nguyên sắp ra mắt! Tạm thời hãy dán URL ở trên.",
     previewAlt: "xem trước",
+    cropImage: "Cắt & căn khung ảnh",
+    applyCrop: "Áp dụng",
+    cropArea: "Vùng chọn cắt",
+    cropHint: "Kéo vùng chọn lên xuống để điều chỉnh",
+    resetCrop: "Đặt lại vị trí",
     libraryEmpty: "Chưa có ảnh nào. Hãy tải ảnh lên ở mục Tài nguyên (thanh bên trái), rồi chọn ở đây.",
     variantOverridden: "Phần tử này có màu riêng ở tab Kiểu dáng nên màu đó được ưu tiên hơn kiểu này. Xóa chúng ở đó (×) để thấy thay đổi.",
     propLabels: {

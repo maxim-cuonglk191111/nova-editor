@@ -13,6 +13,7 @@ import { useEffect, useRef, useState } from "react";
 import { useStore } from "@nanostores/react";
 import { selectorIdAttribute } from "@webstudio-is/react-sdk";
 import { ContextualToolbar } from "./ContextualToolbar";
+import { $lightboxImage } from "./ImageLightbox";
 import { $selectedInstanceSelector, $isPreviewMode, $textEditingInstance } from "@/lib/nano-states";
 import { $instances } from "@/lib/data-stores";
 import {
@@ -467,7 +468,8 @@ export function SelectionOverlay() {
   // ── Render ───────────────────────────────────────────────────────────────────
 
   const box = preview ?? rect;
-  if (!box || isPreview || textEditing) return null;
+  const lightbox = useStore($lightboxImage);
+  if (!box || isPreview || textEditing || lightbox) return null;
 
   const label = `${componentName}  ${Math.round(box.width)} × ${Math.round(box.height)}`;
   const colEnd = gridPos ? gridPos.colStart + gridPos.span - 1 : null;
@@ -475,7 +477,28 @@ export function SelectionOverlay() {
   return (
     <div data-nova-overlay="" style={{ position: "fixed", inset: 0, pointerEvents: "none", zIndex: 2147483000 }}>
       {/* Contextual Action Toolbar (Task 017) */}
-      <ContextualToolbar box={box} instanceId={instanceId} isRoot={isRoot} />
+      <ContextualToolbar
+        box={box}
+        instanceId={instanceId}
+        isRoot={isRoot}
+        isImage={instance?.component === "Image"}
+        onCrop={() => {
+          if (elRef.current && instanceId) {
+            const el = elRef.current;
+            const imgEl = el.tagName === "IMG" ? (el as HTMLImageElement) : el.querySelector("img");
+            const r = el.getBoundingClientRect();
+            const comp = imgEl ? window.getComputedStyle(imgEl) : null;
+            $lightboxImage.set({
+              src: imgEl?.src || "",
+              alt: imgEl?.alt || "Image",
+              instanceId,
+              targetWidth: r.width,
+              targetHeight: r.height,
+              objectPosition: comp?.objectPosition || "50% 50%",
+            });
+          }
+        }}
+      />
       {/* Bounding box */}
       <div
         style={{

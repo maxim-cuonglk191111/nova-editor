@@ -99,6 +99,44 @@ function ImageSrcControl({
         }}
       />
 
+      {isValidPreview && (
+        <button
+          type="button"
+          onClick={() => {
+            $pendingCanvasMsg.set({
+              type: "nova:openCrop",
+              instanceId,
+              src,
+            });
+          }}
+          style={{
+            padding: "5px 10px",
+            background: "none",
+            border: `1px solid ${C.inputBorder}`,
+            borderRadius: 4,
+            color: C.textMuted,
+            fontSize: 12,
+            cursor: "pointer",
+            display: "flex",
+            alignItems: "center",
+            gap: 6,
+            width: "100%",
+            justifyContent: "center",
+            transition: "border-color 0.15s, color 0.15s",
+          }}
+          onMouseEnter={(e) => {
+            (e.currentTarget as HTMLButtonElement).style.borderColor = C.accentLight;
+            (e.currentTarget as HTMLButtonElement).style.color = C.accentLight;
+          }}
+          onMouseLeave={(e) => {
+            (e.currentTarget as HTMLButtonElement).style.borderColor = C.inputBorder;
+            (e.currentTarget as HTMLButtonElement).style.color = C.textMuted;
+          }}
+        >
+          <span>✂️</span>
+          <span>{P.cropImage}</span>
+        </button>
+      )}
       <button
         aria-expanded={libraryOpen}
         onClick={() => setLibraryOpen((v) => !v)}

@@ -15,7 +15,7 @@ import { writeStyle } from "@/lib/styleInspectorWrite";
 import type { AnyStyleDecl } from "@/lib/styleValueConversion";
 import { applyReparent, buildParentMap, moveToNewParent } from "@/lib/treeMove";
 import { writeGridSpan, writeGridColumnStart } from "@/lib/propWriteHelper";
-import { writeGridColumnStyle } from "@/lib/styleWriteHelper";
+import { writeGridColumnStyle, writeStyleProperty } from "@/lib/styleWriteHelper";
 
 export type CanvasContextMenuState = { instanceId: string; x: number; y: number };
 
@@ -52,6 +52,16 @@ export function useCanvasMessages({
           const newRootId = duplicateInstanceById(id);
           if (newRootId) $selectedInstanceSelector.set([newRootId]);
         }
+        return;
+      }
+      if (e.data?.type === "nova:cropCommit") {
+        const { instanceId, objectPosition } = e.data as {
+          instanceId: string;
+          objectPosition: string;
+        };
+        writeStyleProperty(instanceId, "objectPosition", objectPosition);
+        writeStyleProperty(instanceId, "objectFit", "cover");
+        $isDirty.set(true);
         return;
       }
       if (e.data?.type === "nova:delete" && e.origin === window.location.origin) {
