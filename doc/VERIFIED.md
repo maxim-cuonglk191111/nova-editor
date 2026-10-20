@@ -1,5 +1,14 @@
 # Nova — Verified Feature Ledger
 
+## nova-builder / v25.16.9 — Inspector Numeric Bounds Clamping & High-Contrast Dialog Buttons (Task 018) (2026-10-20)
+
+| ID | Feature | Status | Visual Evidence |
+|---|---|---|---|
+| STYLE-BOUND1 | Strict bounds clamping on numeric styles (margin -2000px..2000px, padding ≥0, fontSize 0..500px, opacity 0..1, zIndex ±9999) preventing offscreen body clipping | 🟢 | doc/screenshots/15-numeric-bounds-and-high-contrast.png |
+| UNIT-DOT1 | UnitInput auto-normalizes commas to dots and expands input min-width with hover value tooltip | 🟢 | doc/screenshots/15-numeric-bounds-and-high-contrast.png |
+| STYLE-RESET1 | Reset button (↺) on overridden style property rows for 1-click reverting to inherited/default style | 🟢 | doc/screenshots/15-numeric-bounds-and-high-contrast.png |
+| CONTRAST-AAA1 | High-contrast WCAG AAA dialog create buttons (white #ffffff on deep purple #7c3aed) in Pages and Assets modals | 🟢 | doc/screenshots/15-numeric-bounds-and-high-contrast.png |
+
 ## nova-builder / v25.16.8 — Topbar Action State Management & Contextual Toolbar (Task 017) (2026-10-20)
 
 | ID | Feature | Status | Visual Evidence |

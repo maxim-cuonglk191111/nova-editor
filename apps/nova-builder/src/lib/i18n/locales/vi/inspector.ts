@@ -28,6 +28,7 @@ export const viInspector: I18nInspectorDictionary = {
   expressionPlaceholder: "ví dụ: myVar",
   addStyle: "Thêm kiểu — chọn tên, gõ giá trị, nhấn Enter",
   removeValue: "Xóa giá trị này",
+  resetValue: "Đặt lại giá trị (↺)",
   propNames: {
     display: "Hiển thị", flexDirection: "Hướng", flexWrap: "Xuống dòng", alignItems: "Căn phần tử",
     justifyContent: "Dàn nội dung", justifyItems: "Dàn phần tử", alignContent: "Căn nội dung",

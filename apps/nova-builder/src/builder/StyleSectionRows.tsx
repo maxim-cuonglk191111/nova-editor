@@ -34,6 +34,7 @@ export function StyleValueEditor({
       <UnitInput
         value={uv.value}
         unit={uv.unit}
+        property={decl.property}
         units={unitless ? [uv.unit, ...COMMON_UNITS] : undefined}
         onCommit={(v, u) => onWrite({ type: "unit", value: v, unit: u })}
       />
@@ -191,10 +192,10 @@ export function EditablePropRow({
         {removable && (
           <button
             onClick={() => removeStyle(instanceId, decl)}
-            title={t.inspector.removeValue}
-            aria-label={`${t.inspector.removeValue}: ${friendlyName}`}
-            style={{ border: "none", background: "none", color: C.textMuted, fontSize: 15, lineHeight: 1, cursor: "pointer", padding: "0 2px" }}
-          >×</button>
+            title={t.inspector.resetValue ?? t.inspector.removeValue}
+            aria-label={`${t.inspector.resetValue ?? t.inspector.removeValue}: ${friendlyName}`}
+            style={{ border: "none", background: "none", color: C.textMuted, fontSize: 13, lineHeight: 1, cursor: "pointer", padding: "0 2px" }}
+          >↺</button>
         )}
       </td>
     </tr>

@@ -28,6 +28,7 @@ export const enInspector: I18nInspectorDictionary = {
   expressionPlaceholder: "e.g. myVar",
   addStyle: "Add a style — pick a name, type a value, press Enter",
   removeValue: "Remove this value",
+  resetValue: "Reset value (↺)",
   propNames: {
     display: "Display", flexDirection: "Direction", flexWrap: "Wrap", alignItems: "Align items",
     justifyContent: "Justify content", justifyItems: "Justify items", alignContent: "Align content",

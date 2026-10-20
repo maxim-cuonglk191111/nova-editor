@@ -1,8 +1,9 @@
 "use client";
 import { updateData } from "./transactions";
 import { $selectedBreakpoint, $selectedState, $multiSelectedInstanceIds } from "./nano-states";
-import type { AnyStyleDecl, StyleValue } from "./styleValueConversion";
+import type { AnyStyleDecl, StyleValue, UnitValue } from "./styleValueConversion";
 import { ensureLocalSource } from "./style-object-model";
+import { clampNumericStyleValue } from "./styleWriteHelper";
 
 // Re-export for callers that import ensureSource by name (backward compat shim).
 export { ensureLocalSource as ensureSource } from "./style-object-model";
@@ -20,13 +21,19 @@ export function writeStyle(instanceId: string, decl: AnyStyleDecl, newValue: Sty
     for (const targetId of targetIds) {
       // Always write to the LOCAL source — never to a token source.
       const sourceId = ensureLocalSource(targetId, sources, selections);
+      let safeValue = newValue;
+      if (newValue.type === "unit") {
+        const uv = newValue as UnitValue;
+        const clamped = clampNumericStyleValue(decl.property, uv.value, uv.unit);
+        safeValue = { ...uv, value: clamped };
+      }
       const key = `${sourceId}:${activeBpId}:${activeState}:${decl.property}`;
       (styles as Map<string, AnyStyleDecl>).set(key, {
         ...decl,
         styleSourceId: sourceId,
         breakpointId: activeBpId,
         state: activeState || undefined,
-        value: newValue,
+        value: safeValue,
       });
     }
   });

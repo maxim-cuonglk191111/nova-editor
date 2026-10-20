@@ -178,6 +178,7 @@ export interface I18nInspectorDictionary {
   addStyle: string;
   /** Tooltip of the × button that removes a style value. */
   removeValue: string;
+  resetValue: string;
   /** Human-readable CSS property names, keyed by camelCase property. */
   propNames: Record<string, string>;
   /** Plain-language tooltips for the pseudo-state pills, keyed by state (":hover"). */

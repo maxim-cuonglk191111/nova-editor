@@ -431,9 +431,10 @@ export function AssetsPanel() {
                     disabled={!newFolderName.trim()}
                     style={{
                       padding: "6px 14px", borderRadius: 7, border: "none",
-                      background: newFolderName.trim() ? T.accent : "#c4b5fd",
-                      color: "#fff", fontSize: 12, fontWeight: 600,
+                      background: newFolderName.trim() ? T.accent : "rgba(255,255,255,0.06)",
+                      color: newFolderName.trim() ? "#fff" : T.textSub, fontSize: 12, fontWeight: 600,
                       cursor: newFolderName.trim() ? "pointer" : "not-allowed",
+                      opacity: newFolderName.trim() ? 1 : 0.6,
                     }}
                   >
                     {L.create}

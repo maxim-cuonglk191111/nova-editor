@@ -212,10 +212,11 @@ export function PagesPanel() {
               style={{
                 flex: 1,
                 padding: "4px 0",
-                background: canSubmitPage ? "rgba(139,92,246,0.25)" : "rgba(255,255,255,0.05)",
-                border: `1px solid ${canSubmitPage ? "rgba(139,92,246,0.5)" : "rgba(255,255,255,0.1)"}`,
+                background: canSubmitPage ? "#7c3aed" : "rgba(255,255,255,0.05)",
+                border: `1px solid ${canSubmitPage ? "#7c3aed" : "rgba(255,255,255,0.1)"}`,
                 borderRadius: 4,
-                color: canSubmitPage ? "#c4b5fd" : C.textMuted,
+                color: canSubmitPage ? "#ffffff" : C.textMuted,
+                fontWeight: 600,
                 fontSize: 13,
                 fontFamily: C.font,
                 cursor: canSubmitPage ? "pointer" : "not-allowed",
@@ -249,7 +250,7 @@ export function PagesPanel() {
             onKeyDown={(e) => { if (e.key === "Enter") handleCreateFolder(); if (e.key === "Escape") { setShowNewFolder(false); setNewFolderName(""); } }}
             style={inputStyle} />
           <div style={{ display: "flex", gap: 6 }}>
-            <button onClick={handleCreateFolder} style={{ flex: 1, padding: "4px 0", background: "rgba(139,92,246,0.25)", border: "1px solid rgba(139,92,246,0.5)", borderRadius: 4, color: "#c4b5fd", fontSize: 13, fontFamily: C.font, cursor: "pointer" }}>{L.createFolder}</button>
+            <button onClick={handleCreateFolder} style={{ flex: 1, padding: "4px 0", background: "#7c3aed", border: "1px solid #7c3aed", borderRadius: 4, color: "#ffffff", fontWeight: 600, fontSize: 13, fontFamily: C.font, cursor: "pointer" }}>{L.createFolder}</button>
             <button onClick={() => { setShowNewFolder(false); setNewFolderName(""); }} style={{ padding: "4px 10px", background: "none", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 4, color: C.textMuted, fontSize: 13, fontFamily: C.font, cursor: "pointer" }}>{L.cancel}</button>
           </div>
         </div>

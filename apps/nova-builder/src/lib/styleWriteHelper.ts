@@ -61,6 +61,35 @@ function ensureSrc(
  * @param property    — camelCase CSS property name (e.g. "boxShadow", "filter")
  * @param cssValue    — the raw CSS value string (e.g. "0px 4px 8px rgba(0,0,0,0.2)")
  */
+export function clampNumericStyleValue(property: string, value: number, unit = "px"): number {
+  if (isNaN(value)) return 0;
+  if (property.startsWith("margin")) {
+    if (unit === "px" || unit === "" || unit === "number") return Math.max(-2000, Math.min(2000, value));
+    if (unit === "%" || unit === "vw" || unit === "vh") return Math.max(-200, Math.min(200, value));
+  }
+  if (property.startsWith("padding")) return Math.max(0, value);
+  if (
+    property === "width" || property === "height" ||
+    property === "minWidth" || property === "minHeight" ||
+    property === "maxWidth" || property === "maxHeight" ||
+    property === "gap" || property === "rowGap" || property === "columnGap" ||
+    property.includes("Radius") || property.includes("Width")
+  ) {
+    return Math.max(0, value);
+  }
+  if (property === "fontSize") return Math.max(0, Math.min(500, value));
+  if (property === "opacity") {
+    if (unit === "%") return Math.max(0, Math.min(100, value));
+    return Math.max(0, Math.min(1, value));
+  }
+  if (property === "zIndex") return Math.max(-9999, Math.min(9999, Math.round(value)));
+  if (property === "letterSpacing") {
+    if (unit === "px" || unit === "" || unit === "number") return Math.max(-20, Math.min(50, value));
+    if (unit === "em" || unit === "rem") return Math.max(-2, Math.min(5, value));
+  }
+  return value;
+}
+
 export function writeStyleProperty(
   instanceId: string,
   property: string,

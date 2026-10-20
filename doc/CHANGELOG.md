@@ -2,6 +2,15 @@
 
 ---
 
+## [25.16.9] — 2026-10-20
+
+### Task 018 — Inspector Numeric Bounds Clamping, Decimal Formatting & High-Contrast Dialog Buttons (Patch)
+
+- **Numeric Input Bounds Clamping**: Enforced safety bounds in `clampNumericStyleValue` across `styleWriteHelper.ts` and `styleInspectorWrite.ts`, bounding margins to `[-2000px, 2000px]`, padding to `≥0px`, font sizes to `[0px, 500px]`, opacity to `[0, 1]`, and z-index to `[-9999, 9999]` to prevent offscreen body displacements.
+- **Decimal Dot Standardization & Hover Tooltips**: Standardized decimal inputs in `UnitInput.tsx` to automatically normalize commas (`,`) to dots (`.`), expanded input field widths to 58px+, and surfaced live value tooltips on hover.
+- **Style Reset Buttons**: Replaced generic `×` icon with standard `↺` reset button on overridden style properties, allowing 1-click reverting of overridden styles.
+- **High-Contrast Dialog Actions**: Upgraded creation buttons on page and folder dialogs to crisp white text (`#ffffff`) on deep accent (`#7c3aed`), meeting WCAG AAA contrast accessibility standards.
+
 ## [25.16.8] — 2026-10-20
 
 ### Task 017 — Topbar Action State Management & Contextual Toolbar (Patch)
