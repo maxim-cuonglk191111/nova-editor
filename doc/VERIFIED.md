@@ -1,5 +1,14 @@
 # Nova — Verified Feature Ledger
 
+## nova-builder / v25.16.8 — Topbar Action State Management & Contextual Toolbar (Task 017) (2026-10-20)
+
+| ID | Feature | Status | Visual Evidence |
+|---|---|---|---|
+| TOPBAR-DIS1 | Topbar Duplicate & Delete disabled state with opacity 0.35 and not-allowed cursor when no element is selected or root Body is selected | 🟢 | doc/screenshots/14-topbar-action-state-and-contextual-toolbar.png |
+| TOPBAR-TIP1 | Dynamic contextual tooltips indicating target component name and shortcuts (Ctrl+D, Del) | 🟢 | doc/screenshots/14-topbar-action-state-and-contextual-toolbar.png |
+| CANVAS-TOOL1 | Canvas ContextualToolbar component rendering quick Duplicate and Delete pills on selection overlay bounding box | 🟢 | doc/screenshots/14-topbar-action-state-and-contextual-toolbar.png |
+| BRIDGE-CMD1 | Direct postMessage dispatch for nova:duplicate and nova:delete in useCanvasMessages | 🟢 | doc/screenshots/14-topbar-action-state-and-contextual-toolbar.png |
+
 ## nova-builder / v25.16.7 — Automatic Project Thumbnail Capture & Dashboard Preview Cards (Task 016) (2026-10-20)
 
 | ID | Feature | Status | Visual Evidence |

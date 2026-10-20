@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import type { Instance, Instances } from "@webstudio-is/sdk";
-import { deleteInstance } from "../edit-operations";
+import { deleteInstance, duplicateInstance } from "../edit-operations";
 
 const box = (id: string, kids: string[] = []): Instance => ({
   type: "instance",
@@ -38,5 +38,19 @@ describe("deleteInstance nextSelectedId", () => {
     const result = deleteInstance("root", tree());
     expect(result.deleted).toBe(false);
     expect(result.nextSelectedId).toBeUndefined();
+  });
+});
+
+describe("duplicateInstance root guarding", () => {
+  it("returns null when trying to duplicate root", () => {
+    const result = duplicateInstance("root", tree());
+    expect(result).toBeNull();
+  });
+
+  it("duplicates child elements successfully and clones siblings", () => {
+    const result = duplicateInstance("a", tree());
+    expect(result).not.toBeNull();
+    expect(result?.newRootId).toBeDefined();
+    expect(result?.updated.has(result.newRootId)).toBe(true);
   });
 });

@@ -6,14 +6,14 @@ import { useEffect, type RefObject } from "react";
 import { nanoid } from "nanoid";
 import { getRegistry } from "@/builder/left-sidebar/components/ComponentRegistry";
 import { SHORTCUT_MESSAGE, type ForwardedShortcut } from "@/canvas/forwardShortcuts";
+import { duplicateInstanceById, deleteInstanceById } from "@/builder/commands";
 import { $instances } from "@/lib/data-stores";
-import { $selectedInstanceSelector, $canvasZoom, $isDirty, $selectedPage } from "@/lib/nano-states";
+import { $selectedInstanceId, $selectedInstanceSelector, $canvasZoom, $isDirty, $selectedPage } from "@/lib/nano-states";
 import { updateData, replaceMap } from "@/lib/transactions";
 import { parseRichHtml } from "@/lib/richText";
 import { writeStyle } from "@/lib/styleInspectorWrite";
 import type { AnyStyleDecl } from "@/lib/styleValueConversion";
 import { applyReparent, buildParentMap, moveToNewParent } from "@/lib/treeMove";
-import { deleteInstanceById } from "@/builder/commands";
 import { writeGridSpan, writeGridColumnStart } from "@/lib/propWriteHelper";
 import { writeGridColumnStyle } from "@/lib/styleWriteHelper";
 
@@ -44,6 +44,19 @@ export function useCanvasMessages({
       if (e.data?.type === SHORTCUT_MESSAGE && e.origin === window.location.origin) {
         const { key, code, ctrlKey, metaKey, shiftKey, altKey } = e.data as ForwardedShortcut;
         window.dispatchEvent(new KeyboardEvent("keydown", { key, code, ctrlKey, metaKey, shiftKey, altKey, bubbles: true, cancelable: true }));
+        return;
+      }
+      if (e.data?.type === "nova:duplicate" && e.origin === window.location.origin) {
+        const id = (e.data as { instanceId?: string }).instanceId || $selectedInstanceId.get();
+        if (id) {
+          const newRootId = duplicateInstanceById(id);
+          if (newRootId) $selectedInstanceSelector.set([newRootId]);
+        }
+        return;
+      }
+      if (e.data?.type === "nova:delete" && e.origin === window.location.origin) {
+        const id = (e.data as { instanceId?: string }).instanceId || $selectedInstanceId.get();
+        if (id) deleteInstanceById(id);
         return;
       }
       if (e.data?.type === "nova:editingStart") {

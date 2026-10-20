@@ -12,6 +12,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useStore } from "@nanostores/react";
 import { selectorIdAttribute } from "@webstudio-is/react-sdk";
+import { ContextualToolbar } from "./ContextualToolbar";
 import { $selectedInstanceSelector, $isPreviewMode, $textEditingInstance } from "@/lib/nano-states";
 import { $instances } from "@/lib/data-stores";
 import {
@@ -189,6 +190,7 @@ export function SelectionOverlay() {
   const instanceId = selector?.[0];
   const instance = instanceId ? instances.get(instanceId) : undefined;
   const componentName = instance?.component?.split(":").pop() ?? "Element";
+  const isRoot = !instance || instance.component === "Body";
 
   // ── RAF tracker — updates rect + grid state each frame ────────────────────
   useEffect(() => {
@@ -472,6 +474,8 @@ export function SelectionOverlay() {
 
   return (
     <div data-nova-overlay="" style={{ position: "fixed", inset: 0, pointerEvents: "none", zIndex: 2147483000 }}>
+      {/* Contextual Action Toolbar (Task 017) */}
+      <ContextualToolbar box={box} instanceId={instanceId} isRoot={isRoot} />
       {/* Bounding box */}
       <div
         style={{

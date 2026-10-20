@@ -2,7 +2,7 @@
 import { useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { useStore } from "@nanostores/react";
-import { $breakpoints } from "@/lib/data-stores";
+import { $breakpoints, $instances } from "@/lib/data-stores";
 import {
   $selectedBreakpointId, $selectedBreakpoint,
   $selectedInstanceId, $selectedInstanceSelector,
@@ -14,7 +14,7 @@ import { BreakpointPill } from "./BreakpointPills";
 import { TopbarActions } from "./TopbarActions";
 import { hasUnsavedWork } from "./hooks/useUnsavedChangesGuard";
 import { LogoIcon } from "@/components/LogoIcon";
-import { useI18n } from "@/lib/i18n";
+import { useI18n, fmt } from "@/lib/i18n";
 import { UI_VARS as C } from "@/lib/uiTheme";
 
 
@@ -24,20 +24,38 @@ export function Topbar({ isDemo }: { isDemo?: boolean }) {
   const breakpoints = useStore($breakpoints);
   const activeBreakpoint = useStore($selectedBreakpoint);
   const selectedId = useStore($selectedInstanceId);
+  const instances = useStore($instances);
   const brandingLogo = useStore($brandingLogo);
   const brandingName = useStore($brandingName);
 
   const [bpManagerOpen, setBpManagerOpen] = useState(false);
 
+  const selectedInstance = selectedId ? instances.get(selectedId) : null;
+  const isRoot = !selectedInstance || selectedInstance.component === "Body";
+  const canDuplicateOrDelete = Boolean(selectedId && !isRoot);
+  const compName = selectedInstance?.component ?? "";
+
+  const duplicateTitle = !selectedId
+    ? t.builder.noSelectionDuplicateTooltip
+    : isRoot
+    ? t.builder.cannotDeleteBodyTooltip
+    : fmt(t.builder.duplicateTargetTooltip, { name: compName });
+
+  const deleteTitle = !selectedId
+    ? t.builder.noSelectionDeleteTooltip
+    : isRoot
+    ? t.builder.cannotDeleteBodyTooltip
+    : fmt(t.builder.deleteTargetTooltip, { name: compName });
+
   const handleDuplicate = useCallback(() => {
-    if (!selectedId) return;
+    if (!selectedId || isRoot) return;
     const newRootId = duplicateInstanceById(selectedId);
     if (newRootId) $selectedInstanceSelector.set([newRootId]);
-  }, [selectedId]);
+  }, [selectedId, isRoot]);
 
   const handleDelete = useCallback(() => {
-    if (selectedId) deleteInstanceById(selectedId);
-  }, [selectedId]);
+    if (selectedId && !isRoot) deleteInstanceById(selectedId);
+  }, [selectedId, isRoot]);
 
   const sortedBreakpoints = [...breakpoints.values()].sort((a, b) => {
     const aMax = a.maxWidth ?? Infinity;
@@ -73,16 +91,50 @@ export function Topbar({ isDemo }: { isDemo?: boolean }) {
           ⎘ ⧉ ⊕ ⌫ glyphs meant nothing to first-time users (task 007); copy and
           paste stay in the right-click menu and the keyboard shortcuts. */}
       <div style={{ display: "flex", alignItems: "center", gap: 2, flexShrink: 0, marginLeft: 4 }}>
-        {(
-          [
-            { label: `⧉ ${t.commands.duplicate}`, title: t.builder.duplicateTooltip, onClick: handleDuplicate, disabled: !selectedId },
-            { label: `🗑 ${t.commands.delete}`, title: t.builder.deleteTooltip, onClick: handleDelete, disabled: !selectedId, danger: true },
-          ] as Array<{ label: string; title: string; onClick: () => void; disabled: boolean; danger?: boolean }>
-        ).map(({ label, title, onClick, disabled, danger }) => (
-          <button key={title} onClick={onClick} disabled={disabled} title={title} style={{ background: "none", border: `1px solid ${disabled ? "transparent" : C.border}`, cursor: disabled ? "default" : "pointer", color: disabled ? C.textMuted : danger ? C.danger : C.text, opacity: disabled ? 0.45 : 1, fontSize: 12, padding: "3px 8px", borderRadius: 4, lineHeight: 1.2, fontFamily: C.font, transition: "color 0.1s", whiteSpace: "nowrap" }}>
-            {label}
-          </button>
-        ))}
+        <button
+          onClick={handleDuplicate}
+          disabled={!canDuplicateOrDelete}
+          title={duplicateTitle}
+          aria-label={duplicateTitle}
+          style={{
+            background: "none",
+            border: `1px solid ${!canDuplicateOrDelete ? "transparent" : C.border}`,
+            cursor: !canDuplicateOrDelete ? "not-allowed" : "pointer",
+            color: !canDuplicateOrDelete ? C.textMuted : C.text,
+            opacity: !canDuplicateOrDelete ? 0.35 : 1,
+            fontSize: 12,
+            padding: "3px 8px",
+            borderRadius: 4,
+            lineHeight: 1.2,
+            fontFamily: C.font,
+            transition: "all 0.1s",
+            whiteSpace: "nowrap",
+          }}
+        >
+          {`⧉ ${t.commands.duplicate}`}
+        </button>
+        <button
+          onClick={handleDelete}
+          disabled={!canDuplicateOrDelete}
+          title={deleteTitle}
+          aria-label={deleteTitle}
+          style={{
+            background: "none",
+            border: `1px solid ${!canDuplicateOrDelete ? "transparent" : C.border}`,
+            cursor: !canDuplicateOrDelete ? "not-allowed" : "pointer",
+            color: !canDuplicateOrDelete ? C.textMuted : C.danger,
+            opacity: !canDuplicateOrDelete ? 0.35 : 1,
+            fontSize: 12,
+            padding: "3px 8px",
+            borderRadius: 4,
+            lineHeight: 1.2,
+            fontFamily: C.font,
+            transition: "all 0.1s",
+            whiteSpace: "nowrap",
+          }}
+        >
+          {`🗑 ${t.commands.delete}`}
+        </button>
       </div>
 
       <div style={{ flex: 1 }} />

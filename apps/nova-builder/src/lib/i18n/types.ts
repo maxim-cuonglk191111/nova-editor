@@ -134,6 +134,11 @@ export interface I18nBuilderDictionary {
   pasteTooltip: string;
   duplicateTooltip: string;
   deleteTooltip: string;
+  duplicateTargetTooltip: string;
+  deleteTargetTooltip: string;
+  noSelectionDuplicateTooltip: string;
+  noSelectionDeleteTooltip: string;
+  cannotDeleteBodyTooltip: string;
   manageBreakpoints: string;
   components: string;
   symbols: string;

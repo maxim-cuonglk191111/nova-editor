@@ -2,6 +2,15 @@
 
 ---
 
+## [25.16.8] — 2026-10-20
+
+### Task 017 — Topbar Action State Management & Contextual Toolbar (Patch)
+
+- **Selection-Bound Action States**: Topbar Duplicate and Delete buttons now dynamically track selection and root Body status, applying proper disabled state (`opacity: 0.35`, `cursor: not-allowed`) when no element is selected or when the root Body is active.
+- **Contextual Target Tooltips**: Added localized target tooltips indicating the exact component being acted upon (e.g. `Duplicate "Heading" (Ctrl+D)` / `Delete "Heading" (Del)` / `Page body cannot be deleted or duplicated`).
+- **Canvas Contextual Action Toolbar**: Extracted `ContextualToolbar.tsx` to render quick-action Duplicate (`⧉`) and Delete (`🗑`) pills directly on the canvas selection overlay bounding box.
+- **Direct Bridge Messaging**: Wired direct `nova:duplicate` and `nova:delete` postMessage events in `useCanvasMessages.ts` for instantaneous canvas-to-builder command dispatch.
+
 ## [25.16.7] — 2026-10-20
 
 ### Task 016 — Automatic Project Thumbnail Capture & Dashboard Preview Cards (Minor)
