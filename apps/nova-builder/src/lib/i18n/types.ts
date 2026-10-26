@@ -19,7 +19,7 @@ export interface I18nNavDictionary {
   templates: string;
   tryDemo: string;
   pricing: string;
-  docs: string;
+  faq: string;
   login: string;
   signup: string;
   openBuilder: string;
@@ -250,7 +250,12 @@ export interface I18nLandingExample {
 }
 
 export interface I18nLandingFeature {
-  icon: string;
+  title: string;
+  body: string;
+  points: string[];
+}
+
+export interface I18nLandingStep {
   title: string;
   body: string;
 }
@@ -268,25 +273,30 @@ export interface I18nLandingDictionary {
   tryLabel: string;
   examples: I18nLandingExample[];
   trustBadges: string[];
-  features: I18nLandingFeature[];
-  ctaTitle: string;
-  ctaSubtitle: string;
   getStartedFree: string;
   tryDemo: string;
-  simplifyDesignLead: string;
-  simplifyDesignAccent: string;
-  buildEverythingLead: string;
-  buildEverythingAccent: string;
-  buildEverythingDesc: string;
-  deployAnythingLead: string;
-  deployAnythingAccent: string;
-  deployAnythingDesc: string;
-  growProductTitle: string;
-  growProductDesc: string;
-  testimonialsTitle: string;
-  testimonials: { name: string; quote: string; }[];
-  newsEyebrow: string;
-  newsTitle: string;
+  heroPhotoAlt: string;
+  featuresEyebrow: string;
+  featuresTitle: string;
+  featuresDesc: string;
+  features: I18nLandingFeature[];
+  featurePhotoAlts: string[];
+  stepsEyebrow: string;
+  stepsTitle: string;
+  steps: I18nLandingStep[];
+  audienceEyebrow: string;
+  audienceTitle: string;
+  audienceDesc: string;
+  audiences: I18nLandingStep[];
+  pricingEyebrow: string;
+  pricingTitle: string;
+  pricingDesc: string;
+  pricingSeeAll: string;
+  faqEyebrow: string;
+  faqTitle: string;
+  ctaTitle: string;
+  ctaSubtitle: string;
+  ctaPhotoAlt: string;
 }
 
 export interface I18nFaqItem {

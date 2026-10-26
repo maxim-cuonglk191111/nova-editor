@@ -66,8 +66,9 @@ export function PublicNav({ theme = "light" }: PublicNavProps) {
           <div className="on-navbar__center">
             <div className="on-nav-menu">
               <Link href="/builder/demo" className="on-nav-link">{t.nav.tryDemo}</Link>
+              <Link href="/#features" className="on-nav-link">{t.nav.features}</Link>
               <Link href="/pricing" className="on-nav-link">{t.nav.pricing}</Link>
-              <Link href="/docs" className="on-nav-link">{t.nav.docs}</Link>
+              <Link href="/#faq" className="on-nav-link">{t.nav.faq}</Link>
 
               {isLoggedIn && (
                 <Link href="/projects" className="on-nav-link on-nav-link--current">{t.nav.projects}</Link>
@@ -103,8 +104,9 @@ export function PublicNav({ theme = "light" }: PublicNavProps) {
       {mobileOpen && (
         <div className="on-mobile-menu">
           <Link href="/builder/demo" className="on-mobile-link" onClick={() => setMobileOpen(false)}>{t.nav.tryDemo}</Link>
+          <Link href="/#features" className="on-mobile-link" onClick={() => setMobileOpen(false)}>{t.nav.features}</Link>
           <Link href="/pricing" className="on-mobile-link" onClick={() => setMobileOpen(false)}>{t.nav.pricing}</Link>
-          <Link href="/docs" className="on-mobile-link" onClick={() => setMobileOpen(false)}>{t.nav.docs}</Link>
+          <Link href="/#faq" className="on-mobile-link" onClick={() => setMobileOpen(false)}>{t.nav.faq}</Link>
           {isLoggedIn ? (
             <Link href="/projects" className="on-mobile-link" onClick={() => setMobileOpen(false)}>{t.nav.projects}</Link>
           ) : (

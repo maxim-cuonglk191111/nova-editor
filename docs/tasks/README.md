@@ -34,3 +34,4 @@ screenshotted, reviewed and scored /10; a feature we cannot make work is hidden
 | [025](025-pre-generate-auth-guard-and-instruction-sync.md) | Pre-Generate Auth Guard & Dialog Instruction Sync | Open |
 | [026](026-builder-error-boundary-and-crash-protection.md) | Builder Error Boundary & React Error #310 Crash Protection | Open |
 | [027](027-vietqr-real-payment-info-configuration.md) | VietQR Real Payment Account Configuration | Open |
+| [028](028-business-landing-renovation.md) | Business Landing Page Renovation & Dead-Link Removal | Closed |

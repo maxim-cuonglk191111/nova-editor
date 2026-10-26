@@ -9,12 +9,6 @@ export interface I18nSiteDictionary {
   footerSupport: string;
   navHome: string;
   navMenu: string;
-  typingPhrases: string[];
-  connectLead: string;
-  connectRest: string;
-  connectBody: string;
-  exploreIntegrations: string;
-  starsAlt: string;
   userAvatarAlt: string;
   userFallback: string;
   dismissWelcome: string;
