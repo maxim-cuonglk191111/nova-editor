@@ -68,7 +68,7 @@ export default function Home() {
       <PublicNav />
 
       <main>
-        <LandingHero prompt={prompt} onPromptChange={setPrompt} onStart={handleStart} busy={creating || status === "loading"} />
+        <LandingHero prompt={prompt} onPromptChange={setPrompt} onStart={handleStart} busy={creating} waiting={status === "loading"} />
 
         {/* Who it is for, as a ticker. The second copy is for the loop only. */}
         <div className="lp-ticker">

@@ -10,10 +10,13 @@ type Props = {
   prompt: string;
   onPromptChange: (value: string) => void;
   onStart: () => void;
+  /** True while the project is being created: shows the spinner. */
   busy: boolean;
+  /** True while the session is still loading: the button waits but shows no spinner. */
+  waiting?: boolean;
 };
 
-export function LandingHero({ prompt, onPromptChange, onStart, busy }: Props) {
+export function LandingHero({ prompt, onPromptChange, onStart, busy, waiting = false }: Props) {
   const L = useI18n().t.landing;
   return (
     <section className="lp-hero" aria-labelledby="lp-title">
@@ -49,7 +52,7 @@ export function LandingHero({ prompt, onPromptChange, onStart, busy }: Props) {
               />
               <div className="lp-prompt__bar">
                 <span className="lp-prompt__hint">{L.pressEnter}</span>
-                <button type="button" onClick={onStart} disabled={busy} className="lp-btn lp-btn--primary">
+                <button type="button" onClick={onStart} disabled={busy || waiting} className="lp-btn lp-btn--primary">
                   {busy ? (<><span className="lp-spinner" />{L.building}</>) : (<>{L.startBuildingFree}<IconArrow width={16} height={16} /></>)}
                 </button>
               </div>

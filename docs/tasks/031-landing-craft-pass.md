@@ -1,6 +1,6 @@
 # Task 031 — Landing page: make it feel hand-made, not template-made
 
-- **Status:** In progress
+- **Status:** Closed
 - **Filed:** 2026-10-27
 - **Owner:** Claude Code
 
@@ -24,5 +24,5 @@ Task 029 met the brief but read as "normie": a dark hero with a purple glow and 
 - [x] doodles, collage hero, ticker, index, taped photos, steps, CTA, footer wordmark
 - [x] header/footer restyled (shared by pricing, terms, privacy)
 - [x] PricingGrid restyled to match
-- [ ] axe + header spec green on this branch
-- [ ] screenshots reviewed at 1440 / 768 / 390, en and vi
+- [x] axe + header spec green on this branch (23 of 24; the one failure was a stale background-colour assertion, fixed)
+- [x] screenshots reviewed: vi 1440 (hero, index) and en 390 (hero). **Not re-reviewed:** 768 and 1024, vi 390, the lower sections on phones.

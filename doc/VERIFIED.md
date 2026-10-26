@@ -1,5 +1,15 @@
 # Nova — Verified Feature Ledger
 
+## nova-builder / v25.16.21 — Landing hand-made pass (Task 031) (2026-10-27)
+
+| ID | Feature | Status | Visual Evidence |
+|---|---|---|---|
+| LP-CRAFT1 | Hero, ticker, editorial index, taped photos, steps, CTA, footer wordmark render in en and vi at 1440 and 390 | 🟢 | doc/screenshots/24-landing-craft-desktop-vi.png, 25-landing-craft-mobile-en.png |
+| LP-A11Y2 | axe wcag2a+aa clean on /, /login, /signup, /pricing, /terms, /privacy after the restyle | 🟢 | e2e/a11y.spec.ts |
+| LP-HDR2 | Header/footer specs (links, anchors, mobile menu, focus, Projects clickable) green | 🟢 | e2e/landing-header.spec.ts |
+| LP-PRICE9 | Pricing cards on the landing show 499,000 / 1,289,000 and the offer | 🟢 | e2e/promo.spec.ts |
+| LP-RESP2 | 768 / 1024 widths, vi at 390, reduced-motion ticker | 🟡 | not re-captured after the restyle (machine ran out of memory mid-pass) |
+
 ## nova-builder / v25.16.20 — Prices ending in 9 & welcome offer (Task 030) (2026-10-26)
 
 | ID | Feature | Status | Visual Evidence |

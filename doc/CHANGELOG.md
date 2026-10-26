@@ -2,6 +2,17 @@
 
 ---
 
+## [25.16.21] — 2026-10-27
+
+### Task 031 — Landing page, hand-made pass (Minor)
+
+- **Why**: the SaaS redesign met the brief but looked like a template (dark hero with a purple glow, grid of icon cards). The brief for this pass: it should look like a very good human designer made it, not a model.
+- **Look**: warm paper with grain, 2px ink outlines with hard offset shadows that press in on click, the logo violet plus a lime highlighter, taped polaroid photos at slight angles, stickers, a multiplayer-style cursor, a ticker band of the businesses it is for, outlined step numerals, a giant outlined wordmark in the footer. No soft shadows, glass blur or gradient washes.
+- **Type and voice**: Bricolage Grotesque for headlines and Fraunces italic for the human note; both ship a Vietnamese subset (checked). Plain speech: "Your business deserves a website that doesn't look like everyone's.", "Three steps. No meetings."; Vietnamese written separately, not translated word for word.
+- **Shared chrome** (header, footer, plan cards) restyled to match, so pricing, terms and privacy follow.
+- Merged the prices-ending-in-9 and welcome-offer work (task 030); the offer banner is mounted on the landing page.
+- The main button no longer says "Building…" while the page is only waiting for the session.
+
 ## [25.16.20] — 2026-10-26
 
 ### Task 030 — Prices ending in 9 and the welcome offer (Minor)
