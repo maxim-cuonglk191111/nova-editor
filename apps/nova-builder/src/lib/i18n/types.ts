@@ -288,6 +288,9 @@ export interface I18nLandingDictionary {
   audienceTitle: string;
   audienceDesc: string;
   audiences: I18nLandingStep[];
+  capsEyebrow: string;
+  capsTitle: string;
+  caps: I18nLandingStep[];
   pricingEyebrow: string;
   pricingTitle: string;
   pricingDesc: string;

@@ -4,7 +4,7 @@ import AxeBuilder from "@axe-core/playwright";
 // Elder-first a11y gate — runs against the public funnel (no auth required).
 // Fails the suite if any axe violation is serious or critical.
 
-const PUBLIC_PAGES = ["/", "/login", "/signup", "/pricing"];
+const PUBLIC_PAGES = ["/", "/login", "/signup", "/pricing", "/terms", "/privacy"];
 
 for (const path of PUBLIC_PAGES) {
   test(`a11y: ${path} passes wcag2a + wcag2aa`, async ({ page }) => {

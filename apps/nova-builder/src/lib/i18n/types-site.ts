@@ -7,6 +7,10 @@ export interface I18nSiteDictionary {
   footerTerms: string;
   footerPrivacy: string;
   footerSupport: string;
+  footerProduct: string;
+  footerAccount: string;
+  footerLegal: string;
+  footerTagline: string;
   navHome: string;
   navMenu: string;
   userAvatarAlt: string;

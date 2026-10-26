@@ -2,6 +2,16 @@
 
 ---
 
+## [25.16.19] — 2026-10-26
+
+### Task 029 — SaaS landing page and shared public header (Minor)
+
+- **Projects button fixed**: the "Dự án" / "Projects" link in the header carried the class `on-nav-link--current`, whose rule was `pointer-events: none`, so it looked like a button and did nothing. The current page is now marked with `aria-current` only.
+- **Header rebuilt** (landing, pricing, terms, privacy): white sticky bar, 36px Nova mark with a "Nova" wordmark, 15px links, 44px actions, a real mobile menu (`aria-expanded`, Esc, closes on navigation) and an avatar menu on phones. The "Docs" link (no `/docs` page) is gone.
+- **Brand from the logo**: graphite `#24262A`, violet `#6A39BB` → `#4E2597`, lavender `#DAC7FA` as `--brand-*` tokens. The AI mark is now an SVG spark icon; emoji and ✦/✓ glyphs are gone from the landing and the pricing grid.
+- **Landing**: hero with the prompt box and a drawn picture of the editor, six built-in capabilities, three feature rows with business photos, steps, audiences, pricing, FAQ, closing CTA, and a four-column footer.
+- Tests: `e2e/landing-header.spec.ts` (10), axe on `/terms` and `/privacy` added to the a11y gate.
+
 ## [25.16.18] — 2026-10-26
 
 ### Accessibility fixes found by the e2e run after the merge (Patch)

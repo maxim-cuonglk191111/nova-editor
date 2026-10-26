@@ -1,5 +1,17 @@
 # Nova — Verified Feature Ledger
 
+## nova-builder / v25.16.19 — SaaS landing & shared header (Task 029) (2026-10-26)
+
+| ID | Feature | Status | Visual Evidence |
+|---|---|---|---|
+| HDR-PROJ1 | Projects link is clickable when signed in (computed pointer-events not none; click navigates) | 🟢 | e2e/landing-header.spec.ts |
+| HDR-MOB1 | Mobile menu opens/closes (button, Esc, navigation), links ≥ 44px, no horizontal scroll | 🟢 | doc/screenshots/23-landing-saas-mobile-menu.png |
+| HDR-LINK1 | Every header/footer link resolves; none points at /docs; anchors exist | 🟢 | e2e/landing-header.spec.ts |
+| LP-ICON1 | AI mark is an SVG; no emoji/glyph icons on the landing | 🟢 | e2e/landing-header.spec.ts |
+| LP-A11Y1 | axe wcag2a+aa clean on /, /login, /signup, /pricing, /terms, /privacy | 🟢 | e2e/a11y.spec.ts |
+| LP-RESP1 | 1440 / 1024 / 768 / 390 px in en and vi: no horizontal overflow, 0 console errors | 🟢 | doc/screenshots/22-landing-saas-desktop.png |
+| HDR-AUTH1 | Signed-in header driven by a mocked session, not a real account | 🟡 | session endpoint stubbed |
+
 ## nova-builder / v25.16.17 — Multi-page generation (Task 024) (2026-10-26)
 
 | ID | Feature | Status | Visual Evidence |

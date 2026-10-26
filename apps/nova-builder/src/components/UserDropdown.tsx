@@ -86,7 +86,7 @@ export function UserDropdown({ mode = "dark" }: UserDropdownProps) {
           <div
             style={{
               width: 36, height: 36, borderRadius: "50%",
-              background: "linear-gradient(135deg, #a78bfa 0%, #6d28d9 100%)",
+              background: "linear-gradient(135deg, #6a39bb 0%, #401b84 100%)",
               color: "#ffffff", display: "flex", alignItems: "center", justifyContent: "center",
               fontSize: 16, fontWeight: 700, textTransform: "uppercase", border: `2px solid ${colors.avatarBorder}`
             }}
