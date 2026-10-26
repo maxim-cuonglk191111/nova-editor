@@ -44,6 +44,7 @@ import {
 } from "@/lib/nano-states";
 import { useCanvasStore } from "@/lib/sync-stores";
 import { createInstanceElement } from "./elements";
+import { SectionErrorBoundary } from "@/components/SectionErrorBoundary";
 import { RepeatList, repeatListMeta } from "./repeat-list";
 import { Slot, slotMeta } from "./slot";
 import { shadcnComponents, shadcnMetas } from "./shadcn-components";
@@ -503,7 +504,7 @@ export const Canvas = () => {
   return (
     <>
       <GlobalStyles />
-      {elements}
+      <SectionErrorBoundary resetKey={instances}>{elements}</SectionErrorBoundary>
       <SelectionOverlay />
       <TextEditOverlay />
       <ImageLightbox />

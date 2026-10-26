@@ -6,6 +6,8 @@ export interface I18nPagesPanelDictionary {
   pageName: string;
   pathPlaceholder: string;
   pathShortPlaceholder: string;
+  pathAutoPlaceholder: string;
+  pathRequired: string;
   pathParamHintBefore: string;
   pathParamHintAfter: string;
   create: string;

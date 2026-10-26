@@ -3,7 +3,7 @@
 // (canvas/dragReparent.ts) so the reindexing rules live in ONE place (SOLID D).
 // No React, no atoms — just Instances → Instances transforms.
 import type { Instances } from "@webstudio-is/sdk";
-import { checkNesting } from "./nestingGuard";
+import { acceptsChildren, checkNesting } from "./nestingGuard";
 
 let getArea: any;
 let getChildrenRects: any;
@@ -24,20 +24,8 @@ if (typeof window !== "undefined") {
 
 export type DropPosition = "above" | "below" | "into";
 
-const TEXT_ONLY_COMPONENTS = new Set([
-  "Heading",
-  "Paragraph",
-  "RichText",
-  "Bold",
-  "Italic",
-  "Span",
-  "Label",
-  "Code",
-  "TextBlock",
-]);
-
 export function canAcceptChildren(component: string): boolean {
-  return !TEXT_ONLY_COMPONENTS.has(component);
+  return acceptsChildren(component);
 }
 
 export function isGridRow(component: string | null | undefined): boolean {

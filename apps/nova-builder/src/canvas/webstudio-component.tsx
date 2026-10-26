@@ -34,6 +34,7 @@ import {
   createInstanceChildrenElements,
   type WebstudioComponentProps,
 } from "./elements";
+import { VOID_COMPONENTS } from "@/lib/nestingGuard";
 
 // ─── MissingComponentStub ────────────────────────────────────────────────────
 
@@ -54,6 +55,12 @@ const MissingComponentStub = forwardRef<HTMLDivElement, { children?: React.React
   )
 );
 MissingComponentStub.displayName = "MissingComponentStub";
+
+// Void elements (<img>, <input>, <hr>) must not receive children — React throws error #137
+// and blanks the canvas. Saved projects can already hold such a tree, so drop them here.
+function voidSafe(component: string, children: React.ReactNode): React.ReactNode {
+  return VOID_COMPONENTS.has(component) ? null : children;
+}
 
 // ─── Prop value computation ───────────────────────────────────────────────────
 
@@ -164,7 +171,7 @@ export const WebstudioComponentCanvas = forwardRef<
       components,
     }) ?? null;
 
-  return <Component key={instance.id} {...(props as any)} ref={ref}>{children}</Component>;
+  return <Component key={instance.id} {...(props as any)} ref={ref}>{voidSafe(instance.component, children)}</Component>;
 });
 WebstudioComponentCanvas.displayName = "WebstudioComponentCanvas";
 
@@ -217,6 +224,6 @@ export const WebstudioComponentPreview = forwardRef<
       components,
     }) ?? null;
 
-  return <Component {...(props as any)} ref={ref}>{children}</Component>;
+  return <Component {...(props as any)} ref={ref}>{voidSafe(instance.component, children)}</Component>;
 });
 WebstudioComponentPreview.displayName = "WebstudioComponentPreview";

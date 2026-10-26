@@ -1,5 +1,13 @@
 # Nova — Verified Feature Ledger
 
+## nova-builder / v25.16.14 — Void-element crash fix & Pages panel form (Tasks 026, 022) (2026-10-26)
+
+| ID | Feature | Status | Visual Evidence |
+|---|---|---|---|
+| NEST-VOID1 | Image / Input / Checkbox / RadioButton / Separator never receive children (unit-tested); panel drop onto an Image lands beside it | 🟢 | src/lib/__tests__/nesting-void.test.ts |
+| CANVAS-BOUNDARY1 | Canvas tree wrapped in SectionErrorBoundary with Try again / Reload view | 🟡 | not reproduced live: #137 could not be triggered on the old code through the panel-drag or canvas-drag paths |
+| PAGES-FORM1 | Path starts empty + disabled, follows the name, error only after blur/submit, collision shown on inline rename | 🟢 | doc/screenshots/20-pages-panel-inline-form.png |
+
 ## nova-builder / v25.16.12 — Interactive Draggable Image Crop Area (Task 021) (2026-10-20)
 
 | ID | Feature | Status | Visual Evidence |

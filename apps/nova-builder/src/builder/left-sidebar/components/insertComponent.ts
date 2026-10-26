@@ -6,6 +6,7 @@ import { $selectedInstanceSelector, $selectedPage } from "@/lib/nano-states";
 import { updateData } from "@/lib/transactions";
 import { $instances } from "@/lib/data-stores";
 import { ensureLocalSource } from "@/lib/style-object-model";
+import { acceptsChildren } from "@/lib/nestingGuard";
 import type { DropTarget } from "./useDraggable";
 import { getRegistry } from "./ComponentRegistry";
 
@@ -32,7 +33,10 @@ export function insertComponent(componentName: string, dropTarget: DropTarget = 
   let insertIdx: number | null = null;
 
   if (dropTarget) {
-    if (dropTarget.position === "into") {
+    const targetComponent = instances.get(dropTarget.instanceId)?.component;
+    // Images, inputs and text blocks cannot hold children — a drop "into" one lands beside it.
+    const into = dropTarget.position === "into" && (!targetComponent || acceptsChildren(targetComponent));
+    if (into) {
       parentId = dropTarget.instanceId;
     } else if (instances.get(dropTarget.instanceId)) {
       const found = parentOf(instances, dropTarget.instanceId);

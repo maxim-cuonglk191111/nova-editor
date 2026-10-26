@@ -7,6 +7,8 @@ export const viSidebar: I18nSidebarDictionary = {
     pageName: "Tên trang",
     pathPlaceholder: "/duong-dan hoặc /blog/[slug]",
     pathShortPlaceholder: "/duong-dan",
+    pathAutoPlaceholder: "/duong-dan (tự tạo từ tên trang)",
+    pathRequired: "Nhập đường dẫn cho trang này",
     pathParamHintBefore: "Tham số đường dẫn: dùng cú pháp",
     pathParamHintAfter: "",
     create: "Tạo",

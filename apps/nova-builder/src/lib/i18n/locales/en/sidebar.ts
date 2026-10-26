@@ -7,6 +7,8 @@ export const enSidebar: I18nSidebarDictionary = {
     pageName: "Page name",
     pathPlaceholder: "/path or /blog/[slug]",
     pathShortPlaceholder: "/path",
+    pathAutoPlaceholder: "/path (filled in from the page name)",
+    pathRequired: "Enter a path for this page",
     pathParamHintBefore: "Path param: use",
     pathParamHintAfter: "syntax",
     create: "Create",

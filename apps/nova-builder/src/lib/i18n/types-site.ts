@@ -24,4 +24,7 @@ export interface I18nSiteDictionary {
   errorRetry: string;
   previewLoadFailed: string;
   previewLoading: string;
+  sectionErrorTitle: string;
+  sectionErrorBody: string;
+  sectionErrorReload: string;
 }

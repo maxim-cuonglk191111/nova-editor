@@ -27,4 +27,7 @@ export const enSite: I18nSiteDictionary = {
   errorRetry: "Try again",
   previewLoadFailed: "Could not load preview",
   previewLoading: "Loading preview…",
+  sectionErrorTitle: "This part of the page could not be displayed",
+  sectionErrorBody: "Your work is safe. Try again, or reload this view if the problem stays.",
+  sectionErrorReload: "Reload view",
 };

@@ -3,6 +3,7 @@ import { useState, useRef } from "react";
 import type { PageSeo } from "./usePageCrud";
 import { UI_VARS as C } from "@/lib/uiTheme";
 import { useI18n } from "@/lib/i18n";
+import { pathIssue, normalizePagePath } from "./pagePathRules";
 
 
 const inputStyle: React.CSSProperties = {
@@ -35,7 +36,8 @@ type PageStatus = {
 
 type PageHandlers = {
   onClick: () => void;
-  onRename: (name: string, path: string) => void;
+  /** Returns false when the change was rejected (e.g. the path is already taken). */
+  onRename: (name: string, path: string) => boolean;
   onSeoChange: (seo: PageSeo) => void;
   onSetHome: () => void;
   onDelete: () => void;
@@ -49,6 +51,8 @@ const actionStyle: React.CSSProperties = {
   fontSize: 13,
   lineHeight: 1,
   padding: "3px 6px",
+  minWidth: 28,
+  minHeight: 28,
   borderRadius: 4,
   display: "inline-flex",
   alignItems: "center",
@@ -57,11 +61,13 @@ const actionStyle: React.CSSProperties = {
 
 type PageItemProps = {
   page: PageData;
+  /** Every page, so inline edits can be checked against the other pages' paths. */
+  siblings: { id: string; path: string }[];
   status: PageStatus;
   handlers: PageHandlers;
 };
 
-export function PageItem({ page, status, handlers }: PageItemProps) {
+export function PageItem({ page, siblings, status, handlers }: PageItemProps) {
   const L = useI18n().t.sidebar.pages;
   const { name, path, title, description, noindex } = page;
   const { isActive, isHome, canDelete } = status;
@@ -70,20 +76,31 @@ export function PageItem({ page, status, handlers }: PageItemProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [seoOpen, setSeoOpen] = useState(false);
   const [hovered, setHovered] = useState(false);
+  const [editError, setEditError] = useState<string | null>(null);
   const nameRef = useRef<HTMLInputElement>(null);
   const pathRef = useRef<HTMLInputElement>(null);
 
   function commitEdit() {
     const newName = nameRef.current?.value.trim() || name;
-    let newPath = pathRef.current?.value.trim() || path;
-    if (!newPath.startsWith("/")) newPath = `/${newPath}`;
+    const newPath = normalizePagePath(pathRef.current?.value ?? "") || path;
+    if (newName === name && newPath === path) { setIsEditing(false); setEditError(null); return; }
+    const issue = pathIssue(newPath, siblings, page.id);
+    if (issue === "collision" || issue === "reserved") {
+      setEditError(issue === "reserved" ? L.rootPathReserved : L.pathCollisionError);
+      return;
+    }
+    if (onRename(newName, newPath)) { setIsEditing(false); setEditError(null); }
+    else setEditError(L.pathCollisionError);
+  }
+
+  function cancelEdit() {
     setIsEditing(false);
-    if (newName !== name || newPath !== path) onRename(newName, newPath);
+    setEditError(null);
   }
 
   function handleKeyDown(e: React.KeyboardEvent) {
     if (e.key === "Enter") commitEdit();
-    if (e.key === "Escape") setIsEditing(false);
+    if (e.key === "Escape") cancelEdit();
   }
 
   if (isEditing) {
@@ -118,8 +135,10 @@ export function PageItem({ page, status, handlers }: PageItemProps) {
           defaultValue={path}
           placeholder={L.pathShortPlaceholder}
           onKeyDown={handleKeyDown}
-          style={{ ...inputStyle, fontFamily: C.fontMono, color: C.textMuted }}
+          aria-invalid={Boolean(editError)}
+          style={{ ...inputStyle, fontFamily: C.fontMono, color: C.textMuted, ...(editError ? { border: `1px solid ${C.danger}`, color: C.danger } : {}) }}
         />
+        {editError && <div role="alert" style={{ fontSize: 12, color: C.danger, fontFamily: C.font }}>{editError}</div>}
       </div>
     );
   }
@@ -136,8 +155,10 @@ export function PageItem({ page, status, handlers }: PageItemProps) {
             flexDirection: "column",
             padding: "7px 10px",
             background: isActive ? C.active : "none",
+            borderTop: "none",
+            borderRight: "none",
+            borderBottom: "none",
             borderLeft: isActive ? `2px solid ${C.activeBorder}` : "2px solid transparent",
-            border: "none",
             cursor: "pointer",
             textAlign: "left",
             gap: 2,
