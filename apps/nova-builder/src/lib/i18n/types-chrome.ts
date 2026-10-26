@@ -28,6 +28,9 @@ export interface I18nSaveDialogDictionary {
   /** Update refused because another tab saved first. */
   errorConflict: string;
   errorCreate: string;
+  /** The session ended before the save reached the server. */
+  errorSignedOut: string;
+  signInAction: string;
   errorSaveAs: string;
   errorNameRequired: string;
 }
@@ -96,6 +99,7 @@ export interface I18nChromeDictionary {
   toastUpdateFailed: string;
   toastCreated: string;
   toastCreateFailed: string;
+  toastSignedOut: string;
   toastCopySaved: string;
   toastCopyFailed: string;
   toastExported: string;

@@ -3,7 +3,8 @@
 import { useEffect, useState, useRef } from "react";
 import { UI_VARS as C } from "@/lib/uiTheme";
 import { useI18n, fmt } from "@/lib/i18n";
-import { SaveConflictError } from "@/lib/saveProject";
+import { SignInLink } from "./SignInLink";
+import { SaveConflictError, AuthRequiredError } from "@/lib/saveProject";
 import { captureCurrentProjectThumbnail } from "@/lib/thumbnailCapture";
 
 type Step = "confirm" | "create" | "saveAs";
@@ -91,56 +92,35 @@ export function SaveProjectDialog({
     setErrorMsg(null);
   };
 
-  const handleUpdateClick = async () => {
+  // One submit path for Update / Create / Save As: busy flag, close on success, and a
+  // message for the failure (a signed-out session wins over the generic one).
+  const submit = async (action: () => Promise<void>, failed: (err: unknown) => string) => {
     setIsSubmitting(true);
     setErrorMsg(null);
     try {
-      await onUpdate();
+      await action();
       onClose();
     } catch (err) {
       console.error(err);
-      setErrorMsg(err instanceof SaveConflictError ? D.errorConflict : D.errorUpdate);
+      setErrorMsg(err instanceof AuthRequiredError ? D.errorSignedOut : failed(err));
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  const handleCreateSubmit = async (e: React.FormEvent) => {
+  const handleUpdateClick = () =>
+    submit(onUpdate, (err) => (err instanceof SaveConflictError ? D.errorConflict : D.errorUpdate));
+
+  const handleCreateSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!name.trim()) {
-      setErrorMsg(D.errorNameRequired);
-      return;
-    }
-    setIsSubmitting(true);
-    setErrorMsg(null);
-    try {
-      await onCreate(name.trim(), description.trim(), thumbnail.trim());
-      onClose();
-    } catch (err) {
-      console.error(err);
-      setErrorMsg(D.errorCreate);
-    } finally {
-      setIsSubmitting(false);
-    }
+    if (!name.trim()) return setErrorMsg(D.errorNameRequired);
+    return submit(() => onCreate(name.trim(), description.trim(), thumbnail.trim()), () => D.errorCreate);
   };
 
-  const handleSaveAsSubmit = async (e: React.FormEvent) => {
+  const handleSaveAsSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!saveAsName.trim()) {
-      setErrorMsg(D.errorNameRequired);
-      return;
-    }
-    setIsSubmitting(true);
-    setErrorMsg(null);
-    try {
-      await onSaveAs(saveAsName.trim());
-      onClose();
-    } catch (err) {
-      console.error(err);
-      setErrorMsg(D.errorSaveAs);
-    } finally {
-      setIsSubmitting(false);
-    }
+    if (!saveAsName.trim()) return setErrorMsg(D.errorNameRequired);
+    return submit(() => onSaveAs(saveAsName.trim()), () => D.errorSaveAs);
   };
 
   const overlayStyle: React.CSSProperties = {
@@ -253,6 +233,7 @@ export function SaveProjectDialog({
         {errorMsg && (
           <div style={{ padding: "8px 12px", background: "rgba(220,38,38,0.1)", border: "1px solid rgba(220,38,38,0.2)", borderRadius: 6, color: "#f87171", fontSize: 12 }}>
             {errorMsg}
+            {errorMsg === D.errorSignedOut && <> <SignInLink label={D.signInAction} /></>}
           </div>
         )}
 

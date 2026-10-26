@@ -40,7 +40,8 @@ export const enTools: I18nToolsDictionary = {
     readyBody: "{count} elements generated. Applying replaces the page that is open now — Ctrl+Z brings it back.",
     discard: "Discard",
     applyToPage: "Replace this page",
-    replacesHint: "This creates a whole new page that replaces the one open now. To change only one part, select that section on the canvas, then use Tools → AI Content Fill.",
+    replacesHint: "This creates a whole new page that replaces the one open now. To change only one part, select that section on the canvas and use AI Content Fill.",
+    editSelectionAction: "Open AI Content Fill",
   },
   aiContent: {
     dialogLabel: "AI Content Fill",

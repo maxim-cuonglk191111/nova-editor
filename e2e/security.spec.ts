@@ -110,3 +110,10 @@ test.describe("tenant isolation + entitlements (needs two seeded accounts)", () 
     await ctxB.close();
   });
 });
+
+test("FA-025: an unauthenticated project API call gets 401 JSON, not an HTML login page", async ({ request }) => {
+  const res = await request.post("/api/projects", { data: { name: "x" }, maxRedirects: 0 });
+  expect(res.status()).toBe(401);
+  expect(res.headers()["content-type"]).toContain("application/json");
+  expect(await res.json()).toEqual({ error: "unauthenticated" });
+});

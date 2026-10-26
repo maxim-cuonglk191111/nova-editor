@@ -48,6 +48,8 @@ export interface I18nAIPanelDictionary {
   applyToPage: string;
   /** Shown when the page already has content: generation replaces it; how to change one section. */
   replacesHint: string;
+  /** Button that jumps to AI Content Fill so the user need not hunt for the Tools menu. */
+  editSelectionAction: string;
 }
 
 export interface I18nAIContentDictionary {

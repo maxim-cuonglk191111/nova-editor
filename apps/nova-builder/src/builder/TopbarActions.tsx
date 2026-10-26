@@ -35,7 +35,7 @@ import {
   showToast,
   openFeatureGate,
 } from "@/lib/nano-states";
-import { saveProject, SaveConflictError, getSerializedProjectSchema } from "@/lib/saveProject";
+import { saveProject, SaveConflictError, AuthRequiredError, assertSignedIn, getSerializedProjectSchema } from "@/lib/saveProject";
 import { captureCurrentProjectThumbnail } from "@/lib/thumbnailCapture";
 import { DEMO_DRAFT_KEY } from "@/builder/hooks/useDemoDraftSync";
 import { SaveProjectDialog } from "./SaveProjectDialog";
@@ -292,6 +292,7 @@ export function TopbarActions({ isDemo }: Props) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
+      assertSignedIn(res);
       if (!res.ok) {
         const errData = await res.json().catch(() => ({}));
         throw new Error(errData.error || `HTTP ${res.status}`);
@@ -307,7 +308,7 @@ export function TopbarActions({ isDemo }: Props) {
     } catch (err) {
       console.error(err);
       setSaveError(true);
-      showToast(err instanceof Error ? err.message : t.chrome.toastCreateFailed, "error");
+      showToast(err instanceof AuthRequiredError ? t.chrome.toastSignedOut : err instanceof Error ? err.message : t.chrome.toastCreateFailed, "error");
       throw err;
     } finally {
       setIsSaving(false);
@@ -325,6 +326,7 @@ export function TopbarActions({ isDemo }: Props) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
+      assertSignedIn(res);
       if (!res.ok) {
         const errData = await res.json().catch(() => ({}));
         throw new Error(errData.error || `HTTP ${res.status}`);
@@ -340,7 +342,7 @@ export function TopbarActions({ isDemo }: Props) {
     } catch (err) {
       console.error(err);
       setSaveError(true);
-      showToast(err instanceof Error ? err.message : t.chrome.toastCopyFailed, "error");
+      showToast(err instanceof AuthRequiredError ? t.chrome.toastSignedOut : err instanceof Error ? err.message : t.chrome.toastCopyFailed, "error");
       throw err;
     } finally {
       setIsSaving(false);

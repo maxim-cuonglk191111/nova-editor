@@ -31,6 +31,6 @@ screenshotted, reviewed and scored /10; a feature we cannot make work is hidden
 | [022](022-pages-panel-inline-form-and-path-editing.md) | Pages Panel UX: Inline Form Placement, Blur Validation & Dual Inline Edit (Name + Path) | Open |
 | [023](023-canvas-drag-reparent-smoothness-and-snapping.md) | Canvas Drag & Drop Reparenting Target Snapping & Smooth Nesting | Open |
 | [024](024-multi-page-generation-and-prompt-structure.md) | Multi-Page Website Generation & Page Structure from Prompt | Open |
-| [025](025-pre-generate-auth-guard-and-instruction-sync.md) | Pre-Generate Auth Guard & Dialog Instruction Sync | Open |
+| [025](025-pre-generate-auth-guard-and-instruction-sync.md) | Pre-Generate Auth Guard & Dialog Instruction Sync | Closed |
 | [026](026-builder-error-boundary-and-crash-protection.md) | Builder Error Boundary & React Error #310 Crash Protection | Open |
 | [027](027-vietqr-real-payment-info-configuration.md) | VietQR Real Payment Account Configuration | Open |
