@@ -63,6 +63,7 @@ export function PublicFooter() {
         </div>
         <div className="pf__bar">{fmt(S.footerRights, { year: new Date().getFullYear() })}</div>
       </div>
+      <div className="pf__giant" aria-hidden="true">Nova</div>
     </footer>
   );
 }

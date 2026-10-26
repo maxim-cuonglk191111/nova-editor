@@ -325,6 +325,9 @@ html, body {
   --brand-lavender: #dac7fa;
   --brand-tint: #f3edfd;
   --brand-surface: #faf9fc;
+  --brand-paper: #f3efe6;
+  --brand-paper-2: #ebe4d3;
+  --brand-lime: #d9f25e;
   --brand-text: #24262a;
   --brand-muted: #4b4e57;
   --brand-rule: rgba(36, 38, 42, 0.12);

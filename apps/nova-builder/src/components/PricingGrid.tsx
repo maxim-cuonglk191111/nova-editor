@@ -24,16 +24,16 @@ export default function PricingGrid({ currentTier, onSelectPlan }: PricingGridPr
           <div
             key={plan.tier}
             style={{
-              border: `1.5px solid ${plan.tier === "pro" ? "var(--brand-violet)" : isCurrent ? "rgba(106,57,187,0.5)" : "#e2e8f0"}`,
-              borderRadius: 16, padding: "28px 24px",
-              background: plan.tier === "pro" ? "var(--brand-tint)" : "#ffffff",
+              border: `2px solid ${isCurrent ? "var(--brand-violet)" : "var(--brand-ink)"}`,
+              borderRadius: 16, padding: "30px 26px",
+              background: plan.tier === "pro" ? "var(--brand-lime)" : "#ffffff",
               display: "flex", flexDirection: "column", gap: 16,
-              boxShadow: plan.tier === "pro" ? "0 0 0 4px rgba(106,57,187,0.12)" : "none",
+              boxShadow: "6px 6px 0 var(--brand-ink)",
               position: "relative",
             }}
           >
             {plan.tier === "pro" && (
-              <div style={{ position: "absolute", top: -13, left: "50%", transform: "translateX(-50%)", background: "var(--brand-violet)", color: "#fff", fontSize: 12, fontWeight: 700, padding: "3px 12px", borderRadius: 999 }}>
+              <div style={{ position: "absolute", top: -13, left: "50%", background: "var(--brand-violet)", color: "#fff", fontSize: 12, fontWeight: 700, padding: "3px 12px", borderRadius: 999, border: "2px solid var(--brand-ink)", transform: "translateX(-50%) rotate(-3deg)" }}>
                 {t.pricing.mostPopular}
               </div>
             )}

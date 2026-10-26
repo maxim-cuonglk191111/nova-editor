@@ -12,15 +12,14 @@ import { useI18n } from "@/lib/i18n";
 import { FadeSection } from "@/components/landing/landingMotion";
 import { LANDING_CSS } from "@/components/landing/landingStyles";
 import { LandingHero } from "@/components/landing/LandingHero";
-import { IconArrow, IconCheck, IconCode, IconCursor, IconDevices, IconForm, IconLayers, IconPages } from "@/components/landing/icons";
+import { Asterisk, Burst, Tape } from "@/components/landing/doodles";
+import { IconArrow, IconCheck } from "@/components/landing/icons";
 
 const FEATURE_PHOTOS = [
   "/images/landing/feature-generate.jpg",
   "/images/landing/feature-edit.jpg",
   "/images/landing/feature-publish.jpg",
 ];
-// One icon per capability, in the order of landing.caps.
-const CAP_ICONS = [IconCursor, IconPages, IconDevices, IconLayers, IconForm, IconCode];
 
 export default function Home() {
   const { t } = useI18n();
@@ -69,6 +68,19 @@ export default function Home() {
       <main>
         <LandingHero prompt={prompt} onPromptChange={setPrompt} onStart={handleStart} busy={creating || status === "loading"} />
 
+        {/* Who it is for, as a ticker. The second copy is for the loop only. */}
+        <div className="lp-ticker">
+          <ul className="lp-ticker__track">
+            {[0, 1].map((copy) =>
+              L.audiences.map((a) => (
+                <li key={`${copy}-${a.title}`} aria-hidden={copy === 1 ? true : undefined}>
+                  <Asterisk width={20} height={20} />{a.title}
+                </li>
+              ))
+            )}
+          </ul>
+        </div>
+
         {/* ═══════════════ FEATURES ═══════════════ */}
         <section id="features" className="lp-section">
           <div className="lp-container">
@@ -77,18 +89,15 @@ export default function Home() {
               <h2 className="lp-h2">{L.capsTitle}</h2>
             </FadeSection>
             <FadeSection>
-              <ul className="lp-caps">
-                {L.caps.map((c, i) => {
-                  const Icon = CAP_ICONS[i] ?? IconLayers;
-                  return (
-                    <li key={c.title} className="lp-cap">
-                      <span className="lp-cap__icon"><Icon width={22} height={22} /></span>
-                      <h3 className="lp-cap__title">{c.title}</h3>
-                      <p className="lp-body">{c.body}</p>
-                    </li>
-                  );
-                })}
-              </ul>
+              <ol className="lp-index">
+                {L.caps.map((c, i) => (
+                  <li key={c.title} className="lp-index__item">
+                    <span className="lp-index__num">{String(i + 1).padStart(2, "0")}</span>
+                    <h3 className="lp-index__title">{c.title}</h3>
+                    <p className="lp-body">{c.body}</p>
+                  </li>
+                ))}
+              </ol>
             </FadeSection>
 
             <div className="lp-showcase">
@@ -99,8 +108,12 @@ export default function Home() {
               </FadeSection>
               {L.features.map((f, i) => (
                 <FadeSection key={f.title} className={`lp-feature${i % 2 ? " lp-feature--flip" : ""}`}>
-                  <img className="lp-feature__photo" src={FEATURE_PHOTOS[i]} alt={L.featurePhotoAlts[i]} width={1600} height={1067} loading="lazy" />
+                  <figure className={`lp-polaroid lp-polaroid--${i % 2 ? "b" : "a"}`}>
+                    <Tape className="lp-tape" />
+                    <img src={FEATURE_PHOTOS[i]} alt={L.featurePhotoAlts[i]} width={1600} height={1067} loading="lazy" />
+                  </figure>
                   <div className="lp-feature__text">
+                    <span className="lp-feature__num" aria-hidden="true">{String(i + 1).padStart(2, "0")}</span>
                     <h3 className="lp-h3">{f.title}</h3>
                     <p className="lp-body">{f.body}</p>
                     <ul className="lp-points">
@@ -124,7 +137,7 @@ export default function Home() {
               <ol className="lp-steps">
                 {L.steps.map((s, i) => (
                   <li key={s.title} className="lp-step">
-                    <span className="lp-step__num">{String(i + 1).padStart(2, "0")}</span>
+                    <span className="lp-step__num" aria-hidden="true">{i + 1}</span>
                     <h3 className="lp-step__title">{s.title}</h3>
                     <p className="lp-step__body">{s.body}</p>
                   </li>
@@ -135,7 +148,7 @@ export default function Home() {
         </section>
 
         {/* ═══════════════ AUDIENCE ═══════════════ */}
-        <section id="audience" className="lp-section lp-section--surface">
+        <section id="audience" className="lp-section">
           <div className="lp-container">
             <FadeSection className="lp-head">
               <p className="lp-eyebrow">{L.audienceEyebrow}</p>
@@ -156,7 +169,7 @@ export default function Home() {
         </section>
 
         {/* ═══════════════ PRICING ═══════════════ */}
-        <section id="pricing" className="lp-section">
+        <section id="pricing" className="lp-section lp-section--paper2">
           <div className="lp-container">
             <FadeSection className="lp-head">
               <p className="lp-eyebrow">{L.pricingEyebrow}</p>
@@ -173,7 +186,7 @@ export default function Home() {
         </section>
 
         {/* ═══════════════ FAQ ═══════════════ */}
-        <section id="faq" className="lp-section lp-section--surface">
+        <section id="faq" className="lp-section">
           <div className="lp-container lp-faq">
             <FadeSection className="lp-faq__head">
               <p className="lp-eyebrow">{L.faqEyebrow}</p>
@@ -192,16 +205,24 @@ export default function Home() {
 
         {/* ═══════════════ FINAL CTA ═══════════════ */}
         <section className="lp-cta">
-          <img className="lp-cta__photo" src="/images/landing/cta-office.jpg" alt={L.ctaPhotoAlt} width={1600} height={900} loading="lazy" />
-          <div className="lp-cta__shade" />
-          <FadeSection className="lp-container lp-cta__body">
-            <h2 className="lp-h2 lp-h2--light">{L.ctaTitle}</h2>
-            <p className="lp-lead lp-lead--light">{L.ctaSubtitle}</p>
-            <div className="lp-cta__actions">
-              <Link href={startHref} className="lp-btn lp-btn--light">{startLabel}<IconArrow width={16} height={16} /></Link>
-              <Link href="/builder/demo" className="lp-btn lp-btn--ghost">{L.tryDemo}</Link>
-            </div>
-          </FadeSection>
+          <div className="lp-container lp-cta__grid">
+            <FadeSection className="lp-cta__body">
+              <h2 className="lp-cta__title">{L.ctaTitle}</h2>
+              <p className="lp-lead lp-lead--light">{L.ctaSubtitle}</p>
+              <div className="lp-cta__actions">
+                <Link href={startHref} className="lp-btn lp-btn--lime">{startLabel}<IconArrow width={16} height={16} /></Link>
+                <Link href="/builder/demo" className="lp-btn lp-btn--paper">{L.tryDemo}</Link>
+              </div>
+            </FadeSection>
+            <figure className="lp-polaroid lp-polaroid--cta">
+              <Tape className="lp-tape" />
+              <img src="/images/landing/cta-office.jpg" alt={L.ctaPhotoAlt} width={1600} height={900} loading="lazy" />
+              <div className="lp-sticker lp-sticker--lime lp-sticker--cta" aria-hidden="true">
+                <Burst className="lp-sticker__bg" />
+                <span>{L.stickerNoCode}</span>
+              </div>
+            </figure>
+          </div>
         </section>
       </main>
 
