@@ -3,11 +3,13 @@
 export const PAYOS_API_URL = "https://api-merchant.payos.vn/v2/payment-requests";
 
 // Plan slug → one-time VND price.
+// Every price ends in 9 on purpose and is never rounded up: Pro 499k is the anchor
+// ($19), Max is $49 at the same rate (49 x 499,000 / 19 = 1,286,842 -> 1,289,000).
 export const PAYOS_PRICES_VND: Record<string, number> = {
-  pro: 500000,
-  max: 1275000,
-  team: 750000,
-  credits: 100000,
+  pro: 499000,
+  max: 1289000,
+  team: 749000,
+  credits: 99000,
 };
 
 export function buildPayosSignData(fields: {

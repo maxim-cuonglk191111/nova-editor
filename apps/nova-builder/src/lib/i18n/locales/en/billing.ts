@@ -29,6 +29,15 @@ export const enBilling: I18nBillingDictionary = {
   planName: "{plan} plan",
   statusPaid: "Paid",
 
+  promoBannerTitle: "Welcome offer: 50% off your first purchase",
+  promoBannerBody: "New accounts only. Ends {date} ({days} days left).",
+  promoCtaSignUp: "Claim it with a free account",
+  promoCtaPlans: "See plans",
+  promoBadge: "{percent}% off your first purchase",
+  promoDismiss: "Dismiss this offer",
+  promoWasPrice: "Regular price",
+  promoCheckoutNote: "Welcome offer applied: {percent}% off your first purchase.",
+  promoTerms: "Applies to the first purchase of an account created while the offer runs. One discounted order at a time.",
   creditsPackLabel: "AI credits pack",
   creditsPackFeatures: [
     "Adds 500 AI credits to your account",

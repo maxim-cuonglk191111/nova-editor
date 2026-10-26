@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { PublicNav } from "@/components/public/PublicNav";
 import { PublicFooter } from "@/components/public/PublicFooter";
+import { PromoBanner } from "@/components/PromoBanner";
 import PricingGrid from "@/components/PricingGrid";
 import { useI18n } from "@/lib/i18n";
 import { FadeSection } from "@/components/landing/landingMotion";
@@ -63,6 +64,7 @@ export default function Home() {
 
   return (
     <div className="lp">
+      <PromoBanner />
       <PublicNav />
 
       <main>

@@ -2,6 +2,19 @@
 // Plan names and feature lists come from `pricing.planCopy`.
 
 export interface I18nBillingDictionary {
+  /** Welcome offer: banner, price badge and checkout note. */
+  promoBannerTitle: string;
+  /** "{date}" end date, "{days}" whole days left. */
+  promoBannerBody: string;
+  promoCtaSignUp: string;
+  promoCtaPlans: string;
+  /** "{percent}" percent off. */
+  promoBadge: string;
+  promoDismiss: string;
+  promoWasPrice: string;
+  /** "{percent}" percent off. */
+  promoCheckoutNote: string;
+  promoTerms: string;
   back: string;
   subscriptionTitle: string;
   historyTitle: string;

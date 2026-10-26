@@ -36,3 +36,5 @@ screenshotted, reviewed and scored /10; a feature we cannot make work is hidden
 | [027](027-vietqr-real-payment-info-configuration.md) | VietQR Real Payment Account Configuration | Open |
 | [028](028-business-landing-renovation.md) | Business Landing Page Renovation & Dead-Link Removal | Closed |
 | [029](029-saas-landing-and-header.md) | SaaS landing page & shared public header (Projects button, brand from logo) | Closed |
+| [030](030-prices-ending-9-and-welcome-offer.md) | Prices ending in 9 & first-purchase welcome offer (50%, 2 months) | Closed (server path not run with a real order) |
+| [031](031-landing-craft-pass.md) | Landing: hand-made visual pass (not template-looking) | In progress |
