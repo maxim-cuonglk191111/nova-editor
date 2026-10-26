@@ -1,6 +1,6 @@
-// Five demo accounts for seeding, each a different kind of person with a different goal and a
+// Demo accounts for seeding, each a different kind of person with a different goal and a
 // site that does not look like the others: a personal blog, a one-person SaaS, a street-food
-// stall, a photographer's portfolio and a podcast. Each is written in the same compact tree the
+// stall, a photographer's portfolio, a podcast and a bakery. Each is written in the same compact tree the
 // AI composer returns, converted by the app's own validateCompositionWS and merged into a
 // project document exactly as applyWSComposition does, so a seeded project has the same shape
 // as one a user generated and the preview page reads it through the normal path.
@@ -13,9 +13,9 @@ import { emptyProjectSchema } from "../emptyProject";
 type Tree = Record<string, unknown>;
 type Styles = Record<string, string>;
 
-// Photos are real places and dishes in Vietnam from Wikimedia Commons (public domain or CC BY /
-// CC BY-SA, credited in each site's footer). Width 1280 is one of Commons' standard thumbnail
-// sizes, so the file is served from cache. Every photo is used on exactly one site.
+// Photos are real places, dishes and people in Vietnam from Wikimedia Commons. Width 1280 is one
+// of Commons' standard thumbnail sizes, so the file is served from cache. Every photo is used
+// once, on one site.
 const commons = (file: string) => `https://commons.wikimedia.org/wiki/Special:FilePath/${encodeURIComponent(file)}?width=1280`;
 
 // ── tiny builders ─────────────────────────────────────────────────────────────
@@ -26,9 +26,8 @@ const a = (text: string, href: string, styles: Styles = {}): Tree => ({ componen
 const btn = (text: string, styles: Styles): Tree => ({ component: "Button", label: "Button", props: { type: "button" }, text, styles });
 const img = (file: string, alt: string, styles: Styles = {}): Tree => ({ component: "Image", label: "Image", props: { src: commons(file), alt }, styles });
 const badge = (text: string, styles: Styles = {}): Tree => ({ component: "Badge", label: "Badge", props: { variant: "outline" }, text, styles });
-// No photo: the Avatar shows the person's initials, so no stranger's face stands in for them.
-const avatar = (name: string, styles: Styles = {}): Tree => ({ component: "Avatar", label: "Avatar", props: { name }, styles });
-const credit = (text: string, color: string): Tree => p(text, { fontFamily: MONO, fontSize: "12px", lineHeight: "1.5", color, margin: "8px 0 0" });
+// Avatars use portraits of ordinary people in Vietnam; the name stays as the fallback initials.
+const avatar = (file: string, name: string, styles: Styles = {}): Tree => ({ component: "Avatar", label: "Avatar", props: { src: commons(file), name }, styles });
 
 export type DemoSite = {
   slug: string;
@@ -94,7 +93,6 @@ function maiBlog(): Tree[] {
     ], { tag: "section", id: "gui-thu" }),
     box("Foot", { padding: "26px 56px", backgroundColor: ink }, [
       p("viết bằng tay, đăng bằng máy · Huế, 2026", { fontFamily: MONO, fontSize: "14px", color: paper, margin: "0" }),
-      credit("Ảnh sông Hương: Lê Tấn Lộc, Wikimedia Commons (phạm vi công cộng).", faded),
     ], { tag: "footer" }),
   ];
 }
@@ -158,7 +156,7 @@ function tabbySaas(): Tree[] {
       ]),
     ], { tag: "section", id: "pricing" }),
     box("Maker", { padding: "88px 48px", backgroundColor: lime, display: "flex", flexWrap: "wrap", gap: "40px", alignItems: "center" }, [
-      avatar("Khoa", { width: "96px", height: "96px" }),
+      avatar("Geedziĝa festo en vilaĝo apud Hue 08.jpg", "Khoa", { width: "96px", height: "96px" }),
       box("Maker text", { flex: "1 1 420px", display: "flex", flexDirection: "column", gap: "12px" }, [
         h("made by one person. his name is Khoa.", "h2", { fontFamily: MONO, fontSize: "36px", fontWeight: "700", color: black, margin: "0" }),
         p("I built Tabby because I kept lying to my own to-do list. It's me, a laptop, and a very patient cat. Questions go straight to my inbox: khoa@tabby.example.", { fontFamily: SANS, fontSize: "18px", lineHeight: "1.6", color: black, margin: "0", maxWidth: "620px" }),
@@ -215,7 +213,6 @@ function bepBaTu(): Tree[] {
     ], { tag: "section", id: "o-dau" }),
     box("Foot", { padding: "22px 40px", backgroundColor: black }, [
       p("Bếp Bà Tư · bán từ 1987 · không có website cho tới tuần trước", { fontFamily: MONO, fontSize: "14px", color: yellow, margin: "0" }),
-      credit("Ảnh bún riêu: Enoki Mushroom, Wikimedia Commons (CC BY-SA 4.0).", "#fcbf49"),
     ], { tag: "footer" }),
   ];
 }
@@ -261,7 +258,6 @@ function hungPhoto(): Tree[] {
     ], { tag: "section", id: "thue-chup" }),
     box("Foot", { padding: "24px 48px", backgroundColor: dark, borderTop: "1px solid #2a2a28" }, [
       p("© 2026 Hùng Lê · mọi bức ảnh trên trang này đều có thật", { fontFamily: MONO, fontSize: "13px", color: dim, margin: "0" }),
-      credit("Ảnh minh họa qua Wikimedia Commons: Phi Phi Hoang (CC BY 2.0), South Photo (phạm vi công cộng), Alexkom000 (CC BY 4.0), Vyacheslav Argenberg (CC BY 4.0).", dim),
     ], { tag: "footer" }),
   ];
 }
@@ -307,8 +303,8 @@ function noiNham(): Tree[] {
     ], { tag: "section", id: "tap" }),
     box("Hosts", { padding: "88px 44px", backgroundColor: sun, display: "flex", flexWrap: "wrap", gap: "40px", alignItems: "center", borderTop: `4px solid ${indigo}` }, [
       box("Avatars", { display: "flex", gap: "0" }, [
-        avatar("Vy", { width: "120px", height: "120px" }),
-        avatar("Nam", { width: "120px", height: "120px" }),
+        avatar("Ao dai (cropped).jpg", "Vy", { width: "120px", height: "120px" }),
+        avatar("BiBi.jpeg", "Nam", { width: "120px", height: "120px" }),
       ]),
       box("Hosts text", { flex: "1 1 420px", display: "flex", flexDirection: "column", gap: "14px" }, [
         h("Hai đứa mình", "h2", { fontFamily: SANS, fontSize: "46px", fontWeight: "900", color: indigo, margin: "0", letterSpacing: "-0.04em" }),
@@ -326,12 +322,176 @@ function noiNham(): Tree[] {
   ];
 }
 
+// ═══ 6. A bakery: Tiệm bánh VyVy ═════════════════════════════════════════════
+// Facts come from the owner's brand profile and nothing is added to them: no flavours described,
+// no sizes named, no delivery area promised. The photos are stand-ins for the shop's own.
+function vyvyBakery(): Tree[] {
+  const cream = "#fbf4e4", white = "#fffdf6", forest = "#1f3d2b", pandan = "#5d8a3a", cocoa = "#4a2c22", blush = "#f7d3c8", yolk = "#f4c542";
+  const PHONE = "0775 624 683", TEL = "tel:0775624683";
+
+  // One line of the cake menu: name, a dotted leader, then the prices.
+  const cakeRow = (name: string, price: string, best = false): Tree =>
+    box("Cake row", { display: "flex", alignItems: "baseline", gap: "12px", padding: "14px 0" }, [
+      h(name, "h3", { fontFamily: SERIF, fontSize: "26px", fontStyle: "italic", fontWeight: "400", color: cocoa, margin: "0" }),
+      ...(best ? [badge("bán chạy nhất", { fontFamily: SANS, fontSize: "12px", fontWeight: "700", color: forest, backgroundColor: yolk, border: `2px solid ${cocoa}`, transform: "rotate(-3deg)" })] : []),
+      box("Leader", { flex: "1 1 24px", height: "0", borderBottom: `3px dotted ${cocoa}`, opacity: "0.45", alignSelf: "flex-end", marginBottom: "6px" }),
+      p(price, { fontFamily: SERIF, fontSize: "24px", fontWeight: "700", color: forest, margin: "0", whiteSpace: "nowrap" }),
+    ]);
+
+  // A snack as a price tag stuck on at a slight angle.
+  const tag = (name: string, price: string, note: string, bg: string, tilt: string): Tree =>
+    box("Snack tag", { flex: "1 1 220px", display: "flex", flexDirection: "column", gap: "4px", padding: "20px 22px", backgroundColor: bg, border: `2px solid ${cocoa}`, borderRadius: "18px", boxShadow: `5px 5px 0 ${cocoa}`, transform: `rotate(${tilt})` }, [
+      h(name, "h3", { fontFamily: SERIF, fontSize: "23px", fontStyle: "italic", fontWeight: "400", lineHeight: "1.2", color: cocoa, margin: "0" }),
+      p(price, { fontFamily: SERIF, fontSize: "36px", fontWeight: "700", lineHeight: "1.1", color: forest, margin: "0" }),
+      ...(note ? [p(note, { fontFamily: SANS, fontSize: "14px", fontWeight: "700", color: cocoa, margin: "4px 0 0" })] : []),
+    ]);
+
+  const creamCard = (title: string, text: string, bg: string, tilt: string): Tree =>
+    box("Cream card", { flex: "1 1 280px", display: "flex", flexDirection: "column", gap: "8px", padding: "24px 26px", backgroundColor: bg, border: `2px solid ${cocoa}`, borderRadius: "22px", transform: `rotate(${tilt})` }, [
+      h(title, "h3", { fontFamily: SERIF, fontSize: "28px", fontStyle: "italic", fontWeight: "400", color: cocoa, margin: "0" }),
+      p(text, { fontFamily: SANS, fontSize: "17px", lineHeight: "1.55", color: cocoa, margin: "0" }),
+    ]);
+
+  const step = (n: string, title: string, text: string): Tree =>
+    box("Step", { flex: "1 1 260px", display: "flex", flexDirection: "column", gap: "8px" }, [
+      p(n, { fontFamily: SERIF, fontSize: "72px", fontStyle: "italic", lineHeight: "1", color: pandan, margin: "0" }),
+      h(title, "h3", { fontFamily: SERIF, fontSize: "26px", fontWeight: "700", color: cocoa, margin: "0" }),
+      p(text, { fontFamily: SANS, fontSize: "17px", lineHeight: "1.6", color: cocoa, margin: "0" }),
+    ]);
+
+  const who = (text: string, bg: string, tilt: string): Tree =>
+    p(text, { fontFamily: SANS, fontSize: "18px", fontWeight: "700", color: cocoa, margin: "0", padding: "12px 22px", backgroundColor: bg, border: `2px solid ${cocoa}`, borderRadius: "999px", transform: `rotate(${tilt})` });
+
+  return [
+    box("Bar", { display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "14px", padding: "18px 48px", backgroundColor: cream, borderBottom: `2px dashed ${cocoa}` }, [
+      h("VyVy", "h2", { fontFamily: SERIF, fontSize: "38px", fontStyle: "italic", fontWeight: "700", color: forest, margin: "0", letterSpacing: "-0.02em" }),
+      box("Nav", { display: "flex", flexWrap: "wrap", gap: "26px", alignItems: "center" }, [
+        a("Bánh kem", "#banh-kem", { fontFamily: SANS, fontSize: "16px", fontWeight: "700", color: cocoa }),
+        a("Bánh ăn vặt", "#banh-an-vat", { fontFamily: SANS, fontSize: "16px", fontWeight: "700", color: cocoa }),
+        a("Cách đặt", "#cach-dat", { fontFamily: SANS, fontSize: "16px", fontWeight: "700", color: cocoa }),
+        a("Liên hệ", "#lien-he", { fontFamily: SANS, fontSize: "16px", fontWeight: "700", color: cocoa }),
+      ], { tag: "nav" }),
+    ], { tag: "header" }),
+
+    box("Hero", { padding: "72px 48px 88px", backgroundColor: cream, display: "flex", flexWrap: "wrap", gap: "56px", alignItems: "center", overflow: "hidden" }, [
+      box("Hero text", { flex: "1 1 440px", display: "flex", flexDirection: "column", gap: "24px" }, [
+        badge("Tiệm bánh · 112 Thanh Niên, Quy Nhơn", { fontFamily: MONO, color: forest, border: `2px solid ${forest}`, width: "fit-content" }),
+        h("Kem tươi tự đánh, sốt nấu từ trái cây thật.", "h1", { fontFamily: SERIF, fontSize: "64px", fontStyle: "italic", fontWeight: "400", lineHeight: "1.05", letterSpacing: "-0.02em", color: cocoa, margin: "0" }),
+        p("VyVy làm bánh kem cho ngày sinh nhật và bánh ăn vặt cho buổi chiều. Chọn bánh bên dưới, rồi nhắn hoặc gọi cho tiệm để đặt.", { fontFamily: SANS, fontSize: "20px", lineHeight: "1.6", color: cocoa, margin: "0", maxWidth: "520px" }),
+        box("Hero actions", { display: "flex", flexWrap: "wrap", gap: "14px" }, [
+          a(`Gọi ${PHONE}`, TEL, { fontFamily: SANS, fontSize: "18px", fontWeight: "800", padding: "16px 28px", backgroundColor: forest, color: cream, borderRadius: "999px", border: `2px solid ${forest}`, boxShadow: `5px 5px 0 ${yolk}` }),
+          a("Xem bánh kem", "#banh-kem", { fontFamily: SANS, fontSize: "18px", fontWeight: "800", padding: "16px 28px", color: cocoa, borderRadius: "999px", border: `2px solid ${cocoa}` }),
+        ]),
+      ]),
+      box("Hero picture", { flex: "1 1 340px", maxWidth: "460px", position: "relative", transform: "rotate(2deg)" }, [
+        img("Egg Tarts with Puff Pastry.jpg", "Đĩa tart trứng nướng vàng", { width: "100%", height: "480px", objectFit: "cover", border: `3px solid ${cocoa}`, borderRadius: "230px 230px 28px 28px", boxShadow: `9px 9px 0 ${cocoa}` }),
+        box("Sticker", { position: "absolute", left: "-28px", bottom: "26px", width: "150px", height: "150px", borderRadius: "50%", backgroundColor: yolk, border: `3px dashed ${cocoa}`, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", textAlign: "center", transform: "rotate(-12deg)" }, [
+          p("bán chạy nhất", { fontFamily: MONO, fontSize: "12px", color: cocoa, margin: "0" }),
+          p("Tart trứng Hong Kong", { fontFamily: SERIF, fontSize: "16px", fontStyle: "italic", lineHeight: "1.15", color: cocoa, margin: "2px 12px" }),
+          p("35k", { fontFamily: SERIF, fontSize: "32px", fontWeight: "700", lineHeight: "1", color: forest, margin: "0" }),
+        ]),
+      ]),
+    ], { tag: "section" }),
+
+    box("Band", { padding: "16px 48px", backgroundColor: forest }, [
+      p("kem tươi tự đánh  ·  cream cheese  ·  mascarpone  ·  sốt nấu từ trái cây tươi", { fontFamily: MONO, fontSize: "15px", color: cream, margin: "0", textAlign: "center" }),
+    ]),
+
+    box("Cakes", { padding: "96px 48px", backgroundColor: white }, [
+      box("Cakes layout", { display: "flex", flexWrap: "wrap", gap: "56px", alignItems: "flex-start" }, [
+        box("Cakes picture", { flex: "1 1 300px", maxWidth: "380px", transform: "rotate(-2deg)" }, [
+          img("ESEAP Conference 2024, day 3, Kota Kinabalu, Malaysia; May 2024 (15).jpg", "Bánh bông lan lá dứa trong hộp", { width: "100%", height: "420px", objectFit: "cover", border: `3px solid ${cocoa}`, borderRadius: "28px 28px 190px 190px", boxShadow: `9px 9px 0 ${pandan}` }),
+        ]),
+        box("Cakes menu", { flex: "2 1 460px", display: "flex", flexDirection: "column", gap: "10px" }, [
+          h("Bánh kem", "h2", { fontFamily: SERIF, fontSize: "60px", fontStyle: "italic", fontWeight: "400", color: cocoa, margin: "0", letterSpacing: "-0.02em" }),
+          p("Mỗi loại có vài mức giá theo cỡ bánh. Nhắn tiệm để chọn cỡ vừa với số người ăn.", { fontFamily: SANS, fontSize: "18px", lineHeight: "1.6", color: cocoa, margin: "0 0 14px", maxWidth: "560px" }),
+          box("Menu", { display: "flex", flexDirection: "column", borderTop: `2px solid ${cocoa}` }, [
+            cakeRow("Lá dứa dừa non", "250k · 300k · 350k", true),
+            cakeRow("Trà bá tước", "250k · 300k · 350k"),
+            cakeRow("Chocolate", "250k · 300k · 350k"),
+            cakeRow("Bông lan trứng muối", "200k – 600k"),
+            cakeRow("Tiramisu", "250k – 370k"),
+            cakeRow("Burnt cheesecake", "250k · 300k"),
+            cakeRow("Mousse xoài chanh dây", "250k · 300k"),
+          ]),
+        ]),
+      ]),
+      box("Creams", { display: "flex", flexWrap: "wrap", gap: "28px", marginTop: "64px" }, [
+        creamCard("Kem tuyết", "Nhẹ, béo thanh, làm từ cream cheese.", blush, "-1deg"),
+        creamCard("Kem muối mascarpone", "Béo đậm hơn kem tuyết, có vị mặn nhẹ.", "#e4efd2", "1deg"),
+      ]),
+      p("Mỗi loại bánh kem có hướng dẫn bảo quản riêng.", { fontFamily: MONO, fontSize: "14px", color: cocoa, margin: "28px 0 0" }),
+    ], { tag: "section", id: "banh-kem" }),
+
+    box("Snacks", { padding: "96px 48px", backgroundColor: blush, borderTop: `2px dashed ${cocoa}` }, [
+      box("Snacks head", { display: "flex", flexWrap: "wrap", gap: "40px", alignItems: "flex-end", justifyContent: "space-between", marginBottom: "44px" }, [
+        box("Snacks title", { flex: "1 1 360px", display: "flex", flexDirection: "column", gap: "12px" }, [
+          h("Bánh ăn vặt", "h2", { fontFamily: SERIF, fontSize: "60px", fontStyle: "italic", fontWeight: "400", color: cocoa, margin: "0", letterSpacing: "-0.02em" }),
+          p("Mua vài cái ăn buổi chiều, hoặc lấy số lượng lớn. Croissant có giá sỉ từ 50 cái.", { fontFamily: SANS, fontSize: "18px", lineHeight: "1.6", color: cocoa, margin: "0", maxWidth: "520px" }),
+        ]),
+        box("Snack photos", { display: "flex", gap: "20px" }, [
+          img("2018 01 Croissant IMG 0685.JPG", "Chiếc croissant trên đĩa", { width: "150px", height: "150px", objectFit: "cover", border: `3px solid ${cocoa}`, borderRadius: "50%", transform: "rotate(-5deg)" }),
+          img("Basque-style cheesecake in Pepito, Tokyo.jpg", "Một miếng burnt cheesecake", { width: "150px", height: "150px", objectFit: "cover", border: `3px solid ${cocoa}`, borderRadius: "50%", transform: "rotate(4deg)" }),
+        ]),
+      ]),
+      box("Snack tags", { display: "flex", flexWrap: "wrap", gap: "26px" }, [
+        tag("Tart trứng Hong Kong", "35k", "bán chạy nhất", yolk, "-1.5deg"),
+        tag("Tart trứng siêu dài", "139k", "", white, "1deg"),
+        tag("Tart trái cây mini", "50k", "", white, "-0.8deg"),
+        tag("Tart trái cây", "85k", "", white, "1.4deg"),
+        tag("Croissant", "50k", "sỉ từ 50 cái", white, "-1deg"),
+        tag("Croissant trứng muối lava", "50k", "", white, "0.8deg"),
+        tag("Pain suisse", "35k", "", white, "-1.2deg"),
+        tag("Tiramisu", "90k", "", white, "1.2deg"),
+        tag("Burnt cheesecake", "45k", "", white, "-0.6deg"),
+      ]),
+    ], { tag: "section", id: "banh-an-vat" }),
+
+    box("Who", { padding: "72px 48px", backgroundColor: cream, display: "flex", flexDirection: "column", gap: "24px" }, [
+      h("Ai hay ghé VyVy", "h2", { fontFamily: SERIF, fontSize: "36px", fontStyle: "italic", fontWeight: "400", color: cocoa, margin: "0" }),
+      box("Who chips", { display: "flex", flexWrap: "wrap", gap: "16px" }, [
+        who("Mua bánh ăn vặt", yolk, "-1.5deg"),
+        who("Đặt bánh sinh nhật", blush, "1deg"),
+        who("Mua bánh làm quà", "#e4efd2", "-0.8deg"),
+        who("Đặt bánh cho công ty", white, "1.4deg"),
+      ]),
+    ], { tag: "section" }),
+
+    box("How", { padding: "96px 48px", backgroundColor: white, borderTop: `2px dashed ${cocoa}` }, [
+      h("Cách đặt bánh", "h2", { fontFamily: SERIF, fontSize: "60px", fontStyle: "italic", fontWeight: "400", color: cocoa, margin: "0 0 44px", letterSpacing: "-0.02em" }),
+      box("Steps", { display: "flex", flexWrap: "wrap", gap: "40px" }, [
+        step("1", "Chọn bánh, nhắn cho tiệm", `Nhắn qua Facebook hoặc TikTok, hoặc gọi ${PHONE}. Cho tiệm biết loại bánh và ngày bạn cần.`),
+        step("2", "Thanh toán", "Chuyển khoản trước, hoặc trả tiền cho shipper khi nhận bánh."),
+        step("3", "Nhận bánh, bảo quản", "Nếu chưa ăn ngay, để bánh trong ngăn mát tủ lạnh. Mỗi loại có hướng dẫn bảo quản riêng."),
+      ]),
+      box("Promise", { marginTop: "64px", padding: "30px 34px", border: `2px dashed ${cocoa}`, borderRadius: "24px", backgroundColor: cream, display: "flex", flexDirection: "column", gap: "10px", maxWidth: "820px" }, [
+        h("Bánh có vấn đề thì sao?", "h3", { fontFamily: SERIF, fontSize: "28px", fontStyle: "italic", fontWeight: "400", color: cocoa, margin: "0" }),
+        p("Nếu chất lượng bánh chưa đúng ý, bạn báo cho tiệm trong 24 giờ kể từ lúc nhận, kèm ảnh hoặc video. Khi tiệm xác nhận lỗi là của tiệm, VyVy hoàn 100% tiền hoặc đổi bánh cho bạn.", { fontFamily: SANS, fontSize: "18px", lineHeight: "1.65", color: cocoa, margin: "0" }),
+      ]),
+    ], { tag: "section", id: "cach-dat" }),
+
+    box("Contact", { padding: "96px 48px", backgroundColor: forest, display: "flex", flexWrap: "wrap", gap: "40px", alignItems: "center", justifyContent: "space-between" }, [
+      box("Contact text", { flex: "1 1 360px", display: "flex", flexDirection: "column", gap: "14px" }, [
+        h("Ghé tiệm hoặc nhắn cho VyVy", "h2", { fontFamily: SERIF, fontSize: "52px", fontStyle: "italic", fontWeight: "400", lineHeight: "1.1", color: cream, margin: "0" }),
+        p("112 Thanh Niên, Quy Nhơn", { fontFamily: SANS, fontSize: "20px", color: cream, margin: "0" }),
+        p("Facebook và TikTok của tiệm: Tiệm bánh VyVy", { fontFamily: SANS, fontSize: "18px", color: "#cfe0bd", margin: "0" }),
+      ]),
+      a(PHONE, TEL, { fontFamily: SERIF, fontSize: "44px", fontWeight: "700", fontStyle: "italic", padding: "18px 38px", backgroundColor: yolk, color: forest, borderRadius: "999px", border: `3px solid ${cream}`, boxShadow: `7px 7px 0 ${pandan}`, transform: "rotate(-2deg)" }),
+    ], { tag: "section", id: "lien-he" }),
+
+    box("Foot", { padding: "22px 48px", backgroundColor: "#142a1d" }, [
+      p("© 2026 Tiệm bánh VyVy · 112 Thanh Niên, Quy Nhơn", { fontFamily: MONO, fontSize: "13px", color: "#cfe0bd", margin: "0" }),
+    ], { tag: "footer" }),
+  ];
+}
+
 export const DEMO_SITES: DemoSite[] = [
   { slug: "mai-viet", name: "Mai viết — blog cá nhân", email: "demo.mai-viet@nova-demo.test", displayName: "Mai", purpose: "Personal blog: a nurse in Huế writing slowly about small things", tree: maiBlog },
   { slug: "tabby", name: "Tabby — to-do list that nags kindly", email: "demo.tabby@nova-demo.test", displayName: "Khoa", purpose: "One-person SaaS: product page with pricing", tree: tabbySaas },
   { slug: "bep-ba-tu", name: "Bếp Bà Tư — bún riêu", email: "demo.bep-ba-tu@nova-demo.test", displayName: "Bà Tư", purpose: "Small local business: a street-food stall that never had a website", tree: bepBaTu },
   { slug: "hung-le", name: "Hùng Lê — nhiếp ảnh", email: "demo.hung-le@nova-demo.test", displayName: "Hùng Lê", purpose: "Freelancer: a photographer's portfolio and booking page", tree: hungPhoto },
   { slug: "noi-nham", name: "Nói nhảm lúc 2 giờ sáng — podcast", email: "demo.noi-nham@nova-demo.test", displayName: "Vy & Nam", purpose: "Creator: an indie podcast with episodes and a listener inbox", tree: noiNham },
+  { slug: "vyvy", name: "Tiệm bánh VyVy — landing page", email: "demo.vyvy@nova-demo.test", displayName: "VyVy", purpose: "Local bakery in Quy Nhơn: cakes and snacks with prices, how to order, refund policy", tree: vyvyBakery },
 ];
 
 // ── tree → project document ───────────────────────────────────────────────────

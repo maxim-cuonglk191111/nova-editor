@@ -12,10 +12,11 @@ function instancesOf(doc: { data: Record<string, any> }, component: string): str
 }
 
 describe("demo seed projects are readable by the preview path", () => {
-  it("has five distinct businesses with unique emails and names", () => {
-    expect(DEMO_SITES).toHaveLength(5);
-    expect(new Set(DEMO_SITES.map((b) => b.email)).size).toBe(5);
-    expect(new Set(DEMO_SITES.map((b) => b.name)).size).toBe(5);
+  it("has distinct sites with unique emails, names and slugs", () => {
+    expect(DEMO_SITES.length).toBeGreaterThanOrEqual(6);
+    expect(new Set(DEMO_SITES.map((b) => b.email)).size).toBe(DEMO_SITES.length);
+    expect(new Set(DEMO_SITES.map((b) => b.name)).size).toBe(DEMO_SITES.length);
+    expect(new Set(DEMO_SITES.map((b) => b.slug)).size).toBe(DEMO_SITES.length);
     for (const b of DEMO_SITES) expect(b.email).toMatch(/@nova-demo\.test$/);
   });
 
@@ -67,25 +68,26 @@ describe("demo seed projects are readable by the preview path", () => {
         const props = (doc.data.props as Entry[]).map(([, p]) => p);
         const srcs = props.filter((p) => p.name === "src").map((p) => p.value as string);
         for (const s of srcs) expect(s).toMatch(/^https:\/\/commons\.wikimedia\.org\/wiki\/Special:FilePath\/.+\?width=1280$/);
-        // avatars carry a name and no stock face
+        // every avatar has a portrait and a name (the name is the fallback initials)
         const avatars = instancesOf(doc, "shadcn:Avatar");
-        for (const id of avatars) expect(props.some((p) => p.instanceId === id && p.name === "src")).toBe(false);
+        for (const id of avatars) {
+          expect(props.some((p) => p.instanceId === id && p.name === "src")).toBe(true);
+          expect(props.some((p) => p.instanceId === id && p.name === "name")).toBe(true);
+        }
         const bpIds = new Set((doc.data.breakpoints as Entry[]).map(([id]) => id));
         for (const [, decl] of doc.data.styles as Entry[]) expect(bpIds.has(decl.breakpointId)).toBe(true);
         const sources = new Set((doc.data.styleSources as Entry[]).map(([id]) => id));
         for (const [, decl] of doc.data.styles as Entry[]) expect(sources.has(decl.styleSourceId)).toBe(true);
       });
 
-      it("credits its photos in the footer whenever it uses any", () => {
-        const props = (doc.data.props as Entry[]).map(([, p]) => p);
-        const usesPhotos = props.some((p) => p.name === "src");
+      it("carries no licence or credit lines in its copy", () => {
         const texts = ((doc.data.instances as Entry[]).flatMap(([, i]) => i.children).filter((c: any) => c.type === "text").map((c: any) => c.value as string));
-        expect(texts.some((x) => /Wikimedia Commons/.test(x))).toBe(usesPhotos);
+        expect(texts.some((x) => /Wikimedia|CC BY|phạm vi công cộng/i.test(x))).toBe(false);
       });
     });
   }
 
-  it("never reuses a photo, on one site or across the five", () => {
+  it("never reuses a photo, on one site or across all of them", () => {
     const all: string[] = [];
     for (const biz of DEMO_SITES) {
       const doc = buildProjectSchema(biz, NOW) as { data: Record<string, any> };
