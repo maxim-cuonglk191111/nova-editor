@@ -1,5 +1,7 @@
 import { describe, it, expect } from "vitest";
-import { DEMO_SITES, buildProjectSchema } from "../seed/demoProjects";
+import { existsSync } from "node:fs";
+import { join } from "node:path";
+import { DEMO_SITES, PLACEHOLDER_CONTEXT, buildProjectSchema } from "../seed/demoProjects";
 import { migrateToLatest } from "../migrate";
 import { serializeWebstudioData } from "../schema";
 
@@ -64,10 +66,16 @@ describe("demo seed projects are readable by the preview path", () => {
         for (const a of anchors) expect(ids.has(a), `#${a}`).toBe(true);
       });
 
-      it("only uses Vietnamese Commons photos and styles that reference known breakpoints", () => {
+      it("only uses Commons photos or the site's own uploaded assets, and styles that reference known breakpoints", () => {
         const props = (doc.data.props as Entry[]).map(([, p]) => p);
         const srcs = props.filter((p) => p.name === "src").map((p) => p.value as string);
-        for (const s of srcs) expect(s).toMatch(/^https:\/\/commons\.wikimedia\.org\/wiki\/Special:FilePath\/.+\?width=1280$/);
+        const own = new RegExp(`^${PLACEHOLDER_CONTEXT.assetBase.replace(/[.]/g, "\\.")}/${biz.slug}/[\\w.-]+$`);
+        for (const s of srcs) {
+          const isCommons = /^https:\/\/commons\.wikimedia\.org\/wiki\/Special:FilePath\/.+\?width=1280$/.test(s);
+          expect(isCommons || own.test(s), s).toBe(true);
+        }
+        // every own asset a tree points at is declared, so the seed script uploads it
+        for (const s of srcs.filter((x) => own.test(x))) expect(biz.assets ?? [], s).toContain(s.split("/").pop());
         // every avatar has a portrait and a name (the name is the fallback initials)
         const avatars = instancesOf(doc, "shadcn:Avatar");
         for (const id of avatars) {
@@ -86,6 +94,10 @@ describe("demo seed projects are readable by the preview path", () => {
       });
     });
   }
+
+  it("ships every declared asset file next to the seed script", () => {
+    for (const biz of DEMO_SITES) for (const f of biz.assets ?? []) expect(existsSync(join(__dirname, "../../../scripts/seed-assets", biz.slug, f)), `${biz.slug}/${f}`).toBe(true);
+  });
 
   it("never reuses a photo, on one site or across all of them", () => {
     const all: string[] = [];

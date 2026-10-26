@@ -2,6 +2,12 @@
 
 ---
 
+## [25.16.24] — 2026-10-27
+
+### Task 034 — Ovemo café seed (Patch)
+
+- **Seed**: seventh account and site, Ovemo (Over The Moon): full M/L menu, toppings, hours, phones. Sites can now ship their own photos: `seed-demo.mjs` uploads `scripts/seed-assets/<slug>/*` to the Supabase `assets` bucket before writing projects.
+
 ## [25.16.23] — 2026-10-27
 
 ### Task 033 — VyVy bakery seed, avatar photos, Workers deploy fix (Patch)
