@@ -1,5 +1,12 @@
 # Nova — Verified Feature Ledger
 
+## nova-builder / v25.16.16 — Drop back into a card (Task 023) (2026-10-26)
+
+| ID | Feature | Status | Visual Evidence |
+|---|---|---|---|
+| DND-INTO1 | Button dragged out of a 363×300 card lands back inside at 12 / 40 / 100px from the edge (before: 8 and 40px landed outside); 3px from the edge still places it beside | 🟢 | doc/screenshots/21-drag-into-card-edge.png |
+| DND-INTO2 | `edgeThreshold` unit-tested (cap 8px, floor 4px, interior always usable) | 🟢 | src/lib/__tests__/drop-edge-threshold.test.ts |
+
 ## nova-builder / v25.16.12 — Interactive Draggable Image Crop Area (Task 021) (2026-10-20)
 
 | ID | Feature | Status | Visual Evidence |

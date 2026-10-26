@@ -1,6 +1,6 @@
 # Task 023 — Canvas Drag & Drop Reparenting Target Snapping & Smooth Nesting
 
-- **Status:** Open
+- **Status:** Closed
 - **Filed:** 2026-10-20
 - **Owner:** Antigravity / Claude Code
 - **Severity:** High (Core Canvas WYSIWYG Manipulation: Dragging elements into cards and nested containers is sticky/unreliable)
@@ -31,3 +31,10 @@
 - [ ] Run `node scripts/i18n-audit.mjs --max=0`.
 - [ ] Run `pnpm --filter @nova/builder typecheck`.
 - [ ] Verify live in Chrome DevTools MCP.
+
+## 3. Outcome (2026-10-26)
+
+- Reproduced in `/builder/demo` with a Card styled 460px wide and a Button dragged out and back (Playwright + system Chrome). Drop 8px / 40px inside the border: landed **outside** the card; 100px / 160px: inside.
+- Root cause was not hit-testing depth or event interception: the target was already the card, but `resolveDropPosition` used a 25%-of-smaller-side edge band (`treeMove.ts`). Replaced by `edgeThreshold` (4–8px).
+- After: 12 / 40 / 100px inside; 3px from the edge still goes beside the card.
+- **Not done** from the original checklist: a new drop-preview placeholder inside the hovered container (the existing indicator already draws for "into") and depth-weighted target resolution. Left out because the measured fault was the edge band alone.

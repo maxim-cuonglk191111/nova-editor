@@ -29,7 +29,7 @@ screenshotted, reviewed and scored /10; a feature we cannot make work is hidden
 | [020](020-landing-rebranding-and-vietnamese-font.md) | Landing Page Rebranding & Vietnamese Typography Refresh | Open |
 | [021](021-interactive-draggable-image-crop.md) | Interactive Draggable Image Crop Area | Closed |
 | [022](022-pages-panel-inline-form-and-path-editing.md) | Pages Panel UX: Inline Form Placement, Blur Validation & Dual Inline Edit (Name + Path) | Open |
-| [023](023-canvas-drag-reparent-smoothness-and-snapping.md) | Canvas Drag & Drop Reparenting Target Snapping & Smooth Nesting | Open |
+| [023](023-canvas-drag-reparent-smoothness-and-snapping.md) | Canvas Drag & Drop Reparenting Target Snapping & Smooth Nesting | Closed |
 | [024](024-multi-page-generation-and-prompt-structure.md) | Multi-Page Website Generation & Page Structure from Prompt | Open |
 | [025](025-pre-generate-auth-guard-and-instruction-sync.md) | Pre-Generate Auth Guard & Dialog Instruction Sync | Open |
 | [026](026-builder-error-boundary-and-crash-protection.md) | Builder Error Boundary & React Error #310 Crash Protection | Open |

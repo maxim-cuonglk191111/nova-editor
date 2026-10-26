@@ -2,6 +2,13 @@
 
 ---
 
+## [25.16.16] — 2026-10-26
+
+### Task 023 — Dropping back into a card (Patch)
+
+- **Root cause**: `resolveDropPosition` treated the outer 25% of a container's smaller side as "next to it" and only the middle as "inside it". On a 363×300 card that is a ~75px band, so a drop 8px or 40px inside the card's border placed the element beside the card, in the surrounding section ("chạy elements"). It only went inside when the pointer was ≥100px from every edge.
+- **Fix**: the edge band is now `edgeThreshold` — 20% of the smaller side, clamped to 4–8px — so the whole interior accepts the drop. Both the on-canvas drag and the Components-panel drag use it.
+
 ## [25.16.12] — 2026-10-20
 
 ### Task 021 — Interactive Draggable Image Crop Area (Patch)

@@ -44,6 +44,14 @@ export function isGridRow(component: string | null | undefined): boolean {
   return component === "HeroUIRow";
 }
 
+// Width of the outer band of a container where a drop means "next to it" instead of
+// "inside it". It used to be 25% of the smaller side — ~75px on a 300px card, so a
+// drop anywhere near the card's border jumped out to the surrounding section.
+// Now a thin band (at most 8px) so the whole card interior accepts the drop.
+export function edgeThreshold(width: number, height: number): number {
+  return Math.min(Math.max(Math.min(width, height) * 0.2, 4), 8);
+}
+
 export function resolveDropPosition(
   el: HTMLElement,
   pointer: { x: number; y: number },
@@ -54,7 +62,7 @@ export function resolveDropPosition(
 
   if (component && canAcceptChildren(component)) {
     const rect = el.getBoundingClientRect();
-    const threshold = Math.min(rect.width, rect.height) * 0.25;
+    const threshold = edgeThreshold(rect.width, rect.height);
     const area = getArea(pointer, threshold, rect);
     if (area === "center") {
       return "into";
