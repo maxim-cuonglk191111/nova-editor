@@ -5,7 +5,7 @@
 // project document exactly as applyWSComposition does, so a seeded project has the same shape
 // as one a user generated and the preview page reads it through the normal path.
 //
-// Photos come from the composer's curated Unsplash list (public URLs). Fonts are system stacks
+// Photos are Vietnamese places and dishes from Wikimedia Commons. Fonts are system stacks
 // so the preview, an export and a published site all draw the same.
 import { validateCompositionWS } from "@studio/ai";
 import { emptyProjectSchema } from "../emptyProject";
@@ -13,7 +13,10 @@ import { emptyProjectSchema } from "../emptyProject";
 type Tree = Record<string, unknown>;
 type Styles = Record<string, string>;
 
-const photo = (id: string) => `https://images.unsplash.com/${id}?auto=format&fit=crop&w=1000&q=80`;
+// Photos are real places and dishes in Vietnam from Wikimedia Commons (public domain or CC BY /
+// CC BY-SA, credited in each site's footer). Width 1280 is one of Commons' standard thumbnail
+// sizes, so the file is served from cache. Every photo is used on exactly one site.
+const commons = (file: string) => `https://commons.wikimedia.org/wiki/Special:FilePath/${encodeURIComponent(file)}?width=1280`;
 
 // ── tiny builders ─────────────────────────────────────────────────────────────
 const box = (label: string, styles: Styles, children: Tree[] = [], props: Record<string, unknown> = {}): Tree => ({ component: "Box", label, props, styles, children });
@@ -21,9 +24,11 @@ const h = (text: string, tag: string, styles: Styles = {}): Tree => ({ component
 const p = (text: string, styles: Styles = {}): Tree => ({ component: "Paragraph", label: "Paragraph", text, styles });
 const a = (text: string, href: string, styles: Styles = {}): Tree => ({ component: "Link", label: "Link", props: { href }, text, styles });
 const btn = (text: string, styles: Styles): Tree => ({ component: "Button", label: "Button", props: { type: "button" }, text, styles });
-const img = (id: string, alt: string, styles: Styles = {}): Tree => ({ component: "Image", label: "Image", props: { src: photo(id), alt }, styles });
+const img = (file: string, alt: string, styles: Styles = {}): Tree => ({ component: "Image", label: "Image", props: { src: commons(file), alt }, styles });
 const badge = (text: string, styles: Styles = {}): Tree => ({ component: "Badge", label: "Badge", props: { variant: "outline" }, text, styles });
-const avatar = (src: string, name: string, styles: Styles = {}): Tree => ({ component: "Avatar", label: "Avatar", props: { src, name }, styles });
+// No photo: the Avatar shows the person's initials, so no stranger's face stands in for them.
+const avatar = (name: string, styles: Styles = {}): Tree => ({ component: "Avatar", label: "Avatar", props: { name }, styles });
+const credit = (text: string, color: string): Tree => p(text, { fontFamily: MONO, fontSize: "12px", lineHeight: "1.5", color, margin: "8px 0 0" });
 
 export type DemoSite = {
   slug: string;
@@ -75,7 +80,7 @@ function maiBlog(): Tree[] {
       post("03", "Không xin lỗi vì trả lời muộn", "3 thg 9 · 3 phút đọc", "-0.4deg"),
     ], { tag: "section", id: "bai-viet" }),
     box("About", { display: "flex", flexWrap: "wrap", gap: "48px", padding: "80px 56px", backgroundColor: "#e9dcbc", borderTop: `1px solid ${ink}`, borderBottom: `1px solid ${ink}` }, [
-      img("photo-1503676260728-1c00da094a0b", "Sách và quả táo trên bàn", { width: "320px", height: "320px", objectFit: "cover", border: `10px solid #fffaf0`, boxShadow: `6px 6px 0 ${ink}`, transform: "rotate(-3deg)" }),
+      img("Sông Hương (Huế).JPG", "Sông Hương buổi sáng, Huế", { width: "320px", height: "320px", objectFit: "cover", border: `10px solid #fffaf0`, boxShadow: `6px 6px 0 ${ink}`, transform: "rotate(-3deg)" }),
       box("About text", { flex: "1 1 360px", display: "flex", flexDirection: "column", gap: "18px", maxWidth: "560px" }, [
         h("Về mình", "h2", { fontFamily: SERIF, fontStyle: "italic", fontSize: "44px", fontWeight: "400", color: ink, margin: "0" }),
         p("Mình là Mai, 31 tuổi, làm điều dưỡng ở Huế. Trực đêm nhiều nên có thói quen viết vào lúc ai cũng ngủ. Blog này không bán gì, không dạy gì, chỉ ghi lại.", { fontFamily: SERIF, fontSize: "19px", lineHeight: "1.65", color: ink, margin: "0" }),
@@ -89,6 +94,7 @@ function maiBlog(): Tree[] {
     ], { tag: "section", id: "gui-thu" }),
     box("Foot", { padding: "26px 56px", backgroundColor: ink }, [
       p("viết bằng tay, đăng bằng máy · Huế, 2026", { fontFamily: MONO, fontSize: "14px", color: paper, margin: "0" }),
+      credit("Ảnh sông Hương: Lê Tấn Lộc, Wikimedia Commons (phạm vi công cộng).", faded),
     ], { tag: "footer" }),
   ];
 }
@@ -152,7 +158,7 @@ function tabbySaas(): Tree[] {
       ]),
     ], { tag: "section", id: "pricing" }),
     box("Maker", { padding: "88px 48px", backgroundColor: lime, display: "flex", flexWrap: "wrap", gap: "40px", alignItems: "center" }, [
-      avatar("https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&q=80", "Khoa", { width: "96px", height: "96px" }),
+      avatar("Khoa", { width: "96px", height: "96px" }),
       box("Maker text", { flex: "1 1 420px", display: "flex", flexDirection: "column", gap: "12px" }, [
         h("made by one person. his name is Khoa.", "h2", { fontFamily: MONO, fontSize: "36px", fontWeight: "700", color: black, margin: "0" }),
         p("I built Tabby because I kept lying to my own to-do list. It's me, a laptop, and a very patient cat. Questions go straight to my inbox: khoa@tabby.example.", { fontFamily: SANS, fontSize: "18px", lineHeight: "1.6", color: black, margin: "0", maxWidth: "620px" }),
@@ -186,7 +192,7 @@ function bepBaTu(): Tree[] {
         h("BÚN RIÊU BÀ TƯ. HẾT LÀ HẾT.", "h1", { fontFamily: POSTER, fontSize: "104px", fontWeight: "400", lineHeight: "0.95", letterSpacing: "0.01em", color: yellow, margin: "0", textShadow: `6px 6px 0 ${black}` }),
         p("Nấu từ 4 giờ sáng bằng cua đồng thật. Ăn tại chỗ, ghế nhựa đỏ, quạt cây. Không giao hàng. Đói thì ghé.", { fontFamily: SANS, fontSize: "22px", fontWeight: "700", lineHeight: "1.45", color: cream, margin: "0", maxWidth: "560px" }),
       ]),
-      img("photo-1504674900247-0877df9cc836", "Tô bún riêu nóng", { flex: "1 1 340px", maxWidth: "460px", height: "420px", objectFit: "cover", border: `8px solid ${black}`, transform: "rotate(3deg)", boxShadow: `12px 12px 0 ${yellow}` }),
+      img("Bun rieu with herbs.jpg", "Tô bún riêu với rau sống", { flex: "1 1 340px", maxWidth: "460px", height: "420px", objectFit: "cover", border: `8px solid ${black}`, transform: "rotate(3deg)", boxShadow: `12px 12px 0 ${yellow}` }),
     ], { tag: "section" }),
     box("Menu", { padding: "72px 40px", backgroundColor: yellow, borderBottom: `8px solid ${black}` }, [
       h("MÓN HÔM NAY", "h2", { fontFamily: POSTER, fontSize: "64px", fontWeight: "400", color: black, margin: "0 0 28px", letterSpacing: "0.02em" }),
@@ -209,6 +215,7 @@ function bepBaTu(): Tree[] {
     ], { tag: "section", id: "o-dau" }),
     box("Foot", { padding: "22px 40px", backgroundColor: black }, [
       p("Bếp Bà Tư · bán từ 1987 · không có website cho tới tuần trước", { fontFamily: MONO, fontSize: "14px", color: yellow, margin: "0" }),
+      credit("Ảnh bún riêu: Enoki Mushroom, Wikimedia Commons (CC BY-SA 4.0).", "#fcbf49"),
     ], { tag: "footer" }),
   ];
 }
@@ -235,10 +242,10 @@ function hungPhoto(): Tree[] {
       p("Nhiếp ảnh gia độc lập, Đà Nẵng. Chụp phong cảnh, đường phố và đôi khi đám cưới của những người không thích chụp ảnh.", { fontFamily: SANS, fontSize: "19px", lineHeight: "1.6", color: dim, margin: "36px 0 0", maxWidth: "560px" }),
     ], { tag: "section" }),
     box("Grid", { padding: "0 48px 96px", backgroundColor: dark, display: "flex", flexWrap: "wrap", gap: "20px", alignItems: "flex-end" }, [
-      shot("photo-1464822759023-fed622ff2c3b", "Núi trong sương", "Sa Pa, 6:12 sáng. Sương dày, sau đó là không có gì.", { flex: "2 1 520px" }),
-      shot("photo-1507525428034-b723cf961d3e", "Biển lúc bình minh", "Mỹ Khê, 5:40. Người đàn ông đầu tiên ra biển.", { flex: "1 1 280px" }),
-      shot("photo-1487958449943-2429e8be8625", "Kiến trúc hiện đại", "Hà Nội, 15:20. Cái bóng quan trọng hơn tòa nhà.", { flex: "1 1 280px" }),
-      shot("photo-1452587925148-ce544e77e70d", "Máy ảnh và ảnh in", "Bàn làm việc. Mình vẫn in ảnh ra, vì ảnh không biết nói dối.", { flex: "2 1 520px" }),
+      shot("Ray over terrace rice field in Sapa - Trung Chải..jpg", "Ruộng bậc thang Sa Pa", "Sa Pa, 6:12 sáng. Lúa chín, sương dày, sau đó là không có gì.", { flex: "2 1 520px" }),
+      shot("Bờ đông cầu Rồng.jpg", "Cầu Rồng, Đà Nẵng", "Đà Nẵng, 19:30. Con rồng chưa kịp phun lửa.", { flex: "1 1 280px" }),
+      shot("2024-12-20 Hoi An Old Town at night 2.jpg", "Phố cổ Hội An về đêm", "Hội An, 20:10. Đèn lồng nhiều hơn người.", { flex: "1 1 280px" }),
+      shot("Ha Long Bay, Tower karsts.jpg", "Vịnh Hạ Long", "Hạ Long, 16:45. Núi đá đứng yên, mình đứng yên theo.", { flex: "2 1 520px" }),
     ], { tag: "section", id: "anh" }),
     box("About", { padding: "96px 48px", backgroundColor: paper, display: "flex", flexWrap: "wrap", gap: "56px" }, [
       h("Giới thiệu", "h2", { fontFamily: MONO, fontSize: "14px", fontWeight: "400", textTransform: "uppercase", letterSpacing: "0.14em", color: "#55544f", margin: "0", flex: "0 0 160px" }),
@@ -254,6 +261,7 @@ function hungPhoto(): Tree[] {
     ], { tag: "section", id: "thue-chup" }),
     box("Foot", { padding: "24px 48px", backgroundColor: dark, borderTop: "1px solid #2a2a28" }, [
       p("© 2026 Hùng Lê · mọi bức ảnh trên trang này đều có thật", { fontFamily: MONO, fontSize: "13px", color: dim, margin: "0" }),
+      credit("Ảnh minh họa qua Wikimedia Commons: Phi Phi Hoang (CC BY 2.0), South Photo (phạm vi công cộng), Alexkom000 (CC BY 4.0), Vyacheslav Argenberg (CC BY 4.0).", dim),
     ], { tag: "footer" }),
   ];
 }
@@ -299,8 +307,8 @@ function noiNham(): Tree[] {
     ], { tag: "section", id: "tap" }),
     box("Hosts", { padding: "88px 44px", backgroundColor: sun, display: "flex", flexWrap: "wrap", gap: "40px", alignItems: "center", borderTop: `4px solid ${indigo}` }, [
       box("Avatars", { display: "flex", gap: "0" }, [
-        avatar("https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80", "Vy", { width: "120px", height: "120px" }),
-        avatar("https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&q=80", "Nam", { width: "120px", height: "120px" }),
+        avatar("Vy", { width: "120px", height: "120px" }),
+        avatar("Nam", { width: "120px", height: "120px" }),
       ]),
       box("Hosts text", { flex: "1 1 420px", display: "flex", flexDirection: "column", gap: "14px" }, [
         h("Hai đứa mình", "h2", { fontFamily: SANS, fontSize: "46px", fontWeight: "900", color: indigo, margin: "0", letterSpacing: "-0.04em" }),

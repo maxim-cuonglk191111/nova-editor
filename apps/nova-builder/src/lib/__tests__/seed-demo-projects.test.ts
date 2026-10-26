@@ -7,6 +7,10 @@ const NOW = "2026-10-27T00:00:00.000Z";
 
 type Entry = [string, any];
 
+function instancesOf(doc: { data: Record<string, any> }, component: string): string[] {
+  return (doc.data.instances as Entry[]).filter(([, i]) => i.component === component).map(([id]) => id);
+}
+
 describe("demo seed projects are readable by the preview path", () => {
   it("has five distinct businesses with unique emails and names", () => {
     expect(DEMO_SITES).toHaveLength(5);
@@ -59,16 +63,35 @@ describe("demo seed projects are readable by the preview path", () => {
         for (const a of anchors) expect(ids.has(a), `#${a}`).toBe(true);
       });
 
-      it("only uses public https images and styles that reference known breakpoints", () => {
+      it("only uses Vietnamese Commons photos and styles that reference known breakpoints", () => {
         const props = (doc.data.props as Entry[]).map(([, p]) => p);
         const srcs = props.filter((p) => p.name === "src").map((p) => p.value as string);
-        expect(srcs.length).toBeGreaterThanOrEqual(1);
-        for (const s of srcs) expect(s).toMatch(/^https:\/\/images\.unsplash\.com\/photo-/);
+        for (const s of srcs) expect(s).toMatch(/^https:\/\/commons\.wikimedia\.org\/wiki\/Special:FilePath\/.+\?width=1280$/);
+        // avatars carry a name and no stock face
+        const avatars = instancesOf(doc, "shadcn:Avatar");
+        for (const id of avatars) expect(props.some((p) => p.instanceId === id && p.name === "src")).toBe(false);
         const bpIds = new Set((doc.data.breakpoints as Entry[]).map(([id]) => id));
         for (const [, decl] of doc.data.styles as Entry[]) expect(bpIds.has(decl.breakpointId)).toBe(true);
         const sources = new Set((doc.data.styleSources as Entry[]).map(([id]) => id));
         for (const [, decl] of doc.data.styles as Entry[]) expect(sources.has(decl.styleSourceId)).toBe(true);
       });
+
+      it("credits its photos in the footer whenever it uses any", () => {
+        const props = (doc.data.props as Entry[]).map(([, p]) => p);
+        const usesPhotos = props.some((p) => p.name === "src");
+        const texts = ((doc.data.instances as Entry[]).flatMap(([, i]) => i.children).filter((c: any) => c.type === "text").map((c: any) => c.value as string));
+        expect(texts.some((x) => /Wikimedia Commons/.test(x))).toBe(usesPhotos);
+      });
     });
   }
+
+  it("never reuses a photo, on one site or across the five", () => {
+    const all: string[] = [];
+    for (const biz of DEMO_SITES) {
+      const doc = buildProjectSchema(biz, NOW) as { data: Record<string, any> };
+      for (const [, p] of doc.data.props as Entry[]) if (p.name === "src") all.push(p.value);
+    }
+    expect(all.length).toBeGreaterThanOrEqual(6);
+    expect(new Set(all).size).toBe(all.length);
+  });
 });
