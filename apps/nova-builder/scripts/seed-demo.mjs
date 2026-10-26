@@ -1,12 +1,12 @@
 #!/usr/bin/env node
-// Seed five demo accounts, each owning one finished project, and print the public preview link
+// Seed the demo accounts, each owning one finished project, and print the public preview link
 // of every project.
 //
 //   cd apps/nova-builder
 //   node scripts/seed-demo.mjs                       dry run: build + validate, write nothing
 //   node scripts/seed-demo.mjs --apply               create / refresh the accounts and projects
 //   node scripts/seed-demo.mjs --apply --base https://your-site.example
-//   node scripts/seed-demo.mjs --cleanup --apply     delete the five accounts (projects cascade)
+//   node scripts/seed-demo.mjs --cleanup --apply     delete the demo accounts (projects cascade)
 //   node scripts/seed-demo.mjs --out some/dir        also write what /api/preview/<id> would return,
 //                                                    one <slug>.json each, to test the preview offline
 //

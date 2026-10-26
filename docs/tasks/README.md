@@ -39,3 +39,4 @@ screenshotted, reviewed and scored /10; a feature we cannot make work is hidden
 | [030](030-prices-ending-9-and-welcome-offer.md) | Prices ending in 9 & first-purchase welcome offer (50%, 2 months) | Closed (server path not run with a real order) |
 | [031](031-landing-craft-pass.md) | Landing: hand-made visual pass (not template-looking) | Closed |
 | [032](032-seed-demo-accounts-and-previews.md) | Seed five demo accounts with finished sites and public preview links | Closed |
+| [033](033-vyvy-bakery-seed-and-cf-deploy-fix.md) | Tiệm bánh VyVy landing seed, avatar photos, Cloudflare deploy fix | Closed |

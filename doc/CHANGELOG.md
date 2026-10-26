@@ -2,6 +2,13 @@
 
 ---
 
+## [25.16.23] — 2026-10-27
+
+### Task 033 — VyVy bakery seed, avatar photos, Workers deploy fix (Patch)
+
+- **Deploy**: dynamic routes no longer answer 500 on Cloudflare. `build:cf` now runs `scripts/patch-open-next-output.mjs`, which stops Next's `getMiddlewareManifest()` from `require()`-ing a file at runtime (workerd cannot). The build fails loudly if an upgrade changes that code.
+- **Seed**: sixth account and site, Tiệm bánh VyVy (menu, price tags, how to order, refund promise), written from the owner's profile. Avatars show ordinary portraits again; credit lines removed.
+
 ## [25.16.22] — 2026-10-27
 
 ### Task 032 — Demo accounts, and the welcome offer for every payment method (Minor)
