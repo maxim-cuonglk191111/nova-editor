@@ -5,7 +5,8 @@ import { $pages } from "@/lib/data-stores";
 import { $selectedPageId } from "@/lib/nano-states";
 import { PageItem } from "./PageItem";
 import { FolderItem } from "./FolderItem";
-import { usePageCrud, toSlug } from "./usePageCrud";
+import { usePageCrud } from "./usePageCrud";
+import { NewPageForm } from "./NewPageForm";
 import type { PageSeo } from "./usePageCrud";
 import { UI_VARS as C } from "@/lib/uiTheme";
 import { useI18n, fmt } from "@/lib/i18n";
@@ -24,6 +25,18 @@ const inputStyle: React.CSSProperties = {
   boxSizing: "border-box",
 };
 
+const headerAction: React.CSSProperties = {
+  background: "none",
+  border: `1px solid ${C.border}`,
+  borderRadius: 4,
+  color: C.text,
+  fontSize: 12,
+  fontFamily: C.font,
+  cursor: "pointer",
+  padding: "4px 8px",
+  minHeight: 28,
+};
+
 export function PagesPanel() {
   const L = useI18n().t.sidebar.pages;
   const pages = useStore($pages);
@@ -33,9 +46,6 @@ export function PagesPanel() {
   const [expandedFolders, setExpandedFolders] = useState<Set<string>>(new Set());
   const [showNewPage, setShowNewPage] = useState(false);
   const [showNewFolder, setShowNewFolder] = useState(false);
-  const [newName, setNewName] = useState("");
-  const [newPath, setNewPath] = useState("/");
-  const [isPathManual, setIsPathManual] = useState(false);
   const [newFolderName, setNewFolderName] = useState("");
 
   if (!pages) {
@@ -47,49 +57,12 @@ export function PagesPanel() {
   const activePageId = selectedPageId ?? pagesData.homePageId;
   const canDelete = pagesData.pages.size > 1;
 
-  // Path normalization & duplicate validation
-  const rawPath = newPath.trim();
-  const normalizedNewPath = rawPath ? (rawPath.startsWith("/") ? rawPath : `/${rawPath}`) : "/";
-  const isDuplicatePath = Array.from(pagesData.pages.values()).some((p) => p.path === normalizedNewPath);
-  const pathError = isDuplicatePath
-    ? (normalizedNewPath === "/" ? L.rootPathReserved : L.pathCollisionError)
-    : null;
-  const canSubmitPage = Boolean(newName.trim()) && !pathError;
-
   function toggleFolder(fid: string) {
     setExpandedFolders(prev => {
       const next = new Set(prev);
       if (next.has(fid)) next.delete(fid); else next.add(fid);
       return next;
     });
-  }
-
-  function handleNameChange(val: string) {
-    setNewName(val);
-    if (!isPathManual) {
-      const slug = toSlug(val);
-      setNewPath(slug ? `/${slug}` : "/");
-    }
-  }
-
-  function handlePathChange(val: string) {
-    setNewPath(val);
-    setIsPathManual(true);
-  }
-
-  function handleCancelNewPage() {
-    setShowNewPage(false);
-    setNewName("");
-    setNewPath("/");
-    setIsPathManual(false);
-  }
-
-  function handleCreatePage() {
-    if (!canSubmitPage) return;
-    const ok = createPage(newName.trim(), normalizedNewPath);
-    if (ok) {
-      handleCancelNewPage();
-    }
   }
 
   function handleCreateFolder() {
@@ -130,6 +103,7 @@ export function PagesPanel() {
       return (
         <PageItem
           key={page.id}
+          siblings={Array.from(pagesData.pages.values()).map((p) => ({ id: p.id, path: p.path }))}
           page={{
             id: page.id,
             name: page.name,
@@ -159,88 +133,23 @@ export function PagesPanel() {
 
   return (
     <div style={{ display: "flex", flexDirection: "column", overflow: "hidden", height: "100%" }}>
-      {/* Header */}
-      <div style={{ padding: "7px 10px 6px", borderBottom: `1px solid ${C.border}`, flexShrink: 0 }}>
+      {/* Header — the add actions sit here so the form opens right beneath the button */}
+      <div style={{ padding: "7px 10px 6px", borderBottom: `1px solid ${C.border}`, flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "space-between", gap: 8 }}>
         <span style={{ fontSize: 12, fontFamily: C.font, color: C.textMuted, fontWeight: 700, letterSpacing: "0.06em", textTransform: "uppercase" }}>
           {L.title}
         </span>
-      </div>
-
-      {/* Tree */}
-      <div style={{ flex: 1, overflowY: "auto" }}>
-        {renderChildren(rootChildren)}
-      </div>
-
-      {/* New page form */}
-      {showNewPage && (
-        <div style={{ padding: "8px 10px", borderTop: `1px solid ${C.border}`, display: "flex", flexDirection: "column", gap: 4, flexShrink: 0 }}>
-          <input
-            autoFocus
-            value={newName}
-            onChange={(e) => handleNameChange(e.target.value)}
-            placeholder={L.pageName}
-            onKeyDown={(e) => { if (e.key === "Enter") handleCreatePage(); if (e.key === "Escape") handleCancelNewPage(); }}
-            style={inputStyle}
-          />
-          <input
-            value={newPath}
-            onChange={(e) => handlePathChange(e.target.value)}
-            placeholder={L.pathPlaceholder}
-            onKeyDown={(e) => { if (e.key === "Enter") handleCreatePage(); if (e.key === "Escape") handleCancelNewPage(); }}
-            style={{
-              ...inputStyle,
-              border: pathError ? `1px solid ${C.danger}` : "1px solid rgba(255,255,255,0.1)",
-              color: pathError ? C.danger : C.textMuted,
-              fontFamily: C.fontMono,
-              fontSize: 13,
-            }}
-          />
-          {pathError && (
-            <div style={{ fontSize: 11, color: C.danger, fontFamily: C.font, marginTop: -2 }}>
-              {pathError}
-            </div>
-          )}
-          {newPath.includes("[") && !pathError && (
-            <div style={{ fontSize: 10, color: C.accentText, fontFamily: C.font, marginTop: -2 }}>
-              {L.pathParamHintBefore} <code style={{ fontFamily: C.fontMono }}>/[slug]</code> {L.pathParamHintAfter}
-            </div>
-          )}
-          <div style={{ display: "flex", gap: 6, marginTop: 2 }}>
-            <button
-              onClick={handleCreatePage}
-              disabled={!canSubmitPage}
-              style={{
-                flex: 1,
-                padding: "4px 0",
-                background: canSubmitPage ? "#7c3aed" : "rgba(255,255,255,0.05)",
-                border: `1px solid ${canSubmitPage ? "#7c3aed" : "rgba(255,255,255,0.1)"}`,
-                borderRadius: 4,
-                color: canSubmitPage ? "#ffffff" : C.textMuted,
-                fontWeight: 600,
-                fontSize: 13,
-                fontFamily: C.font,
-                cursor: canSubmitPage ? "pointer" : "not-allowed",
-              }}
-            >
-              {L.create}
-            </button>
-            <button
-              onClick={handleCancelNewPage}
-              style={{
-                padding: "4px 10px",
-                background: "none",
-                border: "1px solid rgba(255,255,255,0.1)",
-                borderRadius: 4,
-                color: C.textMuted,
-                fontSize: 13,
-                fontFamily: C.font,
-                cursor: "pointer",
-              }}
-            >
-              {L.cancel}
-            </button>
-          </div>
+        <div style={{ display: "flex", gap: 4 }}>
+          <button onClick={() => { setShowNewFolder(false); setShowNewPage(true); }} disabled={showNewPage} style={headerAction}>{L.addPage}</button>
+          <button onClick={() => { setShowNewPage(false); setShowNewFolder(true); }} disabled={showNewFolder} style={headerAction}>{L.addFolder}</button>
         </div>
+      </div>
+
+      {showNewPage && (
+        <NewPageForm
+          existing={Array.from(pagesData.pages.values()).map((p) => ({ id: p.id, path: p.path }))}
+          onCreate={createPage}
+          onCancel={() => setShowNewPage(false)}
+        />
       )}
 
       {/* New folder form */}
@@ -256,19 +165,10 @@ export function PagesPanel() {
         </div>
       )}
 
-      {/* Footer buttons */}
-      {!showNewPage && !showNewFolder && (
-        <div style={{ padding: "6px 10px", borderTop: `1px solid ${C.border}`, flexShrink: 0, display: "flex", gap: 10 }}>
-          <button onClick={() => setShowNewPage(true)} style={{ background: "none", border: "none", color: C.textMuted, fontSize: 13, fontFamily: C.font, cursor: "pointer", padding: 0 }}
-            onMouseEnter={(e) => (e.currentTarget.style.color = C.text)} onMouseLeave={(e) => (e.currentTarget.style.color = C.textMuted)}>
-            {L.addPage}
-          </button>
-          <button onClick={() => setShowNewFolder(true)} style={{ background: "none", border: "none", color: C.textMuted, fontSize: 13, fontFamily: C.font, cursor: "pointer", padding: 0 }}
-            onMouseEnter={(e) => (e.currentTarget.style.color = C.text)} onMouseLeave={(e) => (e.currentTarget.style.color = C.textMuted)}>
-            {L.addFolder}
-          </button>
-        </div>
-      )}
+      {/* Tree */}
+      <div style={{ flex: 1, overflowY: "auto" }}>
+        {renderChildren(rootChildren)}
+      </div>
     </div>
   );
 }

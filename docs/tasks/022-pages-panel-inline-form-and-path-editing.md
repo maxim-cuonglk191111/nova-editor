@@ -1,6 +1,6 @@
 # Task 022 — Pages Panel UX: Inline Form Placement, Blur Validation & Dual Inline Edit (Name + Path)
 
-- **Status:** Open
+- **Status:** Closed
 - **Filed:** 2026-10-20
 - **Owner:** Antigravity / Claude Code
 - **Severity:** High (Core Site Navigation & UX: Creating and editing pages in Pages sidebar)
@@ -29,11 +29,17 @@
 
 ## 2. Solution Checklist
 
-- [ ] Place "+ Page" creation card directly adjacent to the trigger button.
-- [ ] Disable/blur Path input when Page Name is empty (`disabled={!name.trim()}`); auto-populate slug as Name is typed.
-- [ ] Defer collision and format validation to `onBlur` or `onSubmit`.
-- [ ] Enable dual inline editing (Name + Path) in `PageItem.tsx`.
-- [ ] Enhance action icons with clear tooltips and accessible touch targets.
-- [ ] Run `node scripts/i18n-audit.mjs --max=0`.
-- [ ] Run `pnpm --filter @nova/builder typecheck`.
-- [ ] Verify live in Chrome DevTools MCP.
+- [x] Place "+ Page" creation card directly adjacent to the trigger button.
+- [x] Disable/blur Path input when Page Name is empty (`disabled={!name.trim()}`); auto-populate slug as Name is typed.
+- [x] Defer collision and format validation to `onBlur` or `onSubmit`.
+- [x] Enable dual inline editing (Name + Path) in `PageItem.tsx`.
+- [x] Enhance action icons with clear tooltips and accessible touch targets.
+- [x] Run `node scripts/i18n-audit.mjs --max=0`.
+- [x] Run `pnpm --filter @nova/builder typecheck`.
+- [x] Verify live in Chrome DevTools MCP.
+
+## 3. Notes
+
+- Add actions moved to the panel header; form opens under them (`NewPageForm.tsx`, rules in `pagePathRules.ts`).
+- Dual inline edit (Name + Path) already existed; the gap was that a taken path closed the editor silently. It now stays open with a message.
+- Verified with Playwright + system Chrome on `/builder/demo`: path empty+disabled on open, `/about-us` from "About us", `/` flagged on blur, duplicate flagged on submit, inline path edit rejects `/` and accepts `/company`; console clean. "Chrome DevTools MCP" itself was not used.

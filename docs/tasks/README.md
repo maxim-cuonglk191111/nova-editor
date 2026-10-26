@@ -20,18 +20,18 @@ screenshotted, reviewed and scored /10; a feature we cannot make work is hidden
 | [011](011-visual-interactive-mcp-verification.md) | Visual & Interactive State Verification via Chrome DevTools MCP | Closed |
 | [012](012-pages-slug-autogen-and-routing-validation.md) | Pages Slug Auto-Generation, Route Collision Validation & Inline Edit Fix | Closed |
 | [013](013-desktop-canvas-artboard-framing.md) | Desktop Canvas Artboard Framing & Viewport Squeeze Prevention | Closed |
-| [014](014-auth-nav-and-deploy-cache-invalidation.md) | Auth Navigation Loop, Deploy Cache Invalidation & Post-Login Return Flow | Open |
-| [015](015-canvas-height-expansion-and-center-zoom.md) | Canvas Artboard Full-Height Expansion, Center Zoom & Canvas Deselect | Open |
-| [016](016-project-thumbnail-auto-capture.md) | Automatic Project Thumbnail Capture & Dashboard Preview Cards | Open |
-| [017](017-topbar-action-state-and-contextual-toolbar.md) | Topbar Action State Management & Contextual Toolbar | Open |
-| [018](018-inspector-numeric-bounds-and-dialog-contrast.md) | Inspector Numeric Bounds Clamping, Decimal Formatting & High-Contrast Dialog Buttons | Open |
-| [019](019-empty-text-placeholder-and-export-cleaner.md) | Empty Text Element Canvas Placeholder & Clean HTML Export | Open |
-| [020](020-landing-rebranding-and-vietnamese-font.md) | Landing Page Rebranding & Vietnamese Typography Refresh | Open |
+| [014](014-auth-nav-and-deploy-cache-invalidation.md) | Auth Navigation Loop, Deploy Cache Invalidation & Post-Login Return Flow | Closed |
+| [015](015-canvas-height-expansion-and-center-zoom.md) | Canvas Artboard Full-Height Expansion, Center Zoom & Canvas Deselect | Closed |
+| [016](016-project-thumbnail-auto-capture.md) | Automatic Project Thumbnail Capture & Dashboard Preview Cards | Closed |
+| [017](017-topbar-action-state-and-contextual-toolbar.md) | Topbar Action State Management & Contextual Toolbar | Closed |
+| [018](018-inspector-numeric-bounds-and-dialog-contrast.md) | Inspector Numeric Bounds Clamping, Decimal Formatting & High-Contrast Dialog Buttons | Closed |
+| [019](019-empty-text-placeholder-and-export-cleaner.md) | Empty Text Element Canvas Placeholder & Clean HTML Export | Closed |
+| [020](020-landing-rebranding-and-vietnamese-font.md) | Landing Page Rebranding & Vietnamese Typography Refresh | Closed (hero imagery still missing: see 028) |
 | [021](021-interactive-draggable-image-crop.md) | Interactive Draggable Image Crop Area | Closed |
-| [022](022-pages-panel-inline-form-and-path-editing.md) | Pages Panel UX: Inline Form Placement, Blur Validation & Dual Inline Edit (Name + Path) | Open |
+| [022](022-pages-panel-inline-form-and-path-editing.md) | Pages Panel UX: Inline Form Placement, Blur Validation & Dual Inline Edit (Name + Path) | Closed |
 | [023](023-canvas-drag-reparent-smoothness-and-snapping.md) | Canvas Drag & Drop Reparenting Target Snapping & Smooth Nesting | Open |
 | [024](024-multi-page-generation-and-prompt-structure.md) | Multi-Page Website Generation & Page Structure from Prompt | Open |
 | [025](025-pre-generate-auth-guard-and-instruction-sync.md) | Pre-Generate Auth Guard & Dialog Instruction Sync | Open |
-| [026](026-builder-error-boundary-and-crash-protection.md) | Builder Error Boundary & React Error #310 Crash Protection | Open |
+| [026](026-builder-error-boundary-and-crash-protection.md) | Builder Error Boundary & React Void-Element Crash (#137) | Closed (not reproduced live) |
 | [027](027-vietqr-real-payment-info-configuration.md) | VietQR Real Payment Account Configuration | Open |
 | [028](028-business-landing-renovation.md) | Business Landing Page Renovation & Dead-Link Removal | Closed |

@@ -2,6 +2,13 @@
 
 ---
 
+## [25.16.14] — 2026-10-26
+
+### Tasks 026 + 022 — Void-element crash fix & Pages panel form (Patch)
+
+- **Crash fix (React #137)**: `Image`, `Input`, `Checkbox`, `RadioButton` and `Separator` render void HTML elements, which React refuses to give children. The drag/insert guards only knew text-only components, so a drop could nest a child inside them. `nestingGuard.acceptsChildren` is now the single source of truth (`treeMove.canAcceptChildren` delegates to it), panel drops "into" such an element land beside it, and the canvas renderer drops children of void components so already-saved projects still open.
+- **Crash containment**: `SectionErrorBoundary` wraps the canvas tree; a render error shows a recovery card (Try again / Reload view) instead of replacing the whole document, and retries automatically when the data changes.
+- **Pages panel**: `+ Page` / `+ Folder` moved into the header so the form opens right beneath them; the path field starts empty and disabled until the page has a name, follows the name as a slug, and is validated only on blur or submit. Inline rename now refuses a taken path with a visible message instead of closing silently. Action buttons are at least 28 px.
 ## [25.16.13] — 2026-10-26
 
 ### Task 028 — Business Landing Page Renovation & Dead-Link Removal (Patch)

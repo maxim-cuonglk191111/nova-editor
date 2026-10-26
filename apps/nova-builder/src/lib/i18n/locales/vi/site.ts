@@ -16,4 +16,7 @@ export const viSite: I18nSiteDictionary = {
   errorRetry: "Thử lại",
   previewLoadFailed: "Không thể tải bản xem trước",
   previewLoading: "Đang tải bản xem trước…",
+  sectionErrorTitle: "Không thể hiển thị phần này của trang",
+  sectionErrorBody: "Công việc của bạn vẫn an toàn. Hãy thử lại, hoặc tải lại khung nhìn nếu lỗi vẫn còn.",
+  sectionErrorReload: "Tải lại khung nhìn",
 };

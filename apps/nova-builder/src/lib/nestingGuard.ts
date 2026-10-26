@@ -25,6 +25,22 @@ const TEXT_ONLY_COMPONENTS = new Set([
   "TextBlock",
 ]);
 
+// Components that render a void HTML element (<img>, <input>, <hr>). React throws
+// error #137 if one of these is given children, which blanks the whole canvas.
+export const VOID_COMPONENTS: ReadonlySet<string> = new Set([
+  "Image",
+  "Input",
+  "Checkbox",
+  "RadioButton",
+  "Separator",
+]);
+
+// Can this component hold child instances at all? Single source of truth for drag,
+// paste, AI-apply and the canvas renderer.
+export function acceptsChildren(component: string): boolean {
+  return !TEXT_ONLY_COMPONENTS.has(component) && !VOID_COMPONENTS.has(component);
+}
+
 // Components that render interactive elements — nesting one inside another is
 // invalid HTML (a > button, button > a, button > input).
 const INTERACTIVE_COMPONENTS = new Set([
@@ -42,7 +58,7 @@ const INTERACTIVE_COMPONENTS = new Set([
 const FORM_COMPONENTS = new Set(["Form"]);
 
 export type NestingViolation = {
-  code: "text-only" | "interactive" | "form";
+  code: "text-only" | "void" | "interactive" | "form";
   message: string;
 };
 
@@ -56,6 +72,12 @@ export function checkDirectNesting(
     return {
       code: "text-only",
       message: `"${parentComponent}" holds text and cannot contain "${childComponent}".`,
+    };
+  }
+  if (VOID_COMPONENTS.has(parentComponent)) {
+    return {
+      code: "void",
+      message: `"${parentComponent}" cannot contain other elements ("${childComponent}").`,
     };
   }
   if (
