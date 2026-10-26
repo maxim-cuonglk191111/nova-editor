@@ -36,10 +36,11 @@ function warnOnAiNesting(instances: Instance[]): void {
   }
 }
 
-export function applyWSComposition(result: WSCompositionResult): void {
+/** Puts `result` on page `pageId`, or on the open page when none is given. */
+export function applyWSComposition(result: WSCompositionResult, pageId?: string): void {
   if (result.instances.length === 0) return;
 
-  const page = $selectedPage.get();
+  const page = pageId ? { id: pageId } : $selectedPage.get();
   if (!page) return;
 
   const breakpoints = $breakpoints.get();

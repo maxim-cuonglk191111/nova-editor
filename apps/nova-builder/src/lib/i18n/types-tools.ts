@@ -50,6 +50,26 @@ export interface I18nAIPanelDictionary {
   replacesHint: string;
   /** Button that jumps to AI Content Fill so the user need not hunt for the Tools menu. */
   editSelectionAction: string;
+  /** Display name of each page kind the site planner can propose. */
+  sitePageNames: Record<"home" | "products" | "product" | "cart" | "checkout" | "about" | "contact" | "pricing" | "blog" | "faq", string>;
+  /** "{count}" pages. */
+  siteNoticeTitle: string;
+  /** "{pages}" comma-separated names; "{count}" AI generations. */
+  siteNoticeBody: string;
+  siteOnePage: string;
+  /** "{count}" pages. */
+  siteAllPages: string;
+  /** "{count}" pages. */
+  generateSite: string;
+  /** "{current}" of "{total}": "{name}". */
+  buildingPage: string;
+  siteReadyTitle: string;
+  /** "{count}" pages; "{pages}" names. */
+  siteReadyBody: string;
+  /** "{done}" of "{total}" pages built; "{reason}" why it stopped. */
+  sitePartial: string;
+  /** "{count}" pages. */
+  applySite: string;
 }
 
 export interface I18nAIContentDictionary {

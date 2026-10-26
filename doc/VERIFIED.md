@@ -1,5 +1,15 @@
 # Nova — Verified Feature Ledger
 
+## nova-builder / v25.16.17 — Multi-page generation (Task 024) (2026-10-26)
+
+| ID | Feature | Status | Visual Evidence |
+|---|---|---|---|
+| SITE-PLAN1 | Client's shop prompt plans home / products / product detail / checkout; single-page prompts stay single | 🟢 | src/lib/__tests__/ai-site-plan.test.ts |
+| SITE-APPLY1 | Pages created at their paths, each filled from its own composition, home opened (real stores + undo transaction) | 🟢 | src/lib/__tests__/generate-site.test.ts |
+| SITE-FAIL1 | First failure stops further requests and keeps finished pages | 🟢 | src/lib/__tests__/generate-site.test.ts |
+| SITE-NAV1 | Navbar links rewired to page paths by link text | 🟢 | src/lib/__tests__/generate-site.test.ts |
+| SITE-UI1 | Plan notice renders page names, paths and cost (en/vi strings) | 🟡 | static render test only; panel not driven live (gated in demo, no AI keys locally) |
+| SITE-AI1 | A real model follows the per-page request | 🔴 | not tested: no AI provider key available in this environment |
 ## nova-builder / v25.16.16 — Drop back into a card (Task 023) (2026-10-26)
 
 | ID | Feature | Status | Visual Evidence |
