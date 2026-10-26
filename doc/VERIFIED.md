@@ -1,5 +1,12 @@
 # Nova — Verified Feature Ledger
 
+## nova-builder / v25.16.15 — Signed-out saves & AI panel hint (Task 025) (2026-10-26)
+
+| ID | Feature | Status | Visual Evidence |
+|---|---|---|---|
+| AUTH-API401 | Signed-out `/api/projects` returns 401 JSON; pages still redirect | 🟢 | e2e/security.spec.ts FA-025 |
+| AUTH-GATE1 | Demo Generate/Save open the sign-up gate before any input | 🟢 | Playwright run, no prompt textarea rendered |
+| AUTH-DIALOG1 | Save dialog shows "signed out" + Sign in link on AuthRequiredError | 🟡 | unit-tested (`assert-signed-in.test.ts`); not driven live: no test account |
 ## nova-builder / v25.16.14 — Void-element crash fix & Pages panel form (Tasks 026, 022) (2026-10-26)
 
 | ID | Feature | Status | Visual Evidence |

@@ -40,7 +40,8 @@ export const viTools: I18nToolsDictionary = {
     readyBody: "Đã tạo {count} phần tử. Áp dụng sẽ thay thế trang đang mở — nhấn Ctrl+Z để lấy lại.",
     discard: "Bỏ qua",
     applyToPage: "Thay thế trang này",
-    replacesHint: "Công cụ này tạo một trang mới thay cho trang đang mở. Muốn đổi một phần thôi, hãy chọn phần đó trên khung vẽ rồi dùng Công cụ → AI viết lại nội dung.",
+    replacesHint: "Công cụ này tạo một trang mới thay cho trang đang mở. Muốn đổi một phần thôi, hãy chọn phần đó trên khung vẽ rồi dùng AI viết lại nội dung.",
+    editSelectionAction: "Mở AI viết lại nội dung",
   },
   aiContent: {
     dialogLabel: "Điền nội dung bằng AI",

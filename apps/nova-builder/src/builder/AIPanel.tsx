@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
 import { useStore } from "@nanostores/react";
-import { $aiPanelOpen, $aiInitialPrompt } from "@/lib/nano-states";
+import { $aiPanelOpen, $aiInitialPrompt, $aiContentPanelOpen } from "@/lib/nano-states";
 import { $projectMeta, $instances } from "@/lib/data-stores";
 import { applyWSComposition } from "@/lib/applyWSComposition";
 import type { WSCompositionResult } from "@studio/ai";
@@ -135,7 +135,15 @@ export function AIPanel() {
       {/* Body */}
       <div style={{ padding: 18, display: "flex", flexDirection: "column", gap: 12 }}>
         {hasPage && state.type !== "success" && (
-          <div style={{ fontSize: 12, color: C.textMuted, lineHeight: 1.5 }}>{L.replacesHint}</div>
+          <div style={{ fontSize: 12, color: C.textMuted, lineHeight: 1.5 }}>
+            {L.replacesHint}{" "}
+            <button
+              onClick={() => { $aiPanelOpen.set(false); $aiContentPanelOpen.set(true); }}
+              style={{ background: "none", border: "none", padding: 0, color: C.accentText, fontSize: 12, fontFamily: C.font, fontWeight: 700, cursor: "pointer", textDecoration: "underline" }}
+            >
+              {L.editSelectionAction}
+            </button>
+          </div>
         )}
         <textarea
           ref={textareaRef}

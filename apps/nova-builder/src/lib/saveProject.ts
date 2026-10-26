@@ -23,6 +23,16 @@ import { $docVersion, $saveStatus, discardQueuedPatches, withFullSaveLock } from
 /** The server holds a newer version (another tab saved first); Update would overwrite it. */
 export class SaveConflictError extends Error {}
 
+/** The session is gone (signed out or expired); the request never reached the project. */
+export class AuthRequiredError extends Error {}
+
+/** Throws AuthRequiredError when a project API call was answered by the sign-in wall. */
+export function assertSignedIn(res: Response): void {
+  if (res.status === 401 || (res.redirected && new URL(res.url).pathname.startsWith("/login"))) {
+    throw new AuthRequiredError("Sign-in required");
+  }
+}
+
 export function saveProject(projectId: string): Promise<void> {
   return withFullSaveLock(() => saveFullDocument(projectId));
 }
@@ -68,6 +78,7 @@ async function saveFullDocument(projectId: string): Promise<void> {
       schema_json,
     }),
   });
+  assertSignedIn(res);
   if (res.status === 409) {
     $saveStatus.set("conflict");
     throw new SaveConflictError("Save conflict: project changed elsewhere");

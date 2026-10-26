@@ -148,6 +148,10 @@ export async function middleware(req: NextRequest) {
   const token = await getSessionToken(req);
 
   if (!token) {
+    // An API caller cannot follow a redirect to an HTML login page: it would parse HTML as JSON.
+    if (pathname.startsWith("/api/")) {
+      return NextResponse.json({ error: "unauthenticated" }, { status: 401 });
+    }
     const loginUrl = new URL("/login", getAppUrl(req));
     loginUrl.searchParams.set("callbackUrl", pathname);
     return NextResponse.redirect(loginUrl);

@@ -2,6 +2,14 @@
 
 ---
 
+## [25.16.15] — 2026-10-26
+
+### Task 025 — Signed-out saves and the AI panel hint (Patch)
+
+- **Root cause of `Unexpected token '<'`**: middleware answered a signed-out `/api/*` call with a redirect to the HTML login page; `fetch` followed it, got a 200, and `res.json()` failed. API paths now get `401 {"error":"unauthenticated"}`; page routes still redirect.
+- **Client**: `assertSignedIn` turns a 401 (or a login redirect) into `AuthRequiredError`; Create, Save As and Update show "You are signed out" with a Sign in link that returns to the page, instead of a generic "try again" and a raw parse error. The three dialog submit paths share one helper.
+- **AI panel**: the "Tools → AI Content Fill" hint is now a direct "Open AI Content Fill" button.
+- Already in place (verified, no change): the demo's Generate and Save open the sign-up gate immediately, before any prompt can be typed (ADR-NB-022 interceptor).
 ## [25.16.14] — 2026-10-26
 
 ### Tasks 026 + 022 — Void-element crash fix & Pages panel form (Patch)
