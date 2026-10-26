@@ -26,7 +26,8 @@ test.describe("Demo & Product UI Parity with Feature Gates (ADR-NB-022)", () => 
     await expect(page.getByRole("button", { name: "⚙" })).toBeVisible();
 
     // Zoom controls
-    await expect(page.getByRole("button", { name: "100%" })).toBeVisible();
+    // Zoom fits the artboard to the viewport (task 015), so the label is a percentage, not always 100%.
+    await expect(page.getByRole("button", { name: /^\d{2,3}%$/ })).toBeVisible();
     await expect(page.locator('button[title*="Zoom in" i], button[title*="Phóng to" i], button[aria-label*="Zoom in" i]').first()).toBeVisible();
     await expect(page.locator('button[title*="Zoom out" i], button[title*="Thu nhỏ" i], button[aria-label*="Zoom out" i]').first()).toBeVisible();
 

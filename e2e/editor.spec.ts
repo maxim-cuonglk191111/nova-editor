@@ -16,6 +16,6 @@ test("FA-007: selecting a canvas element shows the selection overlay + handles",
   // The in-iframe overlay appears with its 8 resize handles.
   const overlay = canvas.locator("[data-nova-overlay]");
   await expect(overlay).toBeVisible({ timeout: 10_000 });
-  // box + label + 8 handles = 10 direct children (handles are the last 8).
-  await expect(overlay.locator("> div")).toHaveCount(10, { timeout: 10_000 });
+  // box + label + 8 handles + the contextual action toolbar (task 017) = 11 direct children.
+  await expect(overlay.locator("> div")).toHaveCount(11, { timeout: 10_000 });
 });

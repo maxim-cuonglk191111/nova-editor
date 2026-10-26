@@ -45,10 +45,12 @@ test("FA-I04: landing hero renders Vietnamese when locale = vi", async ({ contex
   await expect(page.getByRole("heading", { name: /Website cho doanh nghiệp/ })).toBeVisible({ timeout: 30_000 });
 });
 
-test("FA-I05: <title> is localized to Vietnamese when locale = vi", async ({ context, page }) => {
+// ADR-NB-028: the layout no longer reads the locale cookie (it forced per-request rendering and
+// caused Worker error 1102), so <title> stays in the default language; I18nProvider sets <html lang>.
+test("FA-I05: <html lang> follows the locale when locale = vi", async ({ context, page }) => {
   await context.addCookies([{ name: "nova_locale", value: "vi", url: "http://localhost:3001" }]);
   await page.goto("/");
-  await expect(page).toHaveTitle(/Trình tạo website bằng AI/, { timeout: 30_000 });
+  await expect(page.locator("html")).toHaveAttribute("lang", "vi", { timeout: 30_000 });
 });
 
 test("FA-I04: pricing plan cards render Vietnamese when locale = vi", async ({ context, page }) => {
