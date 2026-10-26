@@ -2,6 +2,15 @@
 
 ---
 
+## [25.16.20] — 2026-10-26
+
+### Task 030 — Prices ending in 9 and the welcome offer (Minor)
+
+- **Prices**: Pro 499,000 VND (the anchor), Max 1,289,000 (49/19 of Pro, not rounded to a neighbour), credits pack 99,000, Team 749,000 (not offered). `PAYOS_PRICES_VND` is the single table the cards, the checkout and the order amount read.
+- **Welcome offer** (`lib/promo.ts`): 50% off the first purchase of an account created while the offer runs, 26 Oct – 26 Dec 2026 (UTC+7). Half is exact (249,500 / 644,500), not rounded.
+- **The server decides the price.** `create-link` checks `isEligibleForWelcomeOffer` (account created in the window, no row in `processed_payments`, no paid order) and stores the discounted amount on `payment_orders`; the QR and the SePay webhook both use that amount, so the client cannot lower it. Only one unpaid discounted order exists at a time, so two plans cannot both be bought at half price. No migration.
+- **UI**: `GET /api/promo` (public) feeds a banner on `/pricing`, struck-through list prices with the offer price and a badge on plan cards, and a note in the checkout. It states the real end date and days left; there is no per-visitor countdown. Reported inactive where SePay is not configured (PayOS path charges list price).
+
 ## [25.16.18] — 2026-10-26
 
 ### Accessibility fixes found by the e2e run after the merge (Patch)

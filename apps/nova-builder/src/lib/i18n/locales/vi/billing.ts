@@ -29,6 +29,15 @@ export const viBilling: I18nBillingDictionary = {
   planName: "Gói {plan}",
   statusPaid: "Thành công",
 
+  promoBannerTitle: "Ưu đãi chào mừng: giảm 50% cho lần mua đầu tiên",
+  promoBannerBody: "Chỉ dành cho tài khoản mới. Kết thúc {date} (còn {days} ngày).",
+  promoCtaSignUp: "Nhận ưu đãi với tài khoản miễn phí",
+  promoCtaPlans: "Xem các gói",
+  promoBadge: "Giảm {percent}% lần mua đầu",
+  promoDismiss: "Ẩn ưu đãi này",
+  promoWasPrice: "Giá gốc",
+  promoCheckoutNote: "Đã áp dụng ưu đãi chào mừng: giảm {percent}% cho lần mua đầu tiên.",
+  promoTerms: "Áp dụng cho lần mua đầu tiên của tài khoản tạo trong thời gian ưu đãi. Mỗi lần chỉ một đơn giảm giá.",
   creditsPackLabel: "Gói AI credits",
   creditsPackFeatures: [
     "Cộng thêm 500 AI credits vào tài khoản",

@@ -4,6 +4,8 @@ import { authOptions } from "@/lib/auth";
 import { createHmac } from "crypto";
 import { PAYOS_PRICES_VND, buildPayosSignData } from "@/lib/billing/payos";
 import { sepayConfig, paymentCode } from "@/lib/billing/sepay";
+import { isEligibleForWelcomeOffer } from "@/lib/billing/promoEligibility";
+import { PROMO, promoPrice } from "@/lib/promo";
 import { getSupabaseAdmin } from "@/lib/supabaseAdmin";
 
 export async function POST(req: Request) {
@@ -38,19 +40,35 @@ export async function POST(req: Request) {
   // SePay: plain VietQR transfer to our own account, confirmed from the bank feed.
   const sepay = sepayConfig();
   if (sepay) {
-    const { error } = await getSupabaseAdmin().from("payment_orders").insert({
+    const db = getSupabaseAdmin();
+    // Welcome offer: the SERVER decides the price. The amount saved on the order is what the
+    // QR asks for and what the bank-transfer webhook checks, so the client cannot lower it.
+    const discounted = await isEligibleForWelcomeOffer(db, userId).catch(() => false);
+    const chargeAmount = discounted ? promoPrice(amount) : amount;
+    if (discounted) {
+      // One discounted order at a time: an unpaid earlier one is superseded, so paying
+      // two plans at half price is not possible.
+      const { data: open } = await db.from("payment_orders").select("order_code, plan, amount").eq("user_id", userId).eq("status", "pending");
+      const stale = ((open ?? []) as { order_code: string; plan: string; amount: number }[])
+        .filter((o) => o.amount < (PAYOS_PRICES_VND[o.plan] ?? 0))
+        .map((o) => o.order_code);
+      if (stale.length > 0) await db.from("payment_orders").delete().in("order_code", stale);
+    }
+    const { error } = await db.from("payment_orders").insert({
       order_code: String(orderCode),
       provider: "sepay",
       user_id: userId,
       team_id: teamId || null,
       plan,
-      amount,
+      amount: chargeAmount,
     });
     if (error) return NextResponse.json({ error: `Could not create the order: ${error.message}` }, { status: 500 });
     return NextResponse.json({
       provider: "sepay",
       qrCode: "",
-      amount,
+      amount: chargeAmount,
+      listAmount: amount,
+      discountPercent: discounted ? PROMO.percentOff : 0,
       orderCode,
       accountNumber: sepay.accountNumber,
       accountName: sepay.accountName,

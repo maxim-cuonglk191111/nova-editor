@@ -1,5 +1,15 @@
 # Nova — Verified Feature Ledger
 
+## nova-builder / v25.16.20 — Prices ending in 9 & welcome offer (Task 030) (2026-10-26)
+
+| ID | Feature | Status | Visual Evidence |
+|---|---|---|---|
+| PRICE-9 | Pro 499,000 / Max 1,289,000 / credits 99,000 all end in 9,000; pricing page shows them | 🟢 | e2e/promo.spec.ts, src/lib/__tests__/promo.test.ts |
+| PROMO-RULES | Window = 2 months UTC+7; half is exact; eligibility = new account + no payment (stubbed DB) | 🟢 | src/lib/__tests__/promo.test.ts |
+| PROMO-UI | Banner with real end date, struck-through prices, dismiss, vi/en, hidden for accounts that paid | 🟢 | e2e/promo.spec.ts (offer answered by the test) |
+| PROMO-SERVER | create-link stores the discounted amount; webhook checks it | 🟡 | code-reviewed only: no signed-in account or SePay config to run a real order |
+| PROMO-API | /api/promo reports `active:false` in dev (no SePay account) | 🟢 | curl on dev server |
+
 ## nova-builder / v25.16.17 — Multi-page generation (Task 024) (2026-10-26)
 
 | ID | Feature | Status | Visual Evidence |
