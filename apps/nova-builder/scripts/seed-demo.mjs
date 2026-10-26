@@ -33,6 +33,9 @@ const cleanup = flag("cleanup");
 const envArg = args.find((a, i) => !a.startsWith("--") && args[i - 1] !== "--base" && args[i - 1] !== "--out");
 const baseUrl = (option("base") ?? process.env.SEED_BASE_URL ?? "http://localhost:3001").replace(/\/$/, "");
 const OUTPUT = join(appDir, ".seed-demo-output.json");
+const ASSET_DIR = join(appDir, "scripts/seed-assets");
+const BUCKET = "assets"; // the bucket the editor's own uploads go to (src/lib/supabaseStorage.ts)
+const MIME = { ".jpg": "image/jpeg", ".jpeg": "image/jpeg", ".png": "image/png", ".webp": "image/webp" };
 
 function parseDotenv(text) {
   const out = {};
@@ -94,9 +97,14 @@ async function main() {
     return;
   }
 
+  // Sites that ship their own photos point at the public URL Supabase will give the upload.
+  const ctx = { assetBase: `${url}/storage/v1/object/public/${BUCKET}/seed` };
+  const missing = seed.DEMO_SITES.flatMap((b) => (b.assets ?? []).filter((f) => !existsSync(join(ASSET_DIR, b.slug, f))).map((f) => `${b.slug}/${f}`));
+  if (missing.length) { console.error(`Missing asset files in ${ASSET_DIR}: ${missing.join(", ")}`); process.exit(1); }
+
   // Compatibility check: the exact path /api/preview takes (migrate, then serialize).
   const prepared = seed.DEMO_SITES.map((b) => {
-    const schema = seed.buildProjectSchema(b, now);
+    const schema = seed.buildProjectSchema(b, now, ctx);
     const project = seed.migrateToLatest(JSON.parse(JSON.stringify(schema)));
     const serialized = seed.serializeWebstudioData(project.data);
     if (option("out")) {
@@ -110,6 +118,25 @@ async function main() {
   for (const p of prepared) console.log(`ok   ${p.business.slug.padEnd(16)} ${p.instances} instances, readable by the preview path`);
   console.log("");
   if (!apply) { console.log("Dry run complete. Add --apply to write."); return; }
+
+  // Upload the sites' own photos first, so no preview ever points at a file that is not there yet.
+  const withAssets = seed.DEMO_SITES.filter((b) => b.assets?.length);
+  if (withAssets.length) {
+    const { data: bucket } = await db.storage.getBucket(BUCKET);
+    if (!bucket) {
+      const { error } = await db.storage.createBucket(BUCKET, { public: true });
+      if (error && !/already exists/i.test(error.message)) { console.error(`createBucket: ${error.message}`); process.exit(1); }
+    }
+    for (const b of withAssets) {
+      for (const file of b.assets) {
+        const ext = file.slice(file.lastIndexOf(".")).toLowerCase();
+        const { error } = await db.storage.from(BUCKET).upload(`seed/${b.slug}/${file}`, readFileSync(join(ASSET_DIR, b.slug, file)), { contentType: MIME[ext] ?? "application/octet-stream", upsert: true });
+        console.log(error ? `FAIL asset ${b.slug}/${file}: ${error.message}` : `uploaded ${BUCKET}/seed/${b.slug}/${file}`);
+        if (error) process.exit(1);
+      }
+    }
+    console.log("");
+  }
 
   const previous = existsSync(OUTPUT) ? JSON.parse(readFileSync(OUTPUT, "utf8")) : {};
   const output = { ...previous };
