@@ -2,6 +2,14 @@
 
 ---
 
+## [25.16.22] — 2026-10-27
+
+### Task 032 — Demo accounts, and the welcome offer for every payment method (Minor)
+
+- **Seed**: `pnpm seed:demo` creates five demo accounts, each with a finished site (a personal blog, a one-person SaaS, a street-food stall, a photographer's portfolio, a podcast) built with the app's own composer pipeline and readable through `/preview/<project id>`. Dry run by default; `--apply` writes; `--cleanup --apply` removes. Random passwords go to a gitignored file.
+- **Offer**: the first-purchase discount is no longer tied to SePay. `create-link` decides the price once for SePay, PayOS and the dev mock; the portal checkout does the same; `/api/promo` no longer depends on a bank-account setting.
+- Vietnamese serif fix for seeded sites (Georgia lacks Vietnamese glyphs).
+
 ## [25.16.21] — 2026-10-27
 
 ### Task 031 — Landing page, hand-made pass (Minor)

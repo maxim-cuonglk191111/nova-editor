@@ -8,6 +8,25 @@ import { isEligibleForWelcomeOffer } from "@/lib/billing/promoEligibility";
 import { PROMO, promoPrice } from "@/lib/promo";
 import { getSupabaseAdmin } from "@/lib/supabaseAdmin";
 
+/** Eligibility never blocks a checkout: any failure just means the regular price. */
+async function welcomeOfferApplies(userId: string): Promise<boolean> {
+  try {
+    return await isEligibleForWelcomeOffer(getSupabaseAdmin(), userId);
+  } catch {
+    return false;
+  }
+}
+
+// One discounted order at a time: an unpaid earlier one is superseded, so paying two plans at
+// half price is not possible.
+async function supersedeDiscountedOrders(db: ReturnType<typeof getSupabaseAdmin>, userId: string) {
+  const { data: open } = await db.from("payment_orders").select("order_code, plan, amount").eq("user_id", userId).eq("status", "pending");
+  const stale = ((open ?? []) as { order_code: string; plan: string; amount: number }[])
+    .filter((o) => o.amount < (PAYOS_PRICES_VND[o.plan] ?? 0))
+    .map((o) => o.order_code);
+  if (stale.length > 0) await db.from("payment_orders").delete().in("order_code", stale);
+}
+
 export async function POST(req: Request) {
   const session = await getServerSession(authOptions);
   const user = session?.user as { id?: string; email?: string } | undefined;
@@ -37,23 +56,18 @@ export async function POST(req: Request) {
 
   const orderCode = Number(`${Date.now()}`.slice(-10));
 
+  // Welcome offer: the SERVER decides the price, for every payment method. The amount saved on
+  // the order is what the QR asks for and what the bank-transfer webhook checks (PayOS gets the
+  // same amount in its payment request), so the client cannot lower it.
+  const discounted = await welcomeOfferApplies(userId);
+  const chargeAmount = discounted ? promoPrice(amount) : amount;
+  const discountPercent = discounted ? PROMO.percentOff : 0;
+
   // SePay: plain VietQR transfer to our own account, confirmed from the bank feed.
   const sepay = sepayConfig();
   if (sepay) {
     const db = getSupabaseAdmin();
-    // Welcome offer: the SERVER decides the price. The amount saved on the order is what the
-    // QR asks for and what the bank-transfer webhook checks, so the client cannot lower it.
-    const discounted = await isEligibleForWelcomeOffer(db, userId).catch(() => false);
-    const chargeAmount = discounted ? promoPrice(amount) : amount;
-    if (discounted) {
-      // One discounted order at a time: an unpaid earlier one is superseded, so paying
-      // two plans at half price is not possible.
-      const { data: open } = await db.from("payment_orders").select("order_code, plan, amount").eq("user_id", userId).eq("status", "pending");
-      const stale = ((open ?? []) as { order_code: string; plan: string; amount: number }[])
-        .filter((o) => o.amount < (PAYOS_PRICES_VND[o.plan] ?? 0))
-        .map((o) => o.order_code);
-      if (stale.length > 0) await db.from("payment_orders").delete().in("order_code", stale);
-    }
+    if (discounted) await supersedeDiscountedOrders(db, userId);
     const { error } = await db.from("payment_orders").insert({
       order_code: String(orderCode),
       provider: "sepay",
@@ -68,7 +82,7 @@ export async function POST(req: Request) {
       qrCode: "",
       amount: chargeAmount,
       listAmount: amount,
-      discountPercent: discounted ? PROMO.percentOff : 0,
+      discountPercent,
       orderCode,
       accountNumber: sepay.accountNumber,
       accountName: sepay.accountName,
@@ -91,7 +105,9 @@ export async function POST(req: Request) {
   if (isMock) {
     return NextResponse.json({
       qrCode: "mock-vietqr-data",
-      amount,
+      amount: chargeAmount,
+      listAmount: amount,
+      discountPercent,
       orderCode,
       accountNumber: customAccountNumber || "1234567890",
       accountName: customAccountName || "NOVA EDITOR MOCK TEST",
@@ -110,7 +126,7 @@ export async function POST(req: Request) {
   const cancelUrl = `${origin}/settings/subscription?cancelled=1`;
 
   const signData = buildPayosSignData({
-    amount,
+    amount: chargeAmount,
     cancelUrl,
     description,
     orderCode,
@@ -127,13 +143,13 @@ export async function POST(req: Request) {
     },
     body: JSON.stringify({
       orderCode,
-      amount,
+      amount: chargeAmount,
       description,
       returnUrl,
       cancelUrl,
       signature,
       // Echoed back in the webhook payload so it can attribute the payment.
-      items: [{ name: `nova:${plan}:${userId}:${teamId}`, quantity: 1, price: amount }],
+      items: [{ name: `nova:${plan}:${userId}:${teamId}`, quantity: 1, price: chargeAmount }],
     }),
   });
 
@@ -165,5 +181,7 @@ export async function POST(req: Request) {
     accountName: json.data.accountName,
     bin: json.data.bin,
     description: json.data.description,
+    listAmount: amount,
+    discountPercent,
   });
 }

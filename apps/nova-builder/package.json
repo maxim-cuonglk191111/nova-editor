@@ -1,6 +1,6 @@
 {
   "name": "@nova/builder",
-  "version": "25.16.21",
+  "version": "25.16.22",
   "private": true,
   "scripts": {
     "dev": "next dev --port 3001",
@@ -9,7 +9,8 @@
     "start": "next start --port 3001",
     "typecheck": "tsc --noEmit",
     "lint": "next lint",
-    "seed:test-account": "node scripts/seed-test-account.mjs"
+    "seed:test-account": "node scripts/seed-test-account.mjs",
+    "seed:demo": "node scripts/seed-demo.mjs"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.32.1",

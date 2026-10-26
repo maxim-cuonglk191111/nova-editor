@@ -11,7 +11,7 @@ Pro list price 499k; make the other plans end in 9 too, no rounding. Add an offe
 - Max = 1,289,000: $49 at the Pro rate (49 × 499,000 / 19 = 1,286,842), then up to the next ...9,000. Credits pack 99,000; Team 749,000.
 - **No fake urgency.** The brief mentioned a "1 hour" style banner. A countdown that restarts for each visitor would mislead people about a discount that really lasts until 26 Dec 2026, so the banner shows that date and the days left. If a short-timer is wanted, it should count down to a real moment.
 - "New account" = created on/after 2026-10-26 00:00 UTC+7. Accounts that existed before launch do not get it; say so if they should.
-- Discount applies to the first purchase of any kind (plan or credits pack), only on the SePay checkout.
+- Discount applies to the first purchase of any kind (plan or credits pack). It first shipped only on the SePay checkout; task 032 extended it to PayOS and the portal so the offer does not depend on which provider is configured.
 
 ## Done
 - [x] `PAYOS_PRICES_VND` → 499,000 / 1,289,000 / 749,000 / 99,000

@@ -1,5 +1,14 @@
 # Nova — Verified Feature Ledger
 
+## nova-builder / v25.16.22 — Seeded demo accounts (Task 032) (2026-10-27)
+
+| ID | Feature | Status | Visual Evidence |
+|---|---|---|---|
+| SEED-COMPAT | Five projects round-trip `migrateToLatest` + `serializeWebstudioData` (the /api/preview path); valid trees, one h1, anchors resolve | 🟢 | src/lib/__tests__/seed-demo-projects.test.ts |
+| SEED-LIVE | All five `/preview/<uuid>` pages return 200 on the Cloudflare host and one renders correctly | 🟢 | live capture of the podcast preview |
+| SEED-LOGIN | A seeded account logs into the live Cloudflare site and sees its project on `/projects` | 🟢 | Playwright run against production |
+| PROMO-ANY | Welcome-offer price decided once for SePay, PayOS and the dev mock | 🟡 | typechecked; no real order run |
+
 ## nova-builder / v25.16.21 — Landing hand-made pass (Task 031) (2026-10-27)
 
 | ID | Feature | Status | Visual Evidence |
