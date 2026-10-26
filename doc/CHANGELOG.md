@@ -2,6 +2,15 @@
 
 ---
 
+## [25.16.18] — 2026-10-26
+
+### Accessibility fixes found by the e2e run after the merge (Patch)
+
+- Landing eyebrow labels are `<div>`s, not `<p>`s: they are 12px labels and the "body text ≥ 16px" check reads the first paragraph.
+- The nav "Sign up free" button is at least 44px tall (was 42px).
+- Pricing "/ month" text uses `#475569` (was `#64748b`, below AA contrast on the highlighted plan); the same grid now appears on the landing page.
+- Known failing specs not caused by this work: `demo-parity` (expects a `100%` zoom button, zoom now fits the screen — task 015), `editor` FA-007 overlay child count (10 vs 11 after the contextual toolbar — tasks 017/021), `canvas-selection` after inline edit, `i18n` FA-I05 (page title is English-only by design, ADR-NB-028), and `feature-smoke` (15-minute timeout, hangs).
+
 ## [25.16.17] — 2026-10-26
 
 ### Task 024 — Multi-page website generation (Minor)

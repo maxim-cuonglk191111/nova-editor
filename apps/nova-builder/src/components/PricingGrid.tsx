@@ -41,7 +41,7 @@ export default function PricingGrid({ currentTier, onSelectPlan }: PricingGridPr
               <div style={{ fontSize: 18, fontWeight: 800, color: "#0f172a", marginBottom: 8 }}>{copy.label}</div>
               <div style={{ fontSize: 24, fontWeight: 900, color: plan.tier === "pro" ? "#6d28d9" : "#0f172a", letterSpacing: "-0.02em", whiteSpace: "nowrap" }}>
                 {planPriceVnd(plan.tier, locale)}
-                <span style={{ fontSize: 14, fontWeight: 600, color: "#64748b", letterSpacing: 0, marginLeft: 4 }}>{t.billing.perMonth}</span>
+                <span style={{ fontSize: 14, fontWeight: 600, color: "#475569", letterSpacing: 0, marginLeft: 4 }}>{t.billing.perMonth}</span>
               </div>
             </div>
 

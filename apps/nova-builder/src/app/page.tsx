@@ -80,7 +80,7 @@ export default function Home() {
         <img className="lp-hero__photo" src="/images/landing/hero-team.jpg" alt={L.heroPhotoAlt} width={1600} height={1067} fetchPriority="high" />
         <div className="lp-hero__shade" />
         <div className="lp-container lp-hero__body">
-          <p className="lp-eyebrow lp-eyebrow--light">{L.badge}</p>
+          <div className="lp-eyebrow lp-eyebrow--light">{L.badge}</div>
           <h1 className="lp-hero__title">
             {L.titleLead} <span>{L.titleAccent}</span>
           </h1>
@@ -132,7 +132,7 @@ export default function Home() {
         <section id="features" className="lp-section lp-section--paper">
           <div className="lp-container">
             <FadeSection className="lp-head">
-              <p className="lp-eyebrow">{L.featuresEyebrow}</p>
+              <div className="lp-eyebrow">{L.featuresEyebrow}</div>
               <h2 className="lp-h2">{L.featuresTitle}</h2>
               <p className="lp-lead">{L.featuresDesc}</p>
             </FadeSection>
@@ -156,7 +156,7 @@ export default function Home() {
         <section id="how-it-works" className="lp-section lp-section--ink">
           <div className="lp-container">
             <FadeSection className="lp-head">
-              <p className="lp-eyebrow lp-eyebrow--light">{L.stepsEyebrow}</p>
+              <div className="lp-eyebrow lp-eyebrow--light">{L.stepsEyebrow}</div>
               <h2 className="lp-h2 lp-h2--light">{L.stepsTitle}</h2>
             </FadeSection>
             <FadeSection>
@@ -177,7 +177,7 @@ export default function Home() {
         <section id="audience" className="lp-section lp-section--paper">
           <div className="lp-container">
             <FadeSection className="lp-head">
-              <p className="lp-eyebrow">{L.audienceEyebrow}</p>
+              <div className="lp-eyebrow">{L.audienceEyebrow}</div>
               <h2 className="lp-h2">{L.audienceTitle}</h2>
               <p className="lp-lead">{L.audienceDesc}</p>
             </FadeSection>
@@ -198,7 +198,7 @@ export default function Home() {
         <section id="pricing" className="lp-section lp-section--white">
           <div className="lp-container">
             <FadeSection className="lp-head">
-              <p className="lp-eyebrow">{L.pricingEyebrow}</p>
+              <div className="lp-eyebrow">{L.pricingEyebrow}</div>
               <h2 className="lp-h2">{L.pricingTitle}</h2>
               <p className="lp-lead">{L.pricingDesc}</p>
             </FadeSection>
@@ -215,7 +215,7 @@ export default function Home() {
         <section id="faq" className="lp-section lp-section--paper">
           <div className="lp-container lp-faq">
             <FadeSection className="lp-faq__head">
-              <p className="lp-eyebrow">{L.faqEyebrow}</p>
+              <div className="lp-eyebrow">{L.faqEyebrow}</div>
               <h2 className="lp-h2">{L.faqTitle}</h2>
             </FadeSection>
             <FadeSection className="lp-faq__list">

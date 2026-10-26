@@ -275,6 +275,7 @@ export function PublicNav({ theme = "light" }: PublicNavProps) {
           background-color: #fff;
           border-radius: 8px;
           padding: 12px 18px;
+          min-height: 44px;
           font-family: var(--font-roboto-mono);
           font-size: 12px;
           font-weight: 500;
