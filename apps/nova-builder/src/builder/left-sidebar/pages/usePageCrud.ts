@@ -5,6 +5,7 @@
 import type { Page } from "@webstudio-is/sdk";
 import { updateData } from "@/lib/transactions";
 import { uid } from "@/lib/uid";
+import { createPageRecord } from "@/lib/pageRecords";
 
 export function toSlug(name: string): string {
   return name
@@ -39,41 +40,7 @@ export type PageBasicAuth = {
 
 export function usePageCrud() {
   function createPage(name: string, path: string): boolean {
-    const normalizedPath = path.startsWith("/") ? path : `/${path}`;
-    const pageId = uid("page_");
-    const rootInstId = uid("inst_");
-    let success = false;
-
-    updateData(({ pages, instances }) => {
-      const isDuplicate = Array.from(pages.pages.values()).some((p) => p.path === normalizedPath);
-      if (isDuplicate) return;
-
-      instances.set(rootInstId, {
-        type: "instance" as const,
-        id: rootInstId,
-        component: "Box",
-        children: [],
-      } as Parameters<typeof instances.set>[1]);
-
-      pages.pages.set(pageId, {
-        id: pageId,
-        name,
-        title: name,
-        path: normalizedPath,
-        rootInstanceId: rootInstId,
-        meta: {},
-      } as Page);
-
-      if (pages.rootFolderId) {
-        const rootFolder = pages.folders.get(pages.rootFolderId);
-        if (rootFolder) {
-          rootFolder.children = [...(rootFolder.children ?? []), pageId];
-        }
-      }
-      success = true;
-    });
-
-    return success;
+    return createPageRecord(name, path) !== null;
   }
 
   function renamePage(pageId: string, name: string, path: string): boolean {

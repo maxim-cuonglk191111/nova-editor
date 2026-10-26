@@ -2,6 +2,15 @@
 
 ---
 
+## [25.16.17] — 2026-10-26
+
+### Task 024 — Multi-page website generation (Minor)
+
+- **Planner (free)**: `planSitePages` reads the prompt and, when it asks for several pages ("nhiều trang", "multi-page", or a shop flow of ≥ 2 of products / product detail / cart / checkout), proposes them with home first and standard paths (`/`, `/products`, `/product`, `/cart`, `/checkout`, …), capped at 6. A prompt that merely mentions about / pricing / contact sections stays one page. No AI call is spent on planning.
+- **Generation**: the AI panel shows the plan and its cost (one generation per page) with a "Build one page only" switch; Generate then requests each page separately, each charged only after it validates (ADR-NB-005). It stops at the first failure, keeps the finished pages and says the rest were not charged.
+- **Apply**: missing pages are created at their paths (`createPageRecord`, now shared with the Pages panel), existing ones at the same path are replaced, home opens. Each page's navbar links are pointed at the real page paths (`pointNavLinksAtPages`) because the base prompt still asks for `#anchors`.
+- A prompt arriving from the landing page that describes several pages is no longer auto-submitted; it waits for the user to confirm the plan.
+
 ## [25.16.12] — 2026-10-20
 
 ### Task 021 — Interactive Draggable Image Crop Area (Patch)

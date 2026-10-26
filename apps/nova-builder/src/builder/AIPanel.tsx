@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import { useStore } from "@nanostores/react";
 import { $aiPanelOpen, $aiInitialPrompt } from "@/lib/nano-states";
 import { $projectMeta, $instances } from "@/lib/data-stores";
@@ -7,12 +7,16 @@ import { applyWSComposition } from "@/lib/applyWSComposition";
 import type { WSCompositionResult } from "@studio/ai";
 import { UI_VARS as C } from "@/lib/uiTheme";
 import { useI18n, fmt } from "@/lib/i18n";
+import { planSitePages, type SitePageKey } from "@/lib/aiSitePlan";
+import { composeSite, applySite, type SiteResult, type SiteFailure } from "@/lib/generateSite";
+import { AISitePlanNotice } from "./AISitePlanNotice";
 
 
 type AIState =
   | { type: "idle" }
-  | { type: "loading" }
+  | { type: "loading"; progress?: string }
   | { type: "success"; composition: WSCompositionResult }
+  | { type: "site-success"; results: SiteResult[]; failure?: SiteFailure }
   | { type: "error"; message: string; needsAccount?: boolean };
 
 export function AIPanel() {
@@ -23,6 +27,11 @@ export function AIPanel() {
   const hasPage = useStore($instances).size > 2;
   const [prompt, setPrompt] = useState("");
   const [state, setState] = useState<AIState>({ type: "idle" });
+  const [onePageOnly, setOnePageOnly] = useState(false);
+  // Free, deterministic: tells us when the prompt asks for a multi-page site.
+  const detectedPages = useMemo(() => planSitePages(prompt), [prompt]);
+  const sitePages = onePageOnly ? null : detectedPages;
+  const nameOf = (key: SitePageKey) => L.sitePageNames[key];
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const didAutoSubmit = useRef(false);
 
@@ -34,8 +43,9 @@ export function AIPanel() {
       $aiInitialPrompt.set("");
       didAutoSubmit.current = true;
       setPrompt(initial);
-      // Auto-generate after a brief tick so the panel renders first
-      setTimeout(() => handleGenerate(initial), 80);
+      // A multi-page prompt costs one generation per page: show the plan and let the user
+      // confirm instead of spending credits on arrival.
+      if (!planSitePages(initial)) setTimeout(() => handleGenerate(initial), 80);
     } else {
       textareaRef.current?.focus();
     }
@@ -63,6 +73,7 @@ export function AIPanel() {
   async function handleGenerate(overridePrompt?: string) {
     const text = (overridePrompt ?? prompt).trim();
     if (!text || isLoading) return;
+    if (sitePages && !overridePrompt) return handleGenerateSite(text);
     setState({ type: "loading" });
     try {
       const res = await fetch("/api/ai", {
@@ -86,6 +97,35 @@ export function AIPanel() {
     } catch (err) {
       setState({ type: "error", message: String(err) });
     }
+  }
+
+  async function handleGenerateSite(text: string) {
+    if (!sitePages) return;
+    setState({ type: "loading" });
+    const outcome = await composeSite({
+      prompt: text,
+      pages: sitePages,
+      nameOf,
+      projectId: meta?.id ?? null,
+      onProgress: (index, name) =>
+        setState({ type: "loading", progress: fmt(L.buildingPage, { current: index + 1, total: sitePages.length, name }) }),
+    });
+    const { results, failure } = outcome;
+    if (failure && results.length === 0) {
+      setState(failure.status === 401
+        ? { type: "error", message: L.needsAccount, needsAccount: true }
+        : { type: "error", message: failure.message || fmt(L.genericError, { status: failure.status }) });
+      return;
+    }
+    setState({ type: "site-success", results, failure });
+  }
+
+  function handleApplySite() {
+    if (state.type !== "site-success") return;
+    applySite(state.results);
+    $aiPanelOpen.set(false);
+    setPrompt("");
+    setState({ type: "idle" });
   }
 
   function handleApply() {
@@ -121,7 +161,7 @@ export function AIPanel() {
         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
           <span style={{ fontSize: 14, fontWeight: 800, color: "#a78bfa" }}>{L.title}</span>
           {isLoading && (
-            <span style={{ fontSize: 13, color: C.textMuted }}>{L.building}</span>
+            <span style={{ fontSize: 13, color: C.textMuted }}>{state.type === "loading" && state.progress ? state.progress : L.building}</span>
           )}
         </div>
         <button
@@ -164,6 +204,10 @@ export function AIPanel() {
           }}
         />
 
+        {detectedPages && state.type !== "loading" && state.type !== "site-success" && (
+          <AISitePlanNotice pages={detectedPages} nameOf={nameOf} onePageOnly={onePageOnly} onToggle={() => setOnePageOnly((v) => !v)} />
+        )}
+
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
           <span style={{ fontSize: 13, color: C.textMuted }}>{L.shortcutHint}</span>
           <button
@@ -191,7 +235,7 @@ export function AIPanel() {
                 <span style={{ width: 12, height: 12, border: "2px solid rgba(255,255,255,0.25)", borderTop: "2px solid white", borderRadius: "50%", display: "inline-block", animation: "spin 0.6s linear infinite" }} />
                 {L.generating}
               </>
-            ) : L.generate}
+            ) : sitePages ? fmt(L.generateSite, { count: sitePages.length }) : L.generate}
           </button>
         </div>
 
@@ -214,6 +258,31 @@ export function AIPanel() {
               {L.tryAgain}
             </button>
             )}
+          </div>
+        )}
+
+        {/* Multi-page success */}
+        {state.type === "site-success" && (
+          <div style={{ padding: 14, borderRadius: 9, background: "rgba(5,150,105,0.07)", border: "1px solid rgba(5,150,105,0.18)", display: "flex", flexDirection: "column", gap: 12 }}>
+            <div>
+              <div style={{ color: "#6ee7b7", fontSize: 13, fontWeight: 600, marginBottom: 3 }}>✓ {L.siteReadyTitle}</div>
+              <div style={{ color: C.textMuted, fontSize: 13 }}>
+                {fmt(L.siteReadyBody, { count: state.results.length, pages: state.results.map((r) => r.name).join(", ") })}
+              </div>
+              {state.failure && (
+                <div role="alert" style={{ color: C.danger, fontSize: 12, marginTop: 8, lineHeight: 1.5 }}>
+                  {fmt(L.sitePartial, { done: state.results.length, total: sitePages?.length ?? state.results.length, reason: state.failure.message || fmt(L.genericError, { status: state.failure.status }) })}
+                </div>
+              )}
+            </div>
+            <div style={{ display: "flex", gap: 8, justifyContent: "flex-end" }}>
+              <button onClick={() => setState({ type: "idle" })} style={{ padding: "5px 12px", borderRadius: 5, border: "1px solid rgba(255,255,255,0.1)", background: "transparent", color: C.textMuted, fontSize: 13, fontFamily: C.font, cursor: "pointer" }}>
+                {L.discard}
+              </button>
+              <button onClick={handleApplySite} style={{ padding: "5px 18px", borderRadius: 5, border: "none", background: C.success, color: "#fff", fontSize: 12, fontFamily: C.font, fontWeight: 700, cursor: "pointer" }}>
+                {fmt(L.applySite, { count: state.results.length })}
+              </button>
+            </div>
           </div>
         )}
 

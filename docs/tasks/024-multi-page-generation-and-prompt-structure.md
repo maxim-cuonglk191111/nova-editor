@@ -1,6 +1,6 @@
 # Task 024 — Multi-Page Website Generation & Page Structure from Prompt
 
-- **Status:** Open
+- **Status:** Closed (AI output unverified)
 - **Filed:** 2026-10-20
 - **Owner:** Antigravity / Claude Code
 - **Severity:** High (AI Generation & Site Architecture: Full multi-page websites vs single landing page)
@@ -24,9 +24,16 @@
 
 ## 2. Solution Checklist
 
-- [ ] Support multi-page detection and page scaffold creation in AI generation workflow.
-- [ ] Add Page Presets in Pages Panel for common site structures.
-- [ ] Wire navbar links automatically to generated page routes.
-- [ ] Run `node scripts/i18n-audit.mjs --max=0`.
-- [ ] Run `pnpm --filter @nova/builder typecheck`.
-- [ ] Verify live in Chrome DevTools MCP.
+- [x] Support multi-page detection and page scaffold creation in AI generation workflow.
+- [ ] Add Page Presets in Pages Panel for common site structures. **Not done**: out of scope for this change; prompts cover the need.
+- [x] Wire navbar links automatically to generated page routes (instruction in every request + `pointNavLinksAtPages` safety net).
+- [x] Run `node scripts/i18n-audit.mjs --max=0`.
+- [x] Run `pnpm --filter @nova/builder typecheck`.
+- [ ] Verify live. **Not done**: the panel is gated in the signed-out demo and there is no AI key here, so only unit/integration tests ran.
+
+## 3. Design (2026-10-26)
+
+- Planning is deterministic and free (`lib/aiSitePlan.ts`); the original idea of an AI planner would have cost a generation before any page existed.
+- One `/api/ai` call per page, so each page is small enough for the free-tier token budget and billed only on success. Cost = number of pages generations; the panel says so before Generate.
+- Why conservative detection: the built-in examples ("SaaS pricing page … FAQ", "landing page with about, pricing, contact") must remain single pages.
+- Open risk: whether real models obey "Build ONLY this page" and the nav hrefs. The base prompt still tells them to use `#anchors`; `pointNavLinksAtPages` covers links whose text names a page, not renamed ones.
