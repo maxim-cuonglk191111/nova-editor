@@ -2,6 +2,16 @@
 
 ---
 
+## [25.16.13] — 2026-10-26
+
+### Task 028 — Business Landing Page Renovation & Dead-Link Removal (Patch)
+
+- **Removed dead links**: the nav's "Docs" link pointed to `/docs`, which has no page. Replaced with in-page anchors (Features, FAQ) plus Pricing; every link on the landing page now resolves.
+- **Business photography**: hero, feature rows and closing CTA use self-hosted business photos (`public/images/landing/`) instead of the hot-linked cloud video.
+- **Landing rebuilt as a business site**: hero with working prompt box, three feature rows, how-it-works, who-it-is-for, live pricing (shared `PricingGrid`), FAQ and closing CTA.
+- **Removed invented content**: fake testimonials and the "connects with Figma, GitHub, Vercel" integrations claim are gone; remaining claims come from the plan definitions.
+- **Primary CTA never looks disabled**: an empty prompt now focuses the textarea instead of greying the button.
+
 ## [25.16.12] — 2026-10-20
 
 ### Task 021 — Interactive Draggable Image Crop Area (Patch)

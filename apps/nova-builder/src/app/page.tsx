@@ -7,24 +7,48 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { PublicNav } from "@/components/public/PublicNav";
 import { PublicFooter } from "@/components/public/PublicFooter";
+import PricingGrid from "@/components/PricingGrid";
 import { useI18n } from "@/lib/i18n";
-import { useTypingAnimation, FadeSection } from "@/components/landing/landingMotion";
+import { FadeSection } from "@/components/landing/landingMotion";
 import { LANDING_CSS } from "@/components/landing/landingStyles";
+
+const FEATURE_PHOTOS = [
+  "/images/landing/feature-generate.jpg",
+  "/images/landing/feature-edit.jpg",
+  "/images/landing/feature-publish.jpg",
+];
+
+const Arrow = () => (
+  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+    <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+  </svg>
+);
+
+const Check = () => (
+  <svg className="lp-check" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+    <path d="M3.5 8.5l3 3 6-7" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+  </svg>
+);
 
 export default function Home() {
   const { t } = useI18n();
+  const L = t.landing;
   const { data: session, status } = useSession();
   const router = useRouter();
   const [prompt, setPrompt] = useState("");
   const [creating, setCreating] = useState(false);
 
   const isLoading = status === "loading";
-
-  const typedText = useTypingAnimation(t.site.typingPhrases);
+  const startHref = session ? "/projects" : "/signup";
+  const startLabel = session ? t.nav.projects : L.getStartedFree;
 
   async function handleStart() {
     const trimmed = prompt.trim();
-    if (!trimmed || creating) return;
+    if (creating) return;
+    if (!trimmed) {
+      document.getElementById("site-prompt")?.focus();
+      return;
+    }
     if (!session) {
       sessionStorage.setItem("nova-pending-prompt", trimmed);
       router.push("/login?callbackUrl=%2Fprojects");
@@ -48,301 +72,180 @@ export default function Home() {
   }
 
   return (
-    <div className="origin-home">
+    <div className="lp">
       <PublicNav theme="dark" />
 
       {/* ═══════════════ HERO ═══════════════ */}
-      <div className="origin-hero">
-        <div className="origin-hero__site-wrapper">
-          {/* Background clouds video */}
-          <video
-            autoPlay loop muted playsInline
-            className="origin-hero__video"
-            poster="https://cdn.prod.website-files.com/68acbc076b672f730e0c77b9%2F68bb73e8d95f81619ab0f106_Clouds1-poster-00001.jpg"
-          >
-            <source src="https://cdn.prod.website-files.com/68acbc076b672f730e0c77b9%2F68bb73e8d95f81619ab0f106_Clouds1-transcode.mp4" type="video/mp4" />
-            <source src="https://cdn.prod.website-files.com/68acbc076b672f730e0c77b9%2F68bb73e8d95f81619ab0f106_Clouds1-transcode.webm" type="video/webm" />
-          </video>
-          <div className="origin-hero__overlay" />
+      <header className="lp-hero">
+        <img className="lp-hero__photo" src="/images/landing/hero-team.jpg" alt={L.heroPhotoAlt} width={1600} height={1067} fetchPriority="high" />
+        <div className="lp-hero__shade" />
+        <div className="lp-container lp-hero__body">
+          <p className="lp-eyebrow lp-eyebrow--light">{L.badge}</p>
+          <h1 className="lp-hero__title">
+            {L.titleLead} <span>{L.titleAccent}</span>
+          </h1>
+          <p className="lp-hero__sub">{L.subtitle}</p>
 
-          <div className="origin-container" style={{ position: "relative", zIndex: 2 }}>
-            <div className="origin-hero__wrapper">
-              {/* Promo badge */}
-              <div className="origin-promo">
-                <p className="origin-smalltext">{t.landing.badge}</p>
-              </div>
-
-              {/* Main heading */}
-              <h1 className="origin-display-heading">
-                <em>{t.landing.titleLead.split(" ")[0]}</em>{" "}
-                {t.landing.titleLead.split(" ").slice(1).join(" ")}{" "}
-                {t.landing.titleAccent}
-              </h1>
-
-              {/* Sub copy */}
-              <div className="origin-hero__sub-wrapper">
-                <p className="origin-body-white">{t.landing.subtitle}</p>
-              </div>
-
-              {/* CTA Button */}
-              <Link href={session ? "/projects" : "/signup"} className="origin-button origin-button--nav">
-                <span>{session ? t.nav.projects : t.landing.getStartedFree}</span>
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
-              </Link>
-
-              {/* Typing search bar */}
-              <button
-                onClick={() => {
-                  const el = document.getElementById("site-prompt");
-                  if (el) el.focus();
-                }}
-                className="origin-search-bar"
-              >
-                <span className="origin-typed-words">{typedText}</span>
-                <span className="origin-search-btn">
-                  <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 1v12M1 7h12" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/></svg>
-                </span>
+          <div className="lp-prompt">
+            <label htmlFor="site-prompt" className="sr-only">{L.promptSrLabel}</label>
+            <textarea
+              id="site-prompt"
+              value={prompt}
+              onChange={(e) => setPrompt(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && !e.shiftKey) {
+                  e.preventDefault();
+                  handleStart();
+                }
+              }}
+              placeholder={L.promptPlaceholder}
+              rows={3}
+              className="lp-prompt__input"
+            />
+            <div className="lp-prompt__bar">
+              <span className="lp-prompt__hint">{L.pressEnter}</span>
+              <button onClick={handleStart} disabled={creating || isLoading} className="lp-btn lp-btn--ink">
+                {creating ? (<><span className="lp-spinner" />{L.building}</>) : (<>{L.startBuildingFree}<Arrow /></>)}
               </button>
-
-              {/* Trust line */}
-              <div className="origin-hero__trust">
-                <p className="origin-p60">{t.landing.trustBadges.join("  ·  ")}</p>
-              </div>
             </div>
           </div>
+
+          <div className="lp-chips">
+            <span className="lp-chips__label">{L.tryLabel}</span>
+            {L.examples.map((ex) => (
+              <button key={ex.label} onClick={() => setPrompt(ex.prompt)} className="lp-chip">
+                {ex.label}
+              </button>
+            ))}
+          </div>
+
+          <ul className="lp-trust">
+            {L.trustBadges.map((b) => (
+              <li key={b}><Check />{b}</li>
+            ))}
+          </ul>
         </div>
-      </div>
+      </header>
 
-      {/* ═══════════════ SIMPLIFY SECTION ═══════════════ */}
-      <div className="origin-intro">
-        <div className="origin-site-wrapper">
-          <FadeSection>
-            <div className="origin-container">
-              <div className="origin-hero__wrapper">
-                <h3 className="origin-large-heading">
-                  <em className="origin-text-italics">{t.landing.simplifyDesignLead}</em> {t.landing.simplifyDesignAccent}
-                </h3>
-              </div>
-            </div>
-          </FadeSection>
-        </div>
-      </div>
-
-      {/* ═══════════════ BUILD EVERYTHING — TRACK CARDS ═══════════════ */}
-      <div className="origin-divider" />
-      <div className="origin-intro">
-        <div className="origin-site-wrapper">
-          <FadeSection>
-            <div className="origin-container">
-              <div className="origin-hero__wrapper">
-                <h2 className="origin-large-heading">
-                  <em className="origin-text-italics">{t.landing.buildEverythingLead}</em> {t.landing.buildEverythingAccent}
-                </h2>
-                <div className="origin-hero__sub-wrapper">
-                  <p className="origin-p60">{t.landing.buildEverythingDesc}</p>
-                </div>
-                <Link href={session ? "/projects" : "/signup"} className="origin-button origin-button--dark">
-                  {(session ? t.nav.projects : t.landing.getStartedFree).toUpperCase()}
-                </Link>
-              </div>
-            </div>
-          </FadeSection>
-
-        </div>
-      </div>
-
-            {/* ═══════════════ ASK ANYTHING — AI SECTION ═══════════════ */}
-      <div className="origin-divider" />
-      <div className="origin-ai-section">
-        <div className="origin-intro origin-aigradient">
-          <div className="origin-site-wrapper">
-            <FadeSection>
-              <div className="origin-container">
-                <div className="origin-hero__wrapper">
-                  <svg className="origin-star" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                    <path d="M12 2l2.09 6.26L20.18 10l-6.09 1.74L12 18l-2.09-6.26L3.82 10l6.09-1.74L12 2z" fill="white" fillOpacity="0.6"/>
-                  </svg>
-                  <h2 className="origin-large-heading origin-font-weight-normal">
-                    <span className="origin-text-span">
-                      <em className="origin-text-italics">{t.landing.deployAnythingLead}</em> {t.landing.deployAnythingAccent}
-                    </span>
-                  </h2>
-                  <div className="origin-hero__sub-wrapper">
-                    <p className="origin-p60">{t.landing.deployAnythingDesc}</p>
-                  </div>
-                </div>
-              </div>
+      <main>
+        {/* ═══════════════ FEATURES ═══════════════ */}
+        <section id="features" className="lp-section lp-section--paper">
+          <div className="lp-container">
+            <FadeSection className="lp-head">
+              <p className="lp-eyebrow">{L.featuresEyebrow}</p>
+              <h2 className="lp-h2">{L.featuresTitle}</h2>
+              <p className="lp-lead">{L.featuresDesc}</p>
             </FadeSection>
 
-            {/* AI Prompt Input — prominent */}
-            <FadeSection>
-              <div className="origin-container">
-                <div className="origin-ai-prompt-wrapper">
-                  <div className="origin-ai-prompt">
-                    <label htmlFor="site-prompt" className="sr-only">{t.landing.promptSrLabel}</label>
-                    <textarea
-                      id="site-prompt"
-                      value={prompt}
-                      onChange={(e) => setPrompt(e.target.value)}
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter" && !e.shiftKey) {
-                          e.preventDefault();
-                          handleStart();
-                        }
-                      }}
-                      placeholder={t.landing.promptPlaceholder}
-                      rows={3}
-                      className="origin-ai-prompt__textarea"
-                    />
-                    <div className="origin-ai-prompt__footer">
-                      <span className="origin-ai-prompt__hint">{t.landing.pressEnter}</span>
-                      <button
-                        onClick={handleStart}
-                        disabled={!prompt.trim() || creating || isLoading}
-                        className="origin-ai-prompt__submit"
-                      >
-                        {creating ? (
-                          <>
-                            <span className="origin-spinner" />
-                            {t.landing.building}
-                          </>
-                        ) : (
-                          <>
-                            {t.landing.startBuildingFree}
-                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
-                          </>
-                        )}
-                      </button>
-                    </div>
-                  </div>
-
-                  {/* Example chips */}
-                  <div className="origin-examples">
-                    <span className="origin-examples__label">{t.landing.tryLabel}</span>
-                    {t.landing.examples.map((ex) => (
-                      <button key={ex.label} onClick={() => setPrompt(ex.prompt)} className="origin-examples__chip">
-                        {ex.icon} {ex.label}
-                      </button>
-                    ))}
-                  </div>
+            {L.features.map((f, i) => (
+              <FadeSection key={f.title} className={`lp-feature${i % 2 ? " lp-feature--flip" : ""}`}>
+                <img className="lp-feature__photo" src={FEATURE_PHOTOS[i]} alt={L.featurePhotoAlts[i]} width={1600} height={1067} loading="lazy" />
+                <div className="lp-feature__text">
+                  <h3 className="lp-h3">{f.title}</h3>
+                  <p className="lp-body">{f.body}</p>
+                  <ul className="lp-points">
+                    {f.points.map((p) => (<li key={p}><Check />{p}</li>))}
+                  </ul>
                 </div>
-              </div>
+              </FadeSection>
+            ))}
+          </div>
+        </section>
+
+        {/* ═══════════════ HOW IT WORKS ═══════════════ */}
+        <section id="how-it-works" className="lp-section lp-section--ink">
+          <div className="lp-container">
+            <FadeSection className="lp-head">
+              <p className="lp-eyebrow lp-eyebrow--light">{L.stepsEyebrow}</p>
+              <h2 className="lp-h2 lp-h2--light">{L.stepsTitle}</h2>
+            </FadeSection>
+            <FadeSection>
+              <ol className="lp-steps">
+                {L.steps.map((s, i) => (
+                  <li key={s.title} className="lp-step">
+                    <span className="lp-step__num">{String(i + 1).padStart(2, "0")}</span>
+                    <h3 className="lp-step__title">{s.title}</h3>
+                    <p className="lp-step__body">{s.body}</p>
+                  </li>
+                ))}
+              </ol>
             </FadeSection>
           </div>
-        </div>
-      </div>
+        </section>
 
-      {/* ═══════════════ DEPLOY — FEATURE CARDS (3-col) ═══════════════ */}
-      <div className="origin-updates">
-        <FadeSection>
-          <div className="origin-container">
-            <div className="origin-hero__wrapper">
-              <h2 className="origin-large-heading">
-                <em className="origin-text-italics">{t.landing.growProductTitle.split(" ")[0]}</em>{" "}
-                {t.landing.growProductTitle.split(" ").slice(1).join(" ")}
-              </h2>
-              <div className="origin-hero__sub-wrapper">
-                <p className="origin-p60">{t.landing.growProductDesc}</p>
-              </div>
-            </div>
+        {/* ═══════════════ AUDIENCE ═══════════════ */}
+        <section id="audience" className="lp-section lp-section--paper">
+          <div className="lp-container">
+            <FadeSection className="lp-head">
+              <p className="lp-eyebrow">{L.audienceEyebrow}</p>
+              <h2 className="lp-h2">{L.audienceTitle}</h2>
+              <p className="lp-lead">{L.audienceDesc}</p>
+            </FadeSection>
+            <FadeSection>
+              <ul className="lp-audience">
+                {L.audiences.map((a) => (
+                  <li key={a.title} className="lp-audience__item">
+                    <h3 className="lp-audience__title">{a.title}</h3>
+                    <p className="lp-body">{a.body}</p>
+                  </li>
+                ))}
+              </ul>
+            </FadeSection>
           </div>
-        </FadeSection>
+        </section>
 
-        <FadeSection>
-          <div className="origin-container">
-            <div className="origin-3col-grid">
-              {t.landing.features.map((feat, i) => (
-                <div key={i} className="origin-update-card">
-                  <div className="origin-product-update-title">{feat.icon}</div>
-                  <h3 className="origin-update-card__title">{feat.title}</h3>
-                  <p className="origin-p60">{feat.body}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </FadeSection>
-      </div>
-
-      {/* ═══════════════ CONNECT SPHERE SECTION ═══════════════ */}
-      <div className="origin-sphere-section">
-        <div className="origin-sphere-bg" />
-        <FadeSection>
-          <div className="origin-sphere-center">
-            <h2 className="origin-large-heading" style={{ fontSize: "clamp(32px, 5vw, 48px)" }}>
-              <em className="origin-text-italics">{t.site.connectLead}</em> {t.site.connectRest}
-            </h2>
-            <div className="origin-hero__sub-wrapper" style={{ marginTop: 16 }}>
-              <p className="origin-p60">
-                {t.site.connectBody}
+        {/* ═══════════════ PRICING ═══════════════ */}
+        <section id="pricing" className="lp-section lp-section--white">
+          <div className="lp-container">
+            <FadeSection className="lp-head">
+              <p className="lp-eyebrow">{L.pricingEyebrow}</p>
+              <h2 className="lp-h2">{L.pricingTitle}</h2>
+              <p className="lp-lead">{L.pricingDesc}</p>
+            </FadeSection>
+            <FadeSection>
+              <PricingGrid onSelectPlan={() => router.push("/pricing")} />
+              <p className="lp-more">
+                <Link href="/pricing" className="lp-link">{L.pricingSeeAll} <Arrow /></Link>
               </p>
-            </div>
-            <Link href={session ? "/projects" : "/signup"} className="origin-button origin-button--dark" style={{ marginTop: 24 }}>
-              {t.site.exploreIntegrations}
-            </Link>
+            </FadeSection>
           </div>
-        </FadeSection>
-      </div>
+        </section>
 
-      {/* ═══════════════ TESTIMONIALS ═══════════════ */}
-      <div className="origin-testimonials">
-        <FadeSection>
-          <div className="origin-container">
-            <div className="origin-hero__wrapper" style={{ marginBottom: 60 }}>
-              <h2 className="origin-large-heading">{t.landing.testimonialsTitle}</h2>
-            </div>
-
-            <div className="origin-testimonial-grid">
-              {t.landing.testimonials.map((item, i) => (
-                <div key={i} className={`origin-quote-card origin-quote-card--${i + 1}`}>
-                  <div>
-                    <img
-                      src="https://cdn.prod.website-files.com/68acbc076b672f730e0c77b9/68acd3d1459c4533e7d4649a_stars.svg"
-                      alt={t.site.starsAlt}
-                      className="origin-quote-card__stars"
-                    />
-                    <p className="origin-quote-card__text">&ldquo;{item.quote}&rdquo;</p>
-                  </div>
-                  <div className="origin-quote-card__author">{item.name}</div>
-                </div>
+        {/* ═══════════════ FAQ ═══════════════ */}
+        <section id="faq" className="lp-section lp-section--paper">
+          <div className="lp-container lp-faq">
+            <FadeSection className="lp-faq__head">
+              <p className="lp-eyebrow">{L.faqEyebrow}</p>
+              <h2 className="lp-h2">{L.faqTitle}</h2>
+            </FadeSection>
+            <FadeSection className="lp-faq__list">
+              {t.pricing.faq.map(({ q, a }) => (
+                <details key={q} className="lp-faq__item">
+                  <summary>{q}</summary>
+                  <p className="lp-body">{a}</p>
+                </details>
               ))}
-            </div>
+            </FadeSection>
           </div>
-        </FadeSection>
-      </div>
+        </section>
 
-      {/* ═══════════════ BOTTOM CTA / FOOTER HERO ═══════════════ */}
-      <div className="origin-forecast-section">
-        <div className="origin-site-wrapper-forecast">
-          <FadeSection>
-            <div className="origin-container">
-              <div className="origin-hero__wrapper">
-                <div className="origin-hero-label">
-                  <span className="origin-hero-label-text">{t.landing.newsEyebrow}</span>
-                </div>
-                <h2 className="origin-large-heading" style={{ color: "#ffffff" }}>
-                  {t.landing.newsTitle}
-                </h2>
-                <div className="origin-hero__sub-wrapper" style={{ marginTop: 16 }}>
-                  <p className="origin-p60" style={{ color: "rgba(255,255,255,0.7)" }}>{t.landing.ctaSubtitle}</p>
-                </div>
-                <div style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap", marginTop: 32 }}>
-                  <Link href={session ? "/projects" : "/signup"} className="origin-button origin-button--nav">
-                    <span>{session ? t.nav.projects : t.landing.getStartedFree}</span>
-                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
-                  </Link>
-                  <Link href="/builder/demo" className="origin-button origin-button--dark">
-                    {t.landing.tryDemo}
-                  </Link>
-                </div>
-              </div>
+        {/* ═══════════════ FINAL CTA ═══════════════ */}
+        <section className="lp-cta">
+          <img className="lp-cta__photo" src="/images/landing/cta-office.jpg" alt={L.ctaPhotoAlt} width={1600} height={900} loading="lazy" />
+          <div className="lp-cta__shade" />
+          <FadeSection className="lp-container lp-cta__body">
+            <h2 className="lp-h2 lp-h2--light">{L.ctaTitle}</h2>
+            <p className="lp-lead lp-lead--light">{L.ctaSubtitle}</p>
+            <div className="lp-cta__actions">
+              <Link href={startHref} className="lp-btn lp-btn--white">{startLabel}<Arrow /></Link>
+              <Link href="/builder/demo" className="lp-btn lp-btn--ghost">{L.tryDemo}</Link>
             </div>
           </FadeSection>
-        </div>
-      </div>
+        </section>
+      </main>
 
       <PublicFooter theme="dark" />
 
-      {/* ═══════════════ STYLES ═══════════════ */}
       <style>{LANDING_CSS}</style>
     </div>
   );

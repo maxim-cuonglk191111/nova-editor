@@ -1,5 +1,13 @@
 # Nova — Verified Feature Ledger
 
+## nova-builder / v25.16.13 — Business Landing Page Renovation & Dead-Link Removal (Task 028) (2026-10-26)
+
+| ID | Feature | Status | Visual Evidence |
+|---|---|---|---|
+| LANDING-LINKS1 | Every link on the landing page returns 200 (no `/docs`); anchors `#features` / `#faq` exist | 🟢 | doc/screenshots/19-landing-business-renovation.png |
+| LANDING-PHOTO1 | Business photography in hero, feature rows and CTA; Montserrat headings render Vietnamese diacritics cleanly | 🟢 | doc/screenshots/19-landing-business-renovation.png |
+| LANDING-RESP1 | 1440 / 1024 / 390 px: no horizontal overflow, 0 console errors | 🟢 | doc/screenshots/19-landing-business-renovation.png |
+
 ## nova-builder / v25.16.12 — Interactive Draggable Image Crop Area (Task 021) (2026-10-20)
 
 | ID | Feature | Status | Visual Evidence |
