@@ -5,6 +5,8 @@ import { useSession } from "next-auth/react";
 import { PAYOS_PRICES_VND } from "@/lib/billing/payos";
 import { UI_VARS as C } from "@/lib/uiTheme";
 import { useI18n, fmt, formatNumber } from "@/lib/i18n";
+import { usePromo } from "@/lib/usePromo";
+import { promoPrice } from "@/lib/promo";
 
 interface PayOSCheckoutModalProps {
   isOpen: boolean;
@@ -22,6 +24,8 @@ type CheckoutData = {
   bin: string;
   description: string;
   isMock?: boolean;
+  listAmount?: number;
+  discountPercent?: number;
 };
 
 export default function PayOSCheckoutModal({ isOpen, onClose, tier, teamId }: PayOSCheckoutModalProps) {
@@ -42,6 +46,8 @@ export default function PayOSCheckoutModal({ isOpen, onClose, tier, teamId }: Pa
     ? { label: b.creditsPackLabel, features: b.creditsPackFeatures }
     : t.pricing.planCopy[tier];
   const vndPrice = PAYOS_PRICES_VND[tier];
+  const promo = usePromo();
+  const offer = promo?.active && promo.eligible === true ? promo : null;
   const vnd = (n: number) => `${formatNumber(n, locale)} VND`;
 
   // Reset state when modal is opened/closed
@@ -200,8 +206,14 @@ export default function PayOSCheckoutModal({ isOpen, onClose, tier, teamId }: Pa
                 <div style={{ fontSize: 13, textTransform: "uppercase", letterSpacing: "0.05em", color: C.accentText || "#a78bfa" }}>{b.selectedPlan}</div>
                 <div style={{ fontSize: 24, fontWeight: 800, margin: "4px 0" }}>{plan.label}</div>
                 <div style={{ fontSize: 18, fontWeight: 700, color: C.success || "#10b981" }}>
-                  {vnd(vndPrice)}
+                  {offer && <s style={{ fontSize: 14, fontWeight: 500, color: C.textMuted, marginRight: 8 }}>{vnd(vndPrice)}</s>}
+                  {vnd(offer ? promoPrice(vndPrice, offer.percentOff) : vndPrice)}
                 </div>
+                {offer && (
+                  <div style={{ fontSize: 12, color: C.textMuted, marginTop: 6 }}>
+                    {fmt(b.promoCheckoutNote, { percent: offer.percentOff })} {b.promoTerms}
+                  </div>
+                )}
               </div>
 
               <div>

@@ -2,6 +2,43 @@
 
 ---
 
+## [25.16.22] — 2026-10-27
+
+### Task 032 — Demo accounts, and the welcome offer for every payment method (Minor)
+
+- **Seed**: `pnpm seed:demo` creates five demo accounts, each with a finished site (a personal blog, a one-person SaaS, a street-food stall, a photographer's portfolio, a podcast) built with the app's own composer pipeline and readable through `/preview/<project id>`. Dry run by default; `--apply` writes; `--cleanup --apply` removes. Random passwords go to a gitignored file.
+- **Offer**: the first-purchase discount is no longer tied to SePay. `create-link` decides the price once for SePay, PayOS and the dev mock; the portal checkout does the same; `/api/promo` no longer depends on a bank-account setting.
+- Vietnamese serif fix for seeded sites (Georgia lacks Vietnamese glyphs).
+
+## [25.16.21] — 2026-10-27
+
+### Task 031 — Landing page, hand-made pass (Minor)
+
+- **Why**: the SaaS redesign met the brief but looked like a template (dark hero with a purple glow, grid of icon cards). The brief for this pass: it should look like a very good human designer made it, not a model.
+- **Look**: warm paper with grain, 2px ink outlines with hard offset shadows that press in on click, the logo violet plus a lime highlighter, taped polaroid photos at slight angles, stickers, a multiplayer-style cursor, a ticker band of the businesses it is for, outlined step numerals, a giant outlined wordmark in the footer. No soft shadows, glass blur or gradient washes.
+- **Type and voice**: Bricolage Grotesque for headlines and Fraunces italic for the human note; both ship a Vietnamese subset (checked). Plain speech: "Your business deserves a website that doesn't look like everyone's.", "Three steps. No meetings."; Vietnamese written separately, not translated word for word.
+- **Shared chrome** (header, footer, plan cards) restyled to match, so pricing, terms and privacy follow.
+- Merged the prices-ending-in-9 and welcome-offer work (task 030); the offer banner is mounted on the landing page.
+- The main button no longer says "Building…" while the page is only waiting for the session.
+
+## [25.16.20] — 2026-10-26
+
+### Task 030 — Prices ending in 9 and the welcome offer (Minor)
+
+- **Prices**: Pro 499,000 VND (the anchor), Max 1,289,000 (49/19 of Pro, not rounded to a neighbour), credits pack 99,000, Team 749,000 (not offered). `PAYOS_PRICES_VND` is the single table the cards, the checkout and the order amount read.
+- **Welcome offer** (`lib/promo.ts`): 50% off the first purchase of an account created while the offer runs, 26 Oct – 26 Dec 2026 (UTC+7). Half is exact (249,500 / 644,500), not rounded.
+- **The server decides the price.** `create-link` checks `isEligibleForWelcomeOffer` (account created in the window, no row in `processed_payments`, no paid order) and stores the discounted amount on `payment_orders`; the QR and the SePay webhook both use that amount, so the client cannot lower it. Only one unpaid discounted order exists at a time, so two plans cannot both be bought at half price. No migration.
+- **UI**: `GET /api/promo` (public) feeds a banner on `/pricing`, struck-through list prices with the offer price and a badge on plan cards, and a note in the checkout. It states the real end date and days left; there is no per-visitor countdown. Reported inactive where SePay is not configured (PayOS path charges list price).
+## [25.16.19] — 2026-10-26
+
+### Task 029 — SaaS landing page and shared public header (Minor)
+
+- **Projects button fixed**: the "Dự án" / "Projects" link in the header carried the class `on-nav-link--current`, whose rule was `pointer-events: none`, so it looked like a button and did nothing. The current page is now marked with `aria-current` only.
+- **Header rebuilt** (landing, pricing, terms, privacy): white sticky bar, 36px Nova mark with a "Nova" wordmark, 15px links, 44px actions, a real mobile menu (`aria-expanded`, Esc, closes on navigation) and an avatar menu on phones. The "Docs" link (no `/docs` page) is gone.
+- **Brand from the logo**: graphite `#24262A`, violet `#6A39BB` → `#4E2597`, lavender `#DAC7FA` as `--brand-*` tokens. The AI mark is now an SVG spark icon; emoji and ✦/✓ glyphs are gone from the landing and the pricing grid.
+- **Landing**: hero with the prompt box and a drawn picture of the editor, six built-in capabilities, three feature rows with business photos, steps, audiences, pricing, FAQ, closing CTA, and a four-column footer.
+- Tests: `e2e/landing-header.spec.ts` (10), axe on `/terms` and `/privacy` added to the a11y gate.
+
 ## [25.16.18] — 2026-10-26
 
 ### Accessibility fixes found by the e2e run after the merge (Patch)

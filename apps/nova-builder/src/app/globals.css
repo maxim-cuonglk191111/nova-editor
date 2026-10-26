@@ -310,3 +310,25 @@ html, body {
     scroll-behavior: auto !important;
   }
 }
+
+/* ── Brand tokens, taken from the Nova mark (public/logo.svg) ──────────────────
+   graphite tile #24262A, ribbon violets #6A39BB → #4E2597 → #401B84, highlight
+   #DAC7FA. Public pages (landing, pricing, legal) read these; the builder keeps
+   its own --ui-* tokens. */
+:root {
+  --brand-ink: #24262a;
+  --brand-ink-soft: #3a3d44;
+  --brand-violet: #6a39bb;
+  --brand-violet-deep: #4e2597;
+  --brand-violet-night: #2a1357;
+  --brand-violet-soft: #a980e6;
+  --brand-lavender: #dac7fa;
+  --brand-tint: #f3edfd;
+  --brand-surface: #faf9fc;
+  --brand-paper: #f3efe6;
+  --brand-paper-2: #ebe4d3;
+  --brand-lime: #d9f25e;
+  --brand-text: #24262a;
+  --brand-muted: #4b4e57;
+  --brand-rule: rgba(36, 38, 42, 0.12);
+}

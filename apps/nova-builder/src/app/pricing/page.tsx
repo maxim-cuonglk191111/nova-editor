@@ -7,6 +7,7 @@ import { PublicFooter } from "@/components/public/PublicFooter";
 import { useI18n } from "@/lib/i18n";
 import PayOSCheckoutModal from "@/components/PayOSCheckoutModal";
 import PricingGrid from "@/components/PricingGrid";
+import { PromoBanner } from "@/components/PromoBanner";
 
 export default function PricingPage() {
   const { t } = useI18n();
@@ -27,6 +28,7 @@ export default function PricingPage() {
 
   return (
     <div style={{ minHeight: "100vh", background: "#ffffff", display: "flex", flexDirection: "column", fontFamily: "system-ui, -apple-system, sans-serif" }}>
+      <PromoBanner />
       <PublicNav />
 
       <main style={{ flex: 1, padding: "64px 24px" }}>

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter, Montserrat, Roboto_Mono } from "next/font/google";
+import { Inter, Montserrat, Roboto_Mono, Bricolage_Grotesque, Fraunces } from "next/font/google";
 import "./globals.css";
 import { Providers } from "./providers";
 import { ToastNotification } from "@/components/ToastNotification";
@@ -16,6 +16,21 @@ const montserrat = Montserrat({
   subsets: ["latin", "vietnamese"],
   display: "swap",
   variable: "--font-montserrat",
+});
+
+// Public-site display faces. Both ship a Vietnamese subset (checked against the Google Fonts
+// CSS); Montserrat stays the app-wide heading face, so the builder UI is unchanged.
+const bricolage = Bricolage_Grotesque({
+  subsets: ["latin", "vietnamese"],
+  display: "swap",
+  variable: "--font-bricolage",
+});
+
+const fraunces = Fraunces({
+  subsets: ["latin", "vietnamese"],
+  style: ["italic"],
+  display: "swap",
+  variable: "--font-fraunces",
 });
 
 const robotoMono = Roboto_Mono({
@@ -38,7 +53,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     // suppressHydrationWarning: browser extensions (e.g. Katalon) may inject
     // attributes onto <html> after SSR, causing a harmless hydration mismatch.
-    <html lang={lang} className={`${inter.variable} ${montserrat.variable} ${robotoMono.variable}`} suppressHydrationWarning>
+    <html lang={lang} className={`${inter.variable} ${montserrat.variable} ${robotoMono.variable} ${bricolage.variable} ${fraunces.variable}`} suppressHydrationWarning>
       <body>
         <Providers>
           {children}

@@ -65,3 +65,6 @@ doc/screenshots/debug-*
 docs/task
 
 *.pdf
+
+# Local seed output (demo account passwords)
+.seed-demo-output.json

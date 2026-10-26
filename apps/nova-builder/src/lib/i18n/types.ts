@@ -261,6 +261,12 @@ export interface I18nLandingStep {
 }
 
 export interface I18nLandingDictionary {
+  /** Hand-written note pointing at the prompt box. */
+  annotationPrompt: string;
+  stickerFree: string;
+  stickerNoCode: string;
+  /** Name on the multiplayer-style cursor in the hero picture. */
+  cursorName: string;
   badge: string;
   titleLead: string;
   titleAccent: string;
@@ -288,6 +294,9 @@ export interface I18nLandingDictionary {
   audienceTitle: string;
   audienceDesc: string;
   audiences: I18nLandingStep[];
+  capsEyebrow: string;
+  capsTitle: string;
+  caps: I18nLandingStep[];
   pricingEyebrow: string;
   pricingTitle: string;
   pricingDesc: string;

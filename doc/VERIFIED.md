@@ -1,5 +1,45 @@
 # Nova — Verified Feature Ledger
 
+## nova-builder / v25.16.22 — Seeded demo accounts (Task 032) (2026-10-27)
+
+| ID | Feature | Status | Visual Evidence |
+|---|---|---|---|
+| SEED-COMPAT | Five projects round-trip `migrateToLatest` + `serializeWebstudioData` (the /api/preview path); valid trees, one h1, anchors resolve | 🟢 | src/lib/__tests__/seed-demo-projects.test.ts |
+| SEED-LIVE | All five `/preview/<uuid>` pages return 200 on the Cloudflare host and one renders correctly | 🟢 | live capture of the podcast preview |
+| SEED-LOGIN | A seeded account logs into the live Cloudflare site and sees its project on `/projects` | 🟢 | Playwright run against production |
+| PROMO-ANY | Welcome-offer price decided once for SePay, PayOS and the dev mock | 🟡 | typechecked; no real order run |
+
+## nova-builder / v25.16.21 — Landing hand-made pass (Task 031) (2026-10-27)
+
+| ID | Feature | Status | Visual Evidence |
+|---|---|---|---|
+| LP-CRAFT1 | Hero, ticker, editorial index, taped photos, steps, CTA, footer wordmark render in en and vi at 1440 and 390 | 🟢 | doc/screenshots/24-landing-craft-desktop-vi.png, 25-landing-craft-mobile-en.png |
+| LP-A11Y2 | axe wcag2a+aa clean on /, /login, /signup, /pricing, /terms, /privacy after the restyle | 🟢 | e2e/a11y.spec.ts |
+| LP-HDR2 | Header/footer specs (links, anchors, mobile menu, focus, Projects clickable) green | 🟢 | e2e/landing-header.spec.ts |
+| LP-PRICE9 | Pricing cards on the landing show 499,000 / 1,289,000 and the offer | 🟢 | e2e/promo.spec.ts |
+| LP-RESP2 | 768 / 1024 widths, vi at 390, reduced-motion ticker | 🟡 | not re-captured after the restyle (machine ran out of memory mid-pass) |
+
+## nova-builder / v25.16.20 — Prices ending in 9 & welcome offer (Task 030) (2026-10-26)
+
+| ID | Feature | Status | Visual Evidence |
+|---|---|---|---|
+| PRICE-9 | Pro 499,000 / Max 1,289,000 / credits 99,000 all end in 9,000; pricing page shows them | 🟢 | e2e/promo.spec.ts, src/lib/__tests__/promo.test.ts |
+| PROMO-RULES | Window = 2 months UTC+7; half is exact; eligibility = new account + no payment (stubbed DB) | 🟢 | src/lib/__tests__/promo.test.ts |
+| PROMO-UI | Banner with real end date, struck-through prices, dismiss, vi/en, hidden for accounts that paid | 🟢 | e2e/promo.spec.ts (offer answered by the test) |
+| PROMO-SERVER | create-link stores the discounted amount; webhook checks it | 🟡 | code-reviewed only: no signed-in account or SePay config to run a real order |
+| PROMO-API | /api/promo reports `active:false` in dev (no SePay account) | 🟢 | curl on dev server |
+## nova-builder / v25.16.19 — SaaS landing & shared header (Task 029) (2026-10-26)
+
+| ID | Feature | Status | Visual Evidence |
+|---|---|---|---|
+| HDR-PROJ1 | Projects link is clickable when signed in (computed pointer-events not none; click navigates) | 🟢 | e2e/landing-header.spec.ts |
+| HDR-MOB1 | Mobile menu opens/closes (button, Esc, navigation), links ≥ 44px, no horizontal scroll | 🟢 | doc/screenshots/23-landing-saas-mobile-menu.png |
+| HDR-LINK1 | Every header/footer link resolves; none points at /docs; anchors exist | 🟢 | e2e/landing-header.spec.ts |
+| LP-ICON1 | AI mark is an SVG; no emoji/glyph icons on the landing | 🟢 | e2e/landing-header.spec.ts |
+| LP-A11Y1 | axe wcag2a+aa clean on /, /login, /signup, /pricing, /terms, /privacy | 🟢 | e2e/a11y.spec.ts |
+| LP-RESP1 | 1440 / 1024 / 768 / 390 px in en and vi: no horizontal overflow, 0 console errors | 🟢 | doc/screenshots/22-landing-saas-desktop.png |
+| HDR-AUTH1 | Signed-in header driven by a mocked session, not a real account | 🟡 | session endpoint stubbed |
+
 ## nova-builder / v25.16.17 — Multi-page generation (Task 024) (2026-10-26)
 
 | ID | Feature | Status | Visual Evidence |
