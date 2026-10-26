@@ -2,6 +2,13 @@
 
 ---
 
+## [25.16.12-build] — 2026-10-26
+
+### Build — `build:cf` accepts Next 15 past its support window (Patch)
+
+- OpenNext's CLI refuses Next.js versions older than the 2-year support window ("Next.js version 15.5.19 is not supported by the Next.js team"). Next 15 shipped in Oct 2024, so from Oct 2026 `opennextjs-cloudflare build` exits 1 on any machine or on the Cloudflare dashboard, whatever the code. `build:cf` now passes `--dangerouslyUseUnsupportedNextVersion`.
+- This is a stopgap, not a fix: the app is on an unsupported framework major. Moving to Next 16 is its own task (React 19, async request APIs, OpenNext compatibility).
+
 ## [25.16.12] — 2026-10-20
 
 ### Task 021 — Interactive Draggable Image Crop Area (Patch)
