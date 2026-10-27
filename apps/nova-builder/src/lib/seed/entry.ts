@@ -5,3 +5,5 @@ export { DEMO_SITES, buildProjectSchema } from "./demoProjects";
 export { hashPassword } from "../password";
 export { migrateToLatest } from "../migrate";
 export { serializeWebstudioData } from "../schema";
+export { promoPrice } from "../promo";
+export { PAYOS_PRICES_VND } from "../billing/payos";

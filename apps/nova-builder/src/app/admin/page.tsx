@@ -3,6 +3,7 @@ import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { UI_VARS as C } from "@/lib/uiTheme";
 import { useI18n, fmt } from "@/lib/i18n";
+import AdminOverview from "@/components/admin/AdminOverview";
 
 
 type User = {
@@ -81,6 +82,9 @@ export default function AdminPage() {
         </div>
 
         {error && <div style={{ color: C.danger, fontSize: 12, marginBottom: 16 }}>{error}</div>}
+
+        {!error && <AdminOverview />}
+        {!error && <h2 style={{ margin: "0 0 12px", fontSize: 16, fontWeight: 700 }}>{A.allUsersTitle}</h2>}
 
         <div style={{ display: "flex", gap: 8, marginBottom: 16 }}>
           <input

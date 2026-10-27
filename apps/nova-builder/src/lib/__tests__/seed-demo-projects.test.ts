@@ -2,6 +2,7 @@ import { describe, it, expect } from "vitest";
 import { existsSync } from "node:fs";
 import { join } from "node:path";
 import { DEMO_SITES, PLACEHOLDER_CONTEXT, buildProjectSchema } from "../seed/demoProjects";
+import { PAYOS_PRICES_VND } from "../billing/payos";
 import { migrateToLatest } from "../migrate";
 import { serializeWebstudioData } from "../schema";
 
@@ -94,6 +95,12 @@ describe("demo seed projects are readable by the preview path", () => {
       });
     });
   }
+
+  it("marks exactly the five paying customers, all on a plan the price table knows", () => {
+    const buyers = DEMO_SITES.filter((b) => b.purchase).map((b) => b.slug).sort();
+    expect(buyers).toEqual(["hung-le", "mai-viet", "noi-nham", "ovemo", "vyvy"]);
+    for (const b of DEMO_SITES) if (b.purchase) expect(PAYOS_PRICES_VND[b.purchase.plan]).toBeGreaterThan(0);
+  });
 
   it("ships every declared asset file next to the seed script", () => {
     for (const biz of DEMO_SITES) for (const f of biz.assets ?? []) expect(existsSync(join(__dirname, "../../../scripts/seed-assets", biz.slug, f)), `${biz.slug}/${f}`).toBe(true);
