@@ -98,8 +98,8 @@ describe("demo seed projects are readable by the preview path", () => {
 
   it("marks exactly the four paying customers, all on a plan the price table knows", () => {
     const buyers = DEMO_SITES.filter((b) => b.purchase).map((b) => b.slug).sort();
-    expect(buyers).toEqual(["hung-le", "mai-viet", "ovemo", "vyvy"]);
-    expect(DEMO_SITES.filter((b) => b.retired).map((b) => b.slug).sort()).toEqual(["bep-ba-tu", "tabby"]);
+    expect(buyers).toEqual(["bep-ba-tu", "ovemo", "tabby", "vyvy"]);
+    expect(DEMO_SITES.filter((b) => b.retired).map((b) => b.slug).sort()).toEqual(["hung-le", "noi-nham"]);
     for (const b of DEMO_SITES) expect(b.retired && b.purchase, b.slug).toBeFalsy();
     for (const b of DEMO_SITES) if (b.purchase) expect(PAYOS_PRICES_VND[b.purchase.plan]).toBeGreaterThan(0);
   });

@@ -150,19 +150,28 @@ async function main() {
 
   const previous = existsSync(OUTPUT) ? JSON.parse(readFileSync(OUTPUT, "utf8")) : {};
   const output = { ...previous };
+  // SEED_PASSWORDS='{"demo.x@nova-demo.test":"secret"}' sets the password of those accounts (new or
+  // existing), to reuse one that was already handed out.
+  const fixedPasswords = JSON.parse(process.env.SEED_PASSWORDS || "{}");
   const rows = [];
 
   for (const { business: b, schema } of prepared) {
     let { data: user } = await db.from("users").select("id").eq("email", b.email).eq("provider", "email").maybeSingle();
     let password;
     if (!user) {
-      password = randomBytes(9).toString("base64url");
+      password = fixedPasswords[b.email] ?? randomBytes(9).toString("base64url");
       const { data, error } = await db.from("users")
         .insert({ email: b.email, provider: "email", display_name: b.displayName, password_hash: await seed.hashPassword(password), tier: "free", email_verified: true })
         .select("id").single();
       if (error) { console.log(`FAIL account ${b.email}: ${error.message}`); continue; }
       user = data;
       await db.from("credit_transactions").insert({ user_id: user.id, delta: 200, reason: "initial_grant" });
+      output[b.email] = { password, userId: user.id };
+    }
+
+    if (!password && fixedPasswords[b.email]) {
+      await db.from("users").update({ password_hash: await seed.hashPassword(fixedPasswords[b.email]) }).eq("id", user.id);
+      password = fixedPasswords[b.email];
       output[b.email] = { password, userId: user.id };
     }
 
@@ -186,7 +195,7 @@ async function main() {
 }
 
 // Purchases for the sites that have `purchase`: a paid order and its payment record, the account
-// moved to that tier. The amount is the plan's list price and the provider is "demo" so the
+// moved to that tier. The amount is the list price minus the welcome offer and the provider is "demo" so the
 // admin screen can say so. Paid time is a few minutes after the account was created, never in
 // the future. Re-running reconciles: a site without `purchase` loses an order it had before.
 async function sales(db, seed, now) {
@@ -215,9 +224,12 @@ async function sales(db, seed, now) {
       console.log(`removed ${orderCode(b)}`);
       continue;
     }
-    const amount = seed.PAYOS_PRICES_VND[b.purchase.plan];
-    const paidAt = new Date(Math.min(Date.parse(user.created_at) + (7 + i * 9) * 60_000, Date.parse(now) - 60_000)).toISOString();
-    const createdAt = new Date(Date.parse(paidAt) - 2 * 60_000).toISOString();
+    // What a new account really pays: the list price minus the welcome offer (50%).
+    const amount = seed.promoPrice(seed.PAYOS_PRICES_VND[b.purchase.plan]);
+    const born = Date.parse(user.created_at);
+    const paid = Math.max(born + 30_000, Math.min(born + (7 + i * 9) * 60_000, Date.now() - 5_000));
+    const paidAt = new Date(paid).toISOString();
+    const createdAt = new Date(Math.max(born + 10_000, paid - 2 * 60_000)).toISOString();
     console.log(`${apply ? "write" : "would write"} ${orderCode(b)}  ${b.email}  ${b.purchase.plan}  ${amount} VND  paid ${paidAt}`);
     if (!apply) continue;
     const results = await Promise.all([

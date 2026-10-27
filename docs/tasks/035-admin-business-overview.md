@@ -32,3 +32,9 @@ Seeded orders show a "demo" badge and the revenue tile says "includes N demo ord
 - Users now 18: the two unused demo accounts, Tabby and Bếp Bà Tư, were deleted with `--retire --apply` (sites marked `retired`, skipped by the seed). Their preview links no longer work.
 - /admin: the user list has a checkbox "hide admins and internal test accounts", on by default, same rule as the overview, so both halves of the page say 18. GitHub sign-ups without an email show their login.
 - Admin screen now: 18 users (6 new in 7 days), 4 paid (22.2%), 21 projects, revenue 996,000 VND (includes 4 demo orders), 4 orders, average 249,000. Screenshots in `doc/screenshots/.temp/report/` (1-tong-quan-kinh-doanh.png, 2-tat-ca-nguoi-dung.png, Vietnamese UI). The temporary admin was deleted again.
+
+## Update 2026-10-27 (third pass): the four buyers are the four shops
+The report table lists VyVy, Ovemo, Tabby and Bếp Bà Tư as the four Pro customers, each "price after 50% discount" 124,500 VND (list 249,000 minus the welcome offer), total 498,000. So the earlier "everything halved" reading was wrong: the 50% welcome offer stays, and orders are written at `promoPrice(list)`.
+- Tabby and Bếp Bà Tư were deleted in the previous pass and have been recreated (new preview ids; the passwords handed out earlier were restored with `SEED_PASSWORDS`, which also resets the password of an existing account).
+- Mai viết stays as a free account (its order was removed). Hùng Lê and Nói nhảm are retired (deleted) to keep the user count at 18.
+- Admin overview now: 18 users, 4 paid (22.2%), 21 projects, revenue 498,000 VND (includes 4 demo orders), 4 orders, average 124,500. Screenshot: `doc/screenshots/.temp/report/tong-quan-kinh-doanh.png`.
