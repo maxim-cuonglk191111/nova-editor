@@ -87,7 +87,7 @@ export default function AdminOverview() {
                       )}
                     </td>
                     <td style={td}>{o.email}</td>
-                    <td style={{ ...td, textTransform: "capitalize" }}>{o.plan}</td>
+                    <td style={{ ...td, textTransform: "capitalize", whiteSpace: "nowrap" }}>{o.plan}</td>
                     <td style={{ ...td, whiteSpace: "nowrap" }}>{formatVnd(o.amount, locale)}</td>
                     <td style={{ ...td, whiteSpace: "nowrap" }}>{date(o.paidAt)}</td>
                   </tr>

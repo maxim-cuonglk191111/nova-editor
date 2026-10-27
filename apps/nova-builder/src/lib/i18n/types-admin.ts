@@ -60,4 +60,6 @@ export interface I18nAdminDictionary {
   colUpdated: string;
   demoBadge: string;
   allUsersTitle: string;
+  /** Checkbox above the user list: leave out admins and @testqa.dev accounts. */
+  hideInternal: string;
 }

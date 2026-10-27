@@ -25,3 +25,10 @@ Seeded orders show a "demo" badge and the revenue tile says "includes N demo ord
 - Orders and payment records written (5 x 249,500 VND, provider `demo`); temporary admin created, used for the screenshots, then deleted. Admin screen read: 20 users, 5 paid (25%), 23 projects, revenue 1,247,500 VND, 5 orders, average 249,500 VND, "includes 5 demo orders".
 - Screenshots (gitignored, `doc/screenshots/.temp/report/`): 1-admin-tong-quan.png, 2-admin-day-du.png, 3-san-pham-5-khach-hang.png (the five customer sites, live preview links).
 - Undo: `node scripts/seed-demo.mjs --remove-sales --apply`. Recreate the temporary admin with `--admin --apply`, remove it with `--remove-admin --apply`.
+
+## Update 2026-10-27 (second pass): numbers changed
+- List prices halved: Pro 499,000 -> 249,000; Team 749,000 -> 379,000 (half is 374,500; 379,000 is the nearest price ending in 9). Max unchanged. The 50% welcome offer still applies on top of the list price (Pro first purchase 124,500), so it should be retired or kept on purpose.
+- Buyers are now four: VyVy, Ovemo, Mai viết (DEV1), Hùng Lê (DEV2). Nói nhảm is a free account again (`--sales --apply` removes its order and resets the tier). Orders are written at the list price, 249,000.
+- Users now 18: the two unused demo accounts, Tabby and Bếp Bà Tư, were deleted with `--retire --apply` (sites marked `retired`, skipped by the seed). Their preview links no longer work.
+- /admin: the user list has a checkbox "hide admins and internal test accounts", on by default, same rule as the overview, so both halves of the page say 18. GitHub sign-ups without an email show their login.
+- Admin screen now: 18 users (6 new in 7 days), 4 paid (22.2%), 21 projects, revenue 996,000 VND (includes 4 demo orders), 4 orders, average 249,000. Screenshots in `doc/screenshots/.temp/report/` (1-tong-quan-kinh-doanh.png, 2-tat-ca-nguoi-dung.png, Vietnamese UI). The temporary admin was deleted again.

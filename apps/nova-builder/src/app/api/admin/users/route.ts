@@ -13,22 +13,26 @@ export async function GET(req: Request) {
 
   const url = new URL(req.url);
   const search = url.searchParams.get("q") ?? "";
+  // Same rule as the business overview: admins and @testqa.dev accounts are internal.
+  const hideInternal = url.searchParams.get("hideInternal") === "1";
   const page = parseInt(url.searchParams.get("page") ?? "1", 10);
   const limit = 50;
   const offset = (page - 1) * limit;
 
   let query = getSupabaseAdmin()
     .from("users")
-    .select("id, email, tier, role, credits_remaining, created_at", { count: "exact" })
+    .select("id, email, github_login, tier, role, credits_remaining, created_at", { count: "exact" })
     .order("created_at", { ascending: false })
     .range(offset, offset + limit - 1);
 
   if (search) query = query.ilike("email", `%${search}%`);
+  if (hideInternal) query = query.neq("role", "admin").or("email.is.null,email.not.ilike.%@testqa.dev"); // GitHub sign-ups can have no email
 
   const { data, count } = await query;
   const mapped = (data ?? []).map((u: Record<string, unknown>) => ({
     id: u.id,
-    email: u.email,
+    // GitHub sign-ups can have no email: show the login instead of an empty row.
+    email: u.email ?? (u.github_login ? `${u.github_login} (GitHub)` : "—"),
     tier: u.tier,
     role: u.role,
     credits: u.credits_remaining ?? 0,

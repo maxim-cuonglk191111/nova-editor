@@ -5,14 +5,15 @@ import { PAYOS_PRICES_VND } from "../billing/payos";
 import { isEligibleForWelcomeOffer } from "../billing/promoEligibility";
 
 describe("list prices", () => {
-  it("every price ends in 9 and the anchor is Pro 499,000", () => {
-    expect(PAYOS_PRICES_VND.pro).toBe(499000);
+  it("every price ends in 9; Pro is 249,000 and Team 379,000 after the 2026-10-27 halving", () => {
+    expect(PAYOS_PRICES_VND.pro).toBe(249000);
+    expect(PAYOS_PRICES_VND.team).toBe(379000);
     for (const [plan, vnd] of Object.entries(PAYOS_PRICES_VND)) {
       expect(String(vnd), plan).toMatch(/9000$/);
     }
   });
 
-  it("Max follows the dollar ratio without rounding past the next 9: 49/19 of 499k", () => {
+  it("Max keeps its original price: the dollar ratio 49/19 of the old 499k anchor, without rounding past the next 9", () => {
     const exact = (49 * 499000) / 19; // 1,286,842
     expect(PAYOS_PRICES_VND.max).toBeGreaterThanOrEqual(exact);
     expect(PAYOS_PRICES_VND.max - exact).toBeLessThan(5000);
@@ -51,6 +52,7 @@ describe("welcome offer window", () => {
 describe("promoPrice", () => {
   it("is an exact half, never rounded to a neighbour", () => {
     expect(promoPrice(499000)).toBe(249500);
+    expect(promoPrice(PAYOS_PRICES_VND.pro)).toBe(124500);
     expect(promoPrice(1289000)).toBe(644500);
     expect(promoPrice(99000)).toBe(49500);
   });
