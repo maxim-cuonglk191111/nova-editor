@@ -3,6 +3,7 @@ import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { UI_VARS as C } from "@/lib/uiTheme";
 import { useI18n, fmt } from "@/lib/i18n";
+import AdminOverview from "@/components/admin/AdminOverview";
 
 
 type User = {
@@ -64,7 +65,7 @@ export default function AdminPage() {
 
   return (
     <div style={{ background: C.bg, minHeight: "100vh", padding: "28px 32px", fontFamily: C.font, color: C.text }}>
-      <div style={{ maxWidth: 1000, margin: "0 auto" }}>
+      <div style={{ maxWidth: 1200, margin: "0 auto" }}>
         <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 24 }}>
           <button onClick={() => router.push("/projects")}
             style={{ background: "none", border: "none", color: C.textMuted, cursor: "pointer", fontSize: 18 }}>
@@ -81,6 +82,9 @@ export default function AdminPage() {
         </div>
 
         {error && <div style={{ color: C.danger, fontSize: 12, marginBottom: 16 }}>{error}</div>}
+
+        {!error && <AdminOverview />}
+        {!error && <h2 style={{ margin: "0 0 12px", fontSize: 16, fontWeight: 700 }}>{A.allUsersTitle}</h2>}
 
         <div style={{ display: "flex", gap: 8, marginBottom: 16 }}>
           <input

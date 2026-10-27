@@ -40,6 +40,8 @@ export type DemoSite = {
   tree: (ctx: SeedContext) => Tree[];
   /** Files in scripts/seed-assets/<slug>/ that the seed uploads to the "assets" bucket as seed/<slug>/<file>. */
   assets?: string[];
+  /** Set when this person bought a plan (written by `seed-demo.mjs --sales`, provider "demo"). */
+  purchase?: { plan: "pro" };
 };
 
 export type SeedContext = {
@@ -679,13 +681,13 @@ function ovemoCafe(ctx: SeedContext): Tree[] {
 }
 
 export const DEMO_SITES: DemoSite[] = [
-  { slug: "mai-viet", name: "Mai viết — blog cá nhân", email: "demo.mai-viet@nova-demo.test", displayName: "Mai", purpose: "Personal blog: a nurse in Huế writing slowly about small things", tree: maiBlog },
+  { slug: "mai-viet", name: "Mai viết — blog cá nhân", email: "demo.mai-viet@nova-demo.test", displayName: "Mai", purpose: "Personal blog: a nurse in Huế writing slowly about small things", tree: maiBlog, purchase: { plan: "pro" } },
   { slug: "tabby", name: "Tabby — to-do list that nags kindly", email: "demo.tabby@nova-demo.test", displayName: "Khoa", purpose: "One-person SaaS: product page with pricing", tree: tabbySaas },
   { slug: "bep-ba-tu", name: "Bếp Bà Tư — bún riêu", email: "demo.bep-ba-tu@nova-demo.test", displayName: "Bà Tư", purpose: "Small local business: a street-food stall that never had a website", tree: bepBaTu },
-  { slug: "hung-le", name: "Hùng Lê — nhiếp ảnh", email: "demo.hung-le@nova-demo.test", displayName: "Hùng Lê", purpose: "Freelancer: a photographer's portfolio and booking page", tree: hungPhoto },
-  { slug: "noi-nham", name: "Nói nhảm lúc 2 giờ sáng — podcast", email: "demo.noi-nham@nova-demo.test", displayName: "Vy & Nam", purpose: "Creator: an indie podcast with episodes and a listener inbox", tree: noiNham },
-  { slug: "vyvy", name: "Tiệm bánh VyVy — landing page", email: "demo.vyvy@nova-demo.test", displayName: "VyVy", purpose: "Local bakery in Quy Nhơn: cakes and snacks with prices, how to order, refund policy", tree: vyvyBakery },
-  { slug: "ovemo", name: "Ovemo — Over The Moon", email: "demo.ovemo@nova-demo.test", displayName: "Ovemo", purpose: "Coffee and tea shop in Quy Nhơn Nam: full menu with M/L prices, toppings, hours and phones", tree: ovemoCafe, assets: ["ovemo-tra-sua.jpg", "ovemo-matcha.jpg", "ovemo-cacao.jpg", "ovemo-logo.png"] },
+  { slug: "hung-le", name: "Hùng Lê — nhiếp ảnh", email: "demo.hung-le@nova-demo.test", displayName: "Hùng Lê", purpose: "Freelancer: a photographer's portfolio and booking page", tree: hungPhoto, purchase: { plan: "pro" } },
+  { slug: "noi-nham", name: "Nói nhảm lúc 2 giờ sáng — podcast", email: "demo.noi-nham@nova-demo.test", displayName: "Vy & Nam", purpose: "Creator: an indie podcast with episodes and a listener inbox", tree: noiNham, purchase: { plan: "pro" } },
+  { slug: "vyvy", name: "Tiệm bánh VyVy — landing page", email: "demo.vyvy@nova-demo.test", displayName: "VyVy", purpose: "Local bakery in Quy Nhơn: cakes and snacks with prices, how to order, refund policy", tree: vyvyBakery, purchase: { plan: "pro" } },
+  { slug: "ovemo", name: "Ovemo — Over The Moon", email: "demo.ovemo@nova-demo.test", displayName: "Ovemo", purpose: "Coffee and tea shop in Quy Nhơn Nam: full menu with M/L prices, toppings, hours and phones", tree: ovemoCafe, assets: ["ovemo-tra-sua.jpg", "ovemo-matcha.jpg", "ovemo-cacao.jpg", "ovemo-logo.png"], purchase: { plan: "pro" } },
 ];
 
 // ── tree → project document ───────────────────────────────────────────────────

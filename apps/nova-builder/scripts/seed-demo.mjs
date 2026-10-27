@@ -7,6 +7,10 @@
 //   node scripts/seed-demo.mjs --apply               create / refresh the accounts and projects
 //   node scripts/seed-demo.mjs --apply --base https://your-site.example
 //   node scripts/seed-demo.mjs --cleanup --apply     delete the demo accounts (projects cascade)
+//   node scripts/seed-demo.mjs --sales --apply      mark the sites that "bought" Pro as paid (provider "demo")
+//   node scripts/seed-demo.mjs --remove-sales --apply   undo that: orders removed, tier back to free
+//   node scripts/seed-demo.mjs --admin --apply       create a temporary admin account to open /admin
+//   node scripts/seed-demo.mjs --remove-admin --apply   delete it again (an admin account is not left standing)
 //   node scripts/seed-demo.mjs --out some/dir        also write what /api/preview/<id> would return,
 //                                                    one <slug>.json each, to test the preview offline
 //
@@ -97,6 +101,9 @@ async function main() {
     return;
   }
 
+  if (flag("sales") || flag("remove-sales")) { await sales(db, seed, now); return; }
+  if (flag("admin") || flag("remove-admin")) { await admin(db, seed); return; }
+
   // Sites that ship their own photos point at the public URL Supabase will give the upload.
   const ctx = { assetBase: `${url}/storage/v1/object/public/${BUCKET}/seed` };
   const missing = seed.DEMO_SITES.flatMap((b) => (b.assets ?? []).filter((f) => !existsSync(join(ASSET_DIR, b.slug, f))).map((f) => `${b.slug}/${f}`));
@@ -173,6 +180,59 @@ async function main() {
   writeFileSync(OUTPUT, JSON.stringify(output, null, 2));
   console.log(rows.map((r) => `${r.account}  [${r.created}]\n   ${r.preview}`).join("\n"));
   console.log(`\nPasswords for new accounts are in ${OUTPUT} (gitignored).`);
+}
+
+// Purchases for the sites that have `purchase`: a paid order and its payment record, the account
+// moved to that tier. The order is the price the welcome offer really charges a new account
+// (50% of the list price), and the provider is "demo" so the admin screen can say so. Paid time
+// is a few minutes after the account was created, never in the future.
+async function sales(db, seed, now) {
+  const buyers = seed.DEMO_SITES.filter((b) => b.purchase);
+  const orderCode = (b) => `DEMO-${b.slug.toUpperCase()}`;
+  for (const [i, b] of buyers.entries()) {
+    const { data: user } = await db.from("users").select("id, created_at").eq("email", b.email).eq("provider", "email").maybeSingle();
+    if (!user) { console.log(`skip ${b.email}: no account (run the seed first)`); continue; }
+    if (flag("remove-sales")) {
+      if (!apply) { console.log(`would remove order ${orderCode(b)} and set ${b.email} back to free`); continue; }
+      await db.from("payment_orders").delete().eq("order_code", orderCode(b));
+      await db.from("processed_payments").delete().eq("order_code", orderCode(b));
+      await db.from("users").update({ tier: "free" }).eq("id", user.id);
+      console.log(`removed ${orderCode(b)}`);
+      continue;
+    }
+    const amount = seed.promoPrice(seed.PAYOS_PRICES_VND[b.purchase.plan]);
+    const paidAt = new Date(Math.min(Date.parse(user.created_at) + (7 + i * 9) * 60_000, Date.parse(now) - 60_000)).toISOString();
+    const createdAt = new Date(Date.parse(paidAt) - 2 * 60_000).toISOString();
+    console.log(`${apply ? "write" : "would write"} ${orderCode(b)}  ${b.email}  ${b.purchase.plan}  ${amount} VND  paid ${paidAt}`);
+    if (!apply) continue;
+    const results = await Promise.all([
+      db.from("payment_orders").upsert({ order_code: orderCode(b), provider: "demo", user_id: user.id, plan: b.purchase.plan, amount, status: "paid", created_at: createdAt, paid_at: paidAt }),
+      db.from("processed_payments").upsert({ order_code: orderCode(b), provider: "demo", kind: "plan", user_id: user.id, amount, plan: b.purchase.plan, status: "success", created_at: paidAt }),
+      db.from("users").update({ tier: b.purchase.plan }).eq("id", user.id),
+    ]);
+    for (const r of results) if (r.error) console.log(`FAIL ${b.slug}: ${r.error.message}`);
+  }
+  if (!apply) console.log("\nDry run complete. Add --apply to write.");
+}
+
+// A temporary admin so /admin can be opened and photographed; delete it afterwards.
+async function admin(db, seed) {
+  const email = "demo.admin@nova-demo.test";
+  if (flag("remove-admin")) {
+    if (!apply) { console.log(`would delete ${email}`); return; }
+    const { error } = await db.from("users").delete().eq("email", email).eq("provider", "email");
+    console.log(error ? `FAIL: ${error.message}` : `deleted ${email}`);
+    return;
+  }
+  if (!apply) { console.log(`would create admin ${email}`); return; }
+  const password = randomBytes(9).toString("base64url");
+  const { data: existing } = await db.from("users").select("id").eq("email", email).eq("provider", "email").maybeSingle();
+  const row = { email, provider: "email", display_name: "Admin", password_hash: await seed.hashPassword(password), tier: "free", role: "admin", email_verified: true };
+  const { error } = existing ? await db.from("users").update(row).eq("id", existing.id) : await db.from("users").insert(row);
+  if (error) { console.log(`FAIL: ${error.message}`); return; }
+  const previous = existsSync(OUTPUT) ? JSON.parse(readFileSync(OUTPUT, "utf8")) : {};
+  writeFileSync(OUTPUT, JSON.stringify({ ...previous, [email]: { password } }, null, 2));
+  console.log(`admin ${email} ready; password is in ${OUTPUT}`);
 }
 
 main().catch((err) => { console.error(err); process.exit(1); });
