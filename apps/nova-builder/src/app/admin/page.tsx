@@ -28,6 +28,7 @@ export default function AdminPage() {
   const [users, setUsers] = useState<User[]>([]);
   const [total, setTotal] = useState(0);
   const [search, setSearch] = useState("");
+  const [hideInternal, setHideInternal] = useState(true);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [editing, setEditing] = useState<string | null>(null);
@@ -36,7 +37,11 @@ export default function AdminPage() {
   const load = useCallback(async () => {
     setLoading(true);
     try {
-      const qs = search ? `?q=${encodeURIComponent(search)}` : "";
+      const params = new URLSearchParams();
+      if (search) params.set("q", search);
+      if (hideInternal) params.set("hideInternal", "1");
+      const query = params.toString();
+      const qs = query ? `?${query}` : "";
       const res = await fetch(`/api/admin/users${qs}`);
       if (res.status === 403) { setError(A.accessDenied); return; }
       const json = await res.json() as { users: User[]; total: number };
@@ -44,7 +49,7 @@ export default function AdminPage() {
       setTotal(json.total);
     } catch (err) { setError(String(err)); }
     finally { setLoading(false); }
-  }, [search]);
+  }, [search, hideInternal]);
 
   useEffect(() => { load(); }, [load]);
 
@@ -101,6 +106,11 @@ export default function AdminPage() {
             {A.search}
           </button>
         </div>
+
+        <label style={{ display: "flex", alignItems: "center", gap: 8, margin: "0 0 12px", fontSize: 13, color: C.textMuted, cursor: "pointer" }}>
+          <input type="checkbox" checked={hideInternal} onChange={(e) => setHideInternal(e.target.checked)} />
+          {A.hideInternal}
+        </label>
 
         <div style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 10, overflow: "hidden" }}>
           <div style={{ padding: "10px 14px", borderBottom: `1px solid ${C.border}`, fontSize: 13, color: C.textMuted }}>

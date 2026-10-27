@@ -9,6 +9,7 @@
 //   node scripts/seed-demo.mjs --cleanup --apply     delete the demo accounts (projects cascade)
 //   node scripts/seed-demo.mjs --sales --apply      mark the sites that "bought" Pro as paid (provider "demo")
 //   node scripts/seed-demo.mjs --remove-sales --apply   undo that: orders removed, tier back to free
+//   node scripts/seed-demo.mjs --retire --apply     delete the accounts of sites marked `retired` (projects cascade)
 //   node scripts/seed-demo.mjs --admin --apply       create a temporary admin account to open /admin
 //   node scripts/seed-demo.mjs --remove-admin --apply   delete it again (an admin account is not left standing)
 //   node scripts/seed-demo.mjs --out some/dir        also write what /api/preview/<id> would return,
@@ -89,6 +90,7 @@ async function main() {
   console.log(`Preview base    : ${baseUrl}\n`);
 
   const seed = await loadSeedModule();
+  const active = seed.DEMO_SITES.filter((b) => !b.retired);
   const now = new Date().toISOString();
   const db = createClient(url, key, { auth: { persistSession: false } });
 
@@ -101,16 +103,17 @@ async function main() {
     return;
   }
 
+  if (flag("retire")) { await retire(db, seed); return; }
   if (flag("sales") || flag("remove-sales")) { await sales(db, seed, now); return; }
   if (flag("admin") || flag("remove-admin")) { await admin(db, seed); return; }
 
   // Sites that ship their own photos point at the public URL Supabase will give the upload.
   const ctx = { assetBase: `${url}/storage/v1/object/public/${BUCKET}/seed` };
-  const missing = seed.DEMO_SITES.flatMap((b) => (b.assets ?? []).filter((f) => !existsSync(join(ASSET_DIR, b.slug, f))).map((f) => `${b.slug}/${f}`));
+  const missing = active.flatMap((b) => (b.assets ?? []).filter((f) => !existsSync(join(ASSET_DIR, b.slug, f))).map((f) => `${b.slug}/${f}`));
   if (missing.length) { console.error(`Missing asset files in ${ASSET_DIR}: ${missing.join(", ")}`); process.exit(1); }
 
   // Compatibility check: the exact path /api/preview takes (migrate, then serialize).
-  const prepared = seed.DEMO_SITES.map((b) => {
+  const prepared = active.map((b) => {
     const schema = seed.buildProjectSchema(b, now, ctx);
     const project = seed.migrateToLatest(JSON.parse(JSON.stringify(schema)));
     const serialized = seed.serializeWebstudioData(project.data);
@@ -127,7 +130,7 @@ async function main() {
   if (!apply) { console.log("Dry run complete. Add --apply to write."); return; }
 
   // Upload the sites' own photos first, so no preview ever points at a file that is not there yet.
-  const withAssets = seed.DEMO_SITES.filter((b) => b.assets?.length);
+  const withAssets = active.filter((b) => b.assets?.length);
   if (withAssets.length) {
     const { data: bucket } = await db.storage.getBucket(BUCKET);
     if (!bucket) {
@@ -183,12 +186,24 @@ async function main() {
 }
 
 // Purchases for the sites that have `purchase`: a paid order and its payment record, the account
-// moved to that tier. The order is the price the welcome offer really charges a new account
-// (50% of the list price), and the provider is "demo" so the admin screen can say so. Paid time
-// is a few minutes after the account was created, never in the future.
+// moved to that tier. The amount is the plan's list price and the provider is "demo" so the
+// admin screen can say so. Paid time is a few minutes after the account was created, never in
+// the future. Re-running reconciles: a site without `purchase` loses an order it had before.
 async function sales(db, seed, now) {
-  const buyers = seed.DEMO_SITES.filter((b) => b.purchase);
   const orderCode = (b) => `DEMO-${b.slug.toUpperCase()}`;
+  const active = seed.DEMO_SITES.filter((b) => !b.retired);
+  const buyers = active.filter((b) => b.purchase);
+  if (!flag("remove-sales")) {
+    for (const b of active.filter((s) => !s.purchase)) {
+      const { data: old } = await db.from("payment_orders").select("order_code").eq("order_code", orderCode(b)).maybeSingle();
+      if (!old) continue;
+      console.log(`${apply ? "remove" : "would remove"} ${orderCode(b)} (${b.slug} is no longer a buyer)`);
+      if (!apply) continue;
+      await db.from("payment_orders").delete().eq("order_code", orderCode(b));
+      await db.from("processed_payments").delete().eq("order_code", orderCode(b));
+      await db.from("users").update({ tier: "free" }).eq("email", b.email).eq("provider", "email");
+    }
+  }
   for (const [i, b] of buyers.entries()) {
     const { data: user } = await db.from("users").select("id, created_at").eq("email", b.email).eq("provider", "email").maybeSingle();
     if (!user) { console.log(`skip ${b.email}: no account (run the seed first)`); continue; }
@@ -200,7 +215,7 @@ async function sales(db, seed, now) {
       console.log(`removed ${orderCode(b)}`);
       continue;
     }
-    const amount = seed.promoPrice(seed.PAYOS_PRICES_VND[b.purchase.plan]);
+    const amount = seed.PAYOS_PRICES_VND[b.purchase.plan];
     const paidAt = new Date(Math.min(Date.parse(user.created_at) + (7 + i * 9) * 60_000, Date.parse(now) - 60_000)).toISOString();
     const createdAt = new Date(Date.parse(paidAt) - 2 * 60_000).toISOString();
     console.log(`${apply ? "write" : "would write"} ${orderCode(b)}  ${b.email}  ${b.purchase.plan}  ${amount} VND  paid ${paidAt}`);
@@ -211,6 +226,18 @@ async function sales(db, seed, now) {
       db.from("users").update({ tier: b.purchase.plan }).eq("id", user.id),
     ]);
     for (const r of results) if (r.error) console.log(`FAIL ${b.slug}: ${r.error.message}`);
+  }
+  if (!apply) console.log("\nDry run complete. Add --apply to write.");
+}
+
+// Deletes the accounts of retired sites. Projects and orders go with them (foreign keys cascade);
+// the payment record has no foreign key, so it is removed by order code.
+async function retire(db, seed) {
+  for (const b of seed.DEMO_SITES.filter((s) => s.retired)) {
+    if (!apply) { console.log(`would delete account ${b.email}`); continue; }
+    await db.from("processed_payments").delete().eq("order_code", `DEMO-${b.slug.toUpperCase()}`);
+    const { error } = await db.from("users").delete().eq("email", b.email).eq("provider", "email");
+    console.log(error ? `FAIL ${b.email}: ${error.message}` : `deleted ${b.email}`);
   }
   if (!apply) console.log("\nDry run complete. Add --apply to write.");
 }

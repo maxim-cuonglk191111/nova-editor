@@ -51,4 +51,5 @@ export const enAdmin: I18nAdminDictionary = {
   colUpdated: "Updated",
   demoBadge: "demo",
   allUsersTitle: "All users",
+  hideInternal: "Hide admins and internal test accounts",
 };

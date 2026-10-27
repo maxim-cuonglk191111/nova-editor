@@ -51,4 +51,5 @@ export const viAdmin: I18nAdminDictionary = {
   colUpdated: "Cập nhật",
   demoBadge: "demo",
   allUsersTitle: "Tất cả người dùng",
+  hideInternal: "Ẩn quản trị viên và tài khoản kiểm thử nội bộ",
 };
