@@ -80,10 +80,10 @@ export default function AdminOverview() {
               <tbody>
                 {data.transactions.map((o) => (
                   <tr key={o.orderCode}>
-                    <td style={{ ...td, fontFamily: "ui-monospace, Consolas, monospace", fontSize: 12 }}>
+                    <td style={{ ...td, fontFamily: "ui-monospace, Consolas, monospace", fontSize: 12, whiteSpace: "nowrap" }}>
                       {o.orderCode}
                       {o.provider === DEMO_PROVIDER && (
-                        <span style={{ marginLeft: 6, padding: "1px 6px", borderRadius: 4, fontSize: 11, fontWeight: 600, color: "#fbbf24", background: "rgba(251,191,36,0.1)", border: "1px solid rgba(251,191,36,0.25)" }}>{A.demoBadge}</span>
+                        <span style={{ marginLeft: 6, padding: "1px 6px", whiteSpace: "nowrap", borderRadius: 4, fontSize: 11, fontWeight: 600, color: "#fbbf24", background: "rgba(251,191,36,0.1)", border: "1px solid rgba(251,191,36,0.25)" }}>{A.demoBadge}</span>
                       )}
                     </td>
                     <td style={td}>{o.email}</td>

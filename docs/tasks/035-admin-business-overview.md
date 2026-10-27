@@ -1,6 +1,6 @@
 # Task 035 — Admin business overview and seeded Pro purchases for the report
 
-- **Status:** In progress (code done, database write and screenshots pending)
+- **Status:** Closed (admin screen not deployed to Cloudflare yet; screenshots taken from the local build against the same database)
 - **Filed:** 2026-10-27
 - **Owner:** Claude Code
 
@@ -21,15 +21,7 @@ The report needs business results: how many people signed up, who bought a plan,
 ## Decision: demo orders stay marked
 Seeded orders show a "demo" badge and the revenue tile says "includes N demo orders". The slide item asks for real business results; seeded purchases are test data, so the screen says so. If VyVy or Ovemo really pay through the checkout (249,500 VND while the offer runs) their orders appear without the badge.
 
-## Pending
-- Write the five orders and create the temporary admin (blocked by the session's permission check; commands below).
-- Deploy (`build:cf` + deploy), capture `/admin` and the five previews, delete the temporary admin.
-
-```
-cd apps/nova-builder
-node scripts/seed-demo.mjs --sales --apply
-node scripts/seed-demo.mjs --admin --apply        # password lands in .seed-demo-output.json
-node scripts/seed-demo.mjs --remove-admin --apply # when the screenshots are done
-```
-
-Expected numbers after the write: 20 users (13 + 7 demo), 5 paid (25%), revenue 1,247,500 VND, 5 orders, average 249,500 VND.
+## Done
+- Orders and payment records written (5 x 249,500 VND, provider `demo`); temporary admin created, used for the screenshots, then deleted. Admin screen read: 20 users, 5 paid (25%), 23 projects, revenue 1,247,500 VND, 5 orders, average 249,500 VND, "includes 5 demo orders".
+- Screenshots (gitignored, `doc/screenshots/.temp/report/`): 1-admin-tong-quan.png, 2-admin-day-du.png, 3-san-pham-5-khach-hang.png (the five customer sites, live preview links).
+- Undo: `node scripts/seed-demo.mjs --remove-sales --apply`. Recreate the temporary admin with `--admin --apply`, remove it with `--remove-admin --apply`.
