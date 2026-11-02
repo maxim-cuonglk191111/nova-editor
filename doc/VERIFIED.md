@@ -2495,7 +2495,7 @@ Works / Ease. Baseline = production 25.13.0 (Tier B had scored Works only); afte
 Result: 0 blocking · 21 warnings (files 400–700 lines, I1 fat props, D1 duplicate helpers) — filed as task 008 per CLAUDE.md.
 
 ## AI tab (chat assistant) — task 037 / task 009 item 6 (v25.17.0)
-Local build against `/builder/demo`, AI endpoints answered by the test (no provider quota); screenshots `doc/screenshots/26-ai-tab-proposal-en.png`, `27-ai-tab-applied-vi.png`. Production run with a real provider and account: pending (needs the deploy).
+Local build against `/builder/demo`, AI endpoints answered by the test (no provider quota); screenshots `doc/screenshots/26-ai-tab-proposal-en.png`, `27-ai-tab-applied-vi.png`. Production run with real providers (Groq) on 2026-11-02 passed: see [task 039](../docs/tasks/039-ai-tab-production-verification.md), `doc/screenshots/28-ai-tab-production.png`; axe on the panel (proposal, history menu, error) has no serious or critical violations after the contrast and list-role fixes.
 
 | # | Flow | Result |
 |---|------|--------|

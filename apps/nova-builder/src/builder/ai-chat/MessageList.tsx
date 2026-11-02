@@ -58,7 +58,8 @@ export function MessageList({ messages, pending, onApply, onDiscard, onHighlight
           <div key={m.id} data-testid={m.kind === "error" ? "ai-msg-error" : "ai-msg-assistant"}>
             {who(L.assistant, m.at, extra)}
             {m.kind === "error" ? (
-              <div role="alert" style={{ padding: "8px 11px", borderRadius: 10, background: "rgba(239,68,68,0.07)", border: "1px solid rgba(239,68,68,0.3)", color: C.danger, fontSize: 13, lineHeight: 1.5, fontFamily: C.font, display: "flex", gap: 10, alignItems: "center", flexWrap: "wrap" }}>
+              <div role="alert" style={{ padding: "8px 11px", borderRadius: 10, background: "rgba(239,68,68,0.07)", border: "1px solid rgba(239,68,68,0.3)", color: C.text, fontSize: 13, lineHeight: 1.5, fontFamily: C.font, display: "flex", gap: 10, alignItems: "center", flexWrap: "wrap" }}>
+                <span aria-hidden="true" style={{ color: C.danger, fontWeight: 800 }}>!</span>
                 <span style={{ flex: 1, minWidth: 120, overflowWrap: "anywhere" }}>{m.text}</span>
                 {m.needsAccount ? (
                   <a href="/signup?callbackUrl=%2Fprojects" style={{ background: C.accent, borderRadius: 6, color: "#fff", fontSize: 13, padding: "5px 11px", textDecoration: "none", whiteSpace: "nowrap" }}>{A.signUpFree}</a>

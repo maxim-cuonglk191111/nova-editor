@@ -421,8 +421,8 @@ export const enDictionary: I18nDictionary = {
   },
   coachmarks: {
     generate: {
-      title: "✦ Generate with AI",
-      body: "Click here to describe a change — AI rewrites your design instantly.",
+      title: "✦ AI assistant",
+      body: "Open the AI tab and say what you want. AI shows the changes first; nothing happens until you press Apply.",
     },
     canvas: {
       title: "Click to edit",

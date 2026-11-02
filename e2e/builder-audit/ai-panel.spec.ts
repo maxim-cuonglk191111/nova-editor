@@ -232,7 +232,7 @@ test("a reload keeps the thread and a pending proposal, and the history menu reo
   await page.getByTestId("ai-new-chat").click();
   await expect(page.getByTestId("ai-msg-user")).toHaveCount(0);
   await page.getByTestId("ai-history").click();
-  await page.getByRole("option").filter({ hasText: "Make this heading shorter" }).getByRole("button").first().click();
+  await page.getByTestId("ai-history-list").locator("li").filter({ hasText: "Make this heading shorter" }).getByRole("button").first().click();
   await expect(page.getByTestId("ai-msg-user")).toContainText("Make this heading shorter");
 });
 

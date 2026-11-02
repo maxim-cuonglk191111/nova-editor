@@ -45,3 +45,7 @@ screenshotted, reviewed and scored /10; a feature we cannot make work is hidden
 | [036](036-old-landing-and-first-purchase-prices.md) | Old landing page back; first-purchase prices for everyone who never paid | Closed |
 | [037](037-ai-chat-tab.md) | AI as a chat tab in the left sidebar (finishes task 009 item 6) | Closed locally, production run pending |
 | [038](038-builder-ui-modernization.md) | Builder UI modernization (Siteai reference), spec first, no code before approval | Open |
+| [039](039-ai-tab-production-verification.md) | AI tab verified on production with real providers (flows, screenshots, findings) | Closed |
+| [040](040-ai-chat-history-in-database.md) | AI chat history in the database, with restore points (migration needs the owner's go-ahead) | Open |
+| [041](041-ai-tab-quality-and-polish.md) | AI tab: answer quality, reliability and polish backlog | Open |
+| [042](042-housekeeping-and-open-decisions.md) | Housekeeping and open decisions after tasks 029–041 | Open |

@@ -2,6 +2,14 @@
 
 ---
 
+## [25.17.1] — 2026-11-02
+
+### Task 039 — AI tab verified on production; accessibility and copy fixes (Patch)
+
+- **Verified** on the deployed site with real providers (Groq answered): edit, section restyle, add a section, undo, reload, start over. New specs: `ai-panel-flows.spec.ts` (edit, remove, replace, insert, hover outline, 1024px, Vietnamese, axe, keyboard) and `ai-panel-live.spec.ts` (production, throwaway account); 13 route tests for `/api/ai/chat` including "credits only after a valid answer".
+- **Fixed**: the Apply button and error text failed AA contrast; the chat history menu used listbox roles around buttons (axe nested-interactive); the first-run tour still said "Click here… AI rewrites your design instantly".
+- **Docs/tasks**: pricing policy now lists the VND prices and the first-purchase rule; tasks 040–042 filed (database history, quality backlog, housekeeping).
+
 ## [25.17.0] — 2026-11-02
 
 ### Task 037 — AI as a chat tab in the left sidebar (Minor)

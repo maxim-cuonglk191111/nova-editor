@@ -76,7 +76,7 @@ export function ProposalCard({ message, onApply, onDiscard, onHighlight, busy }:
           <button type="button" onClick={() => onDiscard(message)} disabled={busy} style={{ padding: "6px 12px", borderRadius: 7, border: `1px solid ${C.border}`, background: "transparent", color: C.textMuted, fontSize: 13, fontFamily: C.font, cursor: "pointer" }}>
             {L.discard}
           </button>
-          <button type="button" onClick={() => onApply(message)} disabled={busy} data-testid="ai-apply" style={{ padding: "6px 16px", borderRadius: 7, border: "none", background: C.success, color: "#fff", fontSize: 13, fontWeight: 700, fontFamily: C.font, cursor: "pointer" }}>
+          <button type="button" onClick={() => onApply(message)} disabled={busy} data-testid="ai-apply" style={{ padding: "6px 16px", borderRadius: 7, border: "none", background: "#047857", color: "#fff", fontSize: 13, fontWeight: 700, fontFamily: C.font, cursor: "pointer" }}>
             {L.apply}
           </button>
         </div>

@@ -131,3 +131,18 @@ Pre-revenue: default to a free provider, label "(free)" in the selector, show "0
 | DB-driven cost table (no-deploy price changes) | post-revenue |
 | Annual/seat proration edge cases | first Team customer |
 | Opus "max quality" toggle | demand for higher-fidelity generation |
+
+## VND prices at the VietQR checkout and the first-purchase offer (task 036, 2026-11-02)
+
+The checkout charges VND (`lib/billing/payos.ts`, one-time payment). The dollar figures above are the reference for the AI cost model; the VND price table is separate and every price ends in 9.
+
+| Plan | Regular price | First-purchase price (until 26 Dec 2026) |
+|------|---------------|------------------------------------------|
+| Pro | 249,000 VND | 129,000 VND |
+| Team | 379,000 VND | 189,000 VND |
+| Max | 1,289,000 VND | 649,000 VND |
+| Credit pack | 99,000 VND | 49,000 VND |
+
+- **Rule.** Anyone who has never paid for anything (no applied payment, no paid order) sees the regular price struck through and the first-purchase price, labelled "first purchase", on the pricing page, in the checkout and in the banner, whatever the age of the account or whether they are signed in. After a first payment the regular price applies. The server decides the amount (`isEligibleForFirstPurchase`, `promoPrice`); the client only explains it. One discounted order at a time.
+- **Why fixed numbers.** Each first-purchase price is the price ending in 9 nearest to half of the regular price (Pro: 124,500 → 129,000). They are constants in `lib/promo.ts` (`PROMO_PRICES_VND`), with a unit test for the rule.
+- **End date.** 26 Dec 2026 23:59:59 (UTC+7), two months from launch; after it everyone pays the regular price. There is no per-visitor countdown.

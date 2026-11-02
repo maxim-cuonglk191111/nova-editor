@@ -421,8 +421,8 @@ export const viDictionary: I18nDictionary = {
   },
   coachmarks: {
     generate: {
-      title: "✦ Tạo với AI",
-      body: "Nhấp vào đây để mô tả thay đổi — AI sẽ viết lại thiết kế của bạn ngay lập tức.",
+      title: "✦ Trợ lý AI",
+      body: "Mở tab AI rồi nói bạn muốn gì. AI cho xem các thay đổi trước; chưa có gì thay đổi cho đến khi bạn bấm Áp dụng.",
     },
     canvas: {
       title: "Nhấp để chỉnh sửa",
