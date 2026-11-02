@@ -40,13 +40,13 @@ export function MessageList({ messages, pending, onApply, onRestore, onDiscard, 
   const progressText = pending ? (pending.stage === "building" ? pending.progress : pending.stage === "reading" ? L.progressReading : L.progressWriting) : "";
 
   return (
-    <div role="log" aria-live="polite" aria-label={L.title} style={{ display: "flex", flexDirection: "column", gap: 14, padding: "12px 12px 4px" }} data-testid="ai-messages">
+    <div role="log" aria-live="polite" aria-label={L.title} style={{ display: "flex", flexDirection: "column", gap: 16, padding: "14px 14px 6px" }} data-testid="ai-messages">
       {messages.map((m) => {
         if (m.role === "user") {
           return (
             <div key={m.id} data-testid="ai-msg-user">
               {who(L.you, m.at)}
-              <div style={{ padding: "8px 11px", borderRadius: 10, background: C.accentBg, border: `1px solid ${C.accentBorder}`, color: C.text, fontSize: 13, lineHeight: 1.5, whiteSpace: "pre-wrap", overflowWrap: "anywhere", fontFamily: C.font }}>
+              <div style={{ padding: "10px 14px", borderRadius: 14, background: C.accentBg, border: `1px solid ${C.accentBorder}`, color: C.text, fontSize: 14, lineHeight: 1.5, whiteSpace: "pre-wrap", overflowWrap: "anywhere", fontFamily: C.font }}>
                 {m.text}
               </div>
             </div>
@@ -59,18 +59,18 @@ export function MessageList({ messages, pending, onApply, onRestore, onDiscard, 
           <div key={m.id} data-testid={m.kind === "error" ? "ai-msg-error" : "ai-msg-assistant"}>
             {who(L.assistant, m.at, extra)}
             {m.kind === "error" ? (
-              <div role="alert" style={{ padding: "8px 11px", borderRadius: 10, background: "rgba(239,68,68,0.07)", border: "1px solid rgba(239,68,68,0.3)", color: C.text, fontSize: 13, lineHeight: 1.5, fontFamily: C.font, display: "flex", gap: 10, alignItems: "center", flexWrap: "wrap" }}>
+              <div role="alert" style={{ padding: "10px 14px", borderRadius: 14, background: "rgba(239,68,68,0.07)", border: "1px solid rgba(239,68,68,0.3)", color: C.text, fontSize: 14, lineHeight: 1.5, fontFamily: C.font, display: "flex", gap: 10, alignItems: "center", flexWrap: "wrap" }}>
                 <span aria-hidden="true" style={{ color: C.danger, fontWeight: 800 }}>!</span>
                 <span style={{ flex: 1, minWidth: 120, overflowWrap: "anywhere" }}>{m.text}</span>
                 {m.needsAccount ? (
-                  <a href="/signup?callbackUrl=%2Fprojects" style={{ background: C.accent, borderRadius: 6, color: "#fff", fontSize: 13, padding: "5px 11px", textDecoration: "none", whiteSpace: "nowrap" }}>{A.signUpFree}</a>
+                  <a href="/signup?callbackUrl=%2Fprojects" style={{ background: C.accent, borderRadius: 10, color: "#fff", fontSize: 13, padding: "6px 14px", textDecoration: "none", whiteSpace: "nowrap" }}>{A.signUpFree}</a>
                 ) : (
-                  <button type="button" onClick={onRetry} style={{ background: C.danger, border: "none", borderRadius: 6, color: "#fff", fontSize: 13, fontWeight: 600, padding: "5px 11px", cursor: "pointer", fontFamily: C.font }}>{L.retry}</button>
+                  <button type="button" onClick={onRetry} style={{ background: C.danger, border: "none", borderRadius: 10, color: "#fff", fontSize: 13, fontWeight: 600, padding: "6px 14px", cursor: "pointer", fontFamily: C.font }}>{L.retry}</button>
                 )}
               </div>
             ) : (
               <>
-                {m.text && <div style={{ color: C.text, fontSize: 13, lineHeight: 1.55, whiteSpace: "pre-wrap", overflowWrap: "anywhere", fontFamily: C.font }}>{m.text}</div>}
+                {m.text && <div style={{ color: C.text, fontSize: 14, lineHeight: 1.55, whiteSpace: "pre-wrap", overflowWrap: "anywhere", fontFamily: C.font }}>{m.text}</div>}
                 {m.kind === "proposal" && <ProposalCard message={m} onApply={onApply} onDiscard={onDiscard} onRestore={onRestore} onHighlight={onHighlight} busy={pending !== null} />}
               </>
             )}
@@ -79,7 +79,7 @@ export function MessageList({ messages, pending, onApply, onRestore, onDiscard, 
       })}
       {pending && (
         <div role="status" data-testid="ai-progress" style={{ display: "flex", alignItems: "center", gap: 8, color: C.textMuted, fontSize: 13, fontFamily: C.font }}>
-          <span aria-hidden="true" style={{ width: 13, height: 13, border: "2px solid rgba(255,255,255,0.2)", borderTopColor: C.accentText, borderRadius: "50%", display: "inline-block", animation: "ai-chat-spin 0.7s linear infinite" }} />
+          <span aria-hidden="true" style={{ width: 13, height: 13, border: `2px solid ${C.border}`, borderTopColor: C.accentText, borderRadius: "50%", display: "inline-block", animation: "ai-chat-spin 0.7s linear infinite" }} />
           {progressText}
         </div>
       )}

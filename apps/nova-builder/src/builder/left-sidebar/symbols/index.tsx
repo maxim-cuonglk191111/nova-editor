@@ -38,7 +38,7 @@ export function SymbolsPanel() {
             placeholder={selectedId ? L.namePlaceholder : L.selectFirst}
             disabled={!selectedId}
             style={{
-              flex: 1, padding: "5px 8px", background: "rgba(255,255,255,0.05)",
+              flex: 1, padding: "5px 8px", background: "var(--ui-hover-bg)",
               border: `1px solid ${C.border}`, borderRadius: 5, color: C.text,
               fontSize: 13, fontFamily: C.font, outline: "none",
             }}
@@ -49,7 +49,7 @@ export function SymbolsPanel() {
             title={L.saveTitle}
             style={{
               padding: "5px 10px", borderRadius: 5, border: "none",
-              background: selectedId ? "rgba(124,58,237,0.8)" : "rgba(255,255,255,0.06)",
+              background: selectedId ? "color-mix(in srgb, var(--ui-accent) 80%, transparent)" : "rgba(255,255,255,0.06)",
               color: "#fff", fontSize: 13, fontWeight: 600,
               cursor: selectedId ? "pointer" : "default", flexShrink: 0,
             }}
@@ -71,8 +71,8 @@ export function SymbolsPanel() {
                 key={sym.id}
                 style={{
                   display: "flex", alignItems: "center", gap: 8, padding: "8px 10px",
-                  background: flash === sym.id ? "rgba(124,58,237,0.15)" : "rgba(255,255,255,0.02)",
-                  border: `1px solid ${flash === sym.id ? "rgba(124,58,237,0.4)" : C.border}`,
+                  background: flash === sym.id ? "color-mix(in srgb, var(--ui-accent) 15%, transparent)" : "rgba(255,255,255,0.02)",
+                  border: `1px solid ${flash === sym.id ? "color-mix(in srgb, var(--ui-accent) 40%, transparent)" : C.border}`,
                   borderRadius: 6, transition: "background 0.2s, border-color 0.2s",
                 }}
               >

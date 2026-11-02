@@ -223,7 +223,7 @@ export function BreakpointManager({ onClose }: { onClose: () => void }) {
               title={`${dp.label} (${dp.query})`}
               style={{
                 padding: "2px 8px",
-                background: "rgba(255,255,255,0.04)",
+                background: "var(--ui-hover-bg)",
                 border: `1px solid ${C.border}`,
                 borderRadius: 4,
                 color: C.text,
@@ -248,8 +248,8 @@ export function BreakpointManager({ onClose }: { onClose: () => void }) {
           marginTop: 4,
           width: "100%",
           padding: "4px 0",
-          background: "rgba(124,58,237,0.12)",
-          border: `1px dashed rgba(124,58,237,0.4)`,
+          background: "color-mix(in srgb, var(--ui-accent) 12%, transparent)",
+          border: `1px dashed color-mix(in srgb, var(--ui-accent) 40%, transparent)`,
           borderRadius: 4,
           color: C.accentText,
           fontSize: 13,

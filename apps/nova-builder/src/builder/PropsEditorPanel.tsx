@@ -67,7 +67,7 @@ function ImageSrcControl({
       {isValidPreview && (
         <div
           style={{
-            width: "100%", height: 80, borderRadius: 4, overflow: "hidden",
+            width: "100%", height: 80, borderRadius: 10, overflow: "hidden",
             border: `1px solid ${C.inputBorder}`, background: "#111",
             display: "flex", alignItems: "center", justifyContent: "center",
           }}
@@ -110,10 +110,10 @@ function ImageSrcControl({
             });
           }}
           style={{
-            padding: "5px 10px",
+            padding: "8px 12px",
             background: "none",
             border: `1px solid ${C.inputBorder}`,
-            borderRadius: 4,
+            borderRadius: 10,
             color: C.textMuted,
             fontSize: 12,
             cursor: "pointer",
@@ -141,10 +141,10 @@ function ImageSrcControl({
         aria-expanded={libraryOpen}
         onClick={() => setLibraryOpen((v) => !v)}
         style={{
-          padding: "5px 10px",
+          padding: "8px 12px",
           background: "none",
           border: `1px solid ${C.inputBorder}`,
-          borderRadius: 4,
+          borderRadius: 10,
           color: C.textMuted,
           fontSize: 12,
           cursor: "pointer",
@@ -192,9 +192,9 @@ function PropControl({
   const displayValue = value !== undefined ? value : meta.defaultValue;
 
   const inputStyle = {
-    background: C.input, border: `1px solid ${C.inputBorder}`, borderRadius: 4,
+    background: C.card, border: `1px solid ${C.inputBorder}`, borderRadius: 10,
     color: C.text, fontSize: 13, fontFamily: C.fontMono,
-    padding: "3px 6px", width: "100%", boxSizing: "border-box" as const, outline: "none",
+    padding: "7px 10px", width: "100%", boxSizing: "border-box" as const, outline: "none",
   };
 
   if (meta.control === "color" || meta.type === "color") {
@@ -204,7 +204,7 @@ function PropControl({
           type="color"
           value={typeof displayValue === "string" ? displayValue : "#000000"}
           onChange={(e) => writeProp(instanceId, name, e.target.value, "string")}
-          style={{ width: 28, height: 24, padding: 1, border: `1px solid ${C.inputBorder}`, borderRadius: 4, background: "none", cursor: "pointer" }}
+          style={{ width: 28, height: 24, padding: 1, border: `1px solid ${C.inputBorder}`, borderRadius: 10, background: "none", cursor: "pointer" }}
         />
         <input
           type="text"
@@ -311,7 +311,7 @@ function PropRow({
   return (
     <div style={{ padding: "4px 12px", display: "flex", flexDirection: "column", gap: 3 }}>
       <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-        <label style={{ fontSize: 12, color: C.textMuted, fontWeight: 600, letterSpacing: "0.04em", flex: 1 }}>
+        <label style={{ fontSize: 13, color: C.text, fontWeight: 500, flex: 1 }}>
           {label}
         </label>
         {meta.description && (
@@ -349,10 +349,10 @@ function PropRow({
             display: "flex",
             alignItems: "center",
             gap: 6,
-            padding: "4px 8px",
-            borderRadius: 4,
+            padding: "8px 12px",
+            borderRadius: 10,
             border: `1px solid ${C.accentLight}`,
-            background: "rgba(124,58,237,0.08)",
+            background: "color-mix(in srgb, var(--ui-accent) 8%, transparent)",
             color: C.accentLight,
             fontSize: FONT.xs,
             fontFamily: C.fontMono,
@@ -410,7 +410,7 @@ function TextContentField({ instanceId, instance }: { instanceId: string; instan
 
   return (
     <div style={{ padding: "4px 12px 8px", borderBottom: `1px solid ${C.border}` }}>
-      <label style={{ fontSize: 12, color: C.textMuted, fontWeight: 600, letterSpacing: "0.04em", display: "block", marginBottom: 4 }}>
+      <label style={{ fontSize: 13, color: C.text, fontWeight: 500, display: "block", marginBottom: 4 }}>
         {P.content}
       </label>
       <textarea
@@ -427,9 +427,9 @@ function TextContentField({ instanceId, instance }: { instanceId: string; instan
           }
         }}
         style={{
-          background: C.input, border: `1px solid ${C.inputBorder}`, borderRadius: 4,
+          background: C.card, border: `1px solid ${C.inputBorder}`, borderRadius: 10,
           color: C.text, fontSize: 13, fontFamily: C.fontMono,
-          padding: "5px 8px", width: "100%", boxSizing: "border-box" as const,
+          padding: "8px 12px", width: "100%", boxSizing: "border-box" as const,
           outline: "none", resize: "vertical", lineHeight: 1.5,
         }}
       />
@@ -484,7 +484,7 @@ export function PropsEditorPanel() {
     <div style={{ display: "flex", flexDirection: "column", height: "100%", background: C.bg, overflow: "hidden" }}>
       {/* Instance header */}
       <div style={{ padding: "8px 12px 6px", borderBottom: `1px solid ${C.border}`, flexShrink: 0 }}>
-        <div style={{ fontSize: 12, color: C.text, fontWeight: 600 }}>
+        <div style={{ fontSize: 16, color: C.text, fontWeight: 700 }}>
           {(instance as { label?: string }).label || componentName(instance.component, names)}
         </div>
         <div title={instance.component} style={{ fontSize: 12, color: C.textMuted, marginTop: 2 }}>

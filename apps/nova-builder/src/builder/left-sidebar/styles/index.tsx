@@ -74,7 +74,7 @@ export function StylesPanel() {
       {entries.map(([name, value]) => (
         <div key={name} style={{ display: "grid", gridTemplateColumns: "1fr 1fr 22px", gap: 4, marginBottom: 5, alignItems: "center" }}>
           <div
-            style={{ fontFamily: C.mono, fontSize: 12, color: "#a78bfa", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}
+            style={{ fontFamily: C.mono, fontSize: 12, color: "var(--ui-accent-text)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}
             title={`--${name}`}
           >
             --{name}
@@ -116,8 +116,8 @@ export function StylesPanel() {
           style={{
             width: "100%",
             padding: "4px 0",
-            background: "rgba(124,58,237,0.12)",
-            border: `1px dashed rgba(124,58,237,0.4)`,
+            background: "color-mix(in srgb, var(--ui-accent) 12%, transparent)",
+            border: `1px dashed color-mix(in srgb, var(--ui-accent) 40%, transparent)`,
             borderRadius: 4,
             color: C.accentText,
             fontSize: 13,
@@ -129,8 +129,8 @@ export function StylesPanel() {
         </button>
       </div>
 
-      <div style={{ marginTop: 12, padding: "8px 10px", background: "rgba(124,58,237,0.06)", border: `1px solid rgba(124,58,237,0.15)`, borderRadius: 4 }}>
-        <div style={{ fontSize: 9, color: "#7c3aed", fontWeight: 700, letterSpacing: "0.06em", textTransform: "uppercase", marginBottom: 4 }}>{L.usage}</div>
+      <div style={{ marginTop: 12, padding: "8px 10px", background: "color-mix(in srgb, var(--ui-accent) 6%, transparent)", border: `1px solid color-mix(in srgb, var(--ui-accent) 15%, transparent)`, borderRadius: 4 }}>
+        <div style={{ fontSize: 9, color: "var(--ui-accent)", fontWeight: 700, letterSpacing: "0.06em", textTransform: "uppercase", marginBottom: 4 }}>{L.usage}</div>
         <div style={{ fontFamily: C.mono, fontSize: 12, color: C.textMuted, lineHeight: 1.6 }}>
           {/* i18n-ignore — CSS sample */}
           {"color: var(--brand-color)"}

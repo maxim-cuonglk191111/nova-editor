@@ -160,7 +160,7 @@ export function SaveProjectDialog({
     padding: "10px 12px",
     borderRadius: 8,
     border: `1px solid ${C.border}`,
-    background: "rgba(255,255,255,0.05)",
+    background: "var(--ui-hover-bg)",
     color: C.text,
     fontSize: 13,
     fontFamily: C.font,
@@ -244,7 +244,7 @@ export function SaveProjectDialog({
             <p style={{ margin: 0, fontSize: 13, color: C.textMuted, lineHeight: 1.5 }}>
               {D.confirmBody}
             </p>
-            <div style={{ fontSize: 14, fontWeight: 700, padding: "12px 14px", background: "rgba(255,255,255,0.03)", borderRadius: 8, border: `1px solid ${C.border}` }}>
+            <div style={{ fontSize: 14, fontWeight: 700, padding: "12px 14px", background: "var(--ui-hover-bg)", borderRadius: 8, border: `1px solid ${C.border}` }}>
               {D.projectLabel} <span style={{ color: C.accentText }}>{projectName}</span>
             </div>
 

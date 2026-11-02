@@ -3,7 +3,7 @@
 // strokes and a bold/duotone weight that match the reference look. Panels ask for an icon by
 // name, so changing the pack or one glyph is a one-line change here.
 import {
-  AppWindow, ArrowLeft, ArrowRight, ArrowUpRight, Bell, CaretDown, CaretRight, Check, CheckSquare, Compass, Copy,
+  AppWindow, ArrowLeft, ArrowRight, FolderSimplePlus, PaperPlaneRight, Stop, ArrowUpRight, Bell, CaretDown, CaretRight, Check, CheckSquare, Compass, Copy,
   CornersOut, Database, DotsThree, Eye, FilePlus, Files, FolderSimple, GearSix, House, ImageSquare,
   Layout, Lightning, MagnifyingGlass, MagnifyingGlassMinus, MagnifyingGlassPlus, Minus, Palette,
   Pencil, Plus, Rows, Sparkle, SquaresFour, Stack, TextAa, Trash, UploadSimple, X,
@@ -30,6 +30,8 @@ const ICONS = {
   catAdvanced: Lightning,
   // actions and chrome
   back: ArrowLeft,
+  send: PaperPlaneRight,
+  stop: Stop,
   arrowRight: ArrowRight,
   copy: Copy,
   trash: Trash,
@@ -49,6 +51,7 @@ const ICONS = {
   home: House,
   edit: Pencil,
   folder: FolderSimple,
+  folderPlus: FolderSimplePlus,
   newPage: FilePlus,
   upload: UploadSimple,
   database: Database,

@@ -52,24 +52,24 @@ export function DeployPanel({
 
   const field = (label: string, key: keyof typeof form, placeholder = "") => (
     <div style={{ display: "flex", flexDirection: "column", gap: 3 }}>
-      <label style={{ fontSize: 12, color: "rgba(255,255,255,0.4)", fontFamily: C.font, fontWeight: 600, letterSpacing: "0.05em" }}>{label}</label>
+      <label style={{ fontSize: 12, color: "var(--ui-text-muted)", fontFamily: C.font, fontWeight: 600, letterSpacing: "0.05em" }}>{label}</label>
       <input
         type={key === "token" ? "password" : "text"}
         placeholder={placeholder}
         value={form[key]}
         onChange={(e) => setForm((f) => ({ ...f, [key]: e.target.value }))}
-        style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.12)", borderRadius: 4, color: "#e5e7eb", fontSize: 13, fontFamily: "monospace", padding: "4px 8px", outline: "none" }}
+        style={{ background: "var(--ui-hover-bg)", border: "1px solid var(--ui-border)", borderRadius: 4, color: "#e5e7eb", fontSize: 13, fontFamily: "monospace", padding: "4px 8px", outline: "none" }}
       />
     </div>
   );
 
   return (
-    <div ref={panelRef} style={{ position: "absolute", top: "calc(100% + 6px)", right: 0, width: 300, background: "#0f172a", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 8, padding: 14, zIndex: 200, display: "flex", flexDirection: "column", gap: 10, boxShadow: "0 8px 32px rgba(0,0,0,0.5)" }}>
+    <div ref={panelRef} style={{ position: "absolute", top: "calc(100% + 6px)", right: 0, width: 300, background: "#0f172a", border: "1px solid var(--ui-border)", borderRadius: 8, padding: 14, zIndex: 200, display: "flex", flexDirection: "column", gap: 10, boxShadow: "0 8px 32px rgba(0,0,0,0.5)" }}>
       <div style={{ fontSize: 12, fontWeight: 700, color: "#e5e7eb", fontFamily: C.font }}>{L.title}</div>
 
       <div style={{ display: "flex", gap: 4 }}>
         {(["vercel", "netlify", "cloudflare"] as DeployProvider[]).map((p) => (
-          <button key={p} onClick={() => setProvider(p)} style={{ flex: 1, padding: "3px 0", fontSize: 12, fontFamily: C.font, fontWeight: 600, borderRadius: 4, border: `1px solid ${provider === p ? "rgba(124,58,237,0.5)" : "rgba(255,255,255,0.1)"}`, background: provider === p ? "rgba(124,58,237,0.15)" : "transparent", color: provider === p ? "#c4b5fd" : "rgba(255,255,255,0.4)", cursor: "pointer", textTransform: "capitalize" }}>
+          <button key={p} onClick={() => setProvider(p)} style={{ flex: 1, padding: "3px 0", fontSize: 12, fontFamily: C.font, fontWeight: 600, borderRadius: 4, border: `1px solid ${provider === p ? "color-mix(in srgb, var(--ui-accent) 50%, transparent)" : "rgba(255,255,255,0.1)"}`, background: provider === p ? "color-mix(in srgb, var(--ui-accent) 15%, transparent)" : "transparent", color: provider === p ? "var(--ui-accent-text)" : "rgba(255,255,255,0.4)", cursor: "pointer", textTransform: "capitalize" }}>
             {p === "cloudflare" ? "CF Pages" /* i18n-ignore — product name */ : p.charAt(0).toUpperCase() + p.slice(1)}
           </button>
         ))}
@@ -83,7 +83,7 @@ export function DeployPanel({
       {provider === "cloudflare" && field(L.projectName, "projectName", "my-site")}
 
       {status !== "idle" && (
-        <div style={{ fontSize: 13, fontFamily: C.font, color: status === "error" ? "#f87171" : status === "done" ? "#6ee7b7" : "#a78bfa", wordBreak: "break-all" }}>
+        <div style={{ fontSize: 13, fontFamily: C.font, color: status === "error" ? "#f87171" : status === "done" ? "#6ee7b7" : "var(--ui-accent-text)", wordBreak: "break-all" }}>
           {status === "running" ? L.deploying : message}
         </div>
       )}
@@ -91,7 +91,7 @@ export function DeployPanel({
       <button
         onClick={deploy}
         disabled={status === "running"}
-        style={{ padding: "6px 0", borderRadius: 5, border: "none", background: status === "running" ? "rgba(255,255,255,0.06)" : "rgba(124,58,237,0.8)", color: "#fff", fontSize: 12, fontFamily: C.font, fontWeight: 600, cursor: status === "running" ? "default" : "pointer" }}
+        style={{ padding: "6px 0", borderRadius: 5, border: "none", background: status === "running" ? "rgba(255,255,255,0.06)" : "color-mix(in srgb, var(--ui-accent) 80%, transparent)", color: "#fff", fontSize: 12, fontFamily: C.font, fontWeight: 600, cursor: status === "running" ? "default" : "pointer" }}
       >
         {status === "running" ? L.deploying : L.deploy}
       </button>

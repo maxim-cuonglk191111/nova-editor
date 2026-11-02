@@ -1,4 +1,5 @@
 "use client";
+import { Icon } from "@/builder/icons";
 import { useMemo } from "react";
 import { writeStyleProperty } from "@/lib/styleWriteHelper";
 import {
@@ -287,12 +288,12 @@ export function GradientPanel({ instanceId, currentCss }: GradientPanelProps) {
           onClick={addGradient}
           title={E.addGradient}
           style={{
-            width: 20, height: 20, border: `1px solid ${C.border}`, borderRadius: 3,
-            background: "none", color: C.textMuted, fontSize: 15, lineHeight: "18px",
-            cursor: "pointer", padding: 0,
+            width: 28, height: 28, border: "none", borderRadius: 8,
+            background: "none", color: C.textMuted, cursor: "pointer", padding: 0,
+            display: "inline-flex", alignItems: "center", justifyContent: "center",
           }}
         >
-          +
+          <Icon name="plus" size={16} weight="bold" />
         </button>
       </div>
 

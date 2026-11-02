@@ -11,6 +11,7 @@ import { countAssetRefs, T, SearchIcon, UploadIcon, FolderPlusIcon, XIcon, Image
 import { FolderCard, FolderIllustration } from "./FolderCard";
 import { AssetCard } from "./AssetCard";
 import { AssetLightbox } from "./AssetLightbox";
+import { PanelHeader } from "../PanelHeader";
 
 
 const CHUNK_SIZE = 4 * 1024 * 1024;
@@ -199,6 +200,7 @@ export function AssetsPanel() {
 
   return (
     <div style={{ display: "flex", flexDirection: "column", height: "100%", background: T.bg, fontFamily: T.font }}>
+      <PanelHeader title={t.builder.assets} />
 
       {/* Search bar */}
       <div style={{ padding: "12px 12px 8px" }}>
@@ -229,7 +231,7 @@ export function AssetsPanel() {
           style={{
             flex: 1, display: "flex", alignItems: "center", justifyContent: "center", gap: 7,
             padding: "10px 12px", borderRadius: 10,
-            background: uploading ? "rgba(124,58,237,0.5)" : T.accent,
+            background: uploading ? "color-mix(in srgb, var(--ui-accent) 50%, transparent)" : T.accent,
             color: "#fff", border: "none", fontSize: 13, fontWeight: 700,
             cursor: uploading ? "not-allowed" : "pointer",
             transition: "background 0.15s",
@@ -264,7 +266,7 @@ export function AssetsPanel() {
 
       {/* Insert hint */}
       {isImageSelected && (
-        <div style={{ margin: "0 12px 6px", padding: "6px 10px", background: "rgba(124,58,237,0.06)", border: `1px solid ${T.accentBorder}`, borderRadius: 8, fontSize: 11, color: T.accent }}>
+        <div style={{ margin: "0 12px 6px", padding: "6px 10px", background: "color-mix(in srgb, var(--ui-accent) 6%, transparent)", border: `1px solid ${T.accentBorder}`, borderRadius: 8, fontSize: 11, color: T.accent }}>
           {L.insertHint}
         </div>
       )}

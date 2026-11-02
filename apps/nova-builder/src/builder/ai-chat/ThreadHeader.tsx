@@ -15,7 +15,7 @@ type Props = {
   onDelete: (id: string) => void;
 };
 
-const icon = { background: "transparent", border: `1px solid ${C.border}`, borderRadius: 7, color: C.textDim, cursor: "pointer", height: 30, minWidth: 30, fontSize: 13, fontFamily: C.font, padding: "0 8px" } as const;
+const icon = { background: "transparent", border: `1px solid ${C.border}`, borderRadius: 10, color: C.textDim, cursor: "pointer", height: 36, minWidth: 36, fontSize: 13, fontFamily: C.font, padding: 0, display: "inline-flex", alignItems: "center", justifyContent: "center" } as const;
 
 export function ThreadHeader({ thread, threads, onNew, onSelect, onDelete }: Props) {
   const L = useI18n().t.tools.aiChat;
@@ -34,9 +34,9 @@ export function ThreadHeader({ thread, threads, onNew, onSelect, onDelete }: Pro
   const empty = !thread || thread.messages.length === 0;
 
   return (
-    <div ref={box} style={{ position: "relative", display: "flex", alignItems: "center", gap: 6, padding: "9px 10px", borderBottom: `1px solid ${C.border}`, flexShrink: 0 }}>
+    <div ref={box} style={{ position: "relative", display: "flex", alignItems: "center", gap: 8, minHeight: 56, padding: "0 14px", borderBottom: `1px solid ${C.border}`, flexShrink: 0 }}>
       <span style={{ color: C.accentText, display: "inline-flex" }}><Icon name="ai" size={20} weight="fill" /></span>
-      <h2 style={{ margin: 0, flex: 1, minWidth: 0, fontSize: 13, fontWeight: 700, color: C.text, fontFamily: C.font, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }} title={thread?.title || L.title}>
+      <h2 style={{ margin: 0, flex: 1, minWidth: 0, fontSize: 16, fontWeight: 700, letterSpacing: "-0.01em", color: C.text, fontFamily: C.font, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }} title={thread?.title || L.title}>
         {thread?.title || L.title}
       </h2>
       <button type="button" style={icon} onClick={() => setOpen((v) => !v)} aria-expanded={open} aria-label={L.history} title={L.history} data-testid="ai-history">
@@ -46,7 +46,7 @@ export function ThreadHeader({ thread, threads, onNew, onSelect, onDelete }: Pro
         <Icon name="plus" size={18} weight="bold" />
       </button>
       {open && (
-        <div aria-label={L.history} data-testid="ai-history-list" role="group" style={{ position: "absolute", top: "100%", left: 8, right: 8, zIndex: 5, maxHeight: 280, overflowY: "auto", background: C.card, border: `1px solid ${C.border}`, borderRadius: 10, boxShadow: "var(--ui-shadow-pop, 0 10px 30px rgba(0,0,0,0.45))", padding: 4 }}>
+        <div aria-label={L.history} data-testid="ai-history-list" role="group" style={{ position: "absolute", top: "100%", left: 8, right: 8, zIndex: 5, maxHeight: 280, overflowY: "auto", background: C.card, border: `1px solid ${C.border}`, borderRadius: 14, boxShadow: "var(--ui-shadow-pop, 0 10px 30px rgba(0,0,0,0.45))", padding: 6 }}>
           {threads.length === 0 && <div style={{ padding: 10, fontSize: 12, color: C.textMuted, fontFamily: C.font }}>{L.historyEmpty}</div>}
           <ul style={{ listStyle: "none", margin: 0, padding: 0 }}>
           {threads.map((t) => (

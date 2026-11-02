@@ -211,8 +211,8 @@ export function FeatureGateModal() {
               borderRadius: 8,
               border: "none",
               background: current.isPro
-                ? "linear-gradient(135deg, #9333ea 0%, #7c3aed 100%)"
-                : "linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%)",
+                ? "linear-gradient(135deg, #9333ea 0%, var(--ui-accent) 100%)"
+                : "linear-gradient(135deg, var(--ui-accent) 0%, #4f46e5 100%)",
               color: "#fff",
               fontSize: 13,
               fontFamily: C.font,
@@ -224,7 +224,7 @@ export function FeatureGateModal() {
               justifyContent: "center",
               boxShadow: current.isPro
                 ? "0 4px 14px rgba(147,51,234,0.4)"
-                : "0 4px 14px rgba(124,58,237,0.35)",
+                : "0 4px 14px color-mix(in srgb, var(--ui-accent) 35%, transparent)",
             }}
           >
             {current.cta}

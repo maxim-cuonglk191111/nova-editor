@@ -36,7 +36,7 @@ function ShadowPanelBase({
     { label: E.shadowSubtle, layers: [{ x: 0, y: 1, blur: 3, spread: 0, color: "rgba(0,0,0,0.12)", inset: false }] },
     { label: E.shadowMedium, layers: [{ x: 0, y: 4, blur: 6, spread: -1, color: "rgba(0,0,0,0.1)", inset: false }, { x: 0, y: 2, blur: 4, spread: -2, color: "rgba(0,0,0,0.06)", inset: false }] },
     { label: E.shadowElevated, layers: [{ x: 0, y: 10, blur: 25, spread: -5, color: "rgba(0,0,0,0.15)", inset: false }, { x: 0, y: 8, blur: 10, spread: -6, color: "rgba(0,0,0,0.08)", inset: false }] },
-    { label: E.shadowGlow, layers: [{ x: 0, y: 0, blur: 16, spread: 0, color: "rgba(124,58,237,0.35)", inset: false }] },
+    { label: E.shadowGlow, layers: [{ x: 0, y: 0, blur: 16, spread: 0, color: "color-mix(in srgb, var(--ui-accent) 35%, transparent)", inset: false }] },
   ];
 
   return (
@@ -58,7 +58,7 @@ function ShadowPanelBase({
 
       {/* Shadow Presets bar for box shadow */}
       {type === "box" && (
-        <div style={{ padding: "4px 8px", borderBottom: `1px solid ${C.border}`, display: "flex", gap: 3, alignItems: "center", background: "rgba(255,255,255,0.02)", flexWrap: "wrap" }}>
+        <div style={{ padding: "4px 8px", borderBottom: `1px solid ${C.border}`, display: "flex", gap: 3, alignItems: "center", background: "var(--ui-hover-bg)", flexWrap: "wrap" }}>
           <span style={{ fontSize: 11, color: C.textMuted, fontFamily: C.font, fontWeight: 600 }}>{E.shadowPresets}:</span>
           {shadowPresets.map((sp) => (
             <button

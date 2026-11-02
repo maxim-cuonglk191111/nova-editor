@@ -90,7 +90,7 @@ export function HistoryPanel() {
       style={{ position: "fixed", top: 64, right: 296, width: 340, maxHeight: "70vh", zIndex: 100, background: C.bg, border: `1px solid ${C.border}`, borderRadius: 16, boxShadow: "var(--ui-shadow-pop, 0 8px 32px rgba(0,0,0,0.5))", fontFamily: C.font, overflow: "hidden", display: "flex", flexDirection: "column" }}
     >
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "11px 16px", borderBottom: `1px solid ${C.border}`, flexShrink: 0 }}>
-        <span style={{ fontSize: 13, fontWeight: 700, color: "#c4b5fd" }}>{L.title}</span>
+        <span style={{ fontSize: 13, fontWeight: 700, color: "var(--ui-accent-text)" }}>{L.title}</span>
         <button onClick={() => $historyPanelOpen.set(false)} style={{ background: "none", border: "none", color: C.textMuted, cursor: "pointer", fontSize: 18, padding: "2px 4px" }}><Icon name="close" size={14} weight="bold" /></button>
       </div>
       <div style={{ padding: "10px 14px", borderBottom: `1px solid ${C.border}`, flexShrink: 0 }}>
@@ -100,10 +100,10 @@ export function HistoryPanel() {
             onChange={(e) => setNewLabel(e.target.value)}
             placeholder={L.labelPlaceholder}
             onKeyDown={(e) => { if (e.key === "Enter") saveSnapshot(); }}
-            style={{ flex: 1, background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 5, color: C.text, fontSize: 13, fontFamily: C.font, padding: "5px 9px", outline: "none" }}
+            style={{ flex: 1, background: "var(--ui-hover-bg)", border: "1px solid var(--ui-border)", borderRadius: 5, color: C.text, fontSize: 13, fontFamily: C.font, padding: "5px 9px", outline: "none" }}
           />
           <button onClick={saveSnapshot} disabled={saving}
-            style={{ padding: "5px 12px", borderRadius: 5, border: "1px solid rgba(124,58,237,0.4)", background: "rgba(124,58,237,0.15)", color: "#c4b5fd", fontSize: 13, fontFamily: C.font, fontWeight: 700, cursor: saving ? "default" : "pointer" }}>
+            style={{ padding: "5px 12px", borderRadius: 5, border: "1px solid color-mix(in srgb, var(--ui-accent) 40%, transparent)", background: "color-mix(in srgb, var(--ui-accent) 15%, transparent)", color: "var(--ui-accent-text)", fontSize: 13, fontFamily: C.font, fontWeight: 700, cursor: saving ? "default" : "pointer" }}>
             {saving ? "…" : L.save}
           </button>
         </div>
@@ -129,7 +129,7 @@ export function HistoryPanel() {
             <button
               onClick={() => restore(snap.id)}
               disabled={restoring === snap.id}
-              style={{ padding: "3px 9px", borderRadius: 4, border: "1px solid rgba(255,255,255,0.1)", background: "transparent", color: C.textMuted, fontSize: 12, fontFamily: C.font, cursor: restoring === snap.id ? "default" : "pointer" }}
+              style={{ padding: "3px 9px", borderRadius: 4, border: "1px solid var(--ui-border)", background: "transparent", color: C.textMuted, fontSize: 12, fontFamily: C.font, cursor: restoring === snap.id ? "default" : "pointer" }}
             >
               {restoring === snap.id ? "…" : L.restore}
             </button>

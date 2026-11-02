@@ -55,7 +55,7 @@ export function FolderItem({ name, isExpanded, handlers, children }: FolderItemP
             onChange={(e) => setEditValue(e.target.value)}
             onBlur={commitRename}
             onKeyDown={(e) => { if (e.key === "Enter") commitRename(); if (e.key === "Escape") { setIsEditing(false); setEditValue(name); } }}
-            style={{ flex: 1, background: "rgba(255,255,255,0.06)", border: "1px solid rgba(139,92,246,0.4)", borderRadius: 3, color: C.text, fontSize: 12, fontFamily: C.font, padding: "2px 5px", outline: "none", minWidth: 0 }}
+            style={{ flex: 1, background: "var(--ui-hover-bg)", border: "1px solid color-mix(in srgb, var(--ui-accent) 40%, transparent)", borderRadius: 3, color: C.text, fontSize: 12, fontFamily: C.font, padding: "2px 5px", outline: "none", minWidth: 0 }}
           />
         ) : (
           <button
@@ -70,7 +70,7 @@ export function FolderItem({ name, isExpanded, handlers, children }: FolderItemP
           <button
             onClick={(e) => { e.stopPropagation(); onDelete(); }}
             title={L.deleteFolder}
-            style={{ position: "absolute", right: 6, background: "rgba(30,41,59,0.95)", border: "none", color: C.danger, cursor: "pointer", fontSize: 13, lineHeight: 1, padding: "1px 4px", borderRadius: 3 }}
+            style={{ position: "absolute", right: 6, background: "var(--ui-card)", border: "none", color: C.danger, cursor: "pointer", fontSize: 13, lineHeight: 1, padding: "1px 4px", borderRadius: 3 }}
           >
             <Icon name="close" size={12} weight="bold" />
           </button>
@@ -78,7 +78,7 @@ export function FolderItem({ name, isExpanded, handlers, children }: FolderItemP
       </div>
 
       {isExpanded && children && (
-        <div style={{ paddingLeft: 16, borderLeft: "1px solid rgba(255,255,255,0.06)", marginLeft: 14 }}>
+        <div style={{ paddingLeft: 16, borderLeft: "1px solid var(--ui-border)", marginLeft: 14 }}>
           {children}
         </div>
       )}

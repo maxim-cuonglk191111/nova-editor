@@ -118,7 +118,7 @@ export function PageItem({ page, siblings, status, handlers }: PageItemProps) {
           display: "flex",
           flexDirection: "column",
           gap: 4,
-          background: "rgba(255,255,255,0.04)",
+          background: "var(--ui-hover-bg)",
           borderLeft: `2px solid ${C.activeBorder}`,
           outline: "none",
         }}
@@ -129,7 +129,7 @@ export function PageItem({ page, siblings, status, handlers }: PageItemProps) {
           defaultValue={name}
           placeholder={L.pageName}
           onKeyDown={handleKeyDown}
-          style={{ ...inputStyle, border: `1px solid rgba(139,92,246,0.4)` }}
+          style={{ ...inputStyle, border: `1px solid color-mix(in srgb, var(--ui-accent) 40%, transparent)` }}
         />
         <input
           ref={pathRef}
@@ -193,7 +193,7 @@ export function PageItem({ page, siblings, status, handlers }: PageItemProps) {
       </div>
 
       {isActive && seoOpen && (
-        <div style={{ padding: "8px 10px 10px", background: "rgba(15,23,42,0.6)", borderLeft: `2px solid ${C.activeBorder}`, display: "flex", flexDirection: "column", gap: 6 }}>
+        <div style={{ padding: "8px 10px 10px", background: "var(--ui-surface)", borderLeft: `2px solid ${C.activeBorder}`, display: "flex", flexDirection: "column", gap: 6 }}>
           <div style={{ fontSize: 12, color: C.textMuted, fontFamily: C.font, textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 2 }}>
             {L.seoMeta}
           </div>

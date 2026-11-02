@@ -28,8 +28,8 @@ const inputSt: React.CSSProperties = {
 
 function btnSt(variant: "accent" | "danger" | "ghost" = "ghost"): React.CSSProperties {
   return {
-    background: variant === "accent" ? "rgba(124,58,237,0.15)" : variant === "danger" ? "rgba(248,113,113,0.08)" : "none",
-    border: `1px solid ${variant === "accent" ? "rgba(124,58,237,0.4)" : variant === "danger" ? "rgba(248,113,113,0.3)" : C.border}`,
+    background: variant === "accent" ? "color-mix(in srgb, var(--ui-accent) 15%, transparent)" : variant === "danger" ? "rgba(248,113,113,0.08)" : "none",
+    border: `1px solid ${variant === "accent" ? "color-mix(in srgb, var(--ui-accent) 40%, transparent)" : variant === "danger" ? "rgba(248,113,113,0.3)" : C.border}`,
     borderRadius: 4,
     color: variant === "accent" ? C.accentText : variant === "danger" ? C.danger : C.textMuted,
     cursor: "pointer",
@@ -129,14 +129,14 @@ export function StyleTokensPanel() {
                 display: "flex",
                 alignItems: "center",
                 gap: 6,
-                background: applied ? "rgba(124,58,237,0.05)" : "none",
-                borderLeft: applied ? "2px solid rgba(124,58,237,0.5)" : "2px solid transparent",
+                background: applied ? "color-mix(in srgb, var(--ui-accent) 5%, transparent)" : "none",
+                borderLeft: applied ? "2px solid color-mix(in srgb, var(--ui-accent) 50%, transparent)" : "2px solid transparent",
               }}
             >
               {/* Colored dot */}
               <div style={{
                 width: 8, height: 8, borderRadius: "50%", flexShrink: 0,
-                background: applied ? "rgba(124,58,237,0.9)" : "rgba(255,255,255,0.2)",
+                background: applied ? "color-mix(in srgb, var(--ui-accent) 90%, transparent)" : "rgba(255,255,255,0.2)",
               }} />
               {/* Name */}
               <span style={{ flex: 1, fontSize: 13, color: C.text, fontFamily: C.font, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
@@ -177,8 +177,8 @@ export function StyleTokensPanel() {
           onClick={createToken}
           style={{
             marginTop: 5, width: "100%", padding: "4px 0",
-            background: "rgba(124,58,237,0.12)",
-            border: "1px dashed rgba(124,58,237,0.4)",
+            background: "color-mix(in srgb, var(--ui-accent) 12%, transparent)",
+            border: "1px dashed color-mix(in srgb, var(--ui-accent) 40%, transparent)",
             borderRadius: 4, color: C.accentText, fontSize: 13,
             fontFamily: C.font, cursor: "pointer",
           }}

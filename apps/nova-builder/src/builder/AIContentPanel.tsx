@@ -93,7 +93,7 @@ export function AIContentPanel() {
       }}
     >
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "12px 18px", borderBottom: `1px solid ${C.border}` }}>
-        <span style={{ fontSize: 13, fontWeight: 700, color: "#a78bfa" }}>{L.title}</span>
+        <span style={{ fontSize: 13, fontWeight: 700, color: "var(--ui-accent-text)" }}>{L.title}</span>
         <button onClick={() => $aiContentPanelOpen.set(false)}
           style={{ background: "none", border: "none", color: C.textMuted, cursor: "pointer", fontSize: 18, padding: "2px 4px" }}><Icon name="close" size={14} weight="bold" /></button>
       </div>
@@ -113,7 +113,7 @@ export function AIContentPanel() {
           <button
             onClick={handleFill}
             disabled={isLoading || !topic.trim() || !textInstances.length}
-            style={{ padding: "6px 16px", borderRadius: 6, border: "none", background: isLoading || !topic.trim() ? "rgba(124,58,237,0.25)" : "linear-gradient(135deg, #7c3aed, #6d28d9)", color: "#fff", fontSize: 12, fontFamily: C.font, fontWeight: 700, cursor: isLoading ? "default" : "pointer" }}
+            style={{ padding: "6px 16px", borderRadius: 6, border: "none", background: isLoading || !topic.trim() ? "color-mix(in srgb, var(--ui-accent) 25%, transparent)" : "linear-gradient(135deg, var(--ui-accent), var(--ui-accent))", color: "#fff", fontSize: 12, fontFamily: C.font, fontWeight: 700, cursor: isLoading ? "default" : "pointer" }}
           >
             {isLoading ? L.generating : L.fill}
           </button>

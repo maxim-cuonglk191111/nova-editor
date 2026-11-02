@@ -56,7 +56,7 @@ export function TextFormatToolbar({ iframeRef }: { iframeRef: RefObject<HTMLIFra
             background: "none",
             border: "1px solid transparent",
             borderRadius: 4,
-            color: "#c4b5fd",
+            color: "var(--ui-accent-text)",
             cursor: "pointer",
             fontSize: 12,
             padding: "2px 8px",

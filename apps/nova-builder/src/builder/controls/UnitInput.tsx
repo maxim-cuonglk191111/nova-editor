@@ -40,7 +40,7 @@ export function UnitInput({
   };
 
   return (
-    <div style={{ display: "flex", gap: 3, alignItems: "center", minWidth: 0, width: "100%" }}>
+    <div style={{ display: "flex", gap: 6, alignItems: "center", minWidth: 0, width: "100%" }}>
       <input
         ref={inputRef}
         type="text"
@@ -68,11 +68,11 @@ export function UnitInput({
         style={{
           minWidth: 58,
           width: "100%",
-          padding: "3px 6px",
-          minHeight: 22,
-          background: C.inputBg,
+          padding: "0 10px",
+          minHeight: 34,
+          background: C.card,
           border: `1px solid ${C.border}`,
-          borderRadius: 3,
+          borderRadius: 8,
           color: C.text,
           fontFamily: C.fontMono,
           fontSize: FONT.sm,
@@ -85,11 +85,11 @@ export function UnitInput({
         defaultValue={unit}
         onChange={(e) => onCommit(value, e.target.value)}
         style={{
-          padding: "3px 4px",
-          minHeight: 22,
-          background: C.inputBg,
+          padding: "0 6px",
+          minHeight: 34,
+          background: C.card,
           border: `1px solid ${C.border}`,
-          borderRadius: 3,
+          borderRadius: 8,
           color: C.textMuted,
           fontFamily: C.fontMono,
           fontSize: FONT.xs,

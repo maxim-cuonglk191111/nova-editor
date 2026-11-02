@@ -15,8 +15,8 @@ type Props = {
 };
 
 const field: React.CSSProperties = {
-  background: "rgba(255,255,255,0.06)",
-  border: "1px solid rgba(139,92,246,0.4)",
+  background: "var(--ui-hover-bg)",
+  border: "1px solid color-mix(in srgb, var(--ui-accent) 40%, transparent)",
   borderRadius: 4,
   color: C.text,
   fontSize: 13,
@@ -95,14 +95,14 @@ export function NewPageForm({ existing, onCreate, onCancel }: Props) {
           onClick={submit}
           disabled={!hasName}
           style={{
-            flex: 1, padding: "6px 0", background: "#7c3aed", border: "1px solid #7c3aed", borderRadius: 4,
+            flex: 1, padding: "6px 0", background: "var(--ui-accent)", border: "1px solid var(--ui-accent)", borderRadius: 4,
             color: "#ffffff", fontWeight: 600, fontSize: 13, fontFamily: C.font,
             opacity: hasName ? 1 : 0.4, cursor: hasName ? "pointer" : "not-allowed",
           }}
         >
           {L.create}
         </button>
-        <button onClick={onCancel} style={{ padding: "6px 12px", background: "none", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 4, color: C.textMuted, fontSize: 13, fontFamily: C.font, cursor: "pointer" }}>
+        <button onClick={onCancel} style={{ padding: "6px 12px", background: "none", border: "1px solid var(--ui-border)", borderRadius: 4, color: C.textMuted, fontSize: 13, fontFamily: C.font, cursor: "pointer" }}>
           {L.cancel}
         </button>
       </div>

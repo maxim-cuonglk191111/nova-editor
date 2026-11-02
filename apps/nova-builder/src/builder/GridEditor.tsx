@@ -201,7 +201,7 @@ export function GridContainerPanel({
       </div>
 
       {/* Layout Presets bar */}
-      <div style={{ padding: "6px 8px 4px", borderBottom: `1px solid ${C.border}`, background: "rgba(255,255,255,0.02)" }}>
+      <div style={{ padding: "6px 8px 4px", borderBottom: `1px solid ${C.border}`, background: "var(--ui-hover-bg)" }}>
         <div style={{ fontSize: 10, color: C.textMuted, marginBottom: 4, fontWeight: 600 }}>
           {E.layoutPresets}:
         </div>
@@ -217,7 +217,7 @@ export function GridContainerPanel({
                   padding: "2px 6px",
                   borderRadius: 3,
                   border: `1px solid ${active ? C.accentBorder : C.border}`,
-                  background: active ? "rgba(124,58,237,0.2)" : "transparent",
+                  background: active ? "color-mix(in srgb, var(--ui-accent) 20%, transparent)" : "transparent",
                   color: active ? C.accentText : C.text,
                   fontSize: 10,
                   fontFamily: C.font,

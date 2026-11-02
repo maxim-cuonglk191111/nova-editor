@@ -355,6 +355,7 @@ function BuilderPage() {
 
   return (
     <ThemeProvider
+      className="nb-root"
       style={{
         display: "grid",
         gridTemplate: `

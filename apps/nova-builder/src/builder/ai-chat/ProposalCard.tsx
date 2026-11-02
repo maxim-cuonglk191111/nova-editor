@@ -64,8 +64,8 @@ export function ProposalCard({ message, onApply, onDiscard, onRestore, onHighlig
   const hoverable = pending && proposal.lines.some((l) => l.ids.length > 0);
 
   return (
-    <div data-testid="ai-proposal" data-status={message.status} style={{ marginTop: 8, border: `1px solid ${C.border}`, borderRadius: 10, background: C.card, overflow: "hidden" }}>
-      <div style={{ padding: "7px 10px", fontSize: 11, fontWeight: 700, letterSpacing: "0.04em", textTransform: "uppercase", color: C.textMuted, borderBottom: `1px solid ${C.border}`, fontFamily: C.font }}>
+    <div data-testid="ai-proposal" data-status={message.status} style={{ marginTop: 10, border: `1px solid ${C.border}`, borderRadius: 14, background: C.card, overflow: "hidden" }}>
+      <div style={{ padding: "10px 14px", fontSize: 13, fontWeight: 600, color: C.text, borderBottom: `1px solid ${C.border}`, fontFamily: C.font }}>
         {L.proposedChanges}
       </div>
       <ul style={{ listStyle: "none", margin: 0, padding: "4px 0" }}>
@@ -75,7 +75,7 @@ export function ProposalCard({ message, onApply, onDiscard, onRestore, onHighlig
             onMouseEnter={() => hoverable && onHighlight(line.ids)}
             onMouseLeave={() => hoverable && onHighlight(null)}
             title={line.full}
-            style={{ display: "flex", gap: 8, padding: "6px 10px", fontSize: 13, lineHeight: 1.45, color: C.text, fontFamily: C.font, cursor: hoverable && line.ids.length ? "default" : undefined }}
+            style={{ display: "flex", gap: 10, padding: "8px 14px", fontSize: 14, lineHeight: 1.45, color: C.text, fontFamily: C.font, cursor: hoverable && line.ids.length ? "default" : undefined }}
           >
             <span style={{ color: C.accentText, width: 18, display: "inline-flex", justifyContent: "center", flexShrink: 0 }}><Icon name={ICON[line.kind]} size={16} weight="bold" /></span>
             <span style={{ overflowWrap: "anywhere" }}>{lineText(line)}</span>
@@ -83,18 +83,18 @@ export function ProposalCard({ message, onApply, onDiscard, onRestore, onHighlig
         ))}
       </ul>
       {pending ? (
-        <div style={{ padding: "8px 10px", borderTop: `1px solid ${C.border}`, display: "flex", alignItems: "center", gap: 8 }}>
+        <div style={{ padding: "10px 14px", borderTop: `1px solid ${C.border}`, display: "flex", alignItems: "center", gap: 8 }}>
           {hoverable && <span style={{ flex: 1, fontSize: 11, color: C.textMuted, fontFamily: C.font }}>{L.highlightHint}</span>}
           {!hoverable && <span style={{ flex: 1 }} />}
-          <button type="button" onClick={() => onDiscard(message)} disabled={busy} style={{ padding: "6px 12px", borderRadius: 7, border: `1px solid ${C.border}`, background: "transparent", color: C.textMuted, fontSize: 13, fontFamily: C.font, cursor: "pointer" }}>
+          <button type="button" onClick={() => onDiscard(message)} disabled={busy} style={{ height: 36, padding: "0 14px", borderRadius: 10, border: `1px solid ${C.border}`, background: "transparent", color: C.textMuted, fontSize: 13, fontFamily: C.font, cursor: "pointer" }}>
             {L.discard}
           </button>
-          <button type="button" onClick={() => onApply(message)} disabled={busy} data-testid="ai-apply" style={{ padding: "6px 16px", borderRadius: 7, border: "none", background: "#047857", color: "#fff", fontSize: 13, fontWeight: 700, fontFamily: C.font, cursor: "pointer" }}>
+          <button type="button" onClick={() => onApply(message)} disabled={busy} data-testid="ai-apply" style={{ height: 36, padding: "0 18px", borderRadius: 10, border: "none", background: C.primary, color: C.onPrimary, fontSize: 13, fontWeight: 700, fontFamily: C.font, cursor: "pointer" }}>
             {L.apply}
           </button>
         </div>
       ) : (
-        <div role="status" data-undone={undone ? "true" : undefined} style={{ padding: "7px 10px", borderTop: `1px solid ${C.border}`, fontSize: 12, fontFamily: C.font, color: message.status === "applied" && !undone ? "#6ee7b7" : C.textMuted }}>
+        <div role="status" data-undone={undone ? "true" : undefined} style={{ padding: "10px 14px", borderTop: `1px solid ${C.border}`, fontSize: 13, fontFamily: C.font, color: message.status === "applied" && !undone ? C.primary : C.textMuted }}>
           {undone ? L.undone : message.status === "applied"
             ? message.result && message.result.skipped > 0
               ? fmt(L.applyPartial, message.result)

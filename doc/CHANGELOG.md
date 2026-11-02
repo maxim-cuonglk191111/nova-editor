@@ -2,6 +2,16 @@
 
 ---
 
+## [25.20.0] — 2026-11-02
+
+### Task 038 — Builder look and feel, second pass (Minor)
+
+- **Feel**: neutral white and warm-grey chrome with Nova purple tints for selection and one deep-purple primary; larger, calmer type (one step up); soft hover, press and focus feedback in one place (`.nb-root` in `globals.css`); slimmer scrollbars; reduced-motion respected.
+- **Panels**: AI tab (56px header, starter cards with icons, rounded bubbles, solid Send, deep-purple Apply), Assets (shared tokens and icons instead of its own light palette, header), Props and Settings (rounded 34px controls), unit inputs and spacing presets, add-a-style row.
+- **Tokens, not hex**: ~80 hard-coded purples and dark-theme leftovers in the builder chrome now read from `lib/uiTheme.ts`, so the look is changed in one file.
+
+---
+
 ## [25.19.0] — 2026-11-02
 
 ### Task 038 — Builder redesign: top bar, rail, floating library, inspector, icons (Minor)

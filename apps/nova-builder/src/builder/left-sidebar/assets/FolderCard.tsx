@@ -20,9 +20,9 @@ export function FolderIllustration() {
       <circle cx="60" cy="65" r="13" fill="white" fillOpacity="0.25" />
       <polygon points="56,59 74,65 56,71" fill="white" fillOpacity="0.8" />
       {/* Decorative flowers left */}
-      <circle cx="8" cy="50" r="6" fill="#a78bfa" />
-      <circle cx="2" cy="42" r="4" fill="#c4b5fd" />
-      <circle cx="14" cy="40" r="3" fill="#7c3aed" />
+      <circle cx="8" cy="50" r="6" fill="var(--ui-accent-text)" />
+      <circle cx="2" cy="42" r="4" fill="var(--ui-accent-text)" />
+      <circle cx="14" cy="40" r="3" fill="var(--ui-accent)" />
       <line x1="8" y1="50" x2="8" y2="62" stroke="#34d399" strokeWidth="2" />
       {/* Decorative flowers right */}
       <circle cx="112" cy="44" r="7" fill="#60a5fa" />
@@ -90,7 +90,7 @@ export function FolderCard({
     >
       <div style={{
         width: 38, height: 38, borderRadius: 8,
-        background: isActive ? "rgba(124,58,237,0.12)" : "rgba(0,0,0,0.06)",
+        background: isActive ? "color-mix(in srgb, var(--ui-accent) 12%, transparent)" : "rgba(0,0,0,0.06)",
         display: "flex", alignItems: "center", justifyContent: "center",
         flexShrink: 0, color: isActive ? T.accent : "#888",
       }}>

@@ -183,7 +183,7 @@ export function CommandPalette() {
             onChange={(e) => { setQuery(e.target.value); setActiveIdx(0); }}
             onKeyDown={onKeyDown}
             placeholder={t.chrome.palette.search}
-            style={{ width: "100%", background: "none", border: "none", outline: "none", color: C.text, fontSize: 15, fontFamily: C.font, caretColor: "#7c3aed" }}
+            style={{ width: "100%", background: "none", border: "none", outline: "none", color: C.text, fontSize: 15, fontFamily: C.font, caretColor: "var(--ui-accent)" }}
           />
         </div>
 
