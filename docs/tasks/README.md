@@ -43,3 +43,5 @@ screenshotted, reviewed and scored /10; a feature we cannot make work is hidden
 | [034](034-ovemo-cafe-seed.md) | Ovemo café account and site, seed uploads the shop's own photos | Closed |
 | [035](035-admin-business-overview.md) | Admin business overview and seeded Pro purchases for the report | Closed |
 | [036](036-old-landing-and-first-purchase-prices.md) | Old landing page back; first-purchase prices for everyone who never paid | Closed |
+| [037](037-ai-chat-tab.md) | AI as a chat tab in the left sidebar (finishes task 009 item 6) | In progress |
+| [038](038-builder-ui-modernization.md) | Builder UI modernization (Siteai reference), spec first, no code before approval | Open |
