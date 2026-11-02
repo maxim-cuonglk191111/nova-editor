@@ -86,7 +86,7 @@ test("GP-FULL: signup → create project → AI gen → edit → export", async 
     await page.waitForTimeout(600);
     await ss(page, "05-ai-panel-open");
 
-    const aiTextarea = page.locator("textarea").filter({ hasText: "" }).first();
+    const aiTextarea = page.getByTestId("ai-input");
     const hasTA = await aiTextarea.isVisible({ timeout: 5_000 }).catch(() => false);
     console.log("AI textarea visible:", hasTA);
 
@@ -94,7 +94,7 @@ test("GP-FULL: signup → create project → AI gen → edit → export", async 
       await aiTextarea.fill("portfolio with hero section, about me, and contact");
       await ss(page, "06-ai-prompt");
 
-      const genBtn = page.locator("button").filter({ hasText: /generate|create|build/i }).first();
+      const genBtn = page.getByTestId("ai-send");
       const hasGen = await genBtn.isVisible({ timeout: 3_000 }).catch(() => false);
       if (hasGen) {
         await genBtn.click();

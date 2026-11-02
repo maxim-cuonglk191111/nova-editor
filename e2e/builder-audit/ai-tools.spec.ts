@@ -94,13 +94,16 @@ test("AI tools: change one section, content fill, accessibility suggestion", asy
 
   await page.waitForTimeout(QUOTA_GAP);
 
-  await test.step("Generate with AI on a section asks for a whole new page (current behaviour)", async () => {
+  await test.step("The AI tab opens on the selected section and says what it is about", async () => {
     await canvas.locator("h2", { hasText: /menu/i }).first().click();
     await page.locator("button", { hasText: "✦" }).last().click();
-    const dialog = page.getByRole("dialog", { name: /generate with ai/i });
-    await shot(page, "a06-generate-on-section");
-    console.log("generate panel text:", (await dialog.innerText()).replace(/\s+/g, " ").slice(0, 400));
-    await page.keyboard.press("Escape");
+    const panel = page.getByTestId("ai-panel");
+    await expect(panel).toBeVisible();
+    await shot(page, "a06-ai-tab-on-section");
+    // the chip follows the selection: an element inside the menu section, or the section
+    await expect(panel.getByTestId("ai-chip-main")).toContainText(/Element:|Section:/);
+    console.log("ai tab context:", (await panel.getByTestId("ai-chip-main").innerText()).replace(/\s+/g, " "));
+    await page.locator("button", { hasText: "✦" }).last().click();
   });
 
   await test.step("Accessibility: AI suggestion for an image without alt text", async () => {

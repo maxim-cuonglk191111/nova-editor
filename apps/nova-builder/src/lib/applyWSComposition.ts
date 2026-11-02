@@ -36,13 +36,10 @@ function warnOnAiNesting(instances: Instance[]): void {
   }
 }
 
-/** Puts `result` on page `pageId`, or on the open page when none is given. */
-export function applyWSComposition(result: WSCompositionResult, pageId?: string): void {
-  if (result.instances.length === 0) return;
+type Draft = Parameters<Parameters<typeof updateData>[0]>[0];
 
-  const page = pageId ? { id: pageId } : $selectedPage.get();
-  if (!page) return;
-
+/** The base breakpoint, and the one "mobile" declarations (the AI's phone header layout) go to: the widest at or under 767px. */
+export function compositionBreakpoints(): { baseBpId: string; mobileBpId: string | undefined } {
   const breakpoints = $breakpoints.get();
   let baseBpId = "base";
   if (breakpoints.size > 0) {
@@ -51,16 +48,53 @@ export function applyWSComposition(result: WSCompositionResult, pageId?: string)
     );
     baseBpId = sorted[0]?.id ?? "base";
   }
-  // "mobile" decls (AI header layout for phones) go to the widest breakpoint ≤ 767px.
   const mobileBpId = [...breakpoints.values()]
     .filter((bp) => bp.maxWidth !== undefined && bp.maxWidth <= 767)
     .sort((a, b) => (b.maxWidth ?? 0) - (a.maxWidth ?? 0))[0]?.id;
+  return { baseBpId, mobileBpId };
+}
+
+/** Merges the composition's instances, props, style sources, selections and styles into an open transaction. The root nodes are not attached anywhere: the caller decides where they go. */
+export function mergeComposition(draft: Draft, result: WSCompositionResult): void {
+  const { instances, props, styles, styleSources, styleSourceSelections } = draft;
+  const { baseBpId, mobileBpId } = compositionBreakpoints();
+  for (const inst of result.instances) {
+    instances.set(inst.id, inst as Parameters<typeof instances.set>[1]);
+  }
+  for (const prop of result.props) {
+    props.set(prop.id, prop as Parameters<typeof props.set>[1]);
+  }
+  for (const src of result.styleSources) {
+    styleSources.set(src.id, src as Parameters<typeof styleSources.set>[1]);
+  }
+  for (const sel of result.styleSourceSelections) {
+    styleSourceSelections.set(sel.instanceId, sel as Parameters<typeof styleSourceSelections.set>[1]);
+  }
+  // StyleDecl key: `${styleSourceId}:${breakpointId}:${state ?? ""}:${property}`
+  for (const decl of result.styles) {
+    if (decl.breakpointId === "mobile" && !mobileBpId) continue;
+    const bpId = decl.breakpointId === "base" ? baseBpId : decl.breakpointId === "mobile" ? mobileBpId! : decl.breakpointId;
+    const key = `${decl.styleSourceId}:${bpId}::${decl.property}`;
+    styles.set(key, {
+      ...decl,
+      breakpointId: bpId,
+    } as Parameters<typeof styles.set>[1]);
+  }
+}
+
+/** Puts `result` on page `pageId`, or on the open page when none is given. */
+export function applyWSComposition(result: WSCompositionResult, pageId?: string): void {
+  if (result.instances.length === 0) return;
+
+  const page = pageId ? { id: pageId } : $selectedPage.get();
+  if (!page) return;
 
   warnOnAiNesting(result.instances as unknown as Instance[]);
 
   // One transaction: the whole AI application is a single undo step and a
   // single sync payload to the canvas (M1).
-  updateData(({ pages, instances, props, styles, styleSources, styleSourceSelections }) => {
+  updateData((draft) => {
+    const { pages, instances } = draft;
     // 1. Synthetic root instance wrapping the AI's top-level nodes
     const rootId = uid("inst_");
     instances.set(rootId, {
@@ -72,28 +106,7 @@ export function applyWSComposition(result: WSCompositionResult, pageId?: string)
     } as Parameters<typeof instances.set>[1]);
 
     // 2–6. Merge instances / props / sources / selections / styles
-    for (const inst of result.instances) {
-      instances.set(inst.id, inst as Parameters<typeof instances.set>[1]);
-    }
-    for (const prop of result.props) {
-      props.set(prop.id, prop as Parameters<typeof props.set>[1]);
-    }
-    for (const src of result.styleSources) {
-      styleSources.set(src.id, src as Parameters<typeof styleSources.set>[1]);
-    }
-    for (const sel of result.styleSourceSelections) {
-      styleSourceSelections.set(sel.instanceId, sel as Parameters<typeof styleSourceSelections.set>[1]);
-    }
-    // StyleDecl key: `${styleSourceId}:${breakpointId}:${state ?? ""}:${property}`
-    for (const decl of result.styles) {
-      if (decl.breakpointId === "mobile" && !mobileBpId) continue;
-      const bpId = decl.breakpointId === "base" ? baseBpId : decl.breakpointId === "mobile" ? mobileBpId! : decl.breakpointId;
-      const key = `${decl.styleSourceId}:${bpId}::${decl.property}`;
-      styles.set(key, {
-        ...decl,
-        breakpointId: bpId,
-      } as Parameters<typeof styles.set>[1]);
-    }
+    mergeComposition(draft, result);
 
     // 7. Point the active page at the new root
     const current = pages.pages.get(page.id);

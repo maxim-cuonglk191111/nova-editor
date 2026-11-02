@@ -186,3 +186,13 @@ thread. Works / Ease for both audiences ≥ 8; ≥ 1 minute between AI calls.
 4. **Restore point before every Apply** (one snapshot row each) — proposed: yes, they are small and
    make "undo after reload" possible.
 5. v1 scope: one selected element/section (multi-select later) — proposed.
+
+## 13. What was built (v1, 2026-11-02)
+
+Everything in sections 3–6 and 9–10 works as drawn, with these differences (also in [task 037](../docs/tasks/037-ai-chat-tab.md)):
+
+- **Threads are stored in the browser** (`nova-ai-chat:v1:<projectId>`, versioned, read defensively) behind the `ChatStorage` interface in `lib/aiChat/store.ts`; the database columns of §7 and the snapshot link are not built yet because that migration needs the owner's go-ahead on the production database. `POST /api/ai/chat` replaces `conversations`/`messages` routes for now; `GET /api/ai/providers?light=1` feeds the model picker.
+- **No snapshot row per Apply**: Apply is one `updateData` transaction, so Ctrl+Z is the restore point.
+- **New sections** are built by a second AI call from a short brief (`insertSection` / `replaceSection` carry a `brief`, the page composer builds the tree); at most two per message. A second h1 is never added (inserted headings are demoted).
+- Operations v1: `setText`, `setStyle` (visual properties only), `setProp` (alt, href, src, title, placeholder, target, tag), `remove`, `insertSection`, `replaceSection`. Every answer is checked on the server against the context it was given (`validateEditReply`) and again on the client at Apply time.
+- The popup (`AIPanel.tsx`) is gone; `$aiPanelOpen` now means "the AI tab is the open tab". The tab has its own width (300–560px).

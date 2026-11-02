@@ -2,6 +2,16 @@
 
 ---
 
+## [25.17.0] — 2026-11-02
+
+### Task 037 — AI as a chat tab in the left sidebar (Minor)
+
+- **AI tab** (first in the rail): a conversation next to the canvas instead of the one-shot "Generate" popup. Context chips follow the selection (element, section, page) and can be removed to widen the scope; starter prompts per scope; model picker (Auto, or a provider that has a key); history of chats per site; Stop and Retry; the draft and a pending proposal survive a reload.
+- **Edits after a page exists**: AI answers with a short list of changes (rewrite texts, restyle, change a link or image text, remove, add or redo a section). Nothing changes until **Apply**; Apply is one undo step (Ctrl+Z); **Discard** changes nothing. Whole-page and multi-page generation stay (an empty page generates; "Start over with a new page" asks first).
+- **Server**: `POST /api/ai/chat` (same auth, credits and rate limit as `/api/ai`; credits only after a valid answer), edit agent and answer validation in `@studio/ai`, `GET /api/ai/providers?light=1`.
+- Threads are stored in the browser for now (database-backed history needs a migration). The old popup is removed; the ✦ button, ⌘⇧A and the landing-page prompt open the tab.
+- Internal: the demo seed module was split into `seed/builders.ts` and `seed/sites/*` (SOLID gate), `applyWSComposition` exposes `mergeComposition`.
+
 ## [25.16.25] — 2026-11-02
 
 ### Task 036 — Old landing page, first-purchase prices (Minor)

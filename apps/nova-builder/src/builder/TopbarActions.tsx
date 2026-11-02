@@ -122,9 +122,9 @@ type Props = {
   isDemo?: boolean;
 };
 
-// The AI, AI Content Fill, Accessibility and History panels float in the same
+// AI Content Fill, Accessibility, Performance and History float in the same
 // spot; opening one closes the others so they never stack on top of each other.
-const FLOATING_PANELS = [$aiPanelOpen, $aiContentPanelOpen, $a11yPanelOpen, $perfPanelOpen, $historyPanelOpen, $cssPreviewOpen];
+const FLOATING_PANELS = [$aiContentPanelOpen, $a11yPanelOpen, $perfPanelOpen, $historyPanelOpen, $cssPreviewOpen];
 function openFloatingPanel(panel: (typeof FLOATING_PANELS)[number], open: boolean) {
   if (open) for (const p of FLOATING_PANELS) if (p !== panel) p.set(false);
   panel.set(open);
@@ -558,7 +558,8 @@ export function TopbarActions({ isDemo }: Props) {
             if (isDemo && !isLoggedIn) {
               openFeatureGate("ai");
             } else {
-              openFloatingPanel($aiPanelOpen, !isAIPanelOpen);
+              // The AI button opens the AI tab of the left sidebar (it is not a floating panel any more).
+              $aiPanelOpen.set(!isAIPanelOpen);
             }
           }}
           title={t.chrome.generateWithAI}

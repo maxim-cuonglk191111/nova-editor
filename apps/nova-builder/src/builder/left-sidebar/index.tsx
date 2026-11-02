@@ -9,22 +9,29 @@ import { CommentsPanel } from "@/builder/CommentsPanel";
 import { ActivityPanel } from "@/builder/ActivityPanel";
 import { CustomCSSPanel } from "./custom-css";
 import { MarketplacePanel } from "./marketplace";
+import { AIChatPanel } from "@/builder/ai-chat/AIChatPanel";
 import { SymbolsPanel } from "./symbols";
 import { useStore } from "@nanostores/react";
 import { $projectMeta } from "@/lib/data-stores";
+import { $aiPanelOpen } from "@/lib/nano-states";
 import { UI_VARS as C } from "@/lib/uiTheme";
 import { useI18n } from "@/lib/i18n";
 
-type TabId = "components" | "pages" | "navigator" | "assets" | "styles" | "comments" | "activity" | "css" | "marketplace" | "symbols";
+type TabId = "ai" | "components" | "pages" | "navigator" | "assets" | "styles" | "comments" | "activity" | "css" | "marketplace" | "symbols";
 
 // Tabs a remembered choice may reopen (hidden tabs fall back to the navigator).
-const TAB_IDS: TabId[] = ["components", "pages", "navigator", "assets", "marketplace"];
+const TAB_IDS: TabId[] = ["ai", "components", "pages", "navigator", "assets", "marketplace"];
 
 const TAB_KEY = "nova-sidebar-tab";
 const WIDTH_KEY = "nova-sidebar-width";
 const MIN_WIDTH = 180;
 const MAX_WIDTH = 360;
 const DEFAULT_WIDTH = 220;
+// A conversation needs more room than a list: the AI tab keeps its own width.
+const AI_WIDTH_KEY = "nova-sidebar-width-ai";
+const AI_MIN_WIDTH = 300;
+const AI_MAX_WIDTH = 560;
+const AI_DEFAULT_WIDTH = 380;
 
 function loadTab(): TabId {
   if (typeof localStorage === "undefined") return "navigator";
@@ -41,6 +48,12 @@ function loadWidth(): number {
     if (!isNaN(n)) return Math.min(MAX_WIDTH, Math.max(MIN_WIDTH, n));
   }
   return DEFAULT_WIDTH;
+}
+
+function loadAiWidth(): number {
+  if (typeof localStorage === "undefined") return AI_DEFAULT_WIDTH;
+  const n = parseInt(localStorage.getItem(AI_WIDTH_KEY) ?? "", 10);
+  return isNaN(n) ? AI_DEFAULT_WIDTH : Math.min(AI_MAX_WIDTH, Math.max(AI_MIN_WIDTH, n));
 }
 
 type TabItem = { id: TabId; label: string; short: string; icon: string };
@@ -83,13 +96,15 @@ function TabIcon({ tab, isActive, onClick }: { tab: TabItem; isActive: boolean; 
 export function LeftSidebar() {
   const { t } = useI18n();
   const [activeTab, setActiveTab] = useState<TabId | null>(loadTab);
-  const [panelWidth, setPanelWidth] = useState(loadWidth);
+  const [listWidth, setListWidth] = useState(loadWidth);
+  const [aiWidth, setAiWidth] = useState(loadAiWidth);
   const meta = useStore($projectMeta);
   const isResizing = useRef(false);
   const startX = useRef(0);
   const startWidth = useRef(0);
 
   const tabs: TabItem[] = [
+    { id: "ai", label: t.tools.aiChat.title, short: t.tools.rail.ai, icon: "✦" },
     { id: "components", label: t.builder.components, short: t.tools.rail.components, icon: "⊞" },
     // { id: "symbols",    label: t.builder.symbols,    short: "Sym",    icon: "◆" },
     { id: "pages", label: t.builder.pages, short: t.tools.rail.pages, icon: "☰" },
@@ -109,12 +124,34 @@ export function LeftSidebar() {
   }, [activeTab]);
 
   useEffect(() => {
-    localStorage.setItem(WIDTH_KEY, String(panelWidth));
-  }, [panelWidth]);
+    localStorage.setItem(WIDTH_KEY, String(listWidth));
+  }, [listWidth]);
+
+  useEffect(() => {
+    localStorage.setItem(AI_WIDTH_KEY, String(aiWidth));
+  }, [aiWidth]);
+
+  // `$aiPanelOpen` means "the AI tab is the open tab": the top-bar AI button, the ⌘⇧A command and
+  // the landing-page prompt set it, and the tab follows. Clicking tabs here sets it back.
+  useEffect(() => {
+    $aiPanelOpen.set(activeTab === "ai");
+    return $aiPanelOpen.listen((open) => {
+      setActiveTab((prev) => (open ? "ai" : prev === "ai" ? null : prev));
+    });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   function handleTabClick(id: TabId) {
-    setActiveTab((prev) => (prev === id ? null : id));
+    const next = activeTab === id ? null : id;
+    setActiveTab(next);
+    $aiPanelOpen.set(next === "ai");
   }
+
+  const isAi = activeTab === "ai";
+  const panelWidth = isAi ? aiWidth : listWidth;
+  const minWidth = isAi ? AI_MIN_WIDTH : MIN_WIDTH;
+  const maxWidth = isAi ? AI_MAX_WIDTH : MAX_WIDTH;
+  const setPanelWidth = isAi ? setAiWidth : setListWidth;
 
   // Resize handle — right edge of sidebar
   const handleResizeMouseDown = useCallback((e: React.MouseEvent) => {
@@ -131,7 +168,7 @@ export function LeftSidebar() {
     function onMove(ev: MouseEvent) {
       if (!isResizing.current) return;
       const delta = ev.clientX - startX.current;
-      const newWidth = Math.min(MAX_WIDTH, Math.max(MIN_WIDTH, startWidth.current + delta));
+      const newWidth = Math.min(maxWidth, Math.max(minWidth, startWidth.current + delta));
       setPanelWidth(newWidth);
     }
     function onUp() {
@@ -142,7 +179,7 @@ export function LeftSidebar() {
     }
     document.addEventListener("mousemove", onMove);
     document.addEventListener("mouseup", onUp);
-  }, [panelWidth]);
+  }, [panelWidth, minWidth, maxWidth, setPanelWidth]);
 
   const totalWidth = activeTab !== null ? RAIL_WIDTH + panelWidth : RAIL_WIDTH;
 
@@ -195,6 +232,7 @@ export function LeftSidebar() {
             flexShrink: 0,
           }}
         >
+          {activeTab === "ai" && <AIChatPanel />}
           {activeTab === "navigator" && <Navigator />}
           {activeTab === "pages" && <PagesPanel />}
           {activeTab === "components" && <ComponentsPanel />}

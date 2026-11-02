@@ -1,6 +1,6 @@
 # Task 037 — AI as a chat tab in the left sidebar (finishes task 009, item 6)
 
-- **Status:** In progress
+- **Status:** Closed locally (production run with a real provider and account pending the deploy)
 - **Filed:** 2026-11-02
 - **Owner:** Claude Code
 - **Severity:** Major
