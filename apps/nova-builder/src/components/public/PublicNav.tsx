@@ -36,7 +36,6 @@ export function PublicNav() {
   const items: NavItem[] = [
     { href: "/#features", label: t.nav.features },
     { href: "/pricing", label: t.nav.pricing },
-    { href: "/#faq", label: t.nav.faq },
     { href: "/builder/demo", label: t.nav.tryDemo },
     ...(isLoggedIn ? [{ href: "/projects", label: t.nav.projects }] : []),
   ];

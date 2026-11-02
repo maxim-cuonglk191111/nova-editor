@@ -224,8 +224,8 @@ async function sales(db, seed, now) {
       console.log(`removed ${orderCode(b)}`);
       continue;
     }
-    // What a new account really pays: the list price minus the welcome offer (50%).
-    const amount = seed.promoPrice(seed.PAYOS_PRICES_VND[b.purchase.plan]);
+    // What an account pays on its first purchase.
+    const amount = seed.promoPrice(b.purchase.plan, seed.PAYOS_PRICES_VND[b.purchase.plan]);
     const born = Date.parse(user.created_at);
     const paid = Math.max(born + 30_000, Math.min(born + (7 + i * 9) * 60_000, Date.now() - 5_000));
     const paidAt = new Date(paid).toISOString();

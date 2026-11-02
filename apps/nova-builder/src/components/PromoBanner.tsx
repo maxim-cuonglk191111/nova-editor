@@ -1,5 +1,5 @@
 "use client";
-// Welcome-offer strip for public pages. It states the real rule and the real end date, so
+// First-purchase strip for public pages. It states the real rule and the real end date, so
 // the urgency is true: the offer ends on that date for everyone, not after a timer that
 // restarts per visitor. Hidden when the offer is over, when the account already bought
 // something, and after the visitor dismisses it.
@@ -8,7 +8,9 @@ import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { useI18n, fmt } from "@/lib/i18n";
 import { usePromo } from "@/lib/usePromo";
-import { PROMO, formatPromoEnd, promoDaysLeft } from "@/lib/promo";
+import { PROMO, PROMO_PRICES_VND, formatPromoEnd, promoDaysLeft } from "@/lib/promo";
+import { PAYOS_PRICES_VND } from "@/lib/billing/payos";
+import { formatVnd } from "@/lib/billing/planPrice";
 
 const DISMISS_KEY = `nova-promo-dismissed:${PROMO.id}`;
 
@@ -29,9 +31,9 @@ export function PromoBanner() {
   const cta = session ? { href: "/pricing", label: t.billing.promoCtaPlans } : { href: "/signup", label: t.billing.promoCtaSignUp };
 
   return (
-    <aside className="promo" role="region" aria-label={t.billing.promoBannerTitle}>
+    <aside className="promo" role="region" aria-label={t.billing.promoBadge}>
       <p className="promo__text">
-        <strong>{t.billing.promoBannerTitle}</strong>
+        <strong>{fmt(t.billing.promoBannerTitle, { price: formatVnd(PROMO_PRICES_VND.pro!, locale), was: formatVnd(PAYOS_PRICES_VND.pro!, locale) })}</strong>
         <span>{fmt(t.billing.promoBannerBody, { date: formatPromoEnd(locale), days })}</span>
       </p>
       <Link href={cta.href} className="promo__cta">{cta.label}</Link>

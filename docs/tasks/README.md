@@ -42,3 +42,4 @@ screenshotted, reviewed and scored /10; a feature we cannot make work is hidden
 | [033](033-vyvy-bakery-seed-and-cf-deploy-fix.md) | Tiệm bánh VyVy landing seed, avatar photos, Cloudflare deploy fix | Closed |
 | [034](034-ovemo-cafe-seed.md) | Ovemo café account and site, seed uploads the shop's own photos | Closed |
 | [035](035-admin-business-overview.md) | Admin business overview and seeded Pro purchases for the report | Closed |
+| [036](036-old-landing-and-first-purchase-prices.md) | Old landing page back; first-purchase prices for everyone who never paid | Closed |
