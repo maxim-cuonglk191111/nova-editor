@@ -1,6 +1,6 @@
 # Task 040 — AI chat history in the database, with restore points
 
-- **Status:** Done locally 2026-11-02 (migration 0024 applied to production by the owner's go-ahead); production verification below
+- **Status:** Done locally 2026-11-02 (migration 0024 applied to production by the owner's go-ahead); verified on production (worker version e60354a3)
 - **Filed:** 2026-11-02
 - **Owner:** Claude Code
 - **Severity:** Medium
@@ -38,4 +38,4 @@ Not a defect: task 037 shipped the conversation first. The persisted-shape rule 
 
 ## Verification
 - Unit: `ai-chat-db` (row round trip, ownership 404/403/409, snapshot ids of other projects dropped), `ai-chat-sync` (merge, debounce, import, retry, late answer for another project), `ai-conversations-route` (401/400/413/404/403/409, no internal message leaks). `pnpm test`, `tsc`, lint, i18n audit (0), SOLID audit (0 blocking) pass; 20 local AI-panel e2e specs still pass.
-- E2E (`ai-history-live.spec.ts`, throwaway account): Apply saves the chat with status applied and a snapshot id; a second browser context with empty local storage shows the chat and the applied card; Restore (confirm, reload) brings the heading back; DELETE removes it. Passed against the local dev server (production database) in 51 s.
+- E2E (`ai-history-live.spec.ts`, throwaway account): Apply saves the chat with status applied and a snapshot id; a second browser context with empty local storage shows the chat and the applied card; Restore (confirm, reload) brings the heading back; DELETE removes it. Passed against the local dev server in 51 s and against the deployed site (worker version `e60354a3`) in 25 s.

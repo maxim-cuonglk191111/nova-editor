@@ -1,5 +1,13 @@
 # Nova — Verified Feature Ledger
 
+## nova-builder / v25.18.0 — AI chat history in the database (Task 040) (2026-11-02)
+
+| ID | Feature | Status | Visual Evidence |
+|---|---|---|---|
+| AIHIST-DB | An applied AI answer is saved with status and restore point; a second browser (empty local storage) shows the chat | 🟢 | e2e/builder-audit/ai-history-live.spec.ts on production |
+| AIHIST-RESTORE | "Restore the page from before" asks, restores, reloads: the heading is back | 🟢 | same spec |
+| AIHIST-ACL | Ownership (404/403/409), snapshot ids of other projects dropped, no internal error text | 🟢 | ai-chat-db and ai-conversations-route unit tests |
+
 ## nova-builder / v25.16.22 — Seeded demo accounts (Task 032) (2026-10-27)
 
 | ID | Feature | Status | Visual Evidence |
