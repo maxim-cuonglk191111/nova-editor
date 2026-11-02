@@ -127,7 +127,7 @@ export function SaveProjectDialog({
   const overlayStyle: React.CSSProperties = {
     position: "fixed",
     inset: 0,
-    background: "rgba(0,0,0,0.65)",
+    background: "rgba(17,17,17,0.42)",
     backdropFilter: "blur(4px)",
     display: "flex",
     alignItems: "center",
@@ -136,14 +136,14 @@ export function SaveProjectDialog({
   };
 
   const modalStyle: React.CSSProperties = {
-    width: 440,
-    background: C.surface,
+    width: 460,
+    background: C.card,
     border: `1px solid ${C.border}`,
-    borderRadius: 14,
-    padding: "24px 28px",
+    borderRadius: 24,
+    padding: 28,
     display: "flex",
     flexDirection: "column",
-    gap: 16,
+    gap: 18,
     boxShadow: "var(--ui-shadow-pop, 0 24px 48px rgba(0,0,0,0.5))",
     color: C.text,
     fontFamily: C.font,
@@ -151,18 +151,20 @@ export function SaveProjectDialog({
 
   const titleStyle: React.CSSProperties = {
     margin: 0,
-    fontSize: 18,
+    fontSize: 21,
     fontWeight: 700,
+    letterSpacing: "-0.015em",
     color: C.text,
   };
 
   const inputStyle: React.CSSProperties = {
-    padding: "10px 12px",
-    borderRadius: 8,
+    height: 44,
+    padding: "0 14px",
+    borderRadius: 12,
     border: `1px solid ${C.border}`,
-    background: "rgba(255,255,255,0.05)",
+    background: C.card,
     color: C.text,
-    fontSize: 13,
+    fontSize: 15,
     fontFamily: C.font,
     outline: "none",
     width: "100%",
@@ -171,22 +173,25 @@ export function SaveProjectDialog({
 
   const textareaStyle: React.CSSProperties = {
     ...inputStyle,
+    height: "auto",
+    padding: "12px 14px",
     resize: "none",
   };
 
   const labelStyle: React.CSSProperties = {
-    fontSize: 12,
-    fontWeight: 600,
-    color: C.textMuted,
-    marginBottom: 4,
+    fontSize: 14,
+    fontWeight: 500,
+    color: C.textDim,
+    marginBottom: 6,
     display: "block",
   };
 
   const buttonBaseStyle: React.CSSProperties = {
-    padding: "8px 16px",
-    borderRadius: 8,
+    height: 44,
+    padding: "0 20px",
+    borderRadius: 12,
     border: "none",
-    fontSize: 13,
+    fontSize: 15,
     fontFamily: C.font,
     fontWeight: 600,
     cursor: "pointer",
@@ -199,8 +204,8 @@ export function SaveProjectDialog({
 
   const primaryBtnStyle: React.CSSProperties = {
     ...buttonBaseStyle,
-    background: C.accent,
-    color: "#fff",
+    background: C.primary,
+    color: C.onPrimary,
   };
 
   const secondaryBtnStyle: React.CSSProperties = {
@@ -232,7 +237,7 @@ export function SaveProjectDialog({
 
         {/* Error message */}
         {errorMsg && (
-          <div style={{ padding: "8px 12px", background: "rgba(220,38,38,0.1)", border: "1px solid rgba(220,38,38,0.2)", borderRadius: 6, color: "#f87171", fontSize: 12 }}>
+          <div style={{ padding: "10px 14px", background: "rgba(220,38,38,0.08)", border: "1px solid rgba(220,38,38,0.25)", borderRadius: 12, color: C.error, fontSize: 14 }}>
             {errorMsg}
             {errorMsg === D.errorSignedOut && <> <SignInLink label={D.signInAction} /></>}
           </div>
@@ -241,10 +246,10 @@ export function SaveProjectDialog({
         {/* STEP 1: CONFIRM */}
         {step === "confirm" && (
           <>
-            <p style={{ margin: 0, fontSize: 13, color: C.textMuted, lineHeight: 1.5 }}>
+            <p style={{ margin: 0, fontSize: 15, color: C.textMuted, lineHeight: 1.55 }}>
               {D.confirmBody}
             </p>
-            <div style={{ fontSize: 14, fontWeight: 700, padding: "12px 14px", background: "rgba(255,255,255,0.03)", borderRadius: 8, border: `1px solid ${C.border}` }}>
+            <div style={{ fontSize: 15, fontWeight: 700, padding: "14px 16px", background: C.surface, borderRadius: 12, border: `1px solid ${C.border}` }}>
               {D.projectLabel} <span style={{ color: C.accentText }}>{projectName}</span>
             </div>
 

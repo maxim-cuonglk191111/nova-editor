@@ -154,7 +154,7 @@ export function EditablePropRow({
       <tr data-property={property}>
         <td colSpan={3} style={{ padding: "6px 16px 10px" }}>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 6 }}>
-            <span title={`${friendlyName} (${property})`} style={{ fontSize: 14, fontWeight: 500, color: isToken ? "#a78bfa" : C.text, fontFamily: C.font }}>{friendlyName}</span>
+            <span title={`${friendlyName} (${property})`} style={{ fontSize: 14, fontWeight: 500, color: isToken ? "var(--ui-accent-text)" : C.text, fontFamily: C.font }}>{friendlyName}</span>
             {removable && (
               <button
                 onClick={() => removeStyle(instanceId, decl)}
@@ -174,13 +174,13 @@ export function EditablePropRow({
     <tr data-property={property} style={{ verticalAlign: "middle" }}>
       <td
         title={`${friendlyName} (${property})`}
-        style={{ padding: "5px 4px 5px 16px", color: isToken ? "#a78bfa" : C.text, fontFamily: C.font, fontSize: 14, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", maxWidth: 0, width: "46%" }}
+        style={{ padding: "5px 4px 5px 16px", color: isToken ? "var(--ui-accent-text)" : C.text, fontFamily: C.font, fontSize: 14, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", maxWidth: 0, width: "46%" }}
       >
         <div style={{ display: "flex", flexDirection: "column", minWidth: 0, lineHeight: 1.15 }}>
-          <span style={{ fontSize: 14, fontWeight: 500, color: isToken ? "#a78bfa" : C.text, overflow: "hidden", textOverflow: "ellipsis" }}>
+          <span style={{ fontSize: 14, fontWeight: 500, color: isToken ? "var(--ui-accent-text)" : C.text, overflow: "hidden", textOverflow: "ellipsis" }}>
             {friendlyName}
             {isToken && (
-              <span title={fmt(t.inspector.fromToken, { name: src?.name ?? "" })} style={{ marginLeft: 4, fontSize: 8, background: "rgba(124,58,237,0.2)", color: "#c4b5fd", borderRadius: 3, padding: "1px 4px", verticalAlign: "middle", fontFamily: C.font, letterSpacing: "0.05em", textTransform: "uppercase" }}>T{/* i18n-ignore — token badge */}</span>
+              <span title={fmt(t.inspector.fromToken, { name: src?.name ?? "" })} style={{ marginLeft: 4, fontSize: 8, background: "color-mix(in srgb, var(--ui-accent) 20%, transparent)", color: "var(--ui-accent-text)", borderRadius: 3, padding: "1px 4px", verticalAlign: "middle", fontFamily: C.font, letterSpacing: "0.05em", textTransform: "uppercase" }}>T{/* i18n-ignore — token badge */}</span>
             )}
           </span>
           {showCssHint && (
@@ -194,7 +194,7 @@ export function EditablePropRow({
         <div style={{ display: "flex", flexDirection: "column", gap: 3 }}>
           <StyleValueEditor decl={decl} onWrite={handleWrite} />
           {SPACING_PRESET_PROPS.has(property) && decl.value.type === "unit" && (
-            <div style={{ display: "flex", gap: 2, alignItems: "center", marginTop: 1 }}>
+            <div style={{ display: "flex", gap: 4, alignItems: "center", marginTop: 2 }}>
               {SPACING_SCALE_PRESETS.map((p) => {
                 const uv = decl.value as UnitValue;
                 const active = uv.value === p.value && (uv.unit === "px" || uv.unit === "" || uv.unit === "number");
@@ -204,13 +204,13 @@ export function EditablePropRow({
                     onClick={() => handleWrite({ type: "unit", value: p.value, unit: "px" })}
                     title={`${p.tag}: ${p.value}px`}
                     style={{
-                      background: active ? "rgba(124,58,237,0.2)" : "transparent",
+                      background: active ? "color-mix(in srgb, var(--ui-accent) 20%, transparent)" : "transparent",
                       border: `1px solid ${active ? C.accentBorder : C.border}`,
                       color: active ? C.accentText : C.textMuted,
-                      borderRadius: 3,
-                      fontSize: 9,
-                      padding: "1px 4px",
-                      lineHeight: "12px",
+                      borderRadius: 6,
+                      fontSize: 11,
+                      padding: "2px 7px",
+                      lineHeight: "14px",
                       cursor: "pointer",
                       fontFamily: C.fontMono,
                     }}

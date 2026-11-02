@@ -37,7 +37,7 @@ export function Composer({ chat, inputRef }: Props) {
   }
 
   return (
-    <div style={{ flexShrink: 0, borderTop: `1px solid ${C.border}`, padding: 10, display: "flex", flexDirection: "column", gap: 8, background: C.bg }}>
+    <div style={{ flexShrink: 0, borderTop: `1px solid ${C.border}`, padding: 14, display: "flex", flexDirection: "column", gap: 10, background: C.bg }}>
       {!generateMode && scope && <ContextChips reference={scope.ref} onWiden={chat.widen} />}
       {hasPage && startOver === "armed" && (
         <div style={{ display: "flex" }}>
@@ -63,15 +63,15 @@ export function Composer({ chat, inputRef }: Props) {
         aria-label={placeholder}
         rows={3}
         data-testid="ai-input"
-        style={{ width: "100%", boxSizing: "border-box", background: C.input, border: `1px solid ${C.inputBorder}`, borderRadius: 10, color: C.text, fontSize: 13, fontFamily: C.font, padding: "9px 11px", resize: "none", outline: "none", lineHeight: 1.5, maxHeight: 180 }}
+        style={{ width: "100%", boxSizing: "border-box", background: C.card, border: `1px solid ${C.border}`, borderRadius: 14, color: C.text, fontSize: 14, fontFamily: C.font, padding: "12px 14px", resize: "none", outline: "none", lineHeight: 1.5, maxHeight: 180 }}
       />
 
       <div style={{ display: "flex", alignItems: "center", gap: 8, minWidth: 0 }}>
         <ModelPicker value={chat.model} providers={chat.providers} onChange={chat.setModel} disabled={busy} />
         <span style={{ flex: 1 }} />
         {busy ? (
-          <button type="button" onClick={chat.stop} data-testid="ai-stop" style={{ padding: "7px 14px", borderRadius: 8, border: `1px solid ${C.border}`, background: "transparent", color: C.text, fontSize: 13, fontWeight: 700, fontFamily: C.font, cursor: "pointer" }}>
-            ■ {L.stop}
+          <button type="button" onClick={chat.stop} data-testid="ai-stop" style={{ height: 40, padding: "0 16px", borderRadius: 12, border: `1px solid ${C.border}`, background: C.card, color: C.text, fontSize: 14, fontWeight: 700, fontFamily: C.font, cursor: "pointer", display: "inline-flex", alignItems: "center", gap: 8 }}>
+            <Icon name="stop" size={16} weight="fill" /> {L.stop}
           </button>
         ) : (
           <button
@@ -79,9 +79,9 @@ export function Composer({ chat, inputRef }: Props) {
             onClick={submit}
             disabled={!canSend}
             data-testid="ai-send"
-            style={{ padding: "7px 16px", borderRadius: 8, border: "none", background: canSend ? "linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%)" : "rgba(124,58,237,0.25)", color: "#fff", fontSize: 13, fontWeight: 700, fontFamily: C.font, cursor: canSend ? "pointer" : "default" }}
+            style={{ height: 40, padding: "0 18px", borderRadius: 12, border: "none", background: canSend ? C.accent : C.accentBg, color: canSend ? "#fff" : C.accentText, fontSize: 14, fontWeight: 700, fontFamily: C.font, cursor: canSend ? "pointer" : "default", display: "inline-flex", alignItems: "center", gap: 8 }}
           >
-            {L.send} ↵
+            {L.send} <Icon name="send" size={16} weight="fill" />
           </button>
         )}
       </div>
@@ -91,11 +91,11 @@ export function Composer({ chat, inputRef }: Props) {
         {hasPage && startOver === "idle" && !busy && <button type="button" style={small} onClick={() => setStartOver("ask")} data-testid="ai-start-over">{L.startOver}</button>}
       </div>
       {startOver === "ask" && (
-        <div role="alertdialog" aria-label={L.startOver} style={{ padding: "9px 10px", borderRadius: 9, border: `1px solid ${C.accentBorder}`, background: C.accentBg, display: "flex", flexDirection: "column", gap: 8, fontFamily: C.font }}>
+        <div role="alertdialog" aria-label={L.startOver} style={{ padding: "12px 14px", borderRadius: 12, border: `1px solid ${C.accentBorder}`, background: C.accentBg, display: "flex", flexDirection: "column", gap: 8, fontFamily: C.font }}>
           <span style={{ fontSize: 12, lineHeight: 1.5, color: C.text }}>{L.startOverAsk}</span>
           <span style={{ display: "flex", gap: 8 }}>
-            <button type="button" onClick={() => { setStartOver("armed"); inputRef.current?.focus(); }} style={{ padding: "5px 12px", borderRadius: 7, border: "none", background: C.accent, color: "#fff", fontSize: 12, fontWeight: 700, cursor: "pointer", fontFamily: C.font }}>{L.startOverYes}</button>
-            <button type="button" onClick={() => setStartOver("idle")} style={{ padding: "5px 12px", borderRadius: 7, border: `1px solid ${C.border}`, background: "transparent", color: C.textMuted, fontSize: 12, cursor: "pointer", fontFamily: C.font }}>{L.startOverNo}</button>
+            <button type="button" onClick={() => { setStartOver("armed"); inputRef.current?.focus(); }} style={{ height: 32, padding: "0 14px", borderRadius: 10, border: "none", background: C.accent, color: "#fff", fontSize: 13, fontWeight: 700, cursor: "pointer", fontFamily: C.font }}>{L.startOverYes}</button>
+            <button type="button" onClick={() => setStartOver("idle")} style={{ height: 32, padding: "0 14px", borderRadius: 10, border: `1px solid ${C.border}`, background: "transparent", color: C.textMuted, fontSize: 13, cursor: "pointer", fontFamily: C.font }}>{L.startOverNo}</button>
           </span>
         </div>
       )}

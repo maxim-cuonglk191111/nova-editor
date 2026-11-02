@@ -54,7 +54,7 @@ function Key({ label }: { label: string }) {
     <span style={{
       display: "inline-flex", alignItems: "center", justifyContent: "center",
       padding: "2px 7px", borderRadius: 4, minWidth: 24,
-      background: "rgba(255,255,255,0.07)", border: "1px solid rgba(255,255,255,0.12)",
+      background: "var(--ui-hover-bg)", border: "1px solid var(--ui-border)",
       color: C.textDim, fontSize: 12, fontFamily: "monospace", fontWeight: 600,
       lineHeight: 1.6,
     }}>
@@ -99,7 +99,7 @@ export function KeyboardShortcutsModal({ onClose }: { onClose: () => void }) {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             style={{
-              padding: "5px 10px", background: "rgba(255,255,255,0.05)",
+              padding: "5px 10px", background: "var(--ui-hover-bg)",
               border: `1px solid ${C.border}`, borderRadius: 6,
               color: C.text, fontSize: 13, fontFamily: C.font, outline: "none", width: 160,
             }}

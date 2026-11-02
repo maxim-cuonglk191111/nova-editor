@@ -93,25 +93,25 @@ function UnsavedChangesModal({ onConfirm, onClose }: { onConfirm: () => void; on
   return (
     <div
       onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
-      style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.65)", backdropFilter: "blur(4px)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 10000 }}
+      style={{ position: "fixed", inset: 0, background: "rgba(17,17,17,0.42)", backdropFilter: "blur(4px)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 10000 }}
     >
-      <div style={{ width: 400, background: C.surface || "#1e293b", border: `1px solid ${C.border || "rgba(255,255,255,0.1)"}`, borderRadius: 14, padding: "28px 32px", display: "flex", flexDirection: "column", gap: 16, boxShadow: "0 24px 48px rgba(0,0,0,0.5)" }}>
+      <div style={{ width: 440, background: C.card, border: `1px solid ${C.border}`, borderRadius: 24, padding: 28, display: "flex", flexDirection: "column", gap: 18, boxShadow: C.shadowPop }}>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-          <h2 style={{ margin: 0, fontSize: 18, fontWeight: 700, color: C.text || "#fff", fontFamily: C.font }}>{t.chrome.unsavedTitle}</h2>
+          <h2 style={{ margin: 0, fontSize: 21, fontWeight: 700, letterSpacing: "-0.015em", color: C.text, fontFamily: C.font }}>{t.chrome.unsavedTitle}</h2>
           <button onClick={onClose} style={{ background: "transparent", border: "none", color: C.textMuted || "rgba(255,255,255,0.5)", fontSize: 18, cursor: "pointer", lineHeight: 1 }}><Icon name="close" size={14} weight="bold" /></button>
         </div>
 
-        <p style={{ margin: 0, fontSize: 13, color: C.textMuted || "rgba(255,255,255,0.5)", fontFamily: C.font, lineHeight: 1.5 }}>
+        <p style={{ margin: 0, fontSize: 15, color: C.textMuted, fontFamily: C.font, lineHeight: 1.55 }}>
           {t.chrome.unsavedBody}
         </p>
 
         <div style={{ display: "flex", gap: 8, justifyContent: "flex-end", marginTop: 8 }}>
           <button onClick={onClose}
-            style={{ padding: "8px 16px", borderRadius: 7, border: `1px solid ${C.border || "rgba(255,255,255,0.1)"}`, background: "transparent", color: C.textMuted || "rgba(255,255,255,0.5)", fontSize: 12, fontFamily: C.font, cursor: "pointer" }}>
+            style={{ height: 44, padding: "0 20px", borderRadius: 12, border: `1px solid ${C.border}`, background: C.card, color: C.textDim, fontSize: 15, fontFamily: C.font, cursor: "pointer" }}>
             {t.chrome.cancel}
           </button>
           <button onClick={onConfirm}
-            style={{ padding: "8px 22px", borderRadius: 7, border: "none", background: C.danger || "#dc2626", color: "#fff", fontSize: 13, fontFamily: C.font, fontWeight: 700, cursor: "pointer" }}>
+            style={{ height: 44, padding: "0 22px", borderRadius: 12, border: "none", background: C.error, color: "#fff", fontSize: 15, fontFamily: C.font, fontWeight: 700, cursor: "pointer" }}>
             {t.chrome.import}
           </button>
         </div>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useI18n } from "@/lib/i18n";
+import { Icon } from "@/builder/icons";
 import type { Rect } from "./resizeMath";
 
 export function ContextualToolbar({
@@ -20,99 +21,42 @@ export function ContextualToolbar({
 
   if (isRoot || !instanceId) return null;
 
+  const button = (title: string, onClick: () => void, children: React.ReactNode, color = "#1f2937") => (
+    <button
+      type="button"
+      title={title}
+      aria-label={title}
+      onClick={(e) => { e.stopPropagation(); onClick(); }}
+      onMouseEnter={(e) => { e.currentTarget.style.background = "rgba(0,0,0,0.06)"; }}
+      onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; }}
+      style={{ background: "transparent", border: "none", color, cursor: "pointer", width: 30, height: 30, borderRadius: 8, display: "inline-flex", alignItems: "center", justifyContent: "center", padding: 0, transition: "background-color .12s ease" }}
+    >
+      {children}
+    </button>
+  );
+
   return (
     <div
       data-nova-contextual-toolbar=""
       style={{
         position: "fixed",
-        left: Math.max(8, box.left + box.width - 56),
-        top: Math.max(4, box.top - 24),
+        left: Math.max(8, box.left + box.width - 100),
+        top: Math.max(6, box.top - 44),
         display: "flex",
         alignItems: "center",
         gap: 2,
-        background: "#1e1e24",
-        border: "1px solid rgba(255,255,255,0.18)",
-        borderRadius: 4,
-        padding: "2px 4px",
-        boxShadow: "0 2px 8px rgba(0,0,0,0.45)",
+        background: "#ffffff",
+        border: "1px solid rgba(0,0,0,0.09)",
+        borderRadius: 12,
+        padding: 3,
+        boxShadow: "0 1px 2px rgba(15,23,42,0.08), 0 6px 18px rgba(15,23,42,0.14)",
         zIndex: 2147483002,
         pointerEvents: "auto",
       }}
     >
-      {isImage && (
-        <button
-          type="button"
-          title={t.inspector.props.cropImage}
-          aria-label={t.inspector.props.cropImage}
-          onClick={(e) => {
-            e.stopPropagation();
-            onCrop?.();
-          }}
-          style={{
-            background: "transparent",
-            border: "none",
-            color: "#c084fc",
-            cursor: "pointer",
-            fontSize: 12,
-            padding: "1px 4px",
-            borderRadius: 3,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            lineHeight: 1,
-          }}
-        >
-          ✂
-        </button>
-      )}
-      <button
-        type="button"
-        title={t.commands.duplicate}
-        aria-label={t.commands.duplicate}
-        onClick={(e) => {
-          e.stopPropagation();
-          window.parent.postMessage({ type: "nova:duplicate", instanceId }, window.location.origin);
-        }}
-        style={{
-          background: "transparent",
-          border: "none",
-          color: "#e2e8f0",
-          cursor: "pointer",
-          fontSize: 12,
-          padding: "1px 4px",
-          borderRadius: 3,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          lineHeight: 1,
-        }}
-      >
-        ⧉
-      </button>
-      <button
-        type="button"
-        title={t.commands.delete}
-        aria-label={t.commands.delete}
-        onClick={(e) => {
-          e.stopPropagation();
-          window.parent.postMessage({ type: "nova:delete", instanceId }, window.location.origin);
-        }}
-        style={{
-          background: "transparent",
-          border: "none",
-          color: "#ef4444",
-          cursor: "pointer",
-          fontSize: 12,
-          padding: "1px 4px",
-          borderRadius: 3,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          lineHeight: 1,
-        }}
-      >
-        🗑
-      </button>
+      {isImage && button(t.inspector.props.cropImage, () => onCrop?.(), <Icon name="crop" size={18} />, "#5b21b6")}
+      {button(t.commands.duplicate, () => window.parent.postMessage({ type: "nova:duplicate", instanceId }, window.location.origin), <Icon name="copy" size={18} />)}
+      {button(t.commands.delete, () => window.parent.postMessage({ type: "nova:delete", instanceId }, window.location.origin), <Icon name="trash" size={18} />, "#dc2626")}
     </div>
   );
 }

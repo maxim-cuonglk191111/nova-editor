@@ -4,38 +4,44 @@
 
 import type { RefObject } from "react";
 import { useI18n } from "@/lib/i18n";
+import { UI_VARS as C, UI_SHAPE as S } from "@/lib/uiTheme";
+import { Icon } from "./icons";
 
 export function TextFormatToolbar({ iframeRef }: { iframeRef: RefObject<HTMLIFrameElement | null> }) {
   const { t } = useI18n();
+
+  const commands = [
+    { icon: "bold" as const, title: t.chrome.boldTitle, cmd: "bold" },
+    { icon: "italic" as const, title: t.chrome.italicTitle, cmd: "italic" },
+    { icon: "underline" as const, title: t.chrome.underlineTitle, cmd: "underline" },
+    { icon: "link" as const, title: t.chrome.linkTitle, cmd: "link" },
+  ];
 
   return (
     <div
       data-text-format-toolbar="true"
       style={{
         position: "absolute",
-        top: 8,
+        top: 10,
         left: "50%",
         transform: "translateX(-50%)",
         zIndex: 50,
         display: "flex",
+        alignItems: "center",
         gap: 2,
-        background: "#0f172a",
-        border: "1px solid rgba(255,255,255,0.15)",
-        borderRadius: 6,
-        padding: "3px 4px",
-        boxShadow: "var(--ui-shadow-pop, 0 4px 16px rgba(0,0,0,0.5))",
-        fontFamily: "system-ui,sans-serif",
+        background: C.card,
+        border: `1px solid ${C.border}`,
+        borderRadius: S.radiusMd,
+        padding: 4,
+        boxShadow: C.shadowPop,
+        fontFamily: C.font,
       }}
     >
-      {[
-        { label: "B" /* i18n-ignore */, title: t.chrome.boldTitle, cmd: "bold", style: { fontWeight: 700 } },
-        { label: "I" /* i18n-ignore */, title: t.chrome.italicTitle, cmd: "italic", style: { fontStyle: "italic" } },
-        { label: "U̲" /* i18n-ignore */, title: t.chrome.underlineTitle, cmd: "underline", style: {} },
-        { label: "🔗", title: t.chrome.linkTitle, cmd: "link", style: {} },
-      ].map(({ label, title, cmd, style }) => (
+      {commands.map(({ icon, title, cmd }) => (
         <button
           key={cmd}
           title={title}
+          aria-label={title}
           onMouseDown={(e) => {
             e.preventDefault(); // prevent blur in canvas
             if (cmd === "link") {
@@ -52,23 +58,13 @@ export function TextFormatToolbar({ iframeRef }: { iframeRef: RefObject<HTMLIFra
               window.location.origin
             );
           }}
-          style={{
-            background: "none",
-            border: "1px solid transparent",
-            borderRadius: 4,
-            color: "#c4b5fd",
-            cursor: "pointer",
-            fontSize: 12,
-            padding: "2px 8px",
-            lineHeight: "18px",
-            ...style,
-          }}
+          style={{ background: "none", border: "none", borderRadius: S.radiusSm, color: C.text, cursor: "pointer", width: 34, height: 34, display: "inline-flex", alignItems: "center", justifyContent: "center", padding: 0 }}
         >
-          {label}
+          <Icon name={icon} size={18} weight="bold" />
         </button>
       ))}
-      <div style={{ width: 1, background: "rgba(255,255,255,0.1)", margin: "3px 2px" }} />
-      <span style={{ fontSize: 12, color: "rgba(255,255,255,0.3)", padding: "2px 4px", lineHeight: "18px" }}>
+      <div style={{ width: 1, height: 20, background: C.border, margin: "0 6px" }} />
+      <span style={{ fontSize: 13, color: C.textMuted, padding: "0 8px 0 2px" }}>
         {t.builder.formatCommitHint}
       </span>
     </div>

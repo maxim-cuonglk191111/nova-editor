@@ -64,7 +64,7 @@ export function CoachMarks({ visible }: Props) {
       {/* Backdrop */}
       <div
         onClick={dismiss}
-        style={{ position: "fixed", inset: 0, zIndex: 9998, background: "rgba(0,0,0,0.35)" }}
+        style={{ position: "fixed", inset: 0, zIndex: 9998, background: "rgba(17,17,17,0.35)" }}
       />
 
       {/* Tooltip */}
@@ -81,30 +81,30 @@ export function CoachMarks({ visible }: Props) {
           zIndex: 9999,
           background: C.card,
           border: `1px solid ${C.border}`,
-          borderRadius: 10,
-          padding: 18,
-          width: 280,
-          boxShadow: "0 12px 36px rgba(0,0,0,0.6)",
+          borderRadius: 20,
+          padding: 22,
+          width: 320,
+          boxShadow: C.shadowPop,
           fontFamily: C.font,
         }}
       >
-        <div style={{ fontSize: 14, fontWeight: 700, color: C.text, marginBottom: 6 }}>{mark.title}</div>
-        <p style={{ fontSize: 13, color: C.textMuted, lineHeight: 1.65, margin: "0 0 16px" }}>{mark.body}</p>
+        <div style={{ fontSize: 17, fontWeight: 700, letterSpacing: "-0.01em", color: C.text, marginBottom: 8 }}>{mark.title}</div>
+        <p style={{ fontSize: 14, color: C.textMuted, lineHeight: 1.6, margin: "0 0 18px" }}>{mark.body}</p>
 
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-          <span style={{ fontSize: 12, color: C.textMuted }}>
+          <span style={{ fontSize: 13, color: C.textMuted }}>
             {step + 1} / {MARKS.length}
           </span>
           <div style={{ display: "flex", gap: 8 }}>
             <button
               onClick={dismiss}
-              style={{ padding: "4px 10px", borderRadius: 6, border: `1px solid ${C.border}`, background: "transparent", color: C.textMuted, fontSize: 12, cursor: "pointer", fontFamily: C.font }}
+              style={{ height: 36, padding: "0 14px", borderRadius: 10, border: `1px solid ${C.border}`, background: C.card, color: C.textDim, fontSize: 14, cursor: "pointer", fontFamily: C.font }}
             >
               {t.coachmarks.skip}
             </button>
             <button
               onClick={next}
-              style={{ padding: "4px 12px", borderRadius: 6, border: "none", background: C.accent, color: "#fff", fontSize: 12, fontWeight: 700, cursor: "pointer", fontFamily: C.font }}
+              style={{ height: 36, padding: "0 16px", borderRadius: 10, border: "none", background: C.primary, color: C.onPrimary, fontSize: 14, fontWeight: 700, cursor: "pointer", fontFamily: C.font }}
             >
               {step < MARKS.length - 1 ? t.coachmarks.next : t.coachmarks.done}
             </button>

@@ -1,4 +1,5 @@
 "use client";
+import { FloatingPanel, panelPrimary, panelQuiet } from "./FloatingPanel";
 import { Icon } from "@/builder/icons";
 import { useState, useEffect, useRef } from "react";
 import { useStore } from "@nanostores/react";
@@ -82,23 +83,9 @@ export function AIContentPanel() {
   const before = new Map(textInstances.map((t) => [t.instanceId, t.currentText]));
 
   return (
-    <div
-      role="dialog"
-      aria-label={L.dialogLabel}
-      style={{
-        position: "fixed", top: 64, left: "50%", transform: "translateX(-50%)",
-        width: 500, maxWidth: "calc(100vw - 32px)", zIndex: 100,
-        background: C.bg, border: `1px solid ${C.border}`, borderRadius: 14,
-        boxShadow: "var(--ui-shadow-pop, 0 12px 48px rgba(0,0,0,0.6))", fontFamily: C.font, overflow: "hidden",
-      }}
-    >
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "12px 18px", borderBottom: `1px solid ${C.border}` }}>
-        <span style={{ fontSize: 13, fontWeight: 700, color: "#a78bfa" }}>{L.title}</span>
-        <button onClick={() => $aiContentPanelOpen.set(false)}
-          style={{ background: "none", border: "none", color: C.textMuted, cursor: "pointer", fontSize: 18, padding: "2px 4px" }}><Icon name="close" size={14} weight="bold" /></button>
-      </div>
-      <div style={{ padding: 16, display: "flex", flexDirection: "column", gap: 10 }}>
-        <div style={{ fontSize: 13, color: C.textMuted }}>{found}</div>
+    <FloatingPanel label={L.dialogLabel} title={L.title} icon="ai" onClose={() => $aiContentPanelOpen.set(false)} width={520} place="center">
+      <div style={{ padding: 16, display: "flex", flexDirection: "column", gap: 12 }}>
+        <div style={{ fontSize: 14, color: C.textMuted }}>{found}</div>
         <textarea
           ref={textareaRef}
           value={topic}
@@ -107,13 +94,13 @@ export function AIContentPanel() {
           placeholder={L.placeholder}
           rows={2}
           disabled={isLoading}
-          style={{ width: "100%", background: C.input, border: `1px solid ${C.inputBorder}`, borderRadius: 8, color: C.text, fontSize: 12, fontFamily: C.font, padding: "9px 12px", resize: "none", outline: "none", boxSizing: "border-box", opacity: isLoading ? 0.5 : 1 }}
+          style={{ width: "100%", background: C.card, border: `1px solid ${C.border}`, borderRadius: 12, color: C.text, fontSize: 14, fontFamily: C.font, padding: "12px 14px", resize: "none", outline: "none", boxSizing: "border-box", opacity: isLoading ? 0.5 : 1 }}
         />
         <div style={{ display: "flex", justifyContent: "flex-end" }}>
           <button
             onClick={handleFill}
             disabled={isLoading || !topic.trim() || !textInstances.length}
-            style={{ padding: "6px 16px", borderRadius: 6, border: "none", background: isLoading || !topic.trim() ? "rgba(124,58,237,0.25)" : "linear-gradient(135deg, #7c3aed, #6d28d9)", color: "#fff", fontSize: 12, fontFamily: C.font, fontWeight: 700, cursor: isLoading ? "default" : "pointer" }}
+            style={panelPrimary(isLoading || !topic.trim())}
           >
             {isLoading ? L.generating : L.fill}
           </button>
@@ -139,12 +126,12 @@ export function AIContentPanel() {
             )}
             <div style={{ display: "flex", gap: 6, alignItems: "center", justifyContent: "flex-end" }}>
               <span style={{ fontSize: 12, color: C.textMuted, marginRight: "auto" }}>{L.undoHint}</span>
-              <button onClick={() => setState({ type: "idle" })} style={{ padding: "4px 10px", borderRadius: 5, border: `1px solid ${C.border}`, background: "transparent", color: C.textMuted, fontSize: 13, fontFamily: C.font, cursor: "pointer" }}>{L.discard}</button>
-              <button onClick={handleApply} style={{ padding: "4px 14px", borderRadius: 5, border: "none", background: C.success, color: "#fff", fontSize: 13, fontFamily: C.font, fontWeight: 700, cursor: "pointer" }}>{L.apply}</button>
+              <button onClick={() => setState({ type: "idle" })} style={{ ...panelQuiet, height: 32, fontSize: 13 }}>{L.discard}</button>
+              <button onClick={handleApply} style={{ ...panelPrimary(false), height: 32, fontSize: 13 }}>{L.apply}</button>
             </div>
           </div>
         )}
       </div>
-    </div>
+    </FloatingPanel>
   );
 }

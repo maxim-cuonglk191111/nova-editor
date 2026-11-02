@@ -136,7 +136,7 @@ export const viDictionary: I18nDictionary = {
     aiContentFill: "AI viết lại nội dung",
     accessibility: "Kiểm tra trợ năng",
     performance: "Hiệu suất",
-    history: "⏱ Lịch sử",
+    history: "Lịch sử",
     backToMySites: "Về trang Website của tôi",
     backToHome: "Về trang chủ",
     copyTooltip: "Sao chép (Ctrl+C)",

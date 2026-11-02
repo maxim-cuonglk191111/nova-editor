@@ -163,7 +163,7 @@ export const viTools: I18nToolsDictionary = {
   },
   aiContent: {
     dialogLabel: "Điền nội dung bằng AI",
-    title: "✦ Điền nội dung bằng AI",
+    title: "Điền nội dung bằng AI",
     found: "Viết lại {count} đoạn chữ trên trang này. Mẹo: chọn một phần (section) trước để chỉ viết lại phần đó. Hãy mô tả chủ đề, giọng văn hoặc ngôn ngữ.",
     foundSelection: "Chỉ viết lại {count} đoạn chữ trong “{name}” đang chọn — phần còn lại của trang giữ nguyên. Hãy mô tả điều cần đổi.",
     placeholder: "ví dụ: \"Dịch sang tiếng Anh\" hoặc \"Ấm áp hơn, ngắn hơn, cho tiệm bánh gia đình\"",
@@ -178,7 +178,7 @@ export const viTools: I18nToolsDictionary = {
   },
   a11y: {
     dialogLabel: "Kiểm tra trợ năng",
-    title: "♿ Kiểm tra trợ năng",
+    title: "Kiểm tra trợ năng",
     checking: "Đang kiểm tra…",
     run: "Chạy kiểm tra",
     errors: "{count} lỗi",
@@ -205,7 +205,7 @@ export const viTools: I18nToolsDictionary = {
   },
   perf: {
     dialogLabel: "Cố vấn hiệu năng",
-    title: "⚡ Cố vấn hiệu năng",
+    title: "Cố vấn hiệu năng",
     analyzing: "Đang phân tích…",
     analyze: "Phân tích trang",
     impact: "Ảnh hưởng {impact}",
@@ -214,7 +214,7 @@ export const viTools: I18nToolsDictionary = {
   },
   history: {
     dialogLabel: "Lịch sử phiên bản",
-    title: "⏱ Lịch sử phiên bản",
+    title: "Lịch sử phiên bản",
     labelPlaceholder: "Nhãn bản lưu (không bắt buộc)",
     save: "Lưu",
     loading: "Đang tải…",

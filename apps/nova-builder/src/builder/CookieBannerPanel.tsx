@@ -8,7 +8,7 @@ import { useI18n } from "@/lib/i18n";
 
 const inputStyle: React.CSSProperties = {
   width: "100%", padding: "6px 8px",
-  background: "rgba(255,255,255,0.05)", border: `1px solid ${C.border}`,
+  background: "var(--ui-hover-bg)", border: `1px solid ${C.border}`,
   borderRadius: 5, color: C.text, fontSize: 13, fontFamily: C.font,
   outline: "none", boxSizing: "border-box",
 };
@@ -32,7 +32,7 @@ const DEFAULTS: ConsentConfig = {
   position: "bottom",
   bgColor: "#1e1e2e",
   textColor: "#e2e8f0",
-  buttonColor: "#7c3aed",
+  buttonColor: "var(--ui-accent)",
 };
 
 export function CookieBannerPanel() {
@@ -152,7 +152,7 @@ export function CookieBannerPanel() {
         onClick={save}
         style={{
           width: "100%", padding: "7px 0", borderRadius: 5, border: "none",
-          background: saved ? "rgba(5,150,105,0.8)" : "rgba(124,58,237,0.8)",
+          background: saved ? "rgba(5,150,105,0.8)" : "color-mix(in srgb, var(--ui-accent) 80%, transparent)",
           color: "#fff", fontSize: 12, fontFamily: C.font, cursor: "pointer", fontWeight: 600,
         }}
       >

@@ -104,12 +104,12 @@ export function AssetLightbox({ asset, onClose }: { asset: NovaAsset; onClose: (
       >
         <div style={{ display: "flex", flexDirection: "column", gap: 2, maxWidth: "70%" }}>
           <span style={{
-            color: "rgba(255,255,255,0.9)", fontSize: 14, fontWeight: 600,
+            color: "var(--ui-text-muted)", fontSize: 14, fontWeight: 600,
             fontFamily: T.font, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
           }}>
             {asset.name}
           </span>
-          <span style={{ color: "rgba(255,255,255,0.5)", fontSize: 11, fontFamily: T.font }}>
+          <span style={{ color: "var(--ui-text-muted)", fontSize: 11, fontFamily: T.font }}>
             {formatBytes(asset.size)}
           </span>
         </div>
@@ -117,7 +117,7 @@ export function AssetLightbox({ asset, onClose }: { asset: NovaAsset; onClose: (
           onClick={close}
           style={{
             width: 36, height: 36, borderRadius: "50%",
-            border: "1px solid rgba(255,255,255,0.15)", background: "rgba(255,255,255,0.08)",
+            border: "1px solid var(--ui-border)", background: "var(--ui-hover-bg)",
             color: "#fff", fontSize: 18, cursor: "pointer",
             display: "flex", alignItems: "center", justifyContent: "center",
             transition: "background 0.2s",
@@ -165,7 +165,7 @@ export function AssetLightbox({ asset, onClose }: { asset: NovaAsset; onClose: (
           display: "flex", alignItems: "center", gap: 2,
           padding: "6px 8px",
           background: "rgba(30, 30, 40, 0.85)",
-          border: "1px solid rgba(255,255,255,0.1)",
+          border: "1px solid var(--ui-border)",
           borderRadius: 12,
           backdropFilter: "blur(16px)", WebkitBackdropFilter: "blur(16px)",
           opacity: isVisible ? 1 : 0,
@@ -185,7 +185,7 @@ export function AssetLightbox({ asset, onClose }: { asset: NovaAsset; onClose: (
           onClick={resetZoom} title={t.assets.zoomReset}
           style={{
             height: 30, minWidth: 52, border: "none", borderRadius: 8,
-            background: "transparent", color: "rgba(255,255,255,0.85)",
+            background: "transparent", color: "var(--ui-text-muted)",
             fontSize: 11, fontFamily: T.font, fontWeight: 600,
             cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center",
             transition: "background 0.15s", letterSpacing: "0.02em",
@@ -224,7 +224,7 @@ export function LightboxBtn({ children, onClick, title }: { children: React.Reac
       onClick={onClick} title={title}
       style={{
         width: 32, height: 30, border: "none", borderRadius: 8,
-        background: "transparent", color: "rgba(255,255,255,0.75)",
+        background: "transparent", color: "var(--ui-text-muted)",
         cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center",
         transition: "background 0.15s, color 0.15s",
       }}

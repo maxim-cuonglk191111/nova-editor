@@ -43,26 +43,26 @@ const enumOptions = (S: I18nSettingsPanelDictionary): Record<string, { label: st
 const OBJECT_FIT_VALUES = ["cover", "contain", "fill", "none", "scale-down"] as const;
 
 const selectStyle: React.CSSProperties = {
-  background: C.input,
+  background: C.card,
   border: `1px solid ${C.inputBorder}`,
-  borderRadius: 6,
+  borderRadius: 10,
   color: C.text,
   fontSize: 13,
   fontFamily: C.font,
-  padding: "5px 8px",
+  padding: "8px 12px",
   width: "100%",
   cursor: "pointer",
   outline: "none",
 };
 
 const inputStyle: React.CSSProperties = {
-  background: C.input,
+  background: C.card,
   border: `1px solid ${C.inputBorder}`,
-  borderRadius: 6,
+  borderRadius: 10,
   color: C.text,
   fontSize: 13,
   fontFamily: C.fontMono,
-  padding: "5px 8px",
+  padding: "8px 12px",
   width: "100%",
   boxSizing: "border-box",
   outline: "none",
@@ -130,10 +130,10 @@ function ObjectFitControl({ instanceId }: { instanceId: string }) {
               onClick={() => setObjectFit(val)}
               title={val}
               style={{
-                padding: "3px 9px",
-                borderRadius: 5,
+                padding: "5px 12px",
+                borderRadius: 10,
                 border: `1.5px solid ${active ? C.accent : C.border}`,
-                background: active ? "rgba(124,58,237,0.13)" : C.input,
+                background: active ? "color-mix(in srgb, var(--ui-accent) 13%, transparent)" : C.input,
                 color: active ? C.accent : C.textMuted,
                 fontSize: 11,
                 fontWeight: active ? 700 : 400,

@@ -30,7 +30,7 @@ export function StateSelector() {
         padding: "5px 8px",
         borderBottom: `1px solid ${C.border}`,
         flexShrink: 0,
-        background: hasNonDefault ? "rgba(124,58,237,0.06)" : "transparent",
+        background: hasNonDefault ? "color-mix(in srgb, var(--ui-accent) 6%, transparent)" : "transparent",
       }}
     >
       <ToggleGroup

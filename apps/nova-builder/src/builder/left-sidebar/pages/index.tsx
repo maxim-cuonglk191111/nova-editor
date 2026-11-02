@@ -14,8 +14,8 @@ import { useI18n, fmt } from "@/lib/i18n";
 
 
 const inputStyle: React.CSSProperties = {
-  background: "rgba(255,255,255,0.06)",
-  border: "1px solid rgba(139,92,246,0.4)",
+  background: "var(--ui-hover-bg)",
+  border: "1px solid color-mix(in srgb, var(--ui-accent) 40%, transparent)",
   borderRadius: 4,
   color: C.text,
   fontSize: 12,
@@ -158,8 +158,8 @@ export function PagesPanel() {
             onKeyDown={(e) => { if (e.key === "Enter") handleCreateFolder(); if (e.key === "Escape") { setShowNewFolder(false); setNewFolderName(""); } }}
             style={inputStyle} />
           <div style={{ display: "flex", gap: 6 }}>
-            <button onClick={handleCreateFolder} style={{ flex: 1, padding: "4px 0", background: "#7c3aed", border: "1px solid #7c3aed", borderRadius: 4, color: "#ffffff", fontWeight: 600, fontSize: 13, fontFamily: C.font, cursor: "pointer" }}>{L.createFolder}</button>
-            <button onClick={() => { setShowNewFolder(false); setNewFolderName(""); }} style={{ padding: "4px 10px", background: "none", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 4, color: C.textMuted, fontSize: 13, fontFamily: C.font, cursor: "pointer" }}>{L.cancel}</button>
+            <button onClick={handleCreateFolder} style={{ flex: 1, padding: "4px 0", background: "var(--ui-accent)", border: "1px solid var(--ui-accent)", borderRadius: 4, color: "#ffffff", fontWeight: 600, fontSize: 13, fontFamily: C.font, cursor: "pointer" }}>{L.createFolder}</button>
+            <button onClick={() => { setShowNewFolder(false); setNewFolderName(""); }} style={{ padding: "4px 10px", background: "none", border: "1px solid var(--ui-border)", borderRadius: 4, color: C.textMuted, fontSize: 13, fontFamily: C.font, cursor: "pointer" }}>{L.cancel}</button>
           </div>
         </div>
       )}

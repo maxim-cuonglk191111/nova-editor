@@ -1,4 +1,5 @@
 ﻿"use client";
+import { FloatingPanel, panelPrimary, panelQuiet } from "./FloatingPanel";
 import { Icon } from "@/builder/icons";
 import { useState, useEffect, useCallback } from "react";
 import { useStore } from "@nanostores/react";
@@ -86,29 +87,23 @@ export function HistoryPanel() {
   };
 
   return (
-    <div role="dialog" aria-label={L.dialogLabel}
-      style={{ position: "fixed", top: 64, right: 296, width: 340, maxHeight: "70vh", zIndex: 100, background: C.bg, border: `1px solid ${C.border}`, borderRadius: 16, boxShadow: "var(--ui-shadow-pop, 0 8px 32px rgba(0,0,0,0.5))", fontFamily: C.font, overflow: "hidden", display: "flex", flexDirection: "column" }}
-    >
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "11px 16px", borderBottom: `1px solid ${C.border}`, flexShrink: 0 }}>
-        <span style={{ fontSize: 13, fontWeight: 700, color: "#c4b5fd" }}>{L.title}</span>
-        <button onClick={() => $historyPanelOpen.set(false)} style={{ background: "none", border: "none", color: C.textMuted, cursor: "pointer", fontSize: 18, padding: "2px 4px" }}><Icon name="close" size={14} weight="bold" /></button>
-      </div>
-      <div style={{ padding: "10px 14px", borderBottom: `1px solid ${C.border}`, flexShrink: 0 }}>
-        <div style={{ display: "flex", gap: 6 }}>
+    <FloatingPanel label={L.dialogLabel} title={L.title} icon="history" onClose={() => $historyPanelOpen.set(false)} width={380}>
+      <div style={{ padding: "14px 16px", borderBottom: `1px solid ${C.border}`, flexShrink: 0 }}>
+        <div style={{ display: "flex", gap: 8 }}>
           <input
             value={newLabel}
             onChange={(e) => setNewLabel(e.target.value)}
             placeholder={L.labelPlaceholder}
             onKeyDown={(e) => { if (e.key === "Enter") saveSnapshot(); }}
-            style={{ flex: 1, background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 5, color: C.text, fontSize: 13, fontFamily: C.font, padding: "5px 9px", outline: "none" }}
+            style={{ flex: 1, background: C.card, border: "1px solid var(--ui-border)", borderRadius: 12, color: C.text, fontSize: 14, fontFamily: C.font, height: 36, padding: "0 12px", outline: "none" }}
           />
           <button onClick={saveSnapshot} disabled={saving}
-            style={{ padding: "5px 12px", borderRadius: 5, border: "1px solid rgba(124,58,237,0.4)", background: "rgba(124,58,237,0.15)", color: "#c4b5fd", fontSize: 13, fontFamily: C.font, fontWeight: 700, cursor: saving ? "default" : "pointer" }}>
+            style={panelPrimary(saving)}>
             {saving ? "…" : L.save}
           </button>
         </div>
         {message && (
-          <div style={{ marginTop: 6, fontSize: 12, color: message.type === "ok" ? "#6ee7b7" : "#fca5a5" }}>{message.text}</div>
+          <div style={{ marginTop: 6, fontSize: 12, color: message.type === "ok" ? C.success : C.error }}>{message.text}</div>
         )}
       </div>
       <div style={{ flex: 1, overflowY: "auto", padding: "8px 0" }}>
@@ -119,23 +114,23 @@ export function HistoryPanel() {
           </div>
         )}
         {snapshots.map((snap) => (
-          <div key={snap.id} style={{ padding: "8px 14px", display: "flex", alignItems: "center", gap: 8, borderBottom: `1px solid rgba(255,255,255,0.04)` }}>
+          <div key={snap.id} style={{ padding: "10px 16px", display: "flex", alignItems: "center", gap: 10, borderBottom: `1px solid ${C.border}` }}>
             <div style={{ flex: 1 }}>
               <div style={{ fontSize: 13, color: C.text, fontWeight: snap.label ? 600 : 400 }}>
                 {snap.label || <span style={{ color: C.textMuted, fontStyle: "italic" }}>{L.unnamed}</span>}
               </div>
-              <div style={{ fontSize: 9, color: C.textMuted, marginTop: 1 }}>{formatDate(snap.created_at)}</div>
+              <div style={{ fontSize: 12, color: C.textMuted, marginTop: 2 }}>{formatDate(snap.created_at)}</div>
             </div>
             <button
               onClick={() => restore(snap.id)}
               disabled={restoring === snap.id}
-              style={{ padding: "3px 9px", borderRadius: 4, border: "1px solid rgba(255,255,255,0.1)", background: "transparent", color: C.textMuted, fontSize: 12, fontFamily: C.font, cursor: restoring === snap.id ? "default" : "pointer" }}
+              style={{ ...panelQuiet, height: 32, fontSize: 13, cursor: restoring === snap.id ? "default" : "pointer" }}
             >
               {restoring === snap.id ? "…" : L.restore}
             </button>
           </div>
         ))}
       </div>
-    </div>
+    </FloatingPanel>
   );
 }

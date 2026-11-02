@@ -1,4 +1,5 @@
 "use client";
+import { Icon } from "./icons";
 import { useStore } from "@nanostores/react";
 import { $safeModeActive, $commandPaletteOpen } from "@/lib/nano-states";
 import { UI_VARS as C, FONT } from "@/lib/uiTheme";
@@ -21,36 +22,37 @@ export function SafeModeBanner() {
         left: "50%",
         transform: "translate(-50%, -50%)",
         zIndex: 20,
-        background: C.surface,
+        background: C.card,
         border: `1px solid ${C.border}`,
-        borderRadius: 12,
-        padding: "28px 36px",
+        borderRadius: 20,
+        padding: "32px 40px",
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
         gap: 14,
-        boxShadow: "0 24px 48px rgba(0,0,0,0.45)",
+        boxShadow: C.shadowPop,
         textAlign: "center",
-        maxWidth: 320,
+        maxWidth: 360,
         pointerEvents: "all",
       }}
     >
-      <div style={{ fontSize: 32, lineHeight: 1 }}>📄</div>
-      <div style={{ fontSize: FONT.md, fontWeight: 700, color: C.text, fontFamily: C.font }}>
+      <div style={{ width: 56, height: 56, borderRadius: 16, background: C.accentBg, color: C.accentText, display: "flex", alignItems: "center", justifyContent: "center" }}><Icon name="newPage" size={30} weight="duotone" /></div>
+      <div style={{ fontSize: 19, fontWeight: 700, letterSpacing: "-0.01em", color: C.text, fontFamily: C.font }}>
         {t.builder.safeModeTitle}
       </div>
-      <div style={{ fontSize: FONT.sm, color: C.textMuted, fontFamily: C.font, lineHeight: 1.5 }}>
+      <div style={{ fontSize: 15, color: C.textMuted, fontFamily: C.font, lineHeight: 1.55 }}>
         {t.builder.safeModeBody}
       </div>
       <button
         onClick={() => $commandPaletteOpen.set(true)}
         style={{
-          padding: "8px 20px",
-          borderRadius: 7,
+          height: 44,
+          padding: "0 24px",
+          borderRadius: 12,
           border: "none",
-          background: C.accent,
-          color: "#fff",
-          fontSize: FONT.sm,
+          background: C.primary,
+          color: C.onPrimary,
+          fontSize: 15,
           fontFamily: C.font,
           fontWeight: 700,
           cursor: "pointer",

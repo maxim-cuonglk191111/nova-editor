@@ -119,7 +119,7 @@ test("top bar", async ({ page, context }) => {
   });
 
   await step("tools menu panels", async () => {
-    const items = [["AI Content Fill", "t10-ai-fill"], ["Accessibility", "t11-a11y"], ["⏱ History", "t13-history"], ["Grid Guides", "t14-grid"]] as const;
+    const items = [["AI Content Fill", "t10-ai-fill"], ["Accessibility", "t11-a11y"], ["History", "t13-history"], ["Grid Guides", "t14-grid"]] as const;
     for (const hidden of ["Performance", "CSS Preview"]) {
       await btn("Tools").click();
       await expect.soft(page.getByText(hidden, { exact: true }), `${hidden} hidden (Tier C)`).toHaveCount(0);

@@ -24,7 +24,7 @@ type SeoData = Record<string, PageSEO>;
 
 const inputStyle: React.CSSProperties = {
   width: "100%", padding: "6px 8px",
-  background: "rgba(255,255,255,0.05)", border: `1px solid ${C.border}`,
+  background: "var(--ui-hover-bg)", border: `1px solid ${C.border}`,
   borderRadius: 5, color: C.text, fontSize: 13, fontFamily: "monospace",
   outline: "none", boxSizing: "border-box",
 };
@@ -72,11 +72,11 @@ function OGPreviewCard({ title, description, image, url }: {
         // eslint-disable-next-line @next/next/no-img-element
         <img src={image} alt="" style={{ width: "100%", height: 80, objectFit: "cover", display: "block" }} />
       ) : (
-        <div style={{ width: "100%", height: 80, background: "rgba(124,58,237,0.08)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+        <div style={{ width: "100%", height: 80, background: "color-mix(in srgb, var(--ui-accent) 8%, transparent)", display: "flex", alignItems: "center", justifyContent: "center" }}>
           <span style={{ fontSize: 12, color: C.textMuted }}>{L.noOgImage}</span>
         </div>
       )}
-      <div style={{ padding: "8px 10px", background: "rgba(255,255,255,0.02)" }}>
+      <div style={{ padding: "8px 10px", background: "var(--ui-hover-bg)" }}>
         {url && <div style={{ fontSize: 9, color: C.textMuted, marginBottom: 3, textTransform: "uppercase" }}>{url}</div>}
         <div style={{ fontSize: 13, fontWeight: 700, color: C.text, marginBottom: 2 }}>{title || L.previewTitle}</div>
         <div style={{ fontSize: 12, color: C.textDim, overflow: "hidden", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical" }}>
@@ -305,7 +305,7 @@ export function SEOPanel() {
         onClick={save}
         style={{
           width: "100%", padding: "7px 0", borderRadius: 5, border: "none",
-          background: saved ? "rgba(5,150,105,0.8)" : "rgba(124,58,237,0.8)",
+          background: saved ? "rgba(5,150,105,0.8)" : "color-mix(in srgb, var(--ui-accent) 80%, transparent)",
           color: "#fff", fontSize: 12, fontFamily: C.font, cursor: "pointer", fontWeight: 600,
         }}
       >

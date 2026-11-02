@@ -26,7 +26,7 @@ export function AssetCard({
     if (isImage) {
       try {
         const ghost = document.createElement("div");
-        ghost.style.cssText = "position:fixed;top:-200px;left:-200px;width:64px;height:64px;border-radius:8px;overflow:hidden;border:2px solid #7c3aed;";
+        ghost.style.cssText = "position:fixed;top:-200px;left:-200px;width:64px;height:64px;border-radius:8px;overflow:hidden;border:2px solid var(--ui-accent);";
         const img = document.createElement("img");
         img.src = asset.url; img.style.cssText = "width:100%;height:100%;object-fit:cover;";
         ghost.appendChild(img); document.body.appendChild(ghost);

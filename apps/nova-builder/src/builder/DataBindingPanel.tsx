@@ -15,7 +15,7 @@ import { useI18n } from "@/lib/i18n";
 
 
 const inputStyle: React.CSSProperties = {
-  padding: "5px 8px", background: "rgba(255,255,255,0.05)",
+  padding: "5px 8px", background: "var(--ui-hover-bg)",
   border: `1px solid ${C.border}`, borderRadius: 5, color: C.text,
   fontSize: 13, fontFamily: C.font, outline: "none", boxSizing: "border-box",
 };
@@ -60,7 +60,7 @@ export function DataBindingPanel() {
           <option value="json">json</option>
         </select>
         <button onClick={() => { if (varName.trim()) { createVariable(varName, varType); setVarName(""); } }}
-          style={{ padding: "5px 10px", borderRadius: 5, border: "none", background: "rgba(124,58,237,0.8)", color: "#fff", fontSize: 13, fontWeight: 600, cursor: "pointer", flexShrink: 0 }}>+</button>
+          style={{ padding: "5px 10px", borderRadius: 5, border: "none", background: "color-mix(in srgb, var(--ui-accent) 80%, transparent)", color: "#fff", fontSize: 13, fontWeight: 600, cursor: "pointer", flexShrink: 0 }}>+</button>
       </div>
 
       {variables.length === 0 ? (
@@ -68,7 +68,7 @@ export function DataBindingPanel() {
       ) : (
         <div style={{ display: "flex", flexDirection: "column", gap: 6, marginBottom: 20 }}>
           {variables.map((v) => v.type === "variable" && (
-            <div key={v.id} style={{ display: "flex", alignItems: "center", gap: 6, padding: "6px 8px", background: "rgba(255,255,255,0.02)", border: `1px solid ${C.border}`, borderRadius: 6 }}>
+            <div key={v.id} style={{ display: "flex", alignItems: "center", gap: 6, padding: "6px 8px", background: "var(--ui-hover-bg)", border: `1px solid ${C.border}`, borderRadius: 6 }}>
               <div style={{ flex: 1, minWidth: 0 }}>
                 <div style={{ fontSize: 13, fontWeight: 600, color: C.text, fontFamily: C.mono, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{v.name}</div>
                 <div style={{ fontSize: 9, color: C.textMuted }}>
@@ -102,7 +102,7 @@ export function DataBindingPanel() {
           <input value={resUrl} onChange={(e) => setResUrl(e.target.value)} placeholder="https://api.example.com/data" style={{ ...inputStyle, flex: 1, fontFamily: C.mono }} />
         </div>
         <button onClick={() => { if (resName.trim() && resUrl.trim()) { createResource(resName, resUrl, resMethod); setResName(""); setResUrl(""); } }}
-          style={{ padding: "6px 0", borderRadius: 5, border: "none", background: "rgba(124,58,237,0.8)", color: "#fff", fontSize: 13, fontWeight: 600, cursor: "pointer" }}>{t.builder.dbAddResource}</button>
+          style={{ padding: "6px 0", borderRadius: 5, border: "none", background: "color-mix(in srgb, var(--ui-accent) 80%, transparent)", color: "#fff", fontSize: 13, fontWeight: 600, cursor: "pointer" }}>{t.builder.dbAddResource}</button>
       </div>
 
       {resources.size === 0 ? (
@@ -115,7 +115,7 @@ export function DataBindingPanel() {
             )?.id;
             const loaded = dsId ? resourceValues.has(dsId) : false;
             return (
-              <div key={r.id} style={{ display: "flex", alignItems: "center", gap: 6, padding: "6px 8px", background: "rgba(255,255,255,0.02)", border: `1px solid ${C.border}`, borderRadius: 6 }}>
+              <div key={r.id} style={{ display: "flex", alignItems: "center", gap: 6, padding: "6px 8px", background: "var(--ui-hover-bg)", border: `1px solid ${C.border}`, borderRadius: 6 }}>
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={{ fontSize: 13, fontWeight: 600, color: C.text }}>
                     {r.name}

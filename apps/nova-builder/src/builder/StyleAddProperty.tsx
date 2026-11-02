@@ -111,19 +111,20 @@ export function AddPropertyRow({
   const inputStyle: React.CSSProperties = {
     background: C.inputBg,
     border: `1px solid ${C.border}`,
-    borderRadius: 3,
+    borderRadius: 8,
     color: C.text,
     fontFamily: C.fontMono,
     fontSize: 13,
-    padding: "2px 4px",
+    height: 34,
+    padding: "0 10px",
     outline: "none",
     boxSizing: "border-box" as const,
   };
 
   return (
-    <div style={{ padding: "6px 8px", borderBottom: `1px solid ${C.border}`, flexShrink: 0 }}>
-      <div style={{ fontSize: 11, color: C.textMuted, fontFamily: C.font, marginBottom: 4 }}>{t.inspector.addStyle}</div>
-      <div style={{ display: "flex", gap: 4 }}>
+    <div style={{ padding: "12px 16px", borderBottom: `1px solid ${C.border}`, flexShrink: 0 }}>
+      <div style={{ fontSize: 13, color: C.textMuted, fontFamily: C.font, marginBottom: 8 }}>{t.inspector.addStyle}</div>
+      <div style={{ display: "flex", gap: 8 }}>
         <datalist id="nova-css-props">
           {CSS_PROP_SUGGESTIONS.map((p) => (
             <option key={p} value={p}>{t.inspector.propNames[p] ?? p}</option>

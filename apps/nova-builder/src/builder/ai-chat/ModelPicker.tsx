@@ -22,7 +22,7 @@ export function ModelPicker({ value, providers, onChange, disabled }: Props) {
         disabled={disabled}
         onChange={(e) => onChange(e.target.value)}
         aria-label={L.modelLabel}
-        style={{ background: C.input, border: `1px solid ${C.inputBorder}`, borderRadius: 6, color: C.text, fontSize: 12, fontFamily: C.font, padding: "4px 6px", maxWidth: 190, minWidth: 0 }}
+        style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 10, color: C.text, fontSize: 13, fontFamily: C.font, height: 34, padding: "0 8px", maxWidth: 190, minWidth: 0 }}
       >
         <option value="auto">{L.modelAuto} · {L.modelAutoHint}</option>
         {providers && ORDER.map((id) => {

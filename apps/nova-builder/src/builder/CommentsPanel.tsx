@@ -86,7 +86,7 @@ export function CommentsPanel({ projectId }: { projectId: string }) {
           onChange={(e) => setBody(e.target.value)}
           placeholder={L.placeholder}
           rows={2}
-          style={{ width: "100%", background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 7, color: C.text, fontSize: 13, fontFamily: C.font, padding: "7px 10px", resize: "none", outline: "none", boxSizing: "border-box" }}
+          style={{ width: "100%", background: "var(--ui-hover-bg)", border: "1px solid var(--ui-border)", borderRadius: 7, color: C.text, fontSize: 13, fontFamily: C.font, padding: "7px 10px", resize: "none", outline: "none", boxSizing: "border-box" }}
         />
         <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 6 }}>
           <label style={{ display: "flex", alignItems: "center", gap: 4, fontSize: 12, color: C.textMuted, cursor: "pointer" }}>
@@ -94,7 +94,7 @@ export function CommentsPanel({ projectId }: { projectId: string }) {
             {L.pin}
           </label>
           <button onClick={post} disabled={posting || !body.trim()}
-            style={{ marginLeft: "auto", padding: "4px 12px", borderRadius: 5, border: "1px solid rgba(124,58,237,0.4)", background: "rgba(124,58,237,0.15)", color: "#c4b5fd", fontSize: 12, fontFamily: C.font, fontWeight: 700, cursor: posting || !body.trim() ? "default" : "pointer" }}>
+            style={{ marginLeft: "auto", padding: "4px 12px", borderRadius: 5, border: "1px solid color-mix(in srgb, var(--ui-accent) 40%, transparent)", background: "color-mix(in srgb, var(--ui-accent) 15%, transparent)", color: "var(--ui-accent-text)", fontSize: 12, fontFamily: C.font, fontWeight: 700, cursor: posting || !body.trim() ? "default" : "pointer" }}>
             {posting ? "…" : L.post}
           </button>
         </div>
@@ -113,7 +113,7 @@ export function CommentsPanel({ projectId }: { projectId: string }) {
             <div style={{ fontSize: 13, color: C.text, marginBottom: 4, lineHeight: 1.5, wordBreak: "break-word" }}>{c.body}</div>
             <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
               <span style={{ fontSize: 9, color: C.textMuted }}>{formatTimeAgo(c.created_at, t.tools.time)}</span>
-              {c.instance_id && <span style={{ fontSize: 9, color: "#a78bfa" }}>{L.element}</span>}
+              {c.instance_id && <span style={{ fontSize: 9, color: "var(--ui-accent-text)" }}>{L.element}</span>}
               <button onClick={() => resolve(c.id, !c.resolved)} style={{ marginLeft: "auto", fontSize: 9, color: c.resolved ? "#6ee7b7" : C.textMuted, background: "none", border: "none", cursor: "pointer", padding: 0 }}>
                 {c.resolved ? L.unresolve : L.resolve}
               </button>

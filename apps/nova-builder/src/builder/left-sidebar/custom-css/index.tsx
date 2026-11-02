@@ -26,7 +26,7 @@ export function CustomCSSPanel() {
         style={{
           flex: 1,
           width: "100%",
-          background: "rgba(255,255,255,0.03)",
+          background: "var(--ui-hover-bg)",
           border: "none",
           outline: "none",
           color: C.text,
