@@ -52,6 +52,8 @@ import { useCanvasMessages } from "@/builder/hooks/useCanvasMessages";
 import { Topbar } from "@/builder/Topbar";
 import { LeftSidebar } from "@/builder/left-sidebar";
 import { RightPanel } from "@/builder/RightPanel";
+import { CanvasToolbar } from "@/builder/CanvasToolbar";
+import { $addFlyoutOpen } from "@/builder/left-sidebar/sidebarTab";
 import { Footer } from "@/builder/Footer";
 import { AIContentPanel } from "@/builder/AIContentPanel";
 import { A11yPanel } from "@/builder/A11yPanel";
@@ -279,6 +281,18 @@ function BuilderPage() {
     });
   }, [fitToWidth]);
 
+  // The Add tab's thumbnail column pushes the canvas: fit the page again once the layout has settled
+  useEffect(() => {
+    let first = true;
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    const off = $addFlyoutOpen.subscribe(() => {
+      if (first) { first = false; return; }
+      clearTimeout(timer);
+      timer = setTimeout(fitToWidth, 80);
+    });
+    return () => { off(); clearTimeout(timer); };
+  }, [fitToWidth]);
+
   // Auto-fit on breakpoint change or initial project load
   useEffect(() => {
     if (loadState !== "ready") return;
@@ -360,7 +374,7 @@ function BuilderPage() {
           "topbar topbar topbar" 56px
           "left   main   right"  1fr
           "footer footer footer" 36px
-          / auto 1fr 280px
+          / auto 1fr 304px
         `,
         width: "100vw",
         height: "100vh",
@@ -473,6 +487,8 @@ function BuilderPage() {
           );
         })()}
       </div>
+
+      {loadState === "ready" && <CanvasToolbar isDemo={isDemo} />}
 
       {/* Right panel — Style + Settings tabs */}
       {loadState === "ready" && <RightPanel />}

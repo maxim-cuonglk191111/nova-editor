@@ -343,3 +343,8 @@ html, body {
   .nb-hide-narrow { display: none !important; }
   .nb-show-narrow { display: block !important; }
 }
+
+/* Inspector groups: the +/- sign follows the native <details> state. */
+.nb-section-sign::before { content: "+"; }
+details[open] > summary .nb-section-sign::before { content: "\2212"; }
+summary::-webkit-details-marker { display: none; }

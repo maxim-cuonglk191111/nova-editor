@@ -53,11 +53,14 @@ test("right panel", async ({ page, context }) => {
       .or(page.locator("tr").filter({ has: page.locator("td:first-child", { hasText: new RegExp(`^${prop}$`) }) }))
       .first();
   const setNumber = async (prop: string, v: string) => {
-    const input = row(prop).locator('input[type="number"]');
+    const input = row(prop).locator('input[inputmode="decimal"]');
     await input.fill(v);
     await input.press("Enter");
   };
   const setKeyword = async (prop: string, v: string) => {
+    // Properties with a few keywords are segmented pills (title = the keyword); the rest keep a text box.
+    const pill = row(prop).locator(`button[title="${v}"]`);
+    if (await pill.count()) { await pill.click(); return; }
     const input = row(prop).locator('input[type="text"]');
     await input.fill(v);
     await input.press("Enter");
@@ -325,7 +328,7 @@ test("right panel", async ({ page, context }) => {
     await page.waitForTimeout(800);
     await expect.soft.poll(() => cs(sub, "fontSize"), "desktop keeps 26px").toBe("26px");
     await openSection("Typography");
-    await expect.soft(row("fontSize").locator('input[type="number"]')).toHaveValue("26");
+    await expect.soft(row("fontSize").locator('input[inputmode="decimal"]')).toHaveValue("26");
     await shot(page, "r21-desktop-unchanged");
   });
 

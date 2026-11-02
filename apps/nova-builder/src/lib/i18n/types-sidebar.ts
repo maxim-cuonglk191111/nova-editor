@@ -76,6 +76,12 @@ export interface I18nComponentsPanelDictionary {
   hint: string;
   /** Category headings, keyed by the registry's ComponentCategory. */
   categories: Record<string, string>;
+  /** Headings of the three groups of categories: basics, interactive, more. */
+  groups: Record<string, string>;
+  results: string;
+  noResults: string;
+  clearSearch: string;
+  close: string;
   /**
    * Localised descriptions keyed by component id. Missing entries fall back to
    * the registry's own (English) description, so `en` leaves this empty.

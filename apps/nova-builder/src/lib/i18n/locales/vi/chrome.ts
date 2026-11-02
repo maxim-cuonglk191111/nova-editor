@@ -7,6 +7,8 @@ export const viChrome: I18nChromeDictionary = {
   zoomFit: "Vừa màn hình (Ctrl+Shift+1)",
   preview: "Xem trước",
   design: "Thiết kế",
+  canvasToolbar: "Công cụ canvas",
+  canvasAdd: "Thêm thành phần",
   modeSwitch: "Chế độ làm việc",
   previewOpensTab: "Mở bản xem trước trong tab mới",
   saving: "Đang lưu...",

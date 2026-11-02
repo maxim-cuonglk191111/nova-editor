@@ -7,6 +7,8 @@ export const enChrome: I18nChromeDictionary = {
   zoomFit: "Fit to screen (Ctrl+Shift+1)",
   preview: "Preview",
   design: "Design",
+  canvasToolbar: "Canvas tools",
+  canvasAdd: "Add a component",
   modeSwitch: "Work mode",
   previewOpensTab: "Open the preview in a new tab",
   saving: "Saving...",

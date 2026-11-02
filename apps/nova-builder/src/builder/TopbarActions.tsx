@@ -42,6 +42,7 @@ import { SaveProjectDialog } from "./SaveProjectDialog";
 import { DeployPanel } from "./DeployPanel";
 import { CollaboratorAvatars } from "./PresenceLayer";
 import { TopbarMenu, type TopbarMenuItem } from "./TopbarMenu";
+import { useToggleAIPanel } from "./useToggleAIPanel";
 import { exportProject } from "@/features/export/export-project";
 import { importProject } from "@/features/import/import-project";
 import { exportHtml } from "@/features/export-html/export-html";
@@ -135,7 +136,8 @@ export function TopbarActions({ isDemo }: Props) {
   const router = useRouter();
   const meta = useStore($projectMeta);
   const mode = useStore($builderMode);
-  const isAIPanelOpen = useStore($aiPanelOpen);
+  const aiToggle = useToggleAIPanel(isDemo);
+  const isAIPanelOpen = aiToggle.open;
   const isAIContentOpen = useStore($aiContentPanelOpen);
   const isA11yOpen = useStore($a11yPanelOpen);
   const isPerfOpen = useStore($perfPanelOpen);
@@ -358,14 +360,6 @@ export function TopbarActions({ isDemo }: Props) {
     });
   }, [meta]);
 
-  const handleZoomIn = useCallback(() => {
-    $canvasZoom.set(Math.min(3, Math.round(($canvasZoom.get() + 0.1) * 100) / 100));
-  }, []);
-
-  const handleZoomOut = useCallback(() => {
-    $canvasZoom.set(Math.max(0.1, Math.round(($canvasZoom.get() - 0.1) * 100) / 100));
-  }, []);
-
   const exportItems: TopbarMenuItem[] = [
       {
         label: t.builder.exportHtml,
@@ -408,20 +402,8 @@ export function TopbarActions({ isDemo }: Props) {
       { label: t.builder.gridGuides, active: gridGuides, onClick: () => $gridGuidesVisible.set(!gridGuides) },
   ];
 
-  const zoomBtn = { background: "none", border: "none", cursor: "pointer", color: C.textMuted, fontSize: 16, lineHeight: 1, padding: "0 10px", height: "100%", fontFamily: C.font } as const;
-
   return (
     <>
-      {/* Zoom controls */}
-      <div className="nb-hide-narrow" style={{ display: "flex", alignItems: "center", flexShrink: 0, height: S.control, background: C.card, border: `1px solid ${C.border}`, borderRadius: S.radiusMd, overflow: "hidden" }}>
-        <button onClick={handleZoomOut} title={t.chrome.zoomOut} aria-label={t.chrome.zoomOut} style={zoomBtn}>−</button>
-        <button onClick={() => $canvasZoom.set(1)} title={t.chrome.zoomReset} style={{ ...zoomBtn, borderLeft: `1px solid ${C.border}`, borderRight: `1px solid ${C.border}`, color: canvasZoom !== 1 ? C.accentText : C.textMuted, fontSize: 13, fontWeight: canvasZoom !== 1 ? 700 : 500, minWidth: 48 }}>
-          {Math.round(canvasZoom * 100)}%
-        </button>
-        <button onClick={handleZoomIn} title={t.chrome.zoomIn} aria-label={t.chrome.zoomIn} style={zoomBtn}>+</button>
-        <button onClick={() => $fitToWidthTrigger.set($fitToWidthTrigger.get() + 1)} title={t.chrome.zoomFit} aria-label={t.chrome.zoomFit} style={{ ...zoomBtn, borderLeft: `1px solid ${C.border}`, fontSize: 13 }}>⊡</button>
-      </div>
-
       {/* Right action area — unified controls (ADR-NB-022: zero JSX branching on isDemo) */}
       <div style={{ display: "flex", alignItems: "center", gap: 8, flexShrink: 0 }}>
         <CollaboratorAvatars />
@@ -521,14 +503,7 @@ export function TopbarActions({ isDemo }: Props) {
 
         {/* 4 — ✦ Generate: opens the AI tab */}
         <button
-          onClick={() => {
-            if (isDemo && !isLoggedIn) {
-              openFeatureGate("ai");
-            } else {
-              // The AI button opens the AI tab of the left sidebar (it is not a floating panel any more).
-              $aiPanelOpen.set(!isAIPanelOpen);
-            }
-          }}
+          onClick={aiToggle.toggle}
           title={t.chrome.generateWithAI}
           style={{ height: S.control, padding: "0 14px", borderRadius: S.radiusMd, border: `1px solid ${isAIPanelOpen ? C.accent : C.accentBorder}`, background: isAIPanelOpen ? C.accentBg : C.card, color: C.accentText, fontSize: 13, fontFamily: C.font, cursor: "pointer", fontWeight: 700, whiteSpace: "nowrap" }}
         >

@@ -11,6 +11,7 @@ import { CustomCSSPanel } from "./custom-css";
 import { MarketplacePanel } from "./marketplace";
 import { AIChatPanel } from "@/builder/ai-chat/AIChatPanel";
 import { SymbolsPanel } from "./symbols";
+import { $sidebarTabRequest, $addFlyoutOpen, FLYOUT_WIDTH } from "./sidebarTab";
 import { useStore } from "@nanostores/react";
 import { $projectMeta } from "@/lib/data-stores";
 import { $aiPanelOpen } from "@/lib/nano-states";
@@ -142,6 +143,13 @@ export function LeftSidebar() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // Other parts of the builder (the floating canvas toolbar) can ask for a tab.
+  useEffect(() => $sidebarTabRequest.listen((request) => {
+    if (!request) return;
+    setActiveTab(request.tab);
+    $aiPanelOpen.set(false);
+  }), []);
+
   function handleTabClick(id: TabId) {
     const next = activeTab === id ? null : id;
     setActiveTab(next);
@@ -182,7 +190,9 @@ export function LeftSidebar() {
     document.addEventListener("mouseup", onUp);
   }, [panelWidth, minWidth, maxWidth, setPanelWidth]);
 
-  const totalWidth = activeTab !== null ? RAIL_WIDTH + panelWidth : RAIL_WIDTH;
+  const addFlyout = useStore($addFlyoutOpen) && activeTab === "components";
+  const extraWidth = addFlyout ? FLYOUT_WIDTH : 0;
+  const totalWidth = activeTab !== null ? RAIL_WIDTH + panelWidth + extraWidth : RAIL_WIDTH;
 
   return (
     <div
@@ -227,7 +237,7 @@ export function LeftSidebar() {
       {activeTab !== null && (
         <div
           style={{
-            width: panelWidth,
+            width: panelWidth + extraWidth,
             overflow: "hidden",
             display: "flex",
             flexDirection: "column",

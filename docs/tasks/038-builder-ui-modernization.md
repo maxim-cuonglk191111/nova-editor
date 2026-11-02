@@ -1,6 +1,6 @@
 # Task 038 — Builder UI modernization (reference: Siteai), adapted to Nova's content and flow
 
-- **Status:** In progress — P0–P3 built on branch `feat/ui-modernization`, waiting for the owner's sign-off on the P2/P3 screenshots before P4–P6
+- **Status:** In progress — P0–P5 built on branch `feat/ui-modernization` (owner approved the top bar and asked for the rest of the reference look); P6 pass and the Tier 3 audit remain
 - **Filed:** 2026-11-02
 - **Owner:** Claude Code
 - **Severity:** Major (touches every panel of the builder; must not change behaviour)
@@ -58,7 +58,11 @@ New features from the reference (sitemap/wireframe stages, CMS, overlays, cursor
 - **P1** `lib/uiTheme.ts`: `primary`/`primaryHover`/`onPrimary`, `shadowSoft`/`shadowPop` in all three palettes (+ `UI_VARS`, CSS vars) and `UI_SHAPE` (radii 8/12/16, control 36/44, top bar 56).
 - **P2** Top bar 56px on a white surface: back + logo + project name; centred **Design | Preview ↗** switch (Preview still opens the tab, now via `topbar/usePreview.ts`); breakpoints as one pill group; zoom; Export/Tools (one **More** menu below 1280px); **Save** is the single filled primary button (dark green, white text AA); Generate = outline. Width classes `nb-hide-mid` (<1680) and `nb-hide-narrow` (<1280) in `globals.css`. Fixes the clipped Generate button at 1024px. Floating panels moved from top 52 to 64.
 - **P3** Rail 68px with a rounded active tile and readable labels (the "TEMPLATES" clip is gone); shared `PanelHeader` for Pages/Layers/Templates, same title style in Add; page rows as rounded cards; default panel width 260.
-- **Deviations**: no project-name caret (nothing to open from it yet, so no false affordance); Add keeps its category list with preview cards (it already has search and thumbnails) instead of the Siteai row list; the zoom group is hidden below 1280px until the floating toolbar (P4) takes over.
+- **P4** `builder/CanvasToolbar.tsx`: the floating pill at the bottom of the canvas (AI, Add, zoom −/%/+, fit). It replaces the top-bar zoom group (owner decision 3). The AI button shares `useToggleAIPanel` with the top bar (demo gate unchanged); Add opens the sidebar's Add tab through `$sidebarTabRequest`.
+- **P3b (Add)** `left-sidebar/components/`: search, then categories as rows (icon tile, name, count, chevron) in three groups (Page basics / Forms and navigation / More); the chosen category's preview cards open in a second column that **pushes** the canvas (it does not cover it), and the canvas re-fits when the column opens or closes. Wide screens open "Layout" at once; narrow ones start closed. Search lists every match in the second column. Cards keep click-to-insert and drag-to-drop. Split into `ComponentCard`, `CategoryList`, `index`.
+- **P5 (inspector)** `controls/CollapsibleSection` (sentence-case title, count, +/− sign from CSS), `controls/ToggleGroup` as a segmented control (also used by the state selector), `controls/enumOptions.ts`: properties that hold one of a few keywords (display, direction, wrap, align, justify, position, text align/transform/decoration, overflow, …) show as full-width pills under their label; a value outside the list keeps the text box, so no stored value is hidden. Right panel 304px wide, tabs 44px. Writes go through the same `writeStyle`.
+- **Deviations**: no project-name caret (nothing to open from it yet, so no false affordance); Add keeps its category list with preview cards (it already has search and thumbnails) instead of the Siteai row list; the top-bar zoom group is gone (P4).
+- **Not copied from the reference**: Siteai's alignment bar, Link / Position / Cursor groups and the Upgrade button (Nova has no such features or a different place for them); the inspector keeps Nova's own property groups.
 - **Selector note**: the breakpoint ⚙ keeps its accessible name; `builder-canvas-sync.spec.ts` looked for `input[type=number]`, which task 018 turned into text inputs, so the spec was already red; it now uses `input[inputmode=decimal]`.
 
 ## Open questions for the owner (answered above)

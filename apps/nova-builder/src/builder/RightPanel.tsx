@@ -71,14 +71,14 @@ export function RightPanel() {
             onClick={() => setActiveTab(id)}
             style={{
               padding: "8px 2px",
-              minHeight: 32,
-              background: activeTab === id ? "rgba(124,58,237,0.08)" : "none",
+              minHeight: 44,
+              background: activeTab === id ? C.accentBg : "none",
               border: "none",
               borderBottom: activeTab === id
                 ? `2px solid ${C.accent}`
                 : "2px solid transparent",
               cursor: "pointer",
-              fontSize: FONT.sm,
+              fontSize: 14,
               fontFamily: C.font,
               fontWeight: 600,
               overflow: "hidden",

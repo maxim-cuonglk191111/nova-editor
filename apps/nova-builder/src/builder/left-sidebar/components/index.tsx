@@ -1,104 +1,38 @@
 import React, { useState, useMemo, useEffect, useRef, useCallback } from "react";
+import { useStore } from "@nanostores/react";
 import { useDraggable, type DropTarget } from "./useDraggable";
 import { getRegistry } from "./ComponentRegistry";
 import { insertComponent } from "./insertComponent";
+import { ComponentCard } from "./ComponentCard";
+import { CategoryList, CATEGORY_GROUPS } from "./CategoryList";
+import { $addCategory, $addFlyoutOpen, FLYOUT_WIDTH } from "../sidebarTab";
+import { PanelHeader } from "../PanelHeader";
 import { useI18n } from "@/lib/i18n";
 import { componentName } from "@/lib/i18n/componentName";
+import { UI_VARS as C, UI_SHAPE as S } from "@/lib/uiTheme";
 
-// ── Lazy Render Component Preview ───────────────────────────────────────────
-function LazyComponentPreview({ children }: { children: React.ReactNode }) {
-  const [isVisible, setIsVisible] = useState(false);
-  const ref = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true);
-          observer.disconnect();
-        }
-      },
-      { rootMargin: "100px" }
-    );
-
-    if (ref.current) {
-      observer.observe(ref.current);
-    }
-
-    return () => observer.disconnect();
-  }, []);
-
-  return (
-    <div ref={ref} className="w-full flex items-center justify-center min-h-[50px]">
-      {isVisible ? children : (
-        <div className="flex flex-col items-center justify-center gap-2 w-full py-4">
-          <div className="w-6 h-6 rounded-full border-2 border-border border-t-primary animate-spin" />
-        </div>
-      )}
-    </div>
-  );
-}
-
-// ── Constraint & Scaling Visual Component Preview ────────────────────────────
-function ComponentPreview({ id, children }: { id: string; children: React.ReactNode }) {
-  // Identify large components that need to scale down to fit the preview card
-  const isLarge = [
-    "shadcn:Sidebar",
-    "shadcn:Table",
-    "shadcn:DataTable",
-    "shadcn:Dialog",
-    "shadcn:AlertDialog",
-    "shadcn:Drawer",
-    "shadcn:Sheet",
-    "shadcn:Carousel",
-    "shadcn:Command",
-    "shadcn:Row",
-    "shadcn:Row2Cols",
-    "shadcn:Row3Cols",
-    "shadcn:Row4Cols",
-    "shadcn:Calendar"
-  ].includes(id);
-
-  const scaleClass = isLarge ? "scale-[0.62]" : "scale-[0.88]";
-
-  return (
-    <div className="w-full h-[120px] flex items-center justify-center relative overflow-hidden bg-muted/20 border-b border-border/40 p-4 select-none pointer-events-none">
-      {/* Light dot grid background for the playground visual look */}
-      <div className="absolute inset-0 opacity-[0.05] dark:opacity-[0.08] bg-[radial-gradient(ellipse_at_center,_var(--ui-text)_1px,_transparent_1px)] bg-[size:10px_10px]" />
-      
-      <div className={`transform ${scaleClass} origin-center max-w-full max-h-full flex items-center justify-center transition-all duration-300`}>
-        <LazyComponentPreview>
-          {children}
-        </LazyComponentPreview>
-      </div>
-    </div>
-  );
-}
-
-// ── Custom Collapsible Chevron Icon ─────────────────────────────────────────
-function ChevronIcon({ expanded }: { expanded: boolean }) {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      fill="none"
-      viewBox="0 0 24 24"
-      strokeWidth={2.5}
-      stroke="currentColor"
-      className={`w-3 h-3 text-muted-foreground transition-transform duration-200 ${expanded ? "transform rotate-90" : ""}`}
-    >
-      <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
-    </svg>
-  );
-}
+// Wide screens open the first category at once, as the reference does; narrow ones start closed so
+// the canvas keeps its room (the second column pushes the canvas, it does not cover it).
+const WIDE = 1280;
 
 export function ComponentsPanel() {
   const { t } = useI18n();
   const L = t.sidebar.components;
   const nameOf = (item: { id: string; displayName: string }) => componentName(item.id, t.componentNames, item.displayName);
   const [searchQuery, setSearchQuery] = useState("");
-  const [collapsedCategories, setCollapsedCategories] = useState<Record<string, boolean>>({});
+  const category = useStore($addCategory);
 
-  // Draggable hook integration
+  useEffect(() => {
+    if ($addCategory.get() === undefined) $addCategory.set(window.innerWidth >= WIDE ? CATEGORY_GROUPS[0]!.categories[0]! : null);
+  }, []);
+
+  const searching = searchQuery.trim() !== "";
+  const flyoutOpen = (category ?? null) !== null || searching;
+  useEffect(() => {
+    $addFlyoutOpen.set(flyoutOpen);
+    return () => $addFlyoutOpen.set(false);
+  }, [flyoutOpen]);
+
   // The card holds pointer capture during a drag, so releasing it fires a click on
   // the card too; that click must not insert a second copy.
   const lastDropAt = useRef(0);
@@ -111,18 +45,18 @@ export function ComponentsPanel() {
   };
   const { isDragging, ghostPos, draggedComponent, startDrag } = useDraggable(dropInsert);
 
-  const handleMouseDown = (e: React.MouseEvent, componentName: string) => {
+  const handleMouseDown = (e: React.MouseEvent, id: string) => {
     e.preventDefault();
     if (e.button !== 0) return;
-    startDrag(componentName, e.clientX, e.clientY);
+    startDrag(id, e.clientX, e.clientY);
   };
 
-  // Filter components registry supporting tags, categories, keywords, aliases
-  const filteredRegistry = useMemo(() => {
-    const registryList = getRegistry();
-    if (!searchQuery) return registryList;
-    const q = searchQuery.toLowerCase();
-    return registryList.filter(
+  // Search matches names, descriptions, categories, keywords and tags.
+  const matches = useMemo(() => {
+    const all = getRegistry();
+    const q = searchQuery.trim().toLowerCase();
+    if (!q) return all;
+    return all.filter(
       (item) =>
         item.displayName.toLowerCase().includes(q) ||
         nameOf(item).toLowerCase().includes(q) ||
@@ -135,122 +69,71 @@ export function ComponentsPanel() {
   // eslint-disable-next-line react-hooks/exhaustive-deps -- nameOf only reads t
   }, [searchQuery, t]);
 
-  // Group components by shadcn design system categories
-  const categoriesMap = useMemo(() => {
-    // Page-building basics first (sections, text, images), then forms and widgets.
-    const map: Record<string, ReturnType<typeof getRegistry>> = {
-      Layout: [],
-      Typography: [],
-      Display: [],
-      Inputs: [],
-      Navigation: [],
-      Feedback: [],
-      Overlay: [],
-      Advanced: [],
-    };
+  const counts = useMemo(() => {
+    const out: Record<string, number> = {};
+    for (const item of matches) out[item.category] = (out[item.category] ?? 0) + 1;
+    return out;
+  }, [matches]);
 
-    filteredRegistry.forEach((item) => {
-      if (map[item.category]) {
-        map[item.category].push(item);
-      } else {
-        map[item.category] = [item];
-      }
-    });
+  // While searching, every match is listed whatever category is chosen; the category rows only show the match counts.
+  const shown = useMemo(() => (!searching && category ? matches.filter((i) => i.category === category) : matches), [matches, category, searching]);
+  const title = !searching && category ? L.categories[category] ?? category : L.results;
 
-    return map;
-  }, [filteredRegistry]);
-
-  const toggleCategory = (cat: string) => {
-    setCollapsedCategories((prev) => ({
-      ...prev,
-      [cat]: !prev[cat],
-    }));
-  };
+  const select = (c: string) => { setSearchQuery(""); $addCategory.set(category === c && !searching ? null : c); };
+  const closeFlyout = () => { $addCategory.set(null); setSearchQuery(""); };
 
   return (
-    <div className="flex flex-col h-full bg-background border-r border-border select-none relative overflow-hidden font-sans">
-      {/* Header & Search (V0.dev / Figma assets style) */}
-      <div className="p-4 flex flex-col gap-2.5 border-b border-border bg-background/60 backdrop-blur-md z-10">
-        <span className="text-base font-bold text-foreground" style={{ letterSpacing: "-0.01em" }}>{L.title}</span>
-        <div className="relative flex items-center">
-          <span className="absolute left-3 text-xs text-muted-foreground/70 pointer-events-none">🔍</span>
-          <input
-            type="text"
-            placeholder={L.search}
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-8 pr-10 py-1.5 bg-muted/40 hover:bg-muted/70 focus:bg-background border border-border/80 focus:border-primary/60 rounded-md text-xs text-foreground placeholder:text-muted-foreground/60 transition-all outline-none"
-          />
-          {searchQuery ? (
-            <button
-              onClick={() => setSearchQuery("")}
-              className="absolute right-3 text-[10px] text-muted-foreground hover:text-foreground font-bold"
-            >
-              ✕
-            </button>
-          ) : null}
+    <div className="select-none" style={{ display: "flex", height: "100%", background: C.bg, fontFamily: C.font }} onKeyDown={(e) => { if (e.key === "Escape" && flyoutOpen) closeFlyout(); }}>
+      {/* First column: search and the category rows */}
+      <div style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", borderRight: flyoutOpen ? `1px solid ${C.border}` : "none" }}>
+        <PanelHeader title={L.title} />
+        <div style={{ padding: "14px 14px 0", display: "flex", flexDirection: "column", gap: 8 }}>
+          <div style={{ position: "relative" }}>
+            <span aria-hidden="true" style={{ position: "absolute", left: 12, top: "50%", transform: "translateY(-50%)", fontSize: 14, color: C.textMuted, pointerEvents: "none" }}>⌕</span>
+            <input
+              type="text"
+              placeholder={L.search}
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              style={{ width: "100%", boxSizing: "border-box", height: S.controlLg - 4, padding: "0 34px 0 32px", background: C.card, border: `1px solid ${C.border}`, borderRadius: S.radiusMd, fontSize: 14, fontFamily: C.font, color: C.text, outline: "none" }}
+            />
+            {searching && (
+              <button type="button" onClick={() => setSearchQuery("")} aria-label={L.clearSearch} style={{ position: "absolute", right: 6, top: "50%", transform: "translateY(-50%)", width: 28, height: 28, border: "none", background: "none", color: C.textMuted, cursor: "pointer", fontSize: 13 }}>✕</button>
+            )}
+          </div>
+          <p style={{ margin: 0, fontSize: 12, lineHeight: 1.45, color: C.textMuted }}>{L.hint}</p>
         </div>
-        <p className="text-[11px] leading-snug text-muted-foreground">{L.hint}</p>
+        <div className="custom-scrollbar" style={{ flex: 1, overflowY: "auto", padding: "14px 14px 20px" }}>
+          {matches.length === 0 ? (
+            <div style={{ fontSize: 14, color: C.textMuted, padding: "12px 4px" }}>{L.noResults}</div>
+          ) : (
+            <CategoryList counts={counts} selected={searching ? null : category ?? null} names={L.categories} groupNames={L.groups} onSelect={select} />
+          )}
+        </div>
       </div>
 
-      {/* Component Explorer List */}
-      <div className="flex-1 p-4 flex flex-col gap-4.5 overflow-y-auto custom-scrollbar">
-        {Object.entries(categoriesMap).map(([category, items]) => {
-          if (items.length === 0) return null;
-          const isCollapsed = !!collapsedCategories[category];
-
-          return (
-            <div key={category} className="flex flex-col gap-2">
-              {/* Category Header */}
-              <button
-                onClick={() => toggleCategory(category)}
-                className="flex items-center justify-between w-full py-1 text-left hover:opacity-85 transition-opacity"
-              >
-                <div className="flex items-center gap-2">
-                  <ChevronIcon expanded={!isCollapsed} />
-                  <span className="text-xs font-semibold text-foreground/80 tracking-wide">{L.categories[category] ?? category}</span>
-                </div>
-                <span className="text-[9px] text-muted-foreground bg-muted/60 border border-border/50 px-1.5 py-0.5 rounded-full font-semibold">
-                  {items.length}
-                </span>
-              </button>
-
-              {/* Grid of Preview Cards */}
-              {!isCollapsed && (
-                <div className="grid grid-cols-1 gap-3.5 mt-1.5">
-                  {items.map((item) => {
-                    return (
-                      <div
-                        key={item.id}
-                        role="button"
-                        aria-label={nameOf(item)}
-                        className="group relative rounded-xl border transition-all duration-300 cursor-pointer overflow-hidden flex flex-col bg-card select-none border-border hover:shadow-md hover:border-primary/50 hover:scale-[1.02] transform active:scale-[0.98]"
-                        onClick={() => clickInsert(item.id)}
-                        onMouseDown={(e) => handleMouseDown(e, item.id)}
-                      >
-                        {/* Scaled visual preview element */}
-                        <ComponentPreview id={item.id}>
-                          {item.preview()}
-                        </ComponentPreview>
-
-                        {/* Metadata Details */}
-                        <div className="p-3.5 flex flex-col gap-0.5 bg-card/60 border-t border-border/10">
-                          <div className="text-xs font-semibold flex items-center gap-1.5 text-foreground leading-none">
-                            {nameOf(item)}
-                          </div>
-                          <p className="text-[10px] text-muted-foreground line-clamp-1 mt-1 leading-normal font-medium">
-                            {L.descriptions[item.id] ?? item.description}
-                          </p>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              )}
-            </div>
-          );
-        })}
-      </div>
+      {/* Second column: the thumbnails of the chosen category (or of the search results) */}
+      {flyoutOpen && (
+        <div data-testid="add-flyout" style={{ width: FLYOUT_WIDTH, flexShrink: 0, display: "flex", flexDirection: "column", background: C.surface, opacity: isDragging ? 0.35 : 1, transition: "opacity 0.1s" }}>
+          <PanelHeader title={title}>
+            <button type="button" onClick={closeFlyout} aria-label={L.close} style={{ width: 32, height: 32, border: "none", borderRadius: S.radiusSm, background: "transparent", color: C.textMuted, cursor: "pointer", fontSize: 14 }}>✕</button>
+          </PanelHeader>
+          <div className="custom-scrollbar" style={{ flex: 1, overflowY: "auto", padding: 14, display: "flex", flexDirection: "column", gap: 12 }}>
+            {shown.length === 0 && <div style={{ fontSize: 14, color: C.textMuted }}>{L.noResults}</div>}
+            {shown.map((item) => (
+              <ComponentCard
+                key={item.id}
+                id={item.id}
+                name={nameOf(item)}
+                description={L.descriptions[item.id] ?? item.description}
+                preview={item.preview()}
+                onClick={clickInsert}
+                onMouseDown={handleMouseDown}
+              />
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Floating Drag Ghost Preview */}
       {isDragging && draggedComponent && (
@@ -263,12 +146,7 @@ export function ComponentsPanel() {
           `}</style>
           <div
             className="fixed pointer-events-none z-50 bg-primary/20 border border-primary text-primary px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 shadow-lg backdrop-blur-sm"
-            style={{
-              left: ghostPos.x + 10,
-              top: ghostPos.y + 10,
-              animation: "nova-pickup 0.15s ease-out forwards",
-              transform: "rotate(-1deg)"
-            }}
+            style={{ left: ghostPos.x + 10, top: ghostPos.y + 10, animation: "nova-pickup 0.15s ease-out forwards", transform: "rotate(-1deg)" }}
           >
             <span>➕</span>
             <span>{componentName(draggedComponent, t.componentNames)}</span>

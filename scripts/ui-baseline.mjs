@@ -37,6 +37,9 @@ for (const size of [{ w: 1440, h: 900 }, { w: 1024, h: 768 }]) {
   await canvas.locator("h1").first().click();
   await page.waitForTimeout(500);
   await shot("selected-heading");
+  await canvas.locator("section, [data-ws-component='Box']").first().click({ position: { x: 8, y: 8 } }).catch(() => {});
+  await page.waitForTimeout(500);
+  await shot("selected-section");
   for (const tab of ["Props", "Settings"]) {
     const t = page.getByRole("button", { name: tab, exact: true }).or(page.getByText(tab, { exact: true })).first();
     if (await t.count()) { await t.click().catch(() => {}); await page.waitForTimeout(300); await shot(`right-${tab.toLowerCase()}`); }
