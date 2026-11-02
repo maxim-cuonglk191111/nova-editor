@@ -6,6 +6,8 @@
 - **Severity:** Major
 
 ## Request
+This is the work record for **task 009 item 6** (the umbrella task keeps the list; this file holds the plan, deviations and acceptance for the build).
+
 Today AI is a popup with one "Generate" button that replaces the page. After a page exists the owner cannot tell how to ask AI to change it. Task 009 item 6 asked for an **AI tab in the left rail that works like the assistants in Antigravity, Claude and Codex**: a conversation, with context chips, proposals the owner applies or discards, a model picker and history. The design is in `doc/AI-PANEL.md` (drafted 2026-10-08, decisions pending). The owner asked on 2026-11-02 to finish it; the draft's proposed answers are taken as approved (see Decisions).
 
 ## Decisions taken (the draft's proposals)

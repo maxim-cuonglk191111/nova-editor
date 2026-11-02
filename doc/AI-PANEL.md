@@ -1,6 +1,6 @@
 # AI panel — chat assistant in the left sidebar (design, task 009 batch 6)
 
-Status: **draft for the owner's review — no code until approved.** Date: 2026-10-08.
+Status: **approved by the owner's go-ahead on 2026-11-02; being built in [task 037](../docs/tasks/037-ai-chat-tab.md).** Draft date: 2026-10-08. Section 12 decisions: the proposals were taken as answered; deviations are listed in task 037.
 
 ## 1. Problem
 
