@@ -136,7 +136,7 @@ export const enDictionary: I18nDictionary = {
     aiContentFill: "AI Content Fill",
     accessibility: "Accessibility",
     performance: "Performance",
-    history: "⏱ History",
+    history: "History",
     backToMySites: "Back to My Sites",
     backToHome: "Back to Home",
     copyTooltip: "Copy (Ctrl+C)",

@@ -163,7 +163,7 @@ export const enTools: I18nToolsDictionary = {
   },
   aiContent: {
     dialogLabel: "AI Content Fill",
-    title: "✦ Fill with AI",
+    title: "Fill with AI",
     found: "Rewrites the {count} texts on this page. Tip: select a section first to rewrite only that section. Describe the topic, tone or language.",
     foundSelection: "Rewrites the {count} texts in the selected “{name}” only — the rest of the page stays as it is. Describe what to change.",
     placeholder: "e.g. \"Translate to Vietnamese\" or \"Warmer, shorter, for a family bakery\"",
@@ -178,7 +178,7 @@ export const enTools: I18nToolsDictionary = {
   },
   a11y: {
     dialogLabel: "Accessibility Checker",
-    title: "♿ Accessibility Check",
+    title: "Accessibility Check",
     checking: "Checking…",
     run: "Run Check",
     errors: "{count} error(s)",
@@ -205,7 +205,7 @@ export const enTools: I18nToolsDictionary = {
   },
   perf: {
     dialogLabel: "Performance Advisor",
-    title: "⚡ Performance Advisor",
+    title: "Performance Advisor",
     analyzing: "Analyzing…",
     analyze: "Analyze Page",
     impact: "{impact} impact",
@@ -214,7 +214,7 @@ export const enTools: I18nToolsDictionary = {
   },
   history: {
     dialogLabel: "Version History",
-    title: "⏱ Version History",
+    title: "Version History",
     labelPlaceholder: "Snapshot label (optional)",
     save: "Save",
     loading: "Loading…",

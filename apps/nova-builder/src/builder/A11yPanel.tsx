@@ -1,4 +1,5 @@
 "use client";
+import { FloatingPanel, panelPrimary, panelQuiet } from "./FloatingPanel";
 import { Icon } from "@/builder/icons";
 import { useState, useEffect } from "react";
 import { useStore } from "@nanostores/react";
@@ -88,16 +89,10 @@ export function A11yPanel() {
   const warnings = issues.filter((i) => i.severity === "warning").length;
 
   return (
-    <div role="dialog" aria-label={L.dialogLabel}
-      style={{ position: "fixed", top: 64, right: 296, width: 380, maxHeight: "70vh", zIndex: 100, background: C.bg, border: `1px solid ${C.border}`, borderRadius: 16, boxShadow: "var(--ui-shadow-pop, 0 8px 32px rgba(0,0,0,0.5))", fontFamily: C.font, overflow: "hidden", display: "flex", flexDirection: "column" }}
-    >
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "11px 16px", borderBottom: `1px solid ${C.border}`, flexShrink: 0 }}>
-        <span style={{ fontSize: 13, fontWeight: 700, color: "#60a5fa" }}>{L.title}</span>
-        <button onClick={() => $a11yPanelOpen.set(false)} style={{ background: "none", border: "none", color: C.textMuted, cursor: "pointer", fontSize: 18, padding: "2px 4px" }}><Icon name="close" size={14} weight="bold" /></button>
-      </div>
-      <div style={{ padding: "10px 14px", flexShrink: 0 }}>
+    <FloatingPanel label={L.dialogLabel} title={L.title} icon="accessibility" onClose={() => $a11yPanelOpen.set(false)} width={400}>
+      <div style={{ padding: "14px 16px", flexShrink: 0, display: "flex", alignItems: "center" }}>
         <button onClick={runCheck} disabled={loading}
-          style={{ padding: "6px 14px", borderRadius: 6, border: "none", background: "#2563eb", color: "#fff", opacity: loading ? 0.6 : 1, fontSize: 13, fontFamily: C.font, fontWeight: 700, cursor: loading ? "default" : "pointer" }}>
+          style={panelPrimary(loading)}>
           {loading ? L.checking : L.run}
         </button>
         {ran && (
@@ -108,10 +103,10 @@ export function A11yPanel() {
           </span>
         )}
       </div>
-      <div style={{ flex: 1, overflowY: "auto", padding: "0 14px 14px" }}>
+      <div style={{ flex: 1, overflowY: "auto", padding: "0 16px 16px" }}>
         {issues.map((issue) => (
           <div key={`${issue.instanceId}-${issue.rule}`}
-            style={{ marginBottom: 8, padding: "9px 11px", borderRadius: 7, border: `1px solid ${SEVERITY_COLOR[issue.severity]}30`, background: `${SEVERITY_COLOR[issue.severity]}08` }}
+            style={{ marginBottom: 10, padding: "12px 14px", borderRadius: 12, border: `1px solid ${SEVERITY_COLOR[issue.severity]}30`, background: `${SEVERITY_COLOR[issue.severity]}08` }}
           >
             <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 3 }}>
               <span style={{ fontSize: 12, fontWeight: 700, color: SEVERITY_COLOR[issue.severity], textTransform: "uppercase" }}>{L.severity[issue.severity] ?? issue.severity}</span>
@@ -133,6 +128,6 @@ export function A11yPanel() {
           </div>
         )}
       </div>
-    </div>
+    </FloatingPanel>
   );
 }

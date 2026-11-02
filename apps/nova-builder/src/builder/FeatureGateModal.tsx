@@ -1,11 +1,11 @@
 "use client";
 
-import { Icon } from "@/builder/icons";
+import { Icon, type IconName } from "@/builder/icons";
 import { useEffect } from "react";
 import Link from "next/link";
 import { useStore } from "@nanostores/react";
 import { $featureGate, closeFeatureGate } from "@/lib/nano-states";
-import { UI_VARS as C } from "@/lib/uiTheme";
+import { UI_VARS as C, UI_SHAPE as S } from "@/lib/uiTheme";
 import { useI18n } from "@/lib/i18n";
 
 export function FeatureGateModal() {
@@ -32,7 +32,7 @@ export function FeatureGateModal() {
       badge: G.badgeFree,
       isPro: false,
       url: "/signup?callbackUrl=%2Fprojects&returnTo=%2Fbuilder%2Fdemo",
-      icon: "💾",
+      icon: "floppy" as IconName,
     },
     "export-html": {
       title: G.titleExportHtml,
@@ -41,7 +41,7 @@ export function FeatureGateModal() {
       badge: G.badgePro,
       isPro: true,
       url: "/pricing",
-      icon: "📦",
+      icon: "package" as IconName,
     },
     deploy: {
       title: G.titleDeploy,
@@ -50,7 +50,7 @@ export function FeatureGateModal() {
       badge: G.badgePro,
       isPro: true,
       url: "/pricing",
-      icon: "🚀",
+      icon: "rocket" as IconName,
     },
     assets: {
       title: G.titleAssets,
@@ -59,7 +59,7 @@ export function FeatureGateModal() {
       badge: G.badgeFree,
       isPro: false,
       url: "/signup?callbackUrl=%2Fprojects&returnTo=%2Fbuilder%2Fdemo",
-      icon: "🖼️",
+      icon: "assets" as IconName,
     },
     ai: {
       title: G.titleAI,
@@ -68,7 +68,7 @@ export function FeatureGateModal() {
       badge: G.badgeFree,
       isPro: false,
       url: "/signup?callbackUrl=%2Fprojects&returnTo=%2Fbuilder%2Fdemo",
-      icon: "✦",
+      icon: "ai" as IconName,
     },
   };
   const current = configMap[gateState.type] ?? configMap.save;
@@ -84,8 +84,8 @@ export function FeatureGateModal() {
       style={{
         position: "fixed",
         inset: 0,
-        background: "rgba(0,0,0,0.72)",
-        backdropFilter: "blur(6px)",
+        background: "rgba(17,17,17,0.42)",
+        backdropFilter: "blur(4px)",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
@@ -95,139 +95,73 @@ export function FeatureGateModal() {
     >
       <div
         style={{
-          width: 440,
+          width: 460,
           maxWidth: "calc(100vw - 32px)",
-          background: C.surface || "#1e293b",
-          border: `1px solid ${current.isPro ? "rgba(168,85,247,0.35)" : C.border || "rgba(255,255,255,0.12)"}`,
-          borderRadius: 16,
-          padding: "30px 32px",
+          background: C.card,
+          border: `1px solid ${C.border}`,
+          borderRadius: S.radiusLg + 4,
+          padding: 28,
           display: "flex",
           flexDirection: "column",
-          gap: 16,
-          boxShadow: current.isPro
-            ? "0 24px 50px rgba(0,0,0,0.6), 0 0 40px rgba(168,85,247,0.15)"
-            : "0 24px 50px rgba(0,0,0,0.6)",
+          gap: 18,
+          boxShadow: C.shadowPop,
           position: "relative",
         }}
       >
-        {/* Header line with badge and close */}
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
           <span
             style={{
-              fontSize: 11,
-              fontWeight: 800,
-              letterSpacing: "0.06em",
-              textTransform: "uppercase",
-              padding: "3px 9px",
-              borderRadius: 6,
-              background: current.isPro ? "rgba(168,85,247,0.18)" : "rgba(59,130,246,0.18)",
-              color: current.isPro ? "#c084fc" : "#93c5fd",
-              border: `1px solid ${current.isPro ? "rgba(168,85,247,0.35)" : "rgba(59,130,246,0.35)"}`,
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 6,
+              fontSize: 13,
+              fontWeight: 600,
+              padding: "4px 12px 4px 10px",
+              borderRadius: S.radiusPill,
+              background: C.accentBg,
+              color: C.accentText,
+              border: `1px solid ${C.accentBorder}`,
             }}
           >
+            {current.isPro && <Icon name="crown" size={14} weight="fill" />}
             {current.badge}
           </span>
           <button
             onClick={closeFeatureGate}
             aria-label={G.cancel}
-            style={{
-              background: "transparent",
-              border: "none",
-              color: C.textMuted || "rgba(255,255,255,0.45)",
-              fontSize: 20,
-              cursor: "pointer",
-              lineHeight: 1,
-              padding: "2px 6px",
-              borderRadius: 4,
-            }}
-          ><Icon name="close" size={14} weight="bold" /></button>
+            style={{ background: "transparent", border: "none", color: C.textMuted, cursor: "pointer", width: 36, height: 36, borderRadius: S.radiusSm + 2, display: "inline-flex", alignItems: "center", justifyContent: "center" }}
+          ><Icon name="close" size={16} weight="bold" /></button>
         </div>
 
-        {/* Icon & Title */}
-        <div style={{ display: "flex", alignItems: "center", gap: 12, marginTop: 4 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
           <div
-            style={{
-              width: 44,
-              height: 44,
-              borderRadius: 12,
-              background: current.isPro ? "rgba(168,85,247,0.12)" : "rgba(59,130,246,0.12)",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              fontSize: 22,
-              flexShrink: 0,
-            }}
+            style={{ width: 52, height: 52, borderRadius: S.radiusMd + 2, background: C.accentBg, color: C.accentText, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}
           >
-            {current.icon}
+            <Icon name={current.icon} size={28} weight="duotone" />
           </div>
-          <h2
-            style={{
-              margin: 0,
-              fontSize: 18,
-              fontWeight: 700,
-              color: C.text || "#fff",
-              lineHeight: 1.3,
-            }}
-          >
+          <h2 style={{ margin: 0, fontSize: 21, fontWeight: 700, letterSpacing: "-0.015em", color: C.text, lineHeight: 1.25 }}>
             {current.title}
           </h2>
         </div>
 
-        {/* Description body */}
-        <p
-          style={{
-            margin: 0,
-            fontSize: 13,
-            color: C.textMuted || "rgba(255,255,255,0.65)",
-            lineHeight: 1.6,
-          }}
-        >
+        <p style={{ margin: 0, fontSize: 15, color: C.textMuted, lineHeight: 1.6 }}>
           {current.desc}
         </p>
 
-        {/* Actions */}
-        <div style={{ display: "flex", gap: 10, justifyContent: "flex-end", marginTop: 12 }}>
+        <div style={{ display: "flex", gap: 10, justifyContent: "flex-end", marginTop: 6 }}>
           <button
             onClick={closeFeatureGate}
-            style={{
-              padding: "8px 16px",
-              borderRadius: 8,
-              border: `1px solid ${C.border || "rgba(255,255,255,0.12)"}`,
-              background: "transparent",
-              color: C.textMuted || "rgba(255,255,255,0.6)",
-              fontSize: 13,
-              fontFamily: C.font,
-              cursor: "pointer",
-              fontWeight: 500,
-            }}
+            style={{ height: 44, padding: "0 20px", borderRadius: S.radiusMd, border: `1px solid ${C.border}`, background: C.card, color: C.textDim, fontSize: 15, fontFamily: C.font, cursor: "pointer", fontWeight: 500 }}
           >
             {G.cancel}
           </button>
           <Link
             href={current.url}
             onClick={closeFeatureGate}
-            style={{
-              padding: "8px 20px",
-              borderRadius: 8,
-              border: "none",
-              background: current.isPro
-                ? "linear-gradient(135deg, #9333ea 0%, var(--ui-accent) 100%)"
-                : "linear-gradient(135deg, var(--ui-accent) 0%, #4f46e5 100%)",
-              color: "#fff",
-              fontSize: 13,
-              fontFamily: C.font,
-              fontWeight: 700,
-              cursor: "pointer",
-              textDecoration: "none",
-              display: "inline-flex",
-              alignItems: "center",
-              justifyContent: "center",
-              boxShadow: current.isPro
-                ? "0 4px 14px rgba(147,51,234,0.4)"
-                : "0 4px 14px color-mix(in srgb, var(--ui-accent) 35%, transparent)",
-            }}
+            style={{ height: 44, padding: "0 22px", borderRadius: S.radiusMd, border: "none", background: C.primary, color: C.onPrimary, fontSize: 15, fontFamily: C.font, fontWeight: 700, cursor: "pointer", textDecoration: "none", display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 8 }}
           >
             {current.cta}
+            <Icon name="arrowRight" size={16} weight="bold" />
           </Link>
         </div>
       </div>

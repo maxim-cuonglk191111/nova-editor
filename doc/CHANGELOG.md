@@ -8,6 +8,9 @@
 
 - **Feel**: neutral white and warm-grey chrome with Nova purple tints for selection and one deep-purple primary; larger, calmer type (one step up); soft hover, press and focus feedback in one place (`.nb-root` in `globals.css`); slimmer scrollbars; reduced-motion respected.
 - **Panels**: AI tab (56px header, starter cards with icons, rounded bubbles, solid Send, deep-purple Apply), Assets (shared tokens and icons instead of its own light palette, header), Props and Settings (rounded 34px controls), unit inputs and spacing presets, add-a-style row.
+- **Canvas overlays**: white pill toolbar with icons (crop, duplicate, delete) above the selection, a rounded selection label and a 1.5px outline, a light icon toolbar for text editing (B / I / U / link).
+- **Tool panels** (History, Accessibility, Performance, AI content fill) share one frame: 56px header with icon, title and close; they sit clear of the wider inspector; one purple primary button instead of blue and green ones.
+- **Dialogs**: feature gate (purple tint, icon tile, arrow CTA), save, unsaved changes, first-run tour and the empty-page card are rounder (20-24px), larger (15px text, 44px buttons) and use the primary button.
 - **Tokens, not hex**: ~80 hard-coded purples and dark-theme leftovers in the builder chrome now read from `lib/uiTheme.ts`, so the look is changed in one file.
 
 ---

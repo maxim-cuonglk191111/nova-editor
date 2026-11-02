@@ -1,4 +1,5 @@
 ﻿"use client";
+import { FloatingPanel, panelPrimary, panelQuiet } from "./FloatingPanel";
 import { Icon } from "@/builder/icons";
 import { useState, useEffect } from "react";
 import { useStore } from "@nanostores/react";
@@ -94,16 +95,10 @@ export function PerformancePanel() {
   };
 
   return (
-    <div role="dialog" aria-label={L.dialogLabel}
-      style={{ position: "fixed", top: 64, right: 296, width: 380, maxHeight: "70vh", zIndex: 100, background: C.bg, border: `1px solid ${C.border}`, borderRadius: 16, boxShadow: "var(--ui-shadow-pop, 0 8px 32px rgba(0,0,0,0.5))", fontFamily: C.font, overflow: "hidden", display: "flex", flexDirection: "column" }}
-    >
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "11px 16px", borderBottom: `1px solid ${C.border}`, flexShrink: 0 }}>
-        <span style={{ fontSize: 13, fontWeight: 700, color: "#34d399" }}>{L.title}</span>
-        <button onClick={() => $perfPanelOpen.set(false)} style={{ background: "none", border: "none", color: C.textMuted, cursor: "pointer", fontSize: 18, padding: "2px 4px" }}><Icon name="close" size={14} weight="bold" /></button>
-      </div>
-      <div style={{ padding: "10px 14px", borderBottom: `1px solid ${C.border}`, display: "flex", alignItems: "center", gap: 12, flexShrink: 0 }}>
+    <FloatingPanel label={L.dialogLabel} title={L.title} icon="gauge" onClose={() => $perfPanelOpen.set(false)} width={400}>
+      <div style={{ padding: "14px 16px", borderBottom: `1px solid ${C.border}`, display: "flex", alignItems: "center", gap: 12, flexShrink: 0 }}>
         <button onClick={runAnalysis} disabled={loading}
-          style={{ padding: "6px 14px", borderRadius: 6, border: "1px solid rgba(52,211,153,0.4)", background: loading ? "rgba(52,211,153,0.1)" : "rgba(52,211,153,0.15)", color: "#6ee7b7", fontSize: 13, fontFamily: C.font, fontWeight: 700, cursor: loading ? "default" : "pointer" }}>
+          style={panelPrimary(loading)}>
           {loading ? L.analyzing : L.analyze}
         </button>
         {score !== null && (
@@ -113,10 +108,10 @@ export function PerformancePanel() {
           </div>
         )}
       </div>
-      <div style={{ flex: 1, overflowY: "auto", padding: "10px 14px" }}>
+      <div style={{ flex: 1, overflowY: "auto", padding: "14px 16px" }}>
         {hints.map((hint) => (
           <div key={hint.id}
-            style={{ marginBottom: 8, padding: "9px 11px", borderRadius: 7, border: `1px solid ${IMPACT_COLOR[hint.impact]}22`, background: `${IMPACT_COLOR[hint.impact]}08` }}
+            style={{ marginBottom: 10, padding: "12px 14px", borderRadius: 12, border: `1px solid ${IMPACT_COLOR[hint.impact]}22`, background: `${IMPACT_COLOR[hint.impact]}08` }}
           >
             <div style={{ display: "flex", alignItems: "center", gap: 5, marginBottom: 3 }}>
               <span style={{ color: IMPACT_COLOR[hint.impact], fontSize: 12 }}>{SEVERITY_ICON[hint.severity]}</span>
@@ -133,6 +128,6 @@ export function PerformancePanel() {
           </div>
         )}
       </div>
-    </div>
+    </FloatingPanel>
   );
 }
