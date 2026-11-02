@@ -2,6 +2,16 @@
 
 ---
 
+## [25.18.0] — 2026-11-02
+
+### Task 040 — AI chat history in the database, with restore points (Minor)
+
+- **History follows the account**: the AI tab's chats are saved to the database (migration `0024_ai_chat_panel.sql`) and shown on any device or browser; chats that only lived in the browser are imported on first load. Guests and unsaved projects stay browser-only.
+- **Restore**: every Apply first saves a restore point ("Before AI: …", also visible in History); applied answers get "Restore the page from before", which works after a reload and from another device.
+- **Server**: `GET /api/ai/conversations?projectId=`, `PUT|DELETE /api/ai/conversations/:id` (owner only; ids are UUIDs; message ids owned by someone else are never overwritten). `POST /api/ai` accepts `skipLog` so the chat's generations are not logged twice.
+
+---
+
 ## [25.17.1] — 2026-11-02
 
 ### Task 039 — AI tab verified on production; accessibility and copy fixes (Patch)

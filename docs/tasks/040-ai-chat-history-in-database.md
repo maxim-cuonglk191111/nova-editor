@@ -1,6 +1,6 @@
 # Task 040 — AI chat history in the database, with restore points
 
-- **Status:** Open — blocked on the owner's go-ahead for a migration on the production database
+- **Status:** Done locally 2026-11-02 (migration 0024 applied to production by the owner's go-ahead); production verification below
 - **Filed:** 2026-11-02
 - **Owner:** Claude Code
 - **Severity:** Medium
@@ -26,5 +26,16 @@ Not a defect: task 037 shipped the conversation first. The persisted-shape rule 
 - Unit tests for the storage adapter (merge, conflict by `updatedAt`, import), a route test per method, an e2e step in `ai-panel.spec.ts` (reload on a clean browser context).
 - `doc/AI-PANEL.md` §7 updated from "planned" to "built"; task 037's "browser storage" deviation closed.
 
-## Decision needed from the owner
-Run the migration on the production Supabase project (`nhpm…`)? Storage cost is small (a few KB per message); proposals are stored without their payload once decided.
+## Decision (owner, 2026-11-02)
+"task 40 oke": migration run on production. Storage cost is small (a few KB per message); proposals are stored without their payload once decided.
+
+## What was built
+- Migration `0024_ai_chat_panel.sql` (applied twice, idempotent). Columns differ slightly from the plan: `meta jsonb` holds `result` / `checks` / flags, the provider stays in the existing `provider` column (no `model`).
+- Routes: `GET /api/ai/conversations?projectId=`, `PUT|DELETE /api/ai/conversations/:id`. One whole thread per `PUT` replaced the planned per-message `PATCH` routes: simpler, and last-write-wins by `updatedAt` needs no per-field merge.
+- Store: `ChatRemote` (`lib/aiChat/remote.ts`) behind `createChatStore`; load once per project, merge by `updatedAt` (`mergeThreads`), debounced save (1 s), failed saves retry on the next change, local-only threads imported on first load, old non-UUID ids converted.
+- Restore points: `lib/snapshots.ts` (`takeSnapshot` flushes queued edits first, `restoreSnapshot` shared with the History panel); Apply saves "Before AI: …" (4 s cap, skipped silently when it cannot be made); "Restore the page from before" on applied cards.
+- `POST /api/ai` takes `skipLog` (the chat's own generations are not logged twice).
+
+## Verification
+- Unit: `ai-chat-db` (row round trip, ownership 404/403/409, snapshot ids of other projects dropped), `ai-chat-sync` (merge, debounce, import, retry, late answer for another project), `ai-conversations-route` (401/400/413/404/403/409, no internal message leaks). `pnpm test`, `tsc`, lint, i18n audit (0), SOLID audit (0 blocking) pass; 20 local AI-panel e2e specs still pass.
+- E2E (`ai-history-live.spec.ts`, throwaway account): Apply saves the chat with status applied and a snapshot id; a second browser context with empty local storage shows the chat and the applied card; Restore (confirm, reload) brings the heading back; DELETE removes it. Passed against the local dev server (production database) in 51 s.

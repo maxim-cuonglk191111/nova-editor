@@ -52,8 +52,10 @@ export async function POST(req: Request) {
     projectId?: string | null;
     conversationId?: string | null;
     provider?: ProviderName;
+    /** The AI tab keeps its own history (task 040): do not log this request as a conversation. */
+    skipLog?: boolean;
   };
-  const { userMessage, projectId, conversationId: clientConversationId, provider: clientProvider } = body;
+  const { userMessage, projectId, conversationId: clientConversationId, provider: clientProvider, skipLog } = body;
 
   // Requested provider first, then AI_PROVIDER, then the AI_FALLBACK_PROVIDERS
   // order — so one provider's outage or missing key never blocks generation.
@@ -135,8 +137,8 @@ export async function POST(req: Request) {
   });
 
   // ── 5. Resolve or create conversation ──────────────────────────────────────
-  let conversationId = clientConversationId ?? null;
-  if (!conversationId && projectId) {
+  let conversationId = skipLog ? null : clientConversationId ?? null;
+  if (!skipLog && !conversationId && projectId) {
     const title = userMessage.slice(0, 60).trim() || "New composition";
     const created = await createAIConversation(projectId, user.id, title).catch(() => null);
     conversationId = created?.id ?? null;

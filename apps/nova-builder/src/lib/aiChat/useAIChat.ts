@@ -12,7 +12,8 @@ import { applyWSComposition, compositionBreakpoints } from "@/lib/applyWSComposi
 import { composeSite, applySite, type SiteResult } from "@/lib/generateSite";
 import { planSitePages, type SitePage, type SitePageKey } from "@/lib/aiSitePlan";
 import { useI18n, fmt } from "@/lib/i18n";
-import { uid } from "@/lib/uid";
+import { newId } from "./ids";
+import { restoreSnapshot, takeSnapshot } from "@/lib/snapshots";
 import { buildEditContext, parentMap } from "./context";
 import { applyEditOps } from "./applyOps";
 import { describeOps } from "./describe";
@@ -135,7 +136,7 @@ export function useAIChat() {
   const post = useCallback((threadId: string, m: ChatMessage) => chatStore.append(threadId, m), []);
 
   const fail = useCallback((threadId: string, text: string, needsAccount = false) => {
-    post(threadId, { id: uid("msg_"), role: "assistant", at: Date.now(), kind: "error", text, needsAccount });
+    post(threadId, { id: newId(), role: "assistant", at: Date.now(), kind: "error", text, needsAccount });
   }, [post]);
 
   const history = useCallback((th: ChatThread | null) => (th?.messages ?? [])
@@ -170,10 +171,10 @@ export function useAIChat() {
       const ops = json.ops ?? [];
       const answeredBy = { provider: json.provider, ms: json.ms };
       if (ops.length === 0) {
-        return post(threadId, { id: uid("msg_"), role: "assistant", at: Date.now(), kind: "reply", text: json.reply || L.askedOnly, ...answeredBy });
+        return post(threadId, { id: newId(), role: "assistant", at: Date.now(), kind: "reply", text: json.reply || L.askedOnly, ...answeredBy });
       }
       post(threadId, {
-        id: uid("msg_"), role: "assistant", at: Date.now(), kind: "proposal", text: json.reply ?? "", ...answeredBy,
+        id: newId(), role: "assistant", at: Date.now(), kind: "proposal", text: json.reply ?? "", ...answeredBy,
         status: "pending",
         proposal: { lines: describeOps(ops, $instances.get()), payload: { type: "ops", ops } },
       });
@@ -195,7 +196,7 @@ export function useAIChat() {
       if (pages) {
         const nameOf = (key: SitePageKey) => A.sitePageNames[key];
         const outcome = await composeSite({
-          prompt: text, pages, nameOf, projectId: meta?.id ?? null,
+          prompt: text, pages, nameOf, projectId: meta?.id ?? null, skipLog: true,
           onProgress: (index, name) => setPending({ stage: "building", progress: fmt(A.buildingPage, { current: index + 1, total: pages.length, name }) }),
         });
         if (controller.signal.aborted) return;
@@ -205,7 +206,7 @@ export function useAIChat() {
         const results = outcome.results;
         const partial = outcome.failure ? fmt(A.sitePartial, { done: results.length, total: pages.length, reason: outcome.failure.message || fmt(A.genericError, { status: outcome.failure.status }) }) : "";
         post(threadId, {
-          id: uid("msg_"), role: "assistant", at: Date.now(), kind: "proposal", status: "pending",
+          id: newId(), role: "assistant", at: Date.now(), kind: "proposal", status: "pending",
           text: [fmt(A.siteReadyBody, { count: results.length, pages: results.map((r) => r.name).join(", ") }), partial].filter(Boolean).join(" "),
           proposal: { lines: [{ kind: "site", count: results.length, label: "", ids: [], detail: results.map((r) => r.name).join(", ") }], payload: { type: "site", results } },
         });
@@ -215,13 +216,13 @@ export function useAIChat() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         signal: controller.signal,
-        body: JSON.stringify({ userMessage: text, projectId: meta?.id ?? null, ...(model !== "auto" ? { provider: model } : {}) }),
+        body: JSON.stringify({ userMessage: text, projectId: meta?.id ?? null, skipLog: true, ...(model !== "auto" ? { provider: model } : {}) }),
       });
       const json = (await res.json().catch(() => ({}))) as GenerateResponse;
       if (res.status === 401) return fail(threadId, A.needsAccount, true);
       if (!res.ok || !json.composition) return fail(threadId, json.error ?? fmt(A.genericError, { status: res.status }));
       post(threadId, {
-        id: uid("msg_"), role: "assistant", at: Date.now(), kind: "proposal", status: "pending",
+        id: newId(), role: "assistant", at: Date.now(), kind: "proposal", status: "pending",
         text: fmt(A.readyBody, { count: json.composition.instances.length }), provider: json.provider,
         proposal: { lines: [{ kind: "page", count: json.composition.instances.length, label: "", ids: [] }], payload: { type: "page", composition: json.composition } },
       });
@@ -241,7 +242,7 @@ export function useAIChat() {
     const threadId = chatStore.active()?.id ?? chatStore.newThread();
     const ref = scope?.ref;
     const generate = Boolean(opts.generate) || !hasPage;
-    post(threadId, { id: uid("msg_"), role: "user", at: Date.now(), text, ...(ref ? { ref } : {}), ...(generate ? { generate: true } : {}) });
+    post(threadId, { id: newId(), role: "user", at: Date.now(), text, ...(ref ? { ref } : {}), ...(generate ? { generate: true } : {}) });
     setDraft("");
     if (generate) {
       void runGenerate(threadId, text, onePageOnly ? null : planSitePages(text));
@@ -255,7 +256,7 @@ export function useAIChat() {
     abortRef.current?.abort();
     abortRef.current = null;
     setPending(null);
-    if (th) post(th.id, { id: uid("msg_"), role: "assistant", at: Date.now(), kind: "reply", text: L.stopped });
+    if (th) post(th.id, { id: newId(), role: "assistant", at: Date.now(), kind: "reply", text: L.stopped });
   }, [post, L]);
 
   /** Re-sends the last user message after an error. */
@@ -270,11 +271,18 @@ export function useAIChat() {
     send(last.text, { generate: last.generate });
   }, [pending, send]);
 
-  const apply = useCallback((message: AssistantMessage) => {
+  const applying = useRef(new Set<string>());
+
+  const apply = useCallback(async (message: AssistantMessage) => {
     const th = chatStore.active();
     const payload = message.proposal?.payload;
-    if (!th || !payload) return;
+    if (!th || !payload || applying.current.has(message.id)) return;
+    applying.current.add(message.id);
     highlight(null);
+    // A restore point first, so "put it back" survives a reload and works for a stranger to the editor.
+    const snapshotId = meta?.id ? await takeSnapshot(meta.id, fmt(L.snapshotLabel, { text: message.text.replace(/\s+/g, " ").trim().slice(0, 60) })) : null;
+    applying.current.delete(message.id);
+    if (snapshotId) chatStore.patch(th.id, message.id, { snapshotId });
     if (payload.type === "ops") {
       const result = applyEditOps(payload.ops);
       chatStore.patch(th.id, message.id, { status: result.applied > 0 ? "applied" : "discarded", result, checks: checksFor(payload.ops), proposal: { lines: message.proposal!.lines } });
@@ -284,7 +292,16 @@ export function useAIChat() {
       const checks = payload.type === "page" ? checksForComposition(payload.composition) : (payload.results as SiteResult[]).flatMap((r) => checksForComposition(r.composition)).slice(0, 1);
       chatStore.patch(th.id, message.id, { status: "applied", result: { applied: 1, skipped: 0 }, checks, proposal: { lines: message.proposal!.lines } });
     }
-  }, [highlight]);
+  }, [highlight, meta?.id, L]);
+
+  const restore = useCallback(async (message: AssistantMessage) => {
+    if (!meta?.id || !message.snapshotId) return;
+    if (!window.confirm(L.restoreConfirm)) return;
+    if (await restoreSnapshot(meta.id, message.snapshotId)) {
+      await chatStore.flush();
+      window.location.reload();
+    } else window.alert(L.restoreFailed);
+  }, [meta?.id, L]);
 
   const discard = useCallback((message: AssistantMessage) => {
     const th = chatStore.active();
@@ -307,7 +324,7 @@ export function useAIChat() {
 
   return {
     thread, threads: chat.state.threads, hasPage, scope, pending, model, providers, draft, onePageOnly,
-    setDraft, setModel, setOnePageOnly, widen, highlight, send, stop, retry, apply, discard,
+    setDraft, setModel, setOnePageOnly, widen, highlight, send, stop, retry, apply, restore, discard,
     selectThread: chatStore.selectThread, newThread: () => chatStore.newThread(), deleteThread: chatStore.deleteThread,
   };
 }

@@ -26,7 +26,7 @@ export function AIChatPanel() {
       <div style={{ flex: 1, minHeight: 0, overflowY: "auto" }}>
         {messages.length === 0 && !chat.pending
           ? <StarterPrompts scope={chat.scope?.ref.scope ?? "page"} hasPage={chat.hasPage} onPick={pick} />
-          : <MessageList messages={messages} pending={chat.pending} onApply={chat.apply} onDiscard={chat.discard} onHighlight={chat.highlight} onRetry={chat.retry} />}
+          : <MessageList messages={messages} pending={chat.pending} onApply={chat.apply} onRestore={chat.restore} onDiscard={chat.discard} onHighlight={chat.highlight} onRetry={chat.retry} />}
       </div>
       <Composer chat={chat} inputRef={inputRef} />
     </section>

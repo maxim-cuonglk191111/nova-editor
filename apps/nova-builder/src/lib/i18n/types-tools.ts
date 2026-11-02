@@ -78,6 +78,12 @@ export interface I18nAIChatDictionary {
   appliedUndo: string;
   /** After Ctrl+Z: says the change was undone and how to redo it. */
   undone: string;
+  /** Button on an applied card: puts the page back as it was before the change. */
+  restore: string;
+  restoreConfirm: string;
+  restoreFailed: string;
+  /** Label of the restore point saved before applying; "{text}" is the start of the answer. */
+  snapshotLabel: string;
   applyPartial: string;
   discarded: string;
   nothingApplied: string;

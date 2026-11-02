@@ -1,5 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { createChatStore, parseChatState, serializeChatState, titleFrom, MAX_THREADS, STORE_VERSION, type ChatStorage } from "../aiChat/store";
+import { newId } from "../aiChat/ids";
 import type { AssistantMessage, ChatState, UserMessage } from "../aiChat/types";
 
 function memoryStorage() {
@@ -39,12 +40,13 @@ describe("chat store", () => {
     const a = createChatStore(storage, now);
     a.open("proj");
     const id = a.newThread();
-    a.append(id, user("m1", "hi"));
-    a.append(id, proposal("m2", "pending"));
+    const [m1, m2] = [newId(), newId()];
+    a.append(id, user(m1, "hi"));
+    a.append(id, proposal(m2, "pending"));
     const b = createChatStore(storage, now);
     b.open("proj");
     const msgs = b.active()!.messages;
-    expect(msgs.map((m) => m.id)).toEqual(["m1", "m2"]);
+    expect(msgs.map((m) => m.id)).toEqual([m1, m2]);
     expect((msgs[1] as AssistantMessage).proposal?.payload).toBeTruthy();
   });
 

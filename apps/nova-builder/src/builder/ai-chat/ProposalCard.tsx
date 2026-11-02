@@ -13,6 +13,7 @@ type Props = {
   message: AssistantMessage;
   onApply: (m: AssistantMessage) => void;
   onDiscard: (m: AssistantMessage) => void;
+  onRestore: (m: AssistantMessage) => void;
   onHighlight: (ids: string[] | null) => void;
   busy: boolean;
 };
@@ -47,7 +48,7 @@ function useLineText() {
   };
 }
 
-export function ProposalCard({ message, onApply, onDiscard, onHighlight, busy }: Props) {
+export function ProposalCard({ message, onApply, onDiscard, onRestore, onHighlight, busy }: Props) {
   const L = useI18n().t.tools.aiChat;
   const lineText = useLineText();
   const proposal = message.proposal;
@@ -98,6 +99,11 @@ export function ProposalCard({ message, onApply, onDiscard, onHighlight, busy }:
               ? fmt(L.applyPartial, message.result)
               : `✓ ${L.appliedUndo}`
             : message.result && message.result.applied === 0 && message.result.skipped > 0 ? L.nothingApplied : L.discarded}
+          {message.status === "applied" && message.snapshotId && (
+            <button type="button" onClick={() => onRestore(message)} disabled={busy} data-testid="ai-restore" style={{ display: "block", marginTop: 6, padding: "3px 0", border: "none", background: "transparent", color: C.textMuted, fontSize: 12, fontFamily: C.font, textDecoration: "underline", cursor: "pointer" }}>
+              {L.restore}
+            </button>
+          )}
         </div>
       )}
     </div>

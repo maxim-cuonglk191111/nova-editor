@@ -63,6 +63,8 @@ export type AssistantMessage = {
   result?: { applied: number; skipped: number };
   /** What Apply changed, in a few small checks: the card compares them with the document to notice an undo. */
   checks?: AppliedCheck[];
+  /** The version-history snapshot taken just before Apply: "Restore" brings the page back to it. */
+  snapshotId?: string;
 };
 
 export type ChatMessage = UserMessage | AssistantMessage;

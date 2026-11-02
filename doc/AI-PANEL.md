@@ -115,18 +115,28 @@ Per **project and user** (a thread belongs to the site it edits; the existing ta
 this way). Existing: `ai_conversations(id, project_id, user_id, title, created_at, updated_at)`,
 `ai_messages(id, conversation_id, project_id, user_id, role, content, provider, credits_used, created_at)`.
 
-Migration `00xx_ai_chat_panel.sql` adds to `ai_messages` (all nullable, read with defaults):
+**Built (task 040, 2026-11-02)** as `supabase/migrations/0024_ai_chat_panel.sql`, applied to production. It adds to `ai_messages` (all nullable or defaulted, read with defaults):
 
 | Column | Type | Meaning |
 |---|---|---|
 | `kind` | text default 'text' | 'text' · 'proposal' · 'error' |
 | `context` | jsonb | scope + instance ids + page id the message was about |
-| `proposal` | jsonb | `{ summary: string[], ops: Op[] }` |
+| `proposal` | jsonb | `{ lines: ProposalLine[] }` (the payload is dropped once decided) |
 | `status` | text | 'pending' · 'applied' · 'discarded' |
 | `snapshot_id` | uuid → project_snapshots | restore point taken before Apply |
-| `model` | text | model id that answered |
 | `duration_ms` | integer | for "answered in 14 s" |
+| `meta` | jsonb | `needsAccount`, the applied `result` and `checks`, the user message's `generate` flag |
 
+The provider that answered stays in the existing `provider` column. Checks: `kind in ('text','proposal','error')`, `status` null or pending/applied/discarded.
+
+How it is used: the browser keeps its copy (`localStorage`) and syncs one whole thread at a time:
+`GET /api/ai/conversations?projectId=` once when a project opens, `PUT /api/ai/conversations/:id`
+one second after the last change (last write wins by `updatedAt`), `DELETE` when a chat is deleted.
+A thread only in the browser is imported on the first load; a guest or an unsaved project stays
+browser-only. Thread and message ids are UUIDs (older local ids are converted on open).
+Before every Apply a restore point is saved (`project_snapshots`, label "Before AI: …") and linked
+by `snapshot_id`; "Restore the page from before" on the applied card puts it back (same path as
+the History panel) and reloads. `POST /api/ai` takes `skipLog` so the chat's own generations are not logged twice.
 No change to `schema_json`. The migration lands before the code that reads it; readers default
 missing fields (`kind ?? 'text'`).
 
@@ -191,8 +201,8 @@ thread. Works / Ease for both audiences ≥ 8; ≥ 1 minute between AI calls.
 
 Everything in sections 3–6 and 9–10 works as drawn, with these differences (also in [task 037](../docs/tasks/037-ai-chat-tab.md)):
 
-- **Threads are stored in the browser** (`nova-ai-chat:v1:<projectId>`, versioned, read defensively) behind the `ChatStorage` interface in `lib/aiChat/store.ts`; the database columns of §7 and the snapshot link are not built yet because that migration needs the owner's go-ahead on the production database. `POST /api/ai/chat` replaces `conversations`/`messages` routes for now; `GET /api/ai/providers?light=1` feeds the model picker.
-- **No snapshot row per Apply**: Apply is one `updateData` transaction, so Ctrl+Z is the restore point.
+- **Threads are stored in the browser** (`nova-ai-chat:v1:<projectId>`, versioned, read defensively) behind the `ChatStorage` interface in `lib/aiChat/store.ts`. *Update, task 040:* they are also saved in the database (§7) and read from there on another device; `GET /api/ai/providers?light=1` feeds the model picker.
+- **Restore points**: Ctrl+Z undoes an Apply in the same session; since task 040 every Apply also saves a snapshot, so "Restore the page from before" works after a reload and from another device.
 - **New sections** are built by a second AI call from a short brief (`insertSection` / `replaceSection` carry a `brief`, the page composer builds the tree); at most two per message. A second h1 is never added (inserted headings are demoted).
 - Operations v1: `setText`, `setStyle` (visual properties only), `setProp` (alt, href, src, title, placeholder, target, tag), `remove`, `insertSection`, `replaceSection`. Every answer is checked on the server against the context it was given (`validateEditReply`) and again on the client at Apply time.
 - The popup (`AIPanel.tsx`) is gone; `$aiPanelOpen` now means "the AI tab is the open tab". The tab has its own width (300–560px).
