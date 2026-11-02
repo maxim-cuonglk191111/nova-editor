@@ -29,12 +29,12 @@ test("top bar", async ({ page, context }) => {
     await h3("Espresso").scrollIntoViewIfNeeded();
     await h3("Espresso").click();
     await shot(page, "t02-topbar-selected");
-    await btn(/^⧉ Duplicate$/).click();
+    await btn(/^Duplicate "/).click();
     await expect.soft(h3("Espresso")).toHaveCount(2);
     await undo();
     await expect.soft(h3("Espresso")).toHaveCount(1);
     await h3("Espresso").click();
-    await btn(/^🗑 Delete$/).click();
+    await btn(/^Delete "/).click();
     await expect.soft(h3("Espresso")).toHaveCount(0);
     await expect.soft(toast(/Element deleted/)).toBeVisible();
     await toast(/Element deleted/).getByRole("button", { name: "Undo" }).click();
@@ -68,14 +68,18 @@ test("top bar", async ({ page, context }) => {
   });
 
   await step("zoom", async () => {
+    // The floating toolbar holds the zoom controls; the page opens fitted, so step from wherever it is.
+    const zoomLabel = page.locator('button[title^="Reset zoom"]');
+    const pct = async () => parseInt((await zoomLabel.innerText()).replace("%", ""), 10);
+    const start = await pct();
     await page.locator('button[title="Zoom in"]').click();
-    await expect.soft(btn("110%")).toBeVisible();
+    await expect.soft.poll(pct).toBe(start + 10);
     await page.locator('button[title="Zoom out"]').click();
     await page.locator('button[title="Zoom out"]').click();
-    await expect.soft(btn("90%")).toBeVisible();
-    await shot(page, "t06-zoom-90");
-    await btn("90%").click();
-    await expect.soft(btn("100%")).toBeVisible();
+    await expect.soft.poll(pct).toBe(start - 10);
+    await shot(page, "t06-zoom-out");
+    await zoomLabel.click();
+    await expect.soft.poll(pct, "reset puts the zoom back to 100%").toBe(100);
   });
 
   let novaFile = "";
@@ -146,7 +150,7 @@ test("top bar", async ({ page, context }) => {
 
   await step("autosave chip and Save button agree", async () => {
     await h3("Espresso").click();
-    await btn(/^⧉ Duplicate$/).click();
+    await btn(/^Duplicate "/).click();
     await expect.soft(page.getByText(/Saving/).first()).toBeVisible();
     await shot(page, "t17-saving");
     await waitSaved(page);
