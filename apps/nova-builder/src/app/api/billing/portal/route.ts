@@ -11,7 +11,7 @@ import { authOptions } from "@/lib/auth";
 import { createHmac } from "crypto";
 // One VND price list for every checkout path (it had drifted: 290k here vs 500k in checkout).
 import { PAYOS_PRICES_VND } from "@/lib/billing/payos";
-import { isEligibleForWelcomeOffer } from "@/lib/billing/promoEligibility";
+import { isEligibleForFirstPurchase } from "@/lib/billing/promoEligibility";
 import { promoPrice } from "@/lib/promo";
 import { getSupabaseAdmin } from "@/lib/supabaseAdmin";
 
@@ -74,9 +74,9 @@ async function payosCheckout(args: { userId: string; plan: string; teamId: strin
   }
 
   const listAmount = PAYOS_PRICES_VND[args.plan] ?? PAYOS_PRICES_VND.pro!;
-  // Same welcome offer as create-link, decided here on the server.
-  const discounted = await isEligibleForWelcomeOffer(getSupabaseAdmin(), args.userId).catch(() => false);
-  const amount = discounted ? promoPrice(listAmount) : listAmount;
+  // Same first-purchase offer as create-link, decided here on the server.
+  const discounted = await isEligibleForFirstPurchase(getSupabaseAdmin(), args.userId).catch(() => false);
+  const amount = discounted ? promoPrice(args.plan, listAmount) : listAmount;
   // orderCode is numeric per PayOS; timestamp-based, unique enough per user-click.
   const orderCode = Number(`${Date.now()}`.slice(-10));
   // PayOS description max 25 chars; encode the intent for the webhook.

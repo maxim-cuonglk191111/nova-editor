@@ -1,8 +1,8 @@
 import { describe, it, expect } from "vitest";
 import type { SupabaseClient } from "@supabase/supabase-js";
-import { PROMO, formatPromoEnd, isPromoActive, promoDaysLeft, promoPrice } from "../promo";
+import { PROMO, PROMO_PRICES_VND, formatPromoEnd, isPromoActive, promoDaysLeft, promoPrice } from "../promo";
 import { PAYOS_PRICES_VND } from "../billing/payos";
-import { isEligibleForWelcomeOffer } from "../billing/promoEligibility";
+import { isEligibleForFirstPurchase } from "../billing/promoEligibility";
 
 describe("list prices", () => {
   it("every price ends in 9; Pro is 249,000 and Team 379,000 after the 2026-10-27 halving", () => {
@@ -49,22 +49,32 @@ describe("welcome offer window", () => {
   });
 });
 
-describe("promoPrice", () => {
-  it("is an exact half, never rounded to a neighbour", () => {
-    expect(promoPrice(499000)).toBe(249500);
-    expect(promoPrice(PAYOS_PRICES_VND.pro)).toBe(124500);
-    expect(promoPrice(1289000)).toBe(644500);
-    expect(promoPrice(99000)).toBe(49500);
+describe("first-purchase prices", () => {
+  it("are fixed numbers that end in 9, each the 9-ending price nearest to half the regular price", () => {
+    expect(PROMO_PRICES_VND).toEqual({ pro: 129000, team: 189000, max: 649000, credits: 49000 });
+    for (const [plan, promo] of Object.entries(PROMO_PRICES_VND)) {
+      const regular = PAYOS_PRICES_VND[plan]!;
+      expect(String(promo), plan).toMatch(/9000$/);
+      expect(promo, plan).toBeLessThan(regular);
+      const half = regular / 2;
+      const nearest9 = Math.round((half - 9000) / 10000) * 10000 + 9000;
+      expect(promo, plan).toBe(nearest9);
+    }
+  });
+
+  it("promoPrice returns the first-purchase price, and the regular price for a plan without one", () => {
+    expect(promoPrice("pro", PAYOS_PRICES_VND.pro!)).toBe(129000);
+    expect(promoPrice("max", PAYOS_PRICES_VND.max!)).toBe(649000);
+    expect(promoPrice("free", 0)).toBe(0);
   });
 });
 
-// A minimal stand-in for the three queries the eligibility check makes.
-function fakeDb(opts: { createdAt?: string | null; processed?: number; paidOrders?: number }): SupabaseClient {
+// A minimal stand-in for the two queries the eligibility check makes.
+function fakeDb(opts: { processed?: number; paidOrders?: number }): SupabaseClient {
   const head = (count: number) => ({ eq: () => ({ eq: () => Promise.resolve({ count, error: null }) }) });
   return {
     from: (table: string) => ({
       select: (_cols: string, o?: { head?: boolean }) => {
-        if (table === "users") return { eq: () => ({ maybeSingle: () => Promise.resolve({ data: opts.createdAt ? { created_at: opts.createdAt } : null }) }) };
         if (table === "processed_payments" && o?.head) return { eq: () => Promise.resolve({ count: opts.processed ?? 0, error: null }) };
         if (table === "payment_orders" && o?.head) return head(opts.paidOrders ?? 0);
         throw new Error(`unexpected query on ${table}`);
@@ -73,24 +83,20 @@ function fakeDb(opts: { createdAt?: string | null; processed?: number; paidOrder
   } as unknown as SupabaseClient;
 }
 
-describe("isEligibleForWelcomeOffer", () => {
+describe("isEligibleForFirstPurchase", () => {
   const during = new Date("2026-11-10T12:00:00+07:00");
 
-  it("accepts a new account with no payments", async () => {
-    expect(await isEligibleForWelcomeOffer(fakeDb({ createdAt: "2026-11-01T00:00:00Z" }), "u1", during)).toBe(true);
-  });
-
-  it("rejects accounts created before the offer started", async () => {
-    expect(await isEligibleForWelcomeOffer(fakeDb({ createdAt: "2026-09-01T00:00:00Z" }), "u1", during)).toBe(false);
+  it("accepts any account that has never paid, whatever its age", async () => {
+    expect(await isEligibleForFirstPurchase(fakeDb({}), "new", during)).toBe(true);
+    expect(await isEligibleForFirstPurchase(fakeDb({}), "from-july", during)).toBe(true);
   });
 
   it("rejects an account that has already paid, by either record", async () => {
-    expect(await isEligibleForWelcomeOffer(fakeDb({ createdAt: "2026-11-01T00:00:00Z", processed: 1 }), "u1", during)).toBe(false);
-    expect(await isEligibleForWelcomeOffer(fakeDb({ createdAt: "2026-11-01T00:00:00Z", paidOrders: 1 }), "u1", during)).toBe(false);
+    expect(await isEligibleForFirstPurchase(fakeDb({ processed: 1 }), "u1", during)).toBe(false);
+    expect(await isEligibleForFirstPurchase(fakeDb({ paidOrders: 1 }), "u1", during)).toBe(false);
   });
 
-  it("rejects everyone once the offer is over, and unknown users", async () => {
-    expect(await isEligibleForWelcomeOffer(fakeDb({ createdAt: "2026-11-01T00:00:00Z" }), "u1", new Date("2027-01-02T00:00:00Z"))).toBe(false);
-    expect(await isEligibleForWelcomeOffer(fakeDb({ createdAt: null }), "ghost", during)).toBe(false);
+  it("rejects everyone once the offer is over", async () => {
+    expect(await isEligibleForFirstPurchase(fakeDb({}), "u1", new Date("2027-01-02T00:00:00Z"))).toBe(false);
   });
 });

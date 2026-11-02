@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { PLAN_CARDS } from "@/lib/plans";
-import { useI18n, fmt } from "@/lib/i18n";
+import { useI18n } from "@/lib/i18n";
 import { formatVnd, planPriceVnd } from "@/lib/billing/planPrice";
 import { PAYOS_PRICES_VND } from "@/lib/billing/payos";
 import { usePromo } from "@/lib/usePromo";
@@ -17,7 +17,7 @@ interface PricingGridProps {
 export default function PricingGrid({ currentTier, onSelectPlan }: PricingGridProps) {
   const { t, locale } = useI18n();
   const promo = usePromo();
-  // Shown to visitors (eligible === null) and to qualifying accounts; hidden once an account has paid.
+  // Shown to every visitor and to accounts that have never paid; hidden once an account has paid.
   const offer = promo?.active && promo.eligible !== false ? promo : null;
 
   return (
@@ -48,7 +48,7 @@ export default function PricingGrid({ currentTier, onSelectPlan }: PricingGridPr
               <div style={{ fontSize: 18, fontWeight: 800, color: "#0f172a", marginBottom: 8 }}>{copy.label}</div>
               {offer && plan.tier !== "free" && (
                 <div style={{ display: "inline-block", marginBottom: 8, padding: "3px 10px", borderRadius: 6, background: "#24262a", color: "#fff", fontSize: 12, fontWeight: 700 }}>
-                  {fmt(t.billing.promoBadge, { percent: offer.percentOff })}
+                  {t.billing.promoBadge}
                 </div>
               )}
               <div style={{ fontSize: 24, fontWeight: 900, color: plan.tier === "pro" ? "var(--brand-violet)" : "#0f172a", letterSpacing: "-0.02em", whiteSpace: "nowrap" }}>
@@ -57,7 +57,7 @@ export default function PricingGrid({ currentTier, onSelectPlan }: PricingGridPr
                     <s style={{ display: "block", fontSize: 15, fontWeight: 600, color: "#475569", letterSpacing: 0 }}>
                       <span className="sr-only">{t.billing.promoWasPrice}: </span>{planPriceVnd(plan.tier, locale)}
                     </s>
-                    {formatVnd(promoPrice(PAYOS_PRICES_VND[plan.tier] ?? 0, offer.percentOff), locale)}
+                    {formatVnd(promoPrice(plan.tier, PAYOS_PRICES_VND[plan.tier] ?? 0), locale)}
                   </>
                 ) : planPriceVnd(plan.tier, locale)}
                 <span style={{ fontSize: 14, fontWeight: 600, color: "#475569", letterSpacing: 0, marginLeft: 4 }}>{t.billing.perMonth}</span>

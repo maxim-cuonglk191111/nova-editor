@@ -4,21 +4,21 @@ import { authOptions } from "@/lib/auth";
 import { createHmac } from "crypto";
 import { PAYOS_PRICES_VND, buildPayosSignData } from "@/lib/billing/payos";
 import { sepayConfig, paymentCode } from "@/lib/billing/sepay";
-import { isEligibleForWelcomeOffer } from "@/lib/billing/promoEligibility";
-import { PROMO, promoPrice } from "@/lib/promo";
+import { isEligibleForFirstPurchase } from "@/lib/billing/promoEligibility";
+import { promoPrice } from "@/lib/promo";
 import { getSupabaseAdmin } from "@/lib/supabaseAdmin";
 
 /** Eligibility never blocks a checkout: any failure just means the regular price. */
-async function welcomeOfferApplies(userId: string): Promise<boolean> {
+async function firstPurchaseApplies(userId: string): Promise<boolean> {
   try {
-    return await isEligibleForWelcomeOffer(getSupabaseAdmin(), userId);
+    return await isEligibleForFirstPurchase(getSupabaseAdmin(), userId);
   } catch {
     return false;
   }
 }
 
 // One discounted order at a time: an unpaid earlier one is superseded, so paying two plans at
-// half price is not possible.
+// the first-purchase price twice is not possible.
 async function supersedeDiscountedOrders(db: ReturnType<typeof getSupabaseAdmin>, userId: string) {
   const { data: open } = await db.from("payment_orders").select("order_code, plan, amount").eq("user_id", userId).eq("status", "pending");
   const stale = ((open ?? []) as { order_code: string; plan: string; amount: number }[])
@@ -56,12 +56,12 @@ export async function POST(req: Request) {
 
   const orderCode = Number(`${Date.now()}`.slice(-10));
 
-  // Welcome offer: the SERVER decides the price, for every payment method. The amount saved on
+  // First-purchase offer: the SERVER decides the price, for every payment method. The amount saved on
   // the order is what the QR asks for and what the bank-transfer webhook checks (PayOS gets the
   // same amount in its payment request), so the client cannot lower it.
-  const discounted = await welcomeOfferApplies(userId);
-  const chargeAmount = discounted ? promoPrice(amount) : amount;
-  const discountPercent = discounted ? PROMO.percentOff : 0;
+  const discounted = await firstPurchaseApplies(userId);
+  const chargeAmount = discounted ? promoPrice(plan, amount) : amount;
+  const discountPercent = discounted ? Math.round((1 - chargeAmount / amount) * 100) : 0;
 
   // SePay: plain VietQR transfer to our own account, confirmed from the bank feed.
   const sepay = sepayConfig();

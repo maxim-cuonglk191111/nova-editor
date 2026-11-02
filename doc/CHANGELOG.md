@@ -2,6 +2,13 @@
 
 ---
 
+## [25.16.25] — 2026-11-02
+
+### Task 036 — Old landing page, first-purchase prices (Minor)
+
+- **Landing**: the page from before task 028 is back (sky hero, dark pill navbar), without the Docs link that never resolved.
+- **Prices**: Pro 249,000 regular. Anyone who has never paid sees the regular price struck through and the first-purchase price (Pro 129,000, Team 189,000, Max 649,000) labelled "first purchase" until 26 Dec 2026; account age no longer matters. After a payment the regular price applies.
+
 ## [25.16.24] — 2026-10-27
 
 ### Task 034 — Ovemo café seed (Patch)

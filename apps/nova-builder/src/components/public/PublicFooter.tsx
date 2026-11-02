@@ -13,7 +13,6 @@ export function PublicFooter() {
       links: [
         { href: "/#features", label: t.nav.features },
         { href: "/pricing", label: t.nav.pricing },
-        { href: "/#faq", label: t.nav.faq },
         { href: "/builder/demo", label: t.nav.tryDemo },
       ],
     },

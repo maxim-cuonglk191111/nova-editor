@@ -207,11 +207,11 @@ export default function PayOSCheckoutModal({ isOpen, onClose, tier, teamId }: Pa
                 <div style={{ fontSize: 24, fontWeight: 800, margin: "4px 0" }}>{plan.label}</div>
                 <div style={{ fontSize: 18, fontWeight: 700, color: C.success || "#10b981" }}>
                   {offer && <s style={{ fontSize: 14, fontWeight: 500, color: C.textMuted, marginRight: 8 }}>{vnd(vndPrice)}</s>}
-                  {vnd(offer ? promoPrice(vndPrice, offer.percentOff) : vndPrice)}
+                  {vnd(offer ? promoPrice(tier, vndPrice) : vndPrice)}
                 </div>
                 {offer && (
                   <div style={{ fontSize: 12, color: C.textMuted, marginTop: 6 }}>
-                    {fmt(b.promoCheckoutNote, { percent: offer.percentOff })} {b.promoTerms}
+                    {b.promoCheckoutNote} {b.promoTerms}
                   </div>
                 )}
               </div>

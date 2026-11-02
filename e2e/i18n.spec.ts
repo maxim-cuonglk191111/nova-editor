@@ -42,7 +42,7 @@ test("FA-I03: <html lang> defaults to en with no locale cookie", async ({ page }
 test("FA-I04: landing hero renders Vietnamese when locale = vi", async ({ context, page }) => {
   await context.addCookies([{ name: "nova_locale", value: "vi", url: "http://localhost:3001" }]);
   await page.goto("/");
-  await expect(page.getByRole("heading", { name: /Website cho doanh nghiệp/ })).toBeVisible({ timeout: 30_000 });
+  await expect(page.getByRole("heading", { name: /Tạo mọi website/ })).toBeVisible({ timeout: 30_000 });
 });
 
 // ADR-NB-028: the layout no longer reads the locale cookie (it forced per-request rendering and
