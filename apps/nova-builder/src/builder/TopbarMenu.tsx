@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useRef } from "react";
-import { UI_VARS as C } from "@/lib/uiTheme";
+import { UI_VARS as C, UI_SHAPE as S } from "@/lib/uiTheme";
 
 export type TopbarMenuItem = {
   label: string;
@@ -13,13 +13,15 @@ export type TopbarMenuItem = {
 
 type Props = {
   trigger: string;
+  /** Utility class of the wrapper, used to show or hide the menu at some widths. */
+  className?: string;
   items: TopbarMenuItem[];
   open: boolean;
   onToggle: () => void;
   onClose: () => void;
 };
 
-export function TopbarMenu({ trigger, items, open, onToggle, onClose }: Props) {
+export function TopbarMenu({ trigger, className, items, open, onToggle, onClose }: Props) {
   const menuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -39,16 +41,17 @@ export function TopbarMenu({ trigger, items, open, onToggle, onClose }: Props) {
   }, [open, onClose]);
 
   return (
-    <div ref={menuRef} style={{ position: "relative", flexShrink: 0 }}>
+    <div ref={menuRef} className={className} style={{ position: "relative", flexShrink: 0 }}>
       <button
         onClick={onToggle}
         aria-expanded={open}
         aria-haspopup="menu"
         style={{
-          padding: "3px 10px", borderRadius: 4, cursor: "pointer", fontFamily: C.font, fontSize: 13,
-          border: `1px solid ${open ? "rgba(124,58,237,0.45)" : "rgba(255,255,255,0.1)"}`,
-          background: open ? "rgba(124,58,237,0.12)" : "transparent",
-          color: open ? C.accentText : C.textMuted, fontWeight: 600,
+          height: S.control, padding: "0 14px", borderRadius: S.radiusMd, cursor: "pointer", fontFamily: C.font, fontSize: 13,
+          border: `1px solid ${open ? C.accentBorder : C.border}`,
+          background: open ? C.accentBg : C.card,
+          color: open ? C.accentText : C.text, fontWeight: 600,
+          display: "inline-flex", alignItems: "center", gap: 6,
         }}
       >
         {trigger}
@@ -59,17 +62,17 @@ export function TopbarMenu({ trigger, items, open, onToggle, onClose }: Props) {
           role="menu"
           style={{
             position: "absolute", top: "calc(100% + 6px)", right: 0, zIndex: 200,
-            background: C.card, border: `1px solid ${C.border}`, borderRadius: 8,
-            padding: "4px 0", minWidth: 160,
-            boxShadow: "0 8px 32px rgba(0,0,0,0.5)",
+            background: C.card, border: `1px solid ${C.border}`, borderRadius: S.radiusMd,
+            padding: 6, minWidth: 200,
+            boxShadow: C.shadowPop,
           }}
         >
           {items.map((item) => {
             const sharedStyle = {
-              display: "block", width: "100%", padding: "7px 14px", border: "none",
-              background: item.active ? "rgba(124,58,237,0.15)" : "transparent",
+              display: "block", width: "100%", padding: "10px 12px", border: "none", borderRadius: S.radiusSm,
+              background: item.active ? C.accentBg : "transparent",
               color: item.active ? C.accentText : C.text,
-              fontSize: 13, fontFamily: C.font, textAlign: "left" as const,
+              fontSize: 14, fontFamily: C.font, textAlign: "left" as const,
               cursor: "pointer", textDecoration: "none",
               boxSizing: "border-box" as const,
             };

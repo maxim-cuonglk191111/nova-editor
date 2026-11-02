@@ -1,6 +1,6 @@
 "use client";
 import type { Breakpoint } from "@webstudio-is/sdk";
-import { UI_VARS as C } from "@/lib/uiTheme";
+import { UI_VARS as C, UI_SHAPE as S } from "@/lib/uiTheme";
 import { useI18n } from "@/lib/i18n";
 import type { I18nBreakpointPillsDictionary } from "@/lib/i18n";
 
@@ -42,11 +42,13 @@ export function BreakpointPill({
       onClick={onClick}
       title={pxHint}
       style={{
-        padding: "3px 11px",
-        borderRadius: 20,
-        border: `1px solid ${active ? C.accentBorder : C.border}`,
-        background: active ? C.accentBg : "transparent",
-        color: active ? C.accentText : C.textMuted,
+        height: S.control - 4,
+        padding: "0 14px",
+        borderRadius: S.radiusSm + 2,
+        border: "none",
+        background: active ? C.card : "transparent",
+        boxShadow: active ? C.shadowSoft : "none",
+        color: active ? C.text : C.textMuted,
         fontSize: 13,
         fontFamily: C.font,
         fontWeight: active ? 600 : 400,

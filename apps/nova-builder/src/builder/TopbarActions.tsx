@@ -41,11 +41,11 @@ import { DEMO_DRAFT_KEY } from "@/builder/hooks/useDemoDraftSync";
 import { SaveProjectDialog } from "./SaveProjectDialog";
 import { DeployPanel } from "./DeployPanel";
 import { CollaboratorAvatars } from "./PresenceLayer";
-import { TopbarMenu } from "./TopbarMenu";
+import { TopbarMenu, type TopbarMenuItem } from "./TopbarMenu";
 import { exportProject } from "@/features/export/export-project";
 import { importProject } from "@/features/import/import-project";
 import { exportHtml } from "@/features/export-html/export-html";
-import { UI_VARS as C } from "@/lib/uiTheme";
+import { UI_VARS as C, UI_SHAPE as S } from "@/lib/uiTheme";
 import { useI18n, fmt } from "@/lib/i18n";
 import { $saveStatus } from "@/lib/saveQueue";
 import type { I18nBuilderDictionary } from "@/lib/i18n/types";
@@ -160,6 +160,7 @@ export function TopbarActions({ isDemo }: Props) {
   const [exportOpen, setExportOpen] = useState(false);
   const [toolsOpen, setToolsOpen] = useState(false);
   const [deployOpen, setDeployOpen] = useState(false);
+  const [moreOpen, setMoreOpen] = useState(false);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [importConfirmOpen, setImportConfirmOpen] = useState(false);
@@ -365,70 +366,77 @@ export function TopbarActions({ isDemo }: Props) {
     $canvasZoom.set(Math.max(0.1, Math.round(($canvasZoom.get() - 0.1) * 100) / 100));
   }, []);
 
-  const handlePreview = useCallback(() => {
-    if (isDemo) {
-      const data = {
-        pages: $pages.get()!,
-        assets: $assets.get(),
-        instances: $instances.get(),
-        props: $props.get(),
-        dataSources: $dataSources.get(),
-        resources: $resources.get(),
-        breakpoints: $breakpoints.get(),
-        styles: $styles.get(),
-        styleSources: $styleSources.get(),
-        styleSourceSelections: $styleSourceSelections.get(),
-      };
-      const serialized = serializeWebstudioData(data);
-      const demoPayload = {
-        id: "demo",
-        name: "Demo — Nova Builder",
-        schemaVersion: "5.0",
-        data: serialized,
-        cssVars: $cssVars.get(),
-        interactions: $interactions.get(),
-        customCss: $customCss.get(),
-        updatedAt: new Date().toISOString(),
-      };
-      localStorage.setItem("nova-demo-project-data", JSON.stringify(demoPayload));
-      window.open("/preview/demo", "_blank");
-    } else if (meta) {
-      window.open(`/preview/${meta.id}`, "_blank");
-    }
-  }, [isDemo, meta]);
+  const exportItems: TopbarMenuItem[] = [
+      {
+        label: t.builder.exportHtml,
+        title: t.chrome.exportHtmlTitle,
+        href: meta && !isDemo ? `/api/export/${meta.id}` : undefined,
+        download: meta && !isDemo,
+        onClick: isDemo
+          ? () => {
+              setExportOpen(false);
+              openFeatureGate("export-html");
+            }
+          : undefined,
+      },
+      {
+        label: t.builder.exportProject,
+        title: t.chrome.exportProjectTitle,
+        onClick: () => exportProject(meta ? meta.name : "untitled"),
+      },
+      {
+        label: t.builder.importProject,
+        title: t.chrome.importProjectTitle,
+        onClick: () => { setExportOpen(false); handleImportClick(); },
+      },
+  ];
 
-  const btnBase = {
-    padding: "3px 10px", borderRadius: 4, border: `1px solid ${C.border}`,
-    background: "transparent", color: C.textMuted, fontSize: 13, fontFamily: C.font,
-    cursor: "pointer", fontWeight: 600,
-  };
+  const toolItems: TopbarMenuItem[] = [
+      {
+        label: t.builder.aiContentFill,
+        active: isAIContentOpen,
+        onClick: () => {
+          if (isDemo && !isLoggedIn) {
+            openFeatureGate("ai");
+          } else {
+            openFloatingPanel($aiContentPanelOpen, !isAIContentOpen);
+          }
+        },
+      },
+      { label: t.builder.accessibility, active: isA11yOpen, onClick: () => openFloatingPanel($a11yPanelOpen, !isA11yOpen) },
+      { label: t.builder.history, active: isHistoryOpen, onClick: () => openFloatingPanel($historyPanelOpen, !isHistoryOpen) },
+      { label: t.builder.gridGuides, active: gridGuides, onClick: () => $gridGuidesVisible.set(!gridGuides) },
+  ];
+
+  const zoomBtn = { background: "none", border: "none", cursor: "pointer", color: C.textMuted, fontSize: 16, lineHeight: 1, padding: "0 10px", height: "100%", fontFamily: C.font } as const;
 
   return (
     <>
       {/* Zoom controls */}
-      <div style={{ display: "flex", alignItems: "center", flexShrink: 0, background: C.inputBg, border: `1px solid ${C.border}`, borderRadius: 5, overflow: "hidden" }}>
-        <button onClick={handleZoomOut} title={t.chrome.zoomOut} style={{ background: "none", border: "none", cursor: "pointer", color: C.textMuted, fontSize: 14, lineHeight: 1, padding: "2px 7px", fontFamily: C.font }}>−</button>
-        <button onClick={() => $canvasZoom.set(1)} title={t.chrome.zoomReset} style={{ background: "none", border: "none", borderLeft: `1px solid ${C.border}`, borderRight: `1px solid ${C.border}`, cursor: "pointer", color: canvasZoom !== 1 ? C.accentText : C.textMuted, fontSize: 13, fontFamily: C.font, fontWeight: canvasZoom !== 1 ? 700 : 400, padding: "2px 8px", minWidth: 40, textAlign: "center" }}>
+      <div className="nb-hide-narrow" style={{ display: "flex", alignItems: "center", flexShrink: 0, height: S.control, background: C.card, border: `1px solid ${C.border}`, borderRadius: S.radiusMd, overflow: "hidden" }}>
+        <button onClick={handleZoomOut} title={t.chrome.zoomOut} aria-label={t.chrome.zoomOut} style={zoomBtn}>−</button>
+        <button onClick={() => $canvasZoom.set(1)} title={t.chrome.zoomReset} style={{ ...zoomBtn, borderLeft: `1px solid ${C.border}`, borderRight: `1px solid ${C.border}`, color: canvasZoom !== 1 ? C.accentText : C.textMuted, fontSize: 13, fontWeight: canvasZoom !== 1 ? 700 : 500, minWidth: 48 }}>
           {Math.round(canvasZoom * 100)}%
         </button>
-        <button onClick={handleZoomIn} title={t.chrome.zoomIn} style={{ background: "none", border: "none", cursor: "pointer", color: C.textMuted, fontSize: 14, lineHeight: 1, padding: "2px 7px", fontFamily: C.font }}>+</button>
-        <button onClick={() => $fitToWidthTrigger.set($fitToWidthTrigger.get() + 1)} title={t.chrome.zoomFit} style={{ background: "none", border: "none", borderLeft: `1px solid ${C.border}`, cursor: "pointer", color: C.textMuted, fontSize: 12, lineHeight: 1, padding: "2px 7px", fontFamily: C.font }}>⊡</button>
+        <button onClick={handleZoomIn} title={t.chrome.zoomIn} aria-label={t.chrome.zoomIn} style={zoomBtn}>+</button>
+        <button onClick={() => $fitToWidthTrigger.set($fitToWidthTrigger.get() + 1)} title={t.chrome.zoomFit} aria-label={t.chrome.zoomFit} style={{ ...zoomBtn, borderLeft: `1px solid ${C.border}`, fontSize: 13 }}>⊡</button>
       </div>
 
       {/* Right action area — unified controls (ADR-NB-022: zero JSX branching on isDemo) */}
-      <div style={{ display: "flex", alignItems: "center", gap: 5, flexShrink: 0 }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 8, flexShrink: 0 }}>
         <CollaboratorAvatars />
 
         {/* Sync status chip (patch autosave) or Demo status badge */}
         {isDemo ? (
           <span
+            className="nb-hide-mid"
             style={{
-              fontSize: 11,
+              fontSize: 12,
               fontFamily: C.font,
               color: C.textMuted,
-              padding: "2px 8px",
-              borderRadius: 4,
-              background: C.inputBg,
+              padding: "5px 10px",
+              borderRadius: S.radiusPill,
+              background: C.surface,
               border: `1px solid ${C.border}`,
               whiteSpace: "nowrap",
             }}
@@ -441,34 +449,12 @@ export function TopbarActions({ isDemo }: Props) {
 
         {/* 1 — Export ▾ (HTML + Export Project + Import Project) */}
         <TopbarMenu
+          className="nb-hide-narrow"
           trigger={t.builder.export}
           open={exportOpen}
           onToggle={() => { setExportOpen((v) => !v); setToolsOpen(false); }}
           onClose={() => setExportOpen(false)}
-          items={[
-            {
-              label: t.builder.exportHtml,
-              title: t.chrome.exportHtmlTitle,
-              href: meta && !isDemo ? `/api/export/${meta.id}` : undefined,
-              download: meta && !isDemo,
-              onClick: isDemo
-                ? () => {
-                    setExportOpen(false);
-                    openFeatureGate("export-html");
-                  }
-                : undefined,
-            },
-            {
-              label: t.builder.exportProject,
-              title: t.chrome.exportProjectTitle,
-              onClick: () => exportProject(meta ? meta.name : "untitled"),
-            },
-            {
-              label: t.builder.importProject,
-              title: t.chrome.importProjectTitle,
-              onClick: () => { setExportOpen(false); handleImportClick(); },
-            },
-          ]}
+          items={exportItems}
         />
 
         {/* Deploy panel (opens from Export menu if active) */}
@@ -480,64 +466,45 @@ export function TopbarActions({ isDemo }: Props) {
 
         {/* 2 — Tools ▾ (Fill, A11y, Perf, History, Grid Guides) */}
         <TopbarMenu
+          className="nb-hide-narrow"
           trigger={t.builder.tools}
           open={toolsOpen}
           onToggle={() => { setToolsOpen((v) => !v); setExportOpen(false); }}
           onClose={() => setToolsOpen(false)}
-          items={[
-            {
-              label: t.builder.aiContentFill,
-              active: isAIContentOpen,
-              onClick: () => {
-                if (isDemo && !isLoggedIn) {
-                  openFeatureGate("ai");
-                } else {
-                  openFloatingPanel($aiContentPanelOpen, !isAIContentOpen);
-                }
-              },
-            },
-            { label: t.builder.accessibility, active: isA11yOpen, onClick: () => openFloatingPanel($a11yPanelOpen, !isA11yOpen) },
-            { label: t.builder.history, active: isHistoryOpen, onClick: () => openFloatingPanel($historyPanelOpen, !isHistoryOpen) },
-            { label: t.builder.gridGuides, active: gridGuides, onClick: () => $gridGuidesVisible.set(!gridGuides) },
-          ]}
+          items={toolItems}
         />
 
-        {/* 3 — Preview Button */}
-        <button
-          onClick={handlePreview}
-          style={{ ...btnBase, transition: "all 0.15s" }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.borderColor = C.borderHover;
-            e.currentTarget.style.color = C.text;
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.borderColor = C.border;
-            e.currentTarget.style.color = C.textMuted;
-          }}
-        >
-          {t.chrome.preview}
-        </button>
+        {/* Below 1280px the two menus become one, so the primary buttons keep their room */}
+        <TopbarMenu
+          className="nb-show-narrow"
+          trigger={t.builder.more}
+          open={moreOpen}
+          onToggle={() => { setMoreOpen((v) => !v); setExportOpen(false); setToolsOpen(false); }}
+          onClose={() => setMoreOpen(false)}
+          items={[...exportItems, ...toolItems]}
+        />
 
-        {/* 4 — Save Button */}
+        {/* 3 — Save: the one filled button of the bar */}
         <button
           onClick={handleSaveClick}
           disabled={isSaving || (!isDemo && !isDirty && !saveError)}
           style={{
-            padding: "4px 12px",
-            borderRadius: 5,
+            height: S.controlLg - 4,
+            padding: "0 20px",
+            borderRadius: S.radiusMd,
             border: "none",
             background: isSaving
-              ? C.inputBg
+              ? C.surface
               : saveError
                 ? C.danger
                 : (isDirty || isDemo)
-                  ? C.success
-                  : C.inputBg,
-            color: isSaving || (!isDirty && !saveError && !isDemo) ? C.textMuted : "#fff",
-            fontSize: 12,
+                  ? C.primary
+                  : C.surface,
+            color: isSaving || (!isDirty && !saveError && !isDemo) ? C.textMuted : saveError ? "#fff" : C.onPrimary,
+            fontSize: 14,
             fontFamily: C.font,
             cursor: isSaving || (!isDirty && !saveError && !isDemo) ? "default" : "pointer",
-            fontWeight: 600,
+            fontWeight: 700,
             transition: "all 0.15s",
           }}
         >
@@ -552,7 +519,7 @@ export function TopbarActions({ isDemo }: Props) {
                   : t.chrome.saved}
         </button>
 
-        {/* 5 — ✦ Generate Button */}
+        {/* 4 — ✦ Generate: opens the AI tab */}
         <button
           onClick={() => {
             if (isDemo && !isLoggedIn) {
@@ -563,7 +530,7 @@ export function TopbarActions({ isDemo }: Props) {
             }
           }}
           title={t.chrome.generateWithAI}
-          style={{ padding: "4px 14px", borderRadius: 6, border: `1px solid ${isAIPanelOpen ? C.accentBorder : C.accent}`, background: isAIPanelOpen ? C.accentBg : `linear-gradient(135deg, ${C.accentBg} 0%, rgba(79,70,229,0.1) 100%)`, color: C.accentText, fontSize: 12, fontFamily: C.font, cursor: "pointer", fontWeight: 700 }}
+          style={{ height: S.control, padding: "0 14px", borderRadius: S.radiusMd, border: `1px solid ${isAIPanelOpen ? C.accent : C.accentBorder}`, background: isAIPanelOpen ? C.accentBg : C.card, color: C.accentText, fontSize: 13, fontFamily: C.font, cursor: "pointer", fontWeight: 700, whiteSpace: "nowrap" }}
         >
           {t.builder.generate}
         </button>
@@ -573,16 +540,17 @@ export function TopbarActions({ isDemo }: Props) {
           <button
             onClick={() => router.push("/signup")}
             style={{
-              padding: "4px 12px",
-              borderRadius: 6,
+              height: S.control,
+              padding: "0 14px",
+              borderRadius: S.radiusMd,
               border: "none",
-              background: "linear-gradient(135deg, rgba(124,58,237,0.9) 0%, rgba(79,70,229,0.85) 100%)",
+              background: C.accent,
               color: "#fff",
-              fontSize: 12,
+              fontSize: 13,
               fontFamily: C.font,
               cursor: "pointer",
               fontWeight: 700,
-              marginLeft: 4,
+              whiteSpace: "nowrap",
             }}
           >
             {t.builder.signUpFree}

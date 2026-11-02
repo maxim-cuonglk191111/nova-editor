@@ -132,6 +132,7 @@ export const viDictionary: I18nDictionary = {
     demoNotice: "Bản dùng thử — không tự lưu",
     signUpFree: "Đăng ký miễn phí →",
     tools: "Công cụ ▾",
+    more: "Thêm ▾",
     aiContentFill: "AI viết lại nội dung",
     accessibility: "Kiểm tra trợ năng",
     performance: "Hiệu suất",

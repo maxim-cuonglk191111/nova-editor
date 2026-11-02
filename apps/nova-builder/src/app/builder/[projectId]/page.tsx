@@ -357,7 +357,7 @@ function BuilderPage() {
       style={{
         display: "grid",
         gridTemplate: `
-          "topbar topbar topbar" 44px
+          "topbar topbar topbar" 56px
           "left   main   right"  1fr
           "footer footer footer" 36px
           / auto 1fr 280px

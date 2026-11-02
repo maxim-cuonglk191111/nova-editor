@@ -145,26 +145,24 @@ export function PageItem({ page, siblings, status, handlers }: PageItemProps) {
 
   return (
     <div onMouseEnter={() => setHovered(true)} onMouseLeave={() => setHovered(false)}>
-      <div style={{ position: "relative", display: "flex", alignItems: "stretch" }}>
+      <div style={{ position: "relative", display: "flex", alignItems: "stretch", margin: "2px 8px", borderRadius: 10, overflow: "hidden", background: isActive ? C.active : hovered ? C.hoverBg : "transparent" }}>
         <button
           onClick={onClick}
           onDoubleClick={(e) => { e.stopPropagation(); setIsEditing(true); }}
           style={{
             flex: 1,
+            minWidth: 0,
             display: "flex",
             flexDirection: "column",
-            padding: "7px 10px",
-            background: isActive ? C.active : "none",
-            borderTop: "none",
-            borderRight: "none",
-            borderBottom: "none",
-            borderLeft: isActive ? `2px solid ${C.activeBorder}` : "2px solid transparent",
+            padding: "9px 12px",
+            background: "none",
+            border: "none",
             cursor: "pointer",
             textAlign: "left",
             gap: 2,
           }}
         >
-          <span style={{ fontSize: 12, fontFamily: C.font, color: isActive ? C.accent : C.text, fontWeight: isActive ? 600 : 400 }}>
+          <span style={{ fontSize: 14, fontFamily: C.font, color: isActive ? C.accentText : C.text, fontWeight: isActive ? 600 : 500 }}>
             {name}
             {isHome && (
               <span style={{ marginLeft: 6, fontSize: 10, fontWeight: 600, color: C.accentText, background: C.accentBg, borderRadius: 3, padding: "1px 5px" }}>

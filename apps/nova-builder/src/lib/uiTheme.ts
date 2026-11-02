@@ -75,6 +75,12 @@ export const DARK = {
   muted: "rgba(255,255,255,0.35)",
   inputBorder: "rgba(255,255,255,0.10)",
   input: "rgba(255,255,255,0.05)",
+  // primary action (one per screen) and elevation
+  primary: "#34d399",
+  primaryHover: "#6ee7b7",
+  onPrimary: "#052e1f",
+  shadowSoft: "0 1px 2px rgba(0,0,0,0.30), 0 4px 12px rgba(0,0,0,0.25)",
+  shadowPop: "0 8px 32px rgba(0,0,0,0.50)",
 } as const;
 
 export const ELDER = {
@@ -129,6 +135,11 @@ export const ELDER = {
   muted: "rgba(255,255,255,0.50)",
   inputBorder: "rgba(255,255,255,0.20)",
   input: "rgba(255,255,255,0.08)",
+  primary: "#6ee7b7",
+  primaryHover: "#a7f3d0",
+  onPrimary: "#000000",
+  shadowSoft: "0 1px 2px rgba(0,0,0,0.40), 0 4px 12px rgba(0,0,0,0.35)",
+  shadowPop: "0 8px 32px rgba(0,0,0,0.65)",
 } as const;
 
 // Light mode palette (landing pages, public-facing surfaces)
@@ -184,6 +195,11 @@ export const LIGHT = {
   muted: "rgba(0,0,0,0.35)",
   inputBorder: "rgba(0,0,0,0.12)",
   input: "rgba(0,0,0,0.04)",
+  primary: "#065f46",
+  primaryHover: "#064e3b",
+  onPrimary: "#ffffff",
+  shadowSoft: "0 1px 2px rgba(15,23,42,0.06), 0 4px 12px rgba(15,23,42,0.06)",
+  shadowPop: "0 12px 32px rgba(15,23,42,0.16), 0 2px 6px rgba(15,23,42,0.08)",
 } as const;
 
 // ── Semantic abstraction — what components import ────────────────────────────
@@ -245,6 +261,23 @@ export const UI_VARS = {
   muted:          "var(--ui-muted)",
   inputBorder:    "var(--ui-input-border)",
   input:          "var(--ui-input)",
+  primary:        "var(--ui-primary)",
+  primaryHover:   "var(--ui-primary-hover)",
+  onPrimary:      "var(--ui-on-primary)",
+  shadowSoft:     "var(--ui-shadow-soft)",
+  shadowPop:      "var(--ui-shadow-pop)",
+} as const;
+
+// Shape tokens (px): the same in every theme, so plain numbers rather than CSS variables.
+// Radii step up with the size of the thing; controls share two heights so rows line up.
+export const UI_SHAPE = {
+  radiusSm: 8,     // inputs, small buttons, menu items
+  radiusMd: 12,    // buttons, segmented controls, menus
+  radiusLg: 16,    // cards, panels, floating toolbars
+  radiusPill: 9999,
+  control: 36,     // regular control height
+  controlLg: 44,   // primary actions and touch targets
+  topbar: 56,
 } as const;
 
 export type UiThemeMode = "dark" | "elder" | "light";
@@ -316,6 +349,11 @@ export function getThemeCssVars(mode: UiThemeMode): string {
   --ui-muted: ${t.muted};
   --ui-input-border: ${t.inputBorder};
   --ui-input: ${t.input};
+  --ui-primary: ${t.primary};
+  --ui-primary-hover: ${t.primaryHover};
+  --ui-on-primary: ${t.onPrimary};
+  --ui-shadow-soft: ${t.shadowSoft};
+  --ui-shadow-pop: ${t.shadowPop};
   --nova-bg: var(--ui-bg);
   --nova-card: var(--ui-card);
   --nova-surface: var(--ui-surface);

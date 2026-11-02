@@ -132,6 +132,7 @@ export const enDictionary: I18nDictionary = {
     demoNotice: "Demo — edits not saved",
     signUpFree: "Sign up free →",
     tools: "Tools ▾",
+    more: "More ▾",
     aiContentFill: "AI Content Fill",
     accessibility: "Accessibility",
     performance: "Performance",

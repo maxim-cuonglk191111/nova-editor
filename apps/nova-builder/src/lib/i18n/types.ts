@@ -124,6 +124,8 @@ export interface I18nBuilderDictionary {
   demoNotice: string;
   signUpFree: string;
   tools: string;
+  /** One menu that holds Export and Tools on narrow screens. */
+  more: string;
   aiContentFill: string;
   accessibility: string;
   performance: string;

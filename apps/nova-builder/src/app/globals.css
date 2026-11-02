@@ -332,3 +332,14 @@ html, body {
   --brand-muted: #4b4e57;
   --brand-rule: rgba(36, 38, 42, 0.12);
 }
+
+/* Builder chrome. Three widths: wide (>=1680), mid (1280-1679), narrow (<1280): the secondary
+   top-bar items give way to the primary ones. */
+.nb-show-narrow { display: none !important; }
+@media (max-width: 1679px) {
+  .nb-hide-mid { display: none !important; }
+}
+@media (max-width: 1279px) {
+  .nb-hide-narrow { display: none !important; }
+  .nb-show-narrow { display: block !important; }
+}

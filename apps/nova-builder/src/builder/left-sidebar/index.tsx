@@ -24,9 +24,9 @@ const TAB_IDS: TabId[] = ["ai", "components", "pages", "navigator", "assets", "m
 
 const TAB_KEY = "nova-sidebar-tab";
 const WIDTH_KEY = "nova-sidebar-width";
-const MIN_WIDTH = 180;
+const MIN_WIDTH = 220;
 const MAX_WIDTH = 360;
-const DEFAULT_WIDTH = 220;
+const DEFAULT_WIDTH = 260;
 // A conversation needs more room than a list: the AI tab keeps its own width.
 const AI_WIDTH_KEY = "nova-sidebar-width-ai";
 const AI_MIN_WIDTH = 300;
@@ -58,7 +58,7 @@ function loadAiWidth(): number {
 
 type TabItem = { id: TabId; label: string; short: string; icon: string };
 
-const RAIL_WIDTH = 56;
+const RAIL_WIDTH = 68;
 
 function TabIcon({ tab, isActive, onClick }: { tab: TabItem; isActive: boolean; onClick: () => void }) {
   return (
@@ -68,25 +68,26 @@ function TabIcon({ tab, isActive, onClick }: { tab: TabItem; isActive: boolean; 
       aria-pressed={isActive}
       onClick={onClick}
       style={{
-        width: RAIL_WIDTH,
-        height: 48,
+        width: RAIL_WIDTH - 12,
+        height: 56,
+        margin: "0 6px",
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
         justifyContent: "center",
-        gap: 2,
-        background: isActive ? "rgba(124,58,237,0.08)" : "none",
+        gap: 3,
+        background: isActive ? C.accentBg : "none",
         border: "none",
+        borderRadius: 12,
         cursor: "pointer",
         color: isActive ? C.tabActive : C.tabInactive,
-        borderLeft: isActive ? `2px solid ${C.tabActive}` : "2px solid transparent",
         flexShrink: 0,
         transition: "color 0.15s, background 0.15s",
         padding: 0,
       }}
     >
-      <span style={{ fontSize: 15, lineHeight: 1 }}>{tab.icon}</span>
-      <span style={{ fontSize: 9, fontFamily: C.font, lineHeight: 1, letterSpacing: "0.03em", textTransform: "uppercase", fontWeight: 600 }}>
+      <span style={{ fontSize: 18, lineHeight: 1 }}>{tab.icon}</span>
+      <span style={{ fontSize: 11, fontFamily: C.font, lineHeight: 1, fontWeight: 600, maxWidth: "100%", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
         {tab.short}
       </span>
     </button>
@@ -204,11 +205,12 @@ export function LeftSidebar() {
         style={{
           width: RAIL_WIDTH,
           flexShrink: 0,
-          background: C.bg,
+          background: C.card,
           borderRight: `1px solid ${C.border}`,
           display: "flex",
           flexDirection: "column",
-          paddingTop: 4,
+          gap: 4,
+          paddingTop: 8,
         }}
       >
         {tabs.map((tab) => (

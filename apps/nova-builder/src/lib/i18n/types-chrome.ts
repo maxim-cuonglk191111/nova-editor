@@ -86,6 +86,10 @@ export interface I18nChromeDictionary {
   zoomIn: string;
   zoomFit: string;
   preview: string;
+  /** Label of the current segment of the top-bar switch. */
+  design: string;
+  modeSwitch: string;
+  previewOpensTab: string;
   saving: string;
   saveFailedRetry: string;
   save: string;

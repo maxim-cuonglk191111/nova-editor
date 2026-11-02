@@ -171,9 +171,7 @@ export function ComponentsPanel() {
     <div className="flex flex-col h-full bg-background border-r border-border select-none relative overflow-hidden font-sans">
       {/* Header & Search (V0.dev / Figma assets style) */}
       <div className="p-4 flex flex-col gap-2.5 border-b border-border bg-background/60 backdrop-blur-md z-10">
-        <div className="flex items-center justify-between">
-          <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">{L.title}</span>
-        </div>
+        <span className="text-base font-bold text-foreground" style={{ letterSpacing: "-0.01em" }}>{L.title}</span>
         <div className="relative flex items-center">
           <span className="absolute left-3 text-xs text-muted-foreground/70 pointer-events-none">🔍</span>
           <input

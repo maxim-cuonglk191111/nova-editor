@@ -10,6 +10,7 @@ import {
 } from "@/lib/nano-states";
 import type { Instances } from "@webstudio-is/sdk";
 import { TreeRow, type InstanceNode } from "./TreeRow";
+import { PanelHeader } from "../PanelHeader";
 import { ContextMenu } from "./ContextMenu";
 import { useDnd } from "./useDnd";
 import { useI18n } from "@/lib/i18n";
@@ -268,21 +269,7 @@ export function Navigator() {
       }}
     >
       {/* Header */}
-      <div
-        style={{
-          padding: "7px 10px",
-          fontSize: 12,
-          fontFamily: C.font,
-          color: C.textMuted,
-          borderBottom: `1px solid ${C.border}`,
-          fontWeight: 700,
-          letterSpacing: "0.06em",
-          textTransform: "uppercase",
-          flexShrink: 0,
-        }}
-      >
-        {t.builder.navigator}
-      </div>
+      <PanelHeader title={t.builder.navigator} />
 
       {/* Tree */}
       <div style={{ flex: 1, overflowY: "auto", padding: "4px 2px" }}>

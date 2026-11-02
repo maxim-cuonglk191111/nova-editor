@@ -8,6 +8,7 @@ import {
 } from "@/lib/protocol/marketplaceClient";
 import { $nestingWarning } from "@/lib/nano-states";
 import { UI_VARS as C } from "@/lib/uiTheme";
+import { PanelHeader } from "../PanelHeader";
 import { useI18n } from "@/lib/i18n";
 
 // Tier C (task 007): bundle export/import, "Publish current page" and the
@@ -141,9 +142,7 @@ export function MarketplacePanel() {
 
   return (
     <div style={{ display: "flex", flexDirection: "column", height: "100%", background: C.bg, fontFamily: C.font }}>
-      <div style={{ padding: "12px 14px 10px", borderBottom: `1px solid ${C.border}`, flexShrink: 0 }}>
-        <div style={{ fontSize: 13, fontWeight: 700, color: C.text, letterSpacing: "0.05em" }}>{t.builder.templates.toUpperCase()}</div>
-      </div>
+      <PanelHeader title={t.builder.templates} />
 
       <div style={{ flex: 1, overflowY: "auto", padding: "10px 10px" }}>
         {SHOW_COMMUNITY && (<>

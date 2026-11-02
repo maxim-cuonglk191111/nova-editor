@@ -1,6 +1,6 @@
 # Task 038 — Builder UI modernization (reference: Siteai), adapted to Nova's content and flow
 
-- **Status:** Open (spec only; no code until the owner approves this document)
+- **Status:** In progress — P0–P3 built on branch `feat/ui-modernization`, waiting for the owner's sign-off on the P2/P3 screenshots before P4–P6
 - **Filed:** 2026-11-02
 - **Owner:** Claude Code
 - **Severity:** Major (touches every panel of the builder; must not change behaviour)
@@ -50,7 +50,18 @@ New features from the reference (sitemap/wireframe stages, CMS, overlays, cursor
 - Light and dark both pass the a11y spec; touch targets and text size rules hold.
 - Self-score ≥ 9/10 on the rubric with the Tier 3 audit attached to `doc/VERIFIED.md`.
 
-## Open questions for the owner
+## Owner decisions (2026-11-02)
+1. Light by default (it already is: `$builderTheme` starts as "light"; there is no theme switch in the builder today, so "dark kept" means the DARK/ELDER palettes stay in `uiTheme.ts`). 2. Centred switch: Design · Preview. 3. The floating toolbar may replace the top-bar zoom once it works.
+
+## Progress
+- **P0** `scripts/ui-baseline.mjs` captures the demo builder (1440/1024) into `doc/screenshots/.temp/ui-baseline/` (before) and `ui-p3/` (after).
+- **P1** `lib/uiTheme.ts`: `primary`/`primaryHover`/`onPrimary`, `shadowSoft`/`shadowPop` in all three palettes (+ `UI_VARS`, CSS vars) and `UI_SHAPE` (radii 8/12/16, control 36/44, top bar 56).
+- **P2** Top bar 56px on a white surface: back + logo + project name; centred **Design | Preview ↗** switch (Preview still opens the tab, now via `topbar/usePreview.ts`); breakpoints as one pill group; zoom; Export/Tools (one **More** menu below 1280px); **Save** is the single filled primary button (dark green, white text AA); Generate = outline. Width classes `nb-hide-mid` (<1680) and `nb-hide-narrow` (<1280) in `globals.css`. Fixes the clipped Generate button at 1024px. Floating panels moved from top 52 to 64.
+- **P3** Rail 68px with a rounded active tile and readable labels (the "TEMPLATES" clip is gone); shared `PanelHeader` for Pages/Layers/Templates, same title style in Add; page rows as rounded cards; default panel width 260.
+- **Deviations**: no project-name caret (nothing to open from it yet, so no false affordance); Add keeps its category list with preview cards (it already has search and thumbnails) instead of the Siteai row list; the zoom group is hidden below 1280px until the floating toolbar (P4) takes over.
+- **Selector note**: the breakpoint ⚙ keeps its accessible name; `builder-canvas-sync.spec.ts` looked for `input[type=number]`, which task 018 turned into text inputs, so the spec was already red; it now uses `input[inputmode=decimal]`.
+
+## Open questions for the owner (answered above)
 1. Light as the default theme (as the reference) with dark kept, or dark stays the default?
 2. The centred switch: which modes should it show? (Proposed: Design · Preview.)
 3. Is the bottom floating toolbar allowed to replace the zoom controls in the top bar once it works?

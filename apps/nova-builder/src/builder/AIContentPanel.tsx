@@ -85,7 +85,7 @@ export function AIContentPanel() {
       role="dialog"
       aria-label={L.dialogLabel}
       style={{
-        position: "fixed", top: 52, left: "50%", transform: "translateX(-50%)",
+        position: "fixed", top: 64, left: "50%", transform: "translateX(-50%)",
         width: 500, maxWidth: "calc(100vw - 32px)", zIndex: 100,
         background: C.bg, border: `1px solid ${C.border}`, borderRadius: 14,
         boxShadow: "0 12px 48px rgba(0,0,0,0.6)", fontFamily: C.font, overflow: "hidden",
