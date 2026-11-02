@@ -57,4 +57,6 @@ Continue after task 007 (builder audit, v25.8.0–25.12.0, scores in `doc/VERIFI
 
 - **Batch 9 — loose ends (v25.15.0):** profile & password page, field hints in AI Content Fill, Welcome card only before the first site, export without the Tailwind CDN (pixel-identical). Infrastructure, owner to decide: the Vercel project `nova-editor-apps` deploys every PR with no environment variables (log-in / sign-up fail there — disable it or add env); Worker preview versions uploaded with `wrangler versions upload` from a local build answered 500 on every route (not investigated further; noted in `CLAUDE.md`).
 
+- **Batch 6 — AI panel as a chat tab (in progress 2026-11-02):** design in `doc/AI-PANEL.md`; implementation tracked in [task 037](037-ai-chat-tab.md) (same scope as item 6, with the deviations recorded there: browser-stored threads in v1, undo step instead of a snapshot row until the migration is approved).
+
 Out of scope unless the owner provides input: task 002 (SePay go-live), task 003 (cards / Google Pay). No spending (no paid AI credits, no paid services).

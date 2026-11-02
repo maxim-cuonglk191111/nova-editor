@@ -49,7 +49,11 @@ export async function GET(req: Request) {
   if (!(session?.user as { id?: string } | undefined)?.id) {
     return Response.json({ error: "Unauthorized" }, { status: 401 });
   }
-  const live = new URL(req.url).searchParams.get("live") === "1";
+  const params = new URL(req.url).searchParams;
+  const live = params.get("live") === "1";
+  // ?light=1 is what the AI tab's model picker reads: which providers have a key and the chain,
+  // without listing Groq's models (an extra network call).
+  const light = params.get("light") === "1";
   const providers = Object.entries(KEYS).map(([id, env]) => ({
     id,
     keyConfigured: Boolean(process.env[env]?.trim()),
@@ -59,7 +63,7 @@ export async function GET(req: Request) {
   return Response.json({
     chain: providerChain([process.env.AI_PROVIDER], process.env.AI_FALLBACK_PROVIDERS),
     providers,
-    groqModels: await groqModels(),
+    groqModels: light ? undefined : await groqModels(),
     live: live ? await liveCheck(providers.filter((p) => p.keyConfigured).map((p) => p.id)) : undefined,
   });
 }

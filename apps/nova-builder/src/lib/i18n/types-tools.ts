@@ -11,6 +11,7 @@ export interface I18nTimeAgoDictionary {
 }
 
 export interface I18nRailDictionary {
+  ai: string;
   components: string;
   pages: string;
   navigator: string;
@@ -27,6 +28,87 @@ export interface I18nBreakpointPillsDictionary {
   mobileLandscape: string;
   mobilePortrait: string;
   allSizes: string;
+}
+
+export interface I18nStarterPrompt {
+  label: string;
+  prompt: string;
+}
+
+export interface I18nAIChatDictionary {
+  title: string;
+  newChat: string;
+  history: string;
+  historyEmpty: string;
+  untitled: string;
+  deleteThread: string;
+  /** "{count}" messages. */
+  threadMeta: string;
+  emptyTitle: string;
+  emptyBody: string;
+  starterElement: I18nStarterPrompt[];
+  starterSection: I18nStarterPrompt[];
+  starterPage: I18nStarterPrompt[];
+  starterEmptyPage: I18nStarterPrompt[];
+  placeholderElement: string;
+  placeholderSection: string;
+  placeholderPage: string;
+  placeholderEmptyPage: string;
+  send: string;
+  stop: string;
+  retry: string;
+  enterHint: string;
+  /** Chip text; "{name}" is the element, section or page. */
+  chipElement: string;
+  chipSection: string;
+  chipPage: string;
+  removeChip: string;
+  you: string;
+  assistant: string;
+  /** "{provider}" answered in "{seconds}" s. */
+  answeredBy: string;
+  progressReading: string;
+  progressWriting: string;
+  stopped: string;
+  busy: string;
+  noChanges: string;
+  proposedChanges: string;
+  apply: string;
+  discard: string;
+  appliedUndo: string;
+  applyPartial: string;
+  discarded: string;
+  nothingApplied: string;
+  /** "{note}" is what was left out. */
+  leftOut: string;
+  /** "{label}" the element, "{count}" how many, "{detail}" what changes. */
+  lineTextOne: string;
+  lineTextMany: string;
+  lineStyleOne: string;
+  lineStyleMany: string;
+  linePropOne: string;
+  linePropMany: string;
+  lineRemove: string;
+  lineInsert: string;
+  lineReplace: string;
+  /** "{count}" elements. */
+  linePage: string;
+  /** "{count}" pages: "{detail}" names. */
+  lineSite: string;
+  highlightHint: string;
+  modelLabel: string;
+  modelAuto: string;
+  modelAutoHint: string;
+  modelUnavailable: string;
+  providers: Record<"groq" | "mistral" | "google" | "openrouter" | "openai" | "anthropic", { name: string; hint: string }>;
+  startOver: string;
+  startOverAsk: string;
+  startOverYes: string;
+  startOverNo: string;
+  /** Plain names of the CSS properties and props a proposal changes (two-level labels). */
+  styleNames: Record<string, string>;
+  /** Answer to a message the AI could only treat as a question. */
+  askedOnly: string;
 }
 
 export interface I18nAIPanelDictionary {
@@ -290,6 +372,7 @@ export interface I18nToolsDictionary {
   rail: I18nRailDictionary;
   breakpointPills: I18nBreakpointPillsDictionary;
   ai: I18nAIPanelDictionary;
+  aiChat: I18nAIChatDictionary;
   aiContent: I18nAIContentDictionary;
   a11y: I18nA11yDictionary;
   perf: I18nPerfDictionary;

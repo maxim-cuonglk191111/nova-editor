@@ -176,13 +176,17 @@ test("top bar", async ({ page, context }) => {
     await canvas.locator("h1").first().waitFor({ timeout: 120_000 });
   });
 
-  await step("Generate with AI replaces the page; undo brings it back", async () => {
+  await step("AI tab: start over with a new page; undo brings the old one back", async () => {
+    // The ✦ button opens the AI tab of the left sidebar. The page has content, so a whole new page
+    // is asked for with "Start over" (which asks first); a plain message would be an edit.
     await btn("✦ Generate").click();
     await shot(page, "t22-ai-panel");
-    await page.locator('[role="dialog"] textarea').fill("A one-page site for a small bakery in Hanoi: hero, three products with prices, opening hours, contact form.");
-    await page.locator('[role="dialog"]').getByRole("button", { name: /^Generate/ }).click();
+    await page.getByTestId("ai-start-over").click();
+    await page.getByRole("button", { name: "Yes, start over" }).click();
+    await page.getByTestId("ai-input").fill("A one-page site for a small bakery in Hanoi: hero, three products with prices, opening hours, contact form.");
+    await page.getByTestId("ai-send").click();
     await shot(page, "t23-ai-generating");
-    const replace = page.getByRole("button", { name: "Replace this page" });
+    const replace = page.getByTestId("ai-apply");
     await replace.waitFor({ timeout: 240_000 });
     await shot(page, "t24-ai-ready");
     await replace.click();

@@ -53,7 +53,6 @@ import { Topbar } from "@/builder/Topbar";
 import { LeftSidebar } from "@/builder/left-sidebar";
 import { RightPanel } from "@/builder/RightPanel";
 import { Footer } from "@/builder/Footer";
-import { AIPanel } from "@/builder/AIPanel";
 import { AIContentPanel } from "@/builder/AIContentPanel";
 import { A11yPanel } from "@/builder/A11yPanel";
 import { PerformancePanel } from "@/builder/PerformancePanel";
@@ -483,9 +482,6 @@ function BuilderPage() {
 
       {/* Footer — breadcrumb */}
       {loadState === "ready" && <Footer />}
-
-      {/* AI panel — fixed overlay, no grid area needed */}
-      {loadState === "ready" && <AIPanel />}
 
       {/* Tool panels — fixed overlays, toggled from Topbar */}
       {loadState === "ready" && <AIContentPanel />}

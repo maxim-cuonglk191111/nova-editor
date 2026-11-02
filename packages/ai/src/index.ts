@@ -11,10 +11,15 @@ export { getProvider, PROVIDER_NAMES } from "./providers/registry.js";
 
 export type { PlanStep } from "./agents/plannerAgent.js";
 export { plannerAgent }  from "./agents/plannerAgent.js";
-export { composerAgentWS } from "./agents/composerAgentWS.js";
+export { composerAgentWS, languageInstruction } from "./agents/composerAgentWS.js";
 export { composeWithFallback, providerChain, DEFAULT_FALLBACK_ORDER } from "./agents/composeWithFallback.js";
 export type { FallbackResult } from "./agents/composeWithFallback.js";
 export { buildComposePromptWS } from "./prompts/compose-ws.prompt.js";
 export { validateCompositionWS } from "./utils/validateCompositionWS.js";
 export type { WSCompositionResult } from "./utils/validateCompositionWS.js";
 export { buildSystemPrompt } from "./prompts/system.prompt.js";
+export { buildEditPrompt } from "./prompts/edit.prompt.js";
+export { editAgent, editWithFallback, serializeContext, buildEditUserMessage } from "./agents/editAgent.js";
+export type { ChatTurn, EditInput, EditFallbackResult } from "./agents/editAgent.js";
+export { validateEditReply, needsComposition, MAX_OPS } from "./utils/validateOps.js";
+export type { EditContext, ContextNode, EditOp, EditReply, StyleMap } from "./utils/validateOps.js";

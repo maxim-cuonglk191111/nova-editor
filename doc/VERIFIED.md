@@ -2493,3 +2493,21 @@ Works / Ease. Baseline = production 25.13.0 (Tier B had scored Works only); afte
 | S1 | 🔴 → ✅ | `app/page.tsx` (1105) | `components/landing/landingStyles.ts` + `landingMotion.tsx` (377) |
 
 Result: 0 blocking · 21 warnings (files 400–700 lines, I1 fat props, D1 duplicate helpers) — filed as task 008 per CLAUDE.md.
+
+## AI tab (chat assistant) — task 037 / task 009 item 6 (v25.17.0)
+Local build against `/builder/demo`, AI endpoints answered by the test (no provider quota); screenshots `doc/screenshots/26-ai-tab-proposal-en.png`, `27-ai-tab-applied-vi.png`. Production run with a real provider and account: pending (needs the deploy).
+
+| # | Flow | Result |
+|---|------|--------|
+| AI-1 | Open the AI tab from the rail and from the top-bar ✦ button; empty state with four starter prompts for the page; a starter fills the input, it does not send | ✅ `ai-panel.spec.ts` |
+| AI-2 | Select a heading: chips "Element: Heading" + "Section: Hero"; message → proposal card "Rewrite the text of …"; nothing changes before Apply; Apply = one undo step, Ctrl+Z restores | ✅ |
+| AI-3 | Discard changes nothing; removing the element chip widens the request to the section, then the page (scope sent to the server follows) | ✅ |
+| AI-4 | Busy provider → "AI is busy (free quota)…" + Retry sends the same request again; signed-out visitor → create-account message with a sign-up link and no Retry | ✅ |
+| AI-5 | Stop ends a running request without a proposal; model picker lists the 6 providers (Auto default), greys out those without a key with the reason, and the choice reaches the server | ✅ |
+| AI-6 | Reload keeps the thread, a pending proposal (with its Apply button) and the unsent draft; the history menu reopens an earlier chat | ✅ |
+| AI-7 | "Start over with a new page" asks first; a new page is proposed and applied (whole-page generation and multi-page planning from task 024 kept) | ✅ |
+| AI-8 | Vietnamese UI (diacritics, plain names for what changes: "màu chữ, độ đậm chữ"), i18n audit 0 hard-coded strings | ✅ |
+
+Unit: `@studio/ai` 65 (15 new: `validateEditReply` ids / CSS / links / limits, edit agent fallback and retry, prompt size), app 149 (24 new: context scope, ops applied as one transaction, proposal lines, thread store). SOLID: 0 blocking (the seed module that had grown past 400 lines was split into `seed/builders.ts` + `seed/sites/*`, output verified identical).
+
+Scores (self, rubric of `CLAUDE.md`): Fidelity 3.5/4 (database-backed history and snapshot links are deferred, see task 037), Polish 2.5/3, Non-regression 2/2 (editor, demo-parity, i18n, landing/header specs green), Hygiene 1/1 → 9/10.

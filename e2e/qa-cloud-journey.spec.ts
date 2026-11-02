@@ -124,12 +124,13 @@ test("QA cloud journey", async ({ page, context, baseURL }) => {
   });
 
   await step("05 AI generates a page", async () => {
-    const dialog = page.getByRole("dialog", { name: /generate with ai/i });
+    // The AI tab opens by itself with the landing-page prompt (a new project is empty, so it generates).
+    const dialog = page.getByTestId("ai-panel");
     if (!(await visible(dialog, 10_000))) {
-      note("AI panel did not auto-open; opening manually");
+      note("AI tab did not auto-open; opening manually");
       await page.locator('button[title="Generate with AI"]').click();
-      await dialog.locator("textarea").fill(PROMPT);
-      await dialog.getByRole("button", { name: /generate/i }).last().click();
+      await page.getByTestId("ai-input").fill(PROMPT);
+      await page.getByTestId("ai-send").click();
     }
     await shot(page, "ai-generating");
     page.on("response", async (r) => {
@@ -143,8 +144,8 @@ test("QA cloud journey", async ({ page, context, baseURL }) => {
       }
     });
     const t0 = Date.now();
-    const apply = page.getByRole("button", { name: /^(apply|replace this page)/i }).first();
-    const errorBox = dialog.getByText(/unavailable|failed|unauthorized|credits|error/i).first();
+    const apply = page.getByTestId("ai-apply");
+    const errorBox = dialog.getByTestId("ai-msg-error");
     await Promise.race([
       apply.waitFor({ timeout: 240_000 }),
       errorBox.waitFor({ timeout: 240_000 }).then(async () => { throw new Error(`AI error: ${await errorBox.textContent()}`); }),
