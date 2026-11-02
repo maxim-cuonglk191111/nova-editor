@@ -1,4 +1,5 @@
 ﻿"use client";
+import { Icon } from "@/builder/icons";
 import { useState, useEffect, useCallback } from "react";
 import { useStore } from "@nanostores/react";
 import { $projectMeta } from "@/lib/data-stores";
@@ -86,11 +87,11 @@ export function HistoryPanel() {
 
   return (
     <div role="dialog" aria-label={L.dialogLabel}
-      style={{ position: "fixed", top: 52, right: 296, width: 340, maxHeight: "70vh", zIndex: 100, background: C.bg, border: `1px solid ${C.border}`, borderRadius: 12, boxShadow: "0 8px 32px rgba(0,0,0,0.5)", fontFamily: C.font, overflow: "hidden", display: "flex", flexDirection: "column" }}
+      style={{ position: "fixed", top: 64, right: 296, width: 340, maxHeight: "70vh", zIndex: 100, background: C.bg, border: `1px solid ${C.border}`, borderRadius: 16, boxShadow: "var(--ui-shadow-pop, 0 8px 32px rgba(0,0,0,0.5))", fontFamily: C.font, overflow: "hidden", display: "flex", flexDirection: "column" }}
     >
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "11px 16px", borderBottom: `1px solid ${C.border}`, flexShrink: 0 }}>
         <span style={{ fontSize: 13, fontWeight: 700, color: "#c4b5fd" }}>{L.title}</span>
-        <button onClick={() => $historyPanelOpen.set(false)} style={{ background: "none", border: "none", color: C.textMuted, cursor: "pointer", fontSize: 18, padding: "2px 4px" }}>×</button>
+        <button onClick={() => $historyPanelOpen.set(false)} style={{ background: "none", border: "none", color: C.textMuted, cursor: "pointer", fontSize: 18, padding: "2px 4px" }}><Icon name="close" size={14} weight="bold" /></button>
       </div>
       <div style={{ padding: "10px 14px", borderBottom: `1px solid ${C.border}`, flexShrink: 0 }}>
         <div style={{ display: "flex", gap: 6 }}>

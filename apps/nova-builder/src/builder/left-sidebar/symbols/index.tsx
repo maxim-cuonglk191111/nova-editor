@@ -1,4 +1,5 @@
 ﻿"use client";
+import { Icon } from "@/builder/icons";
 import { useState } from "react";
 import { useStore } from "@nanostores/react";
 import { $symbols, createSymbolFromSelection, instantiateSymbol, deleteSymbol } from "@/lib/symbols";
@@ -93,9 +94,7 @@ export function SymbolsPanel() {
                   onClick={() => deleteSymbol(sym.id)}
                   title={L.deleteTitle}
                   style={{ background: "none", border: "none", color: C.textMuted, cursor: "pointer", fontSize: 14, padding: "0 2px" }}
-                >
-                  ×
-                </button>
+                ><Icon name="close" size={14} weight="bold" /></button>
               </div>
             ))}
           </div>

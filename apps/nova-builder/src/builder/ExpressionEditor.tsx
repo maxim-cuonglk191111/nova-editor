@@ -116,7 +116,7 @@ export function ExpressionEditor({
         <div
           style={{
             position: "absolute",
-            top: 52,
+            top: 64,
             left: 0,
             right: 0,
             zIndex: 30,

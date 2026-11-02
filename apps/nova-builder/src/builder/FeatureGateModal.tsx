@@ -1,5 +1,6 @@
 "use client";
 
+import { Icon } from "@/builder/icons";
 import { useEffect } from "react";
 import Link from "next/link";
 import { useStore } from "@nanostores/react";
@@ -139,9 +140,7 @@ export function FeatureGateModal() {
               padding: "2px 6px",
               borderRadius: 4,
             }}
-          >
-            ×
-          </button>
+          ><Icon name="close" size={14} weight="bold" /></button>
         </div>
 
         {/* Icon & Title */}

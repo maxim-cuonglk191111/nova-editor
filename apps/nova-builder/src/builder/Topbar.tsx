@@ -2,7 +2,7 @@
 import { useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { useStore } from "@nanostores/react";
-import { $breakpoints, $instances } from "@/lib/data-stores";
+import { $breakpoints, $instances, $projectMeta } from "@/lib/data-stores";
 import {
   $selectedBreakpointId, $selectedBreakpoint,
   $selectedInstanceId, $selectedInstanceSelector,
@@ -15,7 +15,9 @@ import { TopbarActions } from "./TopbarActions";
 import { hasUnsavedWork } from "./hooks/useUnsavedChangesGuard";
 import { LogoIcon } from "@/components/LogoIcon";
 import { useI18n, fmt } from "@/lib/i18n";
-import { UI_VARS as C } from "@/lib/uiTheme";
+import { UI_VARS as C, UI_SHAPE as S } from "@/lib/uiTheme";
+import { ModeSwitch } from "./topbar/ModeSwitch";
+import { Icon } from "./icons";
 
 
 export function Topbar({ isDemo }: { isDemo?: boolean }) {
@@ -27,6 +29,7 @@ export function Topbar({ isDemo }: { isDemo?: boolean }) {
   const instances = useStore($instances);
   const brandingLogo = useStore($brandingLogo);
   const brandingName = useStore($brandingName);
+  const projectMeta = useStore($projectMeta);
 
   const [bpManagerOpen, setBpManagerOpen] = useState(false);
 
@@ -64,10 +67,10 @@ export function Topbar({ isDemo }: { isDemo?: boolean }) {
   });
 
   return (
-    <div style={{ gridArea: "topbar", height: 44, background: C.bg, borderBottom: `1px solid ${C.border}`, display: "flex", alignItems: "center", padding: "0 10px", gap: 6, fontFamily: C.font, flexShrink: 0, zIndex: 150 /* above the floating tool panels (100) so its menus open on top */ }}>
+    <div style={{ gridArea: "topbar", height: S.topbar, background: C.card, borderBottom: `1px solid ${C.border}`, display: "flex", alignItems: "center", padding: "0 14px", gap: 10, fontFamily: C.font, flexShrink: 0, zIndex: 150 /* above the floating tool panels (100) so its menus open on top */ }}>
       {/* Left: back + site name */}
       <div style={{ display: "flex", alignItems: "center", gap: 6, minWidth: 0, flexShrink: 0 }}>
-        <button onClick={() => { if (!hasUnsavedWork() || confirm(t.chrome.leaveUnsaved)) router.push(isDemo ? "/" : "/projects"); }} title={isDemo ? t.builder.backToHome : t.builder.backToMySites} style={{ background: "none", border: "none", cursor: "pointer", color: C.textMuted, fontSize: 16, padding: "2px 5px", lineHeight: 1, borderRadius: 4 }}>←</button>
+        <button onClick={() => { if (!hasUnsavedWork() || confirm(t.chrome.leaveUnsaved)) router.push(isDemo ? "/" : "/projects"); }} title={isDemo ? t.builder.backToHome : t.builder.backToMySites} style={{ background: "none", border: "none", cursor: "pointer", color: C.textMuted, width: 36, height: 36, borderRadius: S.radiusSm, display: "inline-flex", alignItems: "center", justifyContent: "center" }}><Icon name="back" size={20} /></button>
         <button
           type="button"
           onClick={() => { if (!hasUnsavedWork() || confirm(t.chrome.leaveUnsaved)) router.push(isDemo ? "/" : "/projects"); }}
@@ -80,17 +83,22 @@ export function Topbar({ isDemo }: { isDemo?: boolean }) {
             <img src={brandingLogo} alt={brandingName || t.tools.logoAlt} style={{ height: 24, objectFit: "contain", flexShrink: 0 }} />
           ) : (
             <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-              <LogoIcon width={20} height={20} />
-              <span style={{ fontSize: 13, fontWeight: 800, color: "#a78bfa", letterSpacing: "-0.02em", flexShrink: 0 }}>{brandingName || "Nova"}</span>
+              <LogoIcon width={24} height={24} />
+              <span className="nb-hide-mid" style={{ fontSize: 15, fontWeight: 800, color: C.accentText, letterSpacing: "-0.02em", flexShrink: 0 }}>{brandingName || "Nova"}</span>
             </div>
           )}
         </button>
+        {projectMeta?.name && (
+          <span className="nb-hide-mid" title={projectMeta.name} style={{ marginLeft: 6, paddingLeft: 12, borderLeft: `1px solid ${C.border}`, fontSize: 14, fontWeight: 600, color: C.text, maxWidth: 200, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+            {projectMeta.name}
+          </span>
+        )}
       </div>
 
       {/* Edit toolbar: labelled duplicate / delete for the selection. The bare
           ⎘ ⧉ ⊕ ⌫ glyphs meant nothing to first-time users (task 007); copy and
           paste stay in the right-click menu and the keyboard shortcuts. */}
-      <div style={{ display: "flex", alignItems: "center", gap: 2, flexShrink: 0, marginLeft: 4 }}>
+      <div className="nb-hide-narrow" style={{ display: "flex", alignItems: "center", gap: 2, flexShrink: 0, marginLeft: 4 }}>
         <button
           onClick={handleDuplicate}
           disabled={!canDuplicateOrDelete}
@@ -102,16 +110,16 @@ export function Topbar({ isDemo }: { isDemo?: boolean }) {
             cursor: !canDuplicateOrDelete ? "not-allowed" : "pointer",
             color: !canDuplicateOrDelete ? C.textMuted : C.text,
             opacity: !canDuplicateOrDelete ? 0.35 : 1,
-            fontSize: 12,
-            padding: "3px 8px",
-            borderRadius: 4,
-            lineHeight: 1.2,
+            fontSize: 13,
+            height: S.control,
+            padding: "0 10px",
+            borderRadius: S.radiusSm + 2,
             fontFamily: C.font,
             transition: "all 0.1s",
             whiteSpace: "nowrap",
           }}
         >
-          {`⧉ ${t.commands.duplicate}`}
+          <Icon name="copy" size={18} /><span className="nb-hide-mid">{` ${t.commands.duplicate}`}</span>
         </button>
         <button
           onClick={handleDelete}
@@ -124,27 +132,28 @@ export function Topbar({ isDemo }: { isDemo?: boolean }) {
             cursor: !canDuplicateOrDelete ? "not-allowed" : "pointer",
             color: !canDuplicateOrDelete ? C.textMuted : C.danger,
             opacity: !canDuplicateOrDelete ? 0.35 : 1,
-            fontSize: 12,
-            padding: "3px 8px",
-            borderRadius: 4,
-            lineHeight: 1.2,
+            fontSize: 13,
+            height: S.control,
+            padding: "0 10px",
+            borderRadius: S.radiusSm + 2,
             fontFamily: C.font,
             transition: "all 0.1s",
             whiteSpace: "nowrap",
           }}
         >
-          {`🗑 ${t.commands.delete}`}
+          <Icon name="trash" size={18} /><span className="nb-hide-mid">{` ${t.commands.delete}`}</span>
         </button>
       </div>
 
       <div style={{ flex: 1 }} />
 
-      {/* Center: responsive breakpoints + manage ⚙ */}
-      <div style={{ display: "flex", alignItems: "center", gap: 3, position: "relative" }}>
+      {/* Center: the work-mode switch, then the screen sizes as one pill group + manage ⚙ */}
+      <ModeSwitch isDemo={isDemo} />
+      <div style={{ display: "flex", alignItems: "center", gap: 2, position: "relative", padding: 4, background: C.surface, border: `1px solid ${C.border}`, borderRadius: S.radiusMd + 2 }}>
         {sortedBreakpoints.map((bp) => (
           <BreakpointPill key={bp.id} bp={bp} active={bp.id === activeBreakpoint?.id} onClick={() => $selectedBreakpointId.set(bp.id)} />
         ))}
-        <button onClick={() => setBpManagerOpen((v) => !v)} title={t.builder.manageBreakpoints} style={{ background: bpManagerOpen ? C.accentBg : "none", border: `1px solid ${bpManagerOpen ? C.accentBorder : "transparent"}`, cursor: "pointer", color: bpManagerOpen ? C.accentText : C.textMuted, fontSize: 13, lineHeight: 1, padding: "3px 6px", borderRadius: 4, fontFamily: C.font, transition: "all 0.1s" }}>⚙</button>
+        <button onClick={() => setBpManagerOpen((v) => !v)} title={t.builder.manageBreakpoints} style={{ background: bpManagerOpen ? C.accentBg : "none", border: "none", cursor: "pointer", color: bpManagerOpen ? C.accentText : C.textMuted, display: "inline-flex", alignItems: "center", justifyContent: "center", width: S.control - 4, height: S.control - 4, borderRadius: S.radiusSm + 2, fontFamily: C.font, transition: "all 0.1s" }}><Icon name="settings" size={18} /></button>
         {bpManagerOpen && <BreakpointManager onClose={() => setBpManagerOpen(false)} />}
       </div>
 

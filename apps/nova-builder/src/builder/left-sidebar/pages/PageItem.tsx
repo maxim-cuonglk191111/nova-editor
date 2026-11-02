@@ -1,4 +1,5 @@
 "use client";
+import { Icon } from "@/builder/icons";
 import { useState, useRef } from "react";
 import type { PageSeo } from "./usePageCrud";
 import { UI_VARS as C } from "@/lib/uiTheme";
@@ -145,26 +146,24 @@ export function PageItem({ page, siblings, status, handlers }: PageItemProps) {
 
   return (
     <div onMouseEnter={() => setHovered(true)} onMouseLeave={() => setHovered(false)}>
-      <div style={{ position: "relative", display: "flex", alignItems: "stretch" }}>
+      <div style={{ position: "relative", display: "flex", alignItems: "stretch", margin: "2px 8px", borderRadius: 10, overflow: "hidden", background: isActive ? C.active : hovered ? C.hoverBg : "transparent" }}>
         <button
           onClick={onClick}
           onDoubleClick={(e) => { e.stopPropagation(); setIsEditing(true); }}
           style={{
             flex: 1,
+            minWidth: 0,
             display: "flex",
             flexDirection: "column",
-            padding: "7px 10px",
-            background: isActive ? C.active : "none",
-            borderTop: "none",
-            borderRight: "none",
-            borderBottom: "none",
-            borderLeft: isActive ? `2px solid ${C.activeBorder}` : "2px solid transparent",
+            padding: "9px 12px",
+            background: "none",
+            border: "none",
             cursor: "pointer",
             textAlign: "left",
             gap: 2,
           }}
         >
-          <span style={{ fontSize: 12, fontFamily: C.font, color: isActive ? C.accent : C.text, fontWeight: isActive ? 600 : 400 }}>
+          <span style={{ fontSize: 14, fontFamily: C.font, color: isActive ? C.accentText : C.text, fontWeight: isActive ? 600 : 500 }}>
             {name}
             {isHome && (
               <span style={{ marginLeft: 6, fontSize: 10, fontWeight: 600, color: C.accentText, background: C.accentBg, borderRadius: 3, padding: "1px 5px" }}>
@@ -177,9 +176,9 @@ export function PageItem({ page, siblings, status, handlers }: PageItemProps) {
 
         {(hovered || isActive) && (
           <div style={{ display: "flex", alignItems: "center", gap: 1, paddingRight: 4, flexShrink: 0 }}>
-            <button aria-label={L.renamePage} title={L.renamePage} onClick={(e) => { e.stopPropagation(); setIsEditing(true); }} style={actionStyle}>✎</button>
+            <button aria-label={L.renamePage} title={L.renamePage} onClick={(e) => { e.stopPropagation(); setIsEditing(true); }} style={actionStyle}><Icon name="edit" size={16} /></button>
             {!isHome && (
-              <button aria-label={L.setHomePage} title={L.setHomePage} onClick={(e) => { e.stopPropagation(); onSetHome(); }} style={actionStyle}>⌂</button>
+              <button aria-label={L.setHomePage} title={L.setHomePage} onClick={(e) => { e.stopPropagation(); onSetHome(); }} style={actionStyle}><Icon name="home" size={16} /></button>
             )}
             {isActive && (
               <button aria-label={L.seoSettings} title={L.seoSettings} onClick={(e) => { e.stopPropagation(); setSeoOpen(o => !o); }} style={{ ...actionStyle, fontSize: 11, color: seoOpen ? C.accent : C.textMuted }}>
@@ -187,7 +186,7 @@ export function PageItem({ page, siblings, status, handlers }: PageItemProps) {
               </button>
             )}
             {canDelete && (
-              <button aria-label={L.deletePage} title={L.deletePage} onClick={(e) => { e.stopPropagation(); onDelete(); }} style={{ ...actionStyle, color: C.danger, fontSize: 15 }}>×</button>
+              <button aria-label={L.deletePage} title={L.deletePage} onClick={(e) => { e.stopPropagation(); onDelete(); }} style={{ ...actionStyle, color: C.danger }}><Icon name="trash" size={16} /></button>
             )}
           </div>
         )}

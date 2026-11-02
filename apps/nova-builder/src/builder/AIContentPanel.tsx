@@ -1,4 +1,5 @@
 "use client";
+import { Icon } from "@/builder/icons";
 import { useState, useEffect, useRef } from "react";
 import { useStore } from "@nanostores/react";
 import { applyTextFills } from "@/lib/textFills";
@@ -85,16 +86,16 @@ export function AIContentPanel() {
       role="dialog"
       aria-label={L.dialogLabel}
       style={{
-        position: "fixed", top: 52, left: "50%", transform: "translateX(-50%)",
+        position: "fixed", top: 64, left: "50%", transform: "translateX(-50%)",
         width: 500, maxWidth: "calc(100vw - 32px)", zIndex: 100,
         background: C.bg, border: `1px solid ${C.border}`, borderRadius: 14,
-        boxShadow: "0 12px 48px rgba(0,0,0,0.6)", fontFamily: C.font, overflow: "hidden",
+        boxShadow: "var(--ui-shadow-pop, 0 12px 48px rgba(0,0,0,0.6))", fontFamily: C.font, overflow: "hidden",
       }}
     >
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "12px 18px", borderBottom: `1px solid ${C.border}` }}>
         <span style={{ fontSize: 13, fontWeight: 700, color: "#a78bfa" }}>{L.title}</span>
         <button onClick={() => $aiContentPanelOpen.set(false)}
-          style={{ background: "none", border: "none", color: C.textMuted, cursor: "pointer", fontSize: 18, padding: "2px 4px" }}>×</button>
+          style={{ background: "none", border: "none", color: C.textMuted, cursor: "pointer", fontSize: 18, padding: "2px 4px" }}><Icon name="close" size={14} weight="bold" /></button>
       </div>
       <div style={{ padding: 16, display: "flex", flexDirection: "column", gap: 10 }}>
         <div style={{ fontSize: 13, color: C.textMuted }}>{found}</div>

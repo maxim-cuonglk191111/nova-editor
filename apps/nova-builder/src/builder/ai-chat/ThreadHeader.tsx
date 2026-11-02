@@ -1,6 +1,7 @@
 "use client";
 // Top of the AI tab: the thread's title, a menu of earlier chats on this site (open, delete) and
 // a button for a new chat.
+import { Icon } from "@/builder/icons";
 import { useEffect, useRef, useState } from "react";
 import { UI_VARS as C } from "@/lib/uiTheme";
 import { useI18n, fmt } from "@/lib/i18n";
@@ -34,18 +35,18 @@ export function ThreadHeader({ thread, threads, onNew, onSelect, onDelete }: Pro
 
   return (
     <div ref={box} style={{ position: "relative", display: "flex", alignItems: "center", gap: 6, padding: "9px 10px", borderBottom: `1px solid ${C.border}`, flexShrink: 0 }}>
-      <span aria-hidden="true" style={{ color: C.accentText, fontSize: 15 }}>✦</span>
+      <span style={{ color: C.accentText, display: "inline-flex" }}><Icon name="ai" size={20} weight="fill" /></span>
       <h2 style={{ margin: 0, flex: 1, minWidth: 0, fontSize: 13, fontWeight: 700, color: C.text, fontFamily: C.font, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }} title={thread?.title || L.title}>
         {thread?.title || L.title}
       </h2>
       <button type="button" style={icon} onClick={() => setOpen((v) => !v)} aria-expanded={open} aria-label={L.history} title={L.history} data-testid="ai-history">
-        ☰
+        <Icon name="list" size={18} />
       </button>
       <button type="button" style={{ ...icon, opacity: empty ? 0.45 : 1 }} onClick={onNew} disabled={empty} aria-label={L.newChat} title={L.newChat} data-testid="ai-new-chat">
-        ＋
+        <Icon name="plus" size={18} weight="bold" />
       </button>
       {open && (
-        <div aria-label={L.history} data-testid="ai-history-list" role="group" style={{ position: "absolute", top: "100%", left: 8, right: 8, zIndex: 5, maxHeight: 280, overflowY: "auto", background: C.card, border: `1px solid ${C.border}`, borderRadius: 10, boxShadow: "0 10px 30px rgba(0,0,0,0.45)", padding: 4 }}>
+        <div aria-label={L.history} data-testid="ai-history-list" role="group" style={{ position: "absolute", top: "100%", left: 8, right: 8, zIndex: 5, maxHeight: 280, overflowY: "auto", background: C.card, border: `1px solid ${C.border}`, borderRadius: 10, boxShadow: "var(--ui-shadow-pop, 0 10px 30px rgba(0,0,0,0.45))", padding: 4 }}>
           {threads.length === 0 && <div style={{ padding: 10, fontSize: 12, color: C.textMuted, fontFamily: C.font }}>{L.historyEmpty}</div>}
           <ul style={{ listStyle: "none", margin: 0, padding: 0 }}>
           {threads.map((t) => (
@@ -56,8 +57,8 @@ export function ThreadHeader({ thread, threads, onNew, onSelect, onDelete }: Pro
                   {new Date(t.updatedAt).toLocaleDateString(undefined, { dateStyle: "medium" })} · {fmt(L.threadMeta, { count: t.messages.length })}
                 </div>
               </button>
-              <button type="button" onClick={() => onDelete(t.id)} aria-label={`${L.deleteThread}: ${t.title || L.untitled}`} title={L.deleteThread} style={{ background: "none", border: "none", color: C.textMuted, cursor: "pointer", fontSize: 15, width: 28, height: 28 }}>
-                ×
+              <button type="button" onClick={() => onDelete(t.id)} aria-label={`${L.deleteThread}: ${t.title || L.untitled}`} title={L.deleteThread} style={{ background: "none", border: "none", color: C.textMuted, cursor: "pointer", width: 28, height: 28, display: "inline-flex", alignItems: "center", justifyContent: "center" }}>
+                <Icon name="close" size={14} weight="bold" />
               </button>
             </li>
           ))}

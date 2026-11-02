@@ -1,5 +1,14 @@
 # Nova — Verified Feature Ledger
 
+## nova-builder / v25.19.0 — Builder redesign (Task 038) (2026-11-02)
+
+| ID | Feature | Status | Visual Evidence |
+|---|---|---|---|
+| UI-TOPBAR | Top bar, Design \| Preview switch, More menu below 1280px, no clipping at 1024px | 🟢 | doc/screenshots/.temp/ui-p3 (local); demo-parity, top-bar specs |
+| UI-ADD | Add tab: categories, floating thumbnails, canvas keeps its size, click and drag insert | 🟢 | left-sidebar spec (Components step) |
+| UI-INSPECTOR | Groups with +/−, segmented pills write the same style values | 🟢 | right-panel spec (layout step), canvas-sync |
+| UI-ICONS | Phosphor icons in the chrome; no glyphs in translated strings | 🟡 | typechecked, i18n audit 0; dark palette and 390px not checked |
+
 ## nova-builder / v25.18.0 — AI chat history in the database (Task 040) (2026-11-02)
 
 | ID | Feature | Status | Visual Evidence |

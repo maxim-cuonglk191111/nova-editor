@@ -1,4 +1,5 @@
 "use client";
+import { Icon } from "@/builder/icons";
 import { useMemo } from "react";
 import { writeStyleProperty } from "@/lib/styleWriteHelper";
 import { UI_VARS as C } from "@/lib/uiTheme";
@@ -152,8 +153,7 @@ function NumInput({ value, onChange, step = 1 }: { value: number; onChange: (n: 
 function FieldLabel({ text }: { text: string }) {
   return (
     <span style={{
-      fontSize: 9, color: C.textMuted, fontFamily: C.font,
-      textTransform: "uppercase" as const, letterSpacing: "0.05em",
+      fontSize: 11, color: C.textMuted, fontFamily: C.font,
       display: "block", textAlign: "center" as const, marginBottom: 2,
     }}>
       {text}
@@ -196,14 +196,14 @@ function SectionHeader({
         <button
           onClick={onRemove}
           title={fmtMsg(E.removeItem, { label })}
-          style={{ border: "none", background: "none", color: "rgba(248,113,113,0.55)", fontSize: 16, lineHeight: 1, cursor: "pointer", padding: "0 2px" }}
-        >×</button>
+          style={{ width: 28, height: 28, border: "none", borderRadius: 8, background: "none", color: C.danger, cursor: "pointer", padding: 0, display: "inline-flex", alignItems: "center", justifyContent: "center" }}
+        ><Icon name="close" size={14} weight="bold" /></button>
       ) : (
         <button
           onClick={onAdd}
           title={fmtMsg(E.addItem, { label })}
-          style={{ border: `1px solid ${C.border}`, borderRadius: 3, background: "none", color: C.textMuted, fontSize: 15, lineHeight: "18px", width: 20, height: 20, cursor: "pointer", padding: 0 }}
-        >+</button>
+          style={{ width: 28, height: 28, border: "none", borderRadius: 8, background: "none", color: C.textMuted, cursor: "pointer", padding: 0, display: "inline-flex", alignItems: "center", justifyContent: "center" }}
+        ><Icon name="plus" size={16} weight="bold" /></button>
       )}
     </div>
   );
@@ -236,10 +236,10 @@ export function TransformPanel({ instanceId, currentCss }: Props) {
   return (
     <div style={{ borderBottom: `1px solid ${C.border}` }}>
       {/* Panel header */}
-      <div style={{ display: "flex", alignItems: "center", padding: "5px 12px", background: C.sectionBg }}>
+      <div style={{ display: "flex", alignItems: "center", padding: "6px 16px", minHeight: 48, background: "transparent" }}>
         <div style={{ display: "flex", flexDirection: "column", flex: 1, lineHeight: 1.2 }}>
           <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-            <span style={{ fontSize: 12, color: C.textMuted, fontFamily: C.font, fontWeight: 700, letterSpacing: "0.07em", textTransform: "uppercase" }}>
+            <span style={{ fontSize: 15, color: C.text, fontFamily: C.font, fontWeight: 600 }}>
               {E.transform}
             </span>
             {activeCount > 0 && (

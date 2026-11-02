@@ -66,6 +66,11 @@ export const enSidebar: I18nSidebarDictionary = {
     title: "Components Library",
     search: "Search components...",
     hint: "Click to add below the selected element, or drag onto the page.",
+    groups: { basics: "Page basics", interactive: "Forms and navigation", more: "More" },
+    results: "Results",
+    noResults: "Nothing matches your search.",
+    clearSearch: "Clear search",
+    close: "Close",
     categories: {
       Inputs: "Inputs",
       Navigation: "Navigation",

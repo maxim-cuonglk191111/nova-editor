@@ -6,6 +6,7 @@
 // talks only to lib/dataBinding transactions + lib/expression helpers (DIP) —
 // never to atoms or the API directly.
 
+import { Icon } from "@/builder/icons";
 import { useState } from "react";
 import { useStore } from "@nanostores/react";
 import { $dataSources } from "@/lib/data-stores";
@@ -57,9 +58,7 @@ export function BindingPopover({
         <button
           onClick={onClose}
           style={{ background: "none", border: "none", color: C.textMuted, fontSize: 16, cursor: "pointer", lineHeight: 1 }}
-        >
-          ×
-        </button>
+        ><Icon name="close" size={14} weight="bold" /></button>
       </div>
 
       {variables.length === 0 ? (

@@ -1,4 +1,5 @@
 "use client";
+import { Icon } from "@/builder/icons";
 import { useMemo } from "react";
 import { writeStyleProperty } from "@/lib/styleWriteHelper";
 import { UI_VARS as C } from "@/lib/uiTheme";
@@ -205,7 +206,7 @@ export function MsInput({ value, onChange }: { value: number; onChange: (n: numb
 
 export function FieldLabel({ text }: { text: string }) {
   return (
-    <span style={{ fontSize: 9, color: C.textMuted, fontFamily: C.font, textTransform: "uppercase" as const, letterSpacing: "0.05em", display: "block", marginBottom: 2 }}>
+    <span style={{ fontSize: 11, color: C.textMuted, fontFamily: C.font, display: "block", marginBottom: 2 }}>
       {text}
     </span>
   );
@@ -240,10 +241,10 @@ export function DeleteBtn({ onClick }: { onClick: () => void }) {
 export function PanelHeader({ label, subLabel, count, onAdd }: { label: string; subLabel?: string; count: number; onAdd: () => void }) {
   const E = useI18n().t.inspector.editors;
   return (
-    <div style={{ display: "flex", alignItems: "center", padding: "5px 12px", background: C.sectionBg }}>
+    <div style={{ display: "flex", alignItems: "center", padding: "6px 16px", minHeight: 48, background: "transparent" }}>
       <div style={{ display: "flex", flexDirection: "column", flex: 1, lineHeight: 1.2 }}>
         <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-          <span style={{ fontSize: 12, color: C.textMuted, fontFamily: C.font, fontWeight: 700, letterSpacing: "0.07em", textTransform: "uppercase" }}>
+          <span style={{ fontSize: 15, color: C.text, fontFamily: C.font, fontWeight: 600 }}>
             {label}
           </span>
           {count > 0 && <span style={{ color: C.textMuted, fontWeight: 400 }}>{count}</span>}
@@ -257,8 +258,8 @@ export function PanelHeader({ label, subLabel, count, onAdd }: { label: string; 
       <button
         onClick={onAdd}
         title={fmt(E.addItem, { label })}
-        style={{ width: 20, height: 20, border: `1px solid ${C.border}`, borderRadius: 3, background: "none", color: C.textMuted, fontSize: 15, lineHeight: "18px", cursor: "pointer", padding: 0 }}
-      >+</button>
+        style={{ width: 28, height: 28, border: "none", borderRadius: 8, background: "none", color: C.textMuted, cursor: "pointer", padding: 0, display: "inline-flex", alignItems: "center", justifyContent: "center" }}
+      ><Icon name="plus" size={16} weight="bold" /></button>
     </div>
   );
 }

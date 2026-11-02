@@ -173,7 +173,7 @@ export function CommandPalette() {
       style={{ position: "fixed", inset: 0, zIndex: 9999, display: "flex", alignItems: "flex-start", justifyContent: "center", paddingTop: 80, background: C.overlay }}
       onMouseDown={(e) => { if (e.target === e.currentTarget) closePalette(); }}
     >
-      <div style={{ width: 560, maxWidth: "90vw", background: C.bg, border: `1px solid ${C.border}`, borderRadius: 10, boxShadow: "0 24px 64px rgba(0,0,0,0.6)", overflow: "hidden", display: "flex", flexDirection: "column" }}>
+      <div style={{ width: 560, maxWidth: "90vw", background: C.bg, border: `1px solid ${C.border}`, borderRadius: 16, boxShadow: "var(--ui-shadow-pop, 0 24px 64px rgba(0,0,0,0.6))", overflow: "hidden", display: "flex", flexDirection: "column" }}>
 
         {/* Search input */}
         <div style={{ padding: "12px 14px", borderBottom: `1px solid ${C.border}` }}>

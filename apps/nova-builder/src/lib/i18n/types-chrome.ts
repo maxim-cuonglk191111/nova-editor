@@ -86,6 +86,16 @@ export interface I18nChromeDictionary {
   zoomIn: string;
   zoomFit: string;
   preview: string;
+  /** Label of the current segment of the top-bar switch. */
+  design: string;
+  /** Accessible name of the floating pill at the bottom of the canvas. */
+  canvasToolbar: string;
+  /** Tooltip of the + button of the floating toolbar (opens the Add tab). */
+  canvasAdd: string;
+  /** Tooltip of the AI button of the floating toolbar. */
+  canvasAi: string;
+  modeSwitch: string;
+  previewOpensTab: string;
   saving: string;
   saveFailedRetry: string;
   save: string;

@@ -52,6 +52,7 @@ import { useCanvasMessages } from "@/builder/hooks/useCanvasMessages";
 import { Topbar } from "@/builder/Topbar";
 import { LeftSidebar } from "@/builder/left-sidebar";
 import { RightPanel } from "@/builder/RightPanel";
+import { CanvasToolbar } from "@/builder/CanvasToolbar";
 import { Footer } from "@/builder/Footer";
 import { AIContentPanel } from "@/builder/AIContentPanel";
 import { A11yPanel } from "@/builder/A11yPanel";
@@ -357,10 +358,10 @@ function BuilderPage() {
       style={{
         display: "grid",
         gridTemplate: `
-          "topbar topbar topbar" 44px
+          "topbar topbar topbar" 56px
           "left   main   right"  1fr
           "footer footer footer" 36px
-          / auto 1fr 280px
+          / auto 1fr 304px
         `,
         width: "100vw",
         height: "100vh",
@@ -392,7 +393,7 @@ function BuilderPage() {
         }}
         style={{
           gridArea: "main",
-          background: builderTheme === "dark" ? "#0b0f19" : "#e5e7eb",
+          background: builderTheme === "dark" ? "#0b0f19" : "var(--ui-surface)",
           display: "flex",
           alignItems: "flex-start",
           justifyContent: "safe center",
@@ -446,8 +447,8 @@ function BuilderPage() {
                 marginBottom: canvasZoom > 1
                   ? `calc((100vh - 112px) * ${canvasZoom - 1} + 32px)`
                   : "0px",
-                boxShadow: "0 10px 30px -5px rgba(0, 0, 0, 0.15), 0 4px 10px -2px rgba(0, 0, 0, 0.08)",
-                borderRadius: 6,
+                boxShadow: "var(--ui-shadow-pop)",
+                borderRadius: 12,
                 overflow: "hidden",
                 background: "#ffffff",
                 transition: "transform 0.12s ease, width 0.2s ease",
@@ -473,6 +474,8 @@ function BuilderPage() {
           );
         })()}
       </div>
+
+      {loadState === "ready" && <CanvasToolbar isDemo={isDemo} />}
 
       {/* Right panel — Style + Settings tabs */}
       {loadState === "ready" && <RightPanel />}

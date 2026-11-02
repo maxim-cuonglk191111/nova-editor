@@ -23,7 +23,7 @@ export function TextFormatToolbar({ iframeRef }: { iframeRef: RefObject<HTMLIFra
         border: "1px solid rgba(255,255,255,0.15)",
         borderRadius: 6,
         padding: "3px 4px",
-        boxShadow: "0 4px 16px rgba(0,0,0,0.5)",
+        boxShadow: "var(--ui-shadow-pop, 0 4px 16px rgba(0,0,0,0.5))",
         fontFamily: "system-ui,sans-serif",
       }}
     >

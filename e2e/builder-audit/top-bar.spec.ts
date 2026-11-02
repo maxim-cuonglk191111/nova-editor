@@ -29,12 +29,12 @@ test("top bar", async ({ page, context }) => {
     await h3("Espresso").scrollIntoViewIfNeeded();
     await h3("Espresso").click();
     await shot(page, "t02-topbar-selected");
-    await btn(/^⧉ Duplicate$/).click();
+    await btn(/^Duplicate "/).click();
     await expect.soft(h3("Espresso")).toHaveCount(2);
     await undo();
     await expect.soft(h3("Espresso")).toHaveCount(1);
     await h3("Espresso").click();
-    await btn(/^🗑 Delete$/).click();
+    await btn(/^Delete "/).click();
     await expect.soft(h3("Espresso")).toHaveCount(0);
     await expect.soft(toast(/Element deleted/)).toBeVisible();
     await toast(/Element deleted/).getByRole("button", { name: "Undo" }).click();
@@ -68,19 +68,23 @@ test("top bar", async ({ page, context }) => {
   });
 
   await step("zoom", async () => {
+    // The floating toolbar holds the zoom controls; the page opens fitted, so step from wherever it is.
+    const zoomLabel = page.locator('button[title^="Reset zoom"]');
+    const pct = async () => parseInt((await zoomLabel.innerText()).replace("%", ""), 10);
+    const start = await pct();
     await page.locator('button[title="Zoom in"]').click();
-    await expect.soft(btn("110%")).toBeVisible();
+    await expect.soft.poll(pct).toBe(start + 10);
     await page.locator('button[title="Zoom out"]').click();
     await page.locator('button[title="Zoom out"]').click();
-    await expect.soft(btn("90%")).toBeVisible();
-    await shot(page, "t06-zoom-90");
-    await btn("90%").click();
-    await expect.soft(btn("100%")).toBeVisible();
+    await expect.soft.poll(pct).toBe(start - 10);
+    await shot(page, "t06-zoom-out");
+    await zoomLabel.click();
+    await expect.soft.poll(pct, "reset puts the zoom back to 100%").toBe(100);
   });
 
   let novaFile = "";
   await step("export: HTML and .nova", async () => {
-    await btn("Export ▾").click();
+    await btn("Export").click();
     await shot(page, "t07-export-menu");
     const html = await (await page.request.get(`/api/export/${id}`)).text();
     expect.soft(html, "HTML export has the hero heading").toContain("Experience the Soul of Da Lat");
@@ -102,7 +106,7 @@ test("top bar", async ({ page, context }) => {
     await page.keyboard.press("Enter");
     await expect.soft(h1).toHaveText("Changed before import");
     await waitSaved(page);
-    await btn("Export ▾").click();
+    await btn("Export").click();
     const chooser = page.waitForEvent("filechooser");
     await page.getByText("Import project (.nova)").click();
     const confirm = page.getByRole("button", { name: /^Import$/ });
@@ -117,19 +121,19 @@ test("top bar", async ({ page, context }) => {
   await step("tools menu panels", async () => {
     const items = [["AI Content Fill", "t10-ai-fill"], ["Accessibility", "t11-a11y"], ["⏱ History", "t13-history"], ["Grid Guides", "t14-grid"]] as const;
     for (const hidden of ["Performance", "CSS Preview"]) {
-      await btn("Tools ▾").click();
+      await btn("Tools").click();
       await expect.soft(page.getByText(hidden, { exact: true }), `${hidden} hidden (Tier C)`).toHaveCount(0);
-      await btn("Tools ▾").click();
+      await btn("Tools").click();
     }
     for (const [item, name] of items) {
-      await btn("Tools ▾").click();
+      await btn("Tools").click();
       if (item === "AI Content Fill") await shot(page, "t10a-tools-menu");
       if (item === "Accessibility") await expect.soft(page.getByRole("dialog", { name: /AI Content/i }), "previous panel closed").toHaveCount(0);
       await page.getByText(item, { exact: true }).first().click();
       await page.waitForTimeout(800);
       await shot(page, name);
       // Toggle it off again from the same menu.
-      await btn("Tools ▾").click();
+      await btn("Tools").click();
       await page.getByText(item, { exact: true }).first().click();
       await page.waitForTimeout(300);
     }
@@ -146,7 +150,7 @@ test("top bar", async ({ page, context }) => {
 
   await step("autosave chip and Save button agree", async () => {
     await h3("Espresso").click();
-    await btn(/^⧉ Duplicate$/).click();
+    await btn(/^Duplicate "/).click();
     await expect.soft(page.getByText(/Saving/).first()).toBeVisible();
     await shot(page, "t17-saving");
     await waitSaved(page);
@@ -179,7 +183,7 @@ test("top bar", async ({ page, context }) => {
   await step("AI tab: start over with a new page; undo brings the old one back", async () => {
     // The ✦ button opens the AI tab of the left sidebar. The page has content, so a whole new page
     // is asked for with "Start over" (which asks first); a plain message would be an edit.
-    await btn("✦ Generate").click();
+    await btn("Generate").click();
     await shot(page, "t22-ai-panel");
     await page.getByTestId("ai-start-over").click();
     await page.getByRole("button", { name: "Yes, start over" }).click();

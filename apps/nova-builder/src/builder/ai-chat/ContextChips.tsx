@@ -1,6 +1,7 @@
 "use client";
 // What the next message is about, shown above the input: set from the canvas selection, and the
 // user can remove a chip to widen the scope (element → section → page).
+import { Icon } from "@/builder/icons";
 import { UI_VARS as C } from "@/lib/uiTheme";
 import { useI18n, fmt } from "@/lib/i18n";
 import type { ChatContextRef } from "@/lib/aiChat/types";
@@ -35,9 +36,9 @@ export function ContextChips({ reference, onWiden }: Props) {
             onClick={onWiden}
             aria-label={`${L.removeChip}: ${main}`}
             title={L.removeChip}
-            style={{ border: "none", background: "transparent", color: "inherit", cursor: "pointer", width: 18, height: 18, borderRadius: "50%", fontSize: 14, lineHeight: 1, padding: 0 }}
+            style={{ border: "none", background: "transparent", color: "inherit", cursor: "pointer", width: 18, height: 18, borderRadius: "50%", padding: 0, display: "inline-flex", alignItems: "center", justifyContent: "center" }}
           >
-            ×
+            <Icon name="close" size={12} weight="bold" />
           </button>
         ) : <span style={{ width: 5 }} />}
       </span>

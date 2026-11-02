@@ -1,4 +1,5 @@
 "use client";
+import { Icon } from "@/builder/icons";
 import { useState, useEffect, useCallback } from "react";
 import { useStore } from "@nanostores/react";
 import { $selectedPage } from "@/lib/nano-states";
@@ -138,7 +139,7 @@ function RedirectsEditor({ pageId, initialRedirects }: { pageId: string; initial
             <option value="302">302</option>
             <option value="301">301</option>
           </select>
-          <button onClick={() => remove(i)} style={{ background: "none", border: "none", color: C.error, cursor: "pointer", fontSize: 14, padding: "0 2px" }}>×</button>
+          <button onClick={() => remove(i)} style={{ background: "none", border: "none", color: C.error, cursor: "pointer", fontSize: 14, padding: "0 2px" }}><Icon name="close" size={14} weight="bold" /></button>
         </div>
       ))}
       <button
@@ -249,7 +250,7 @@ export function SEOPanel() {
         onClick={() => setShowOG((v) => !v)}
         style={{ background: "none", border: "none", color: C.textMuted, fontSize: 12, cursor: "pointer", fontFamily: C.font, fontWeight: 600, letterSpacing: "0.05em", padding: 0, marginBottom: 12 }}
       >
-        {showOG ? "▼" : "▶"} {L.openGraph}
+        <Icon name={showOG ? "caretDown" : "caretRight"} size={12} weight="bold" /> {L.openGraph}
       </button>
 
       {showOG && (
@@ -271,7 +272,7 @@ export function SEOPanel() {
         onClick={() => setShowRedirects((v) => !v)}
         style={{ background: "none", border: "none", color: C.textMuted, fontSize: 12, cursor: "pointer", fontFamily: C.font, fontWeight: 600, letterSpacing: "0.05em", padding: 0, marginBottom: 12, display: "block" }}
       >
-        {showRedirects ? "▼" : "▶"} {L.redirects} {redirects.length > 0 && <span style={{ color: C.accentText }}>({redirects.length})</span>}
+        <Icon name={showRedirects ? "caretDown" : "caretRight"} size={12} weight="bold" /> {L.redirects} {redirects.length > 0 && <span style={{ color: C.accentText }}>({redirects.length})</span>}
       </button>
 
       {showRedirects && pageId && (

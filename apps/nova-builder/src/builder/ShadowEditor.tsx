@@ -1,4 +1,5 @@
 "use client";
+import { Icon } from "@/builder/icons";
 import { useMemo } from "react";
 import { writeStyleProperty } from "@/lib/styleWriteHelper";
 import { ShadowLayer, parseLayers, serializeLayers, ShadowLayerRow } from "./ShadowLayerRow";
@@ -40,10 +41,10 @@ function ShadowPanelBase({
 
   return (
     <div style={{ borderBottom: `1px solid ${C.border}` }}>
-      <div style={{ display: "flex", alignItems: "center", padding: "5px 12px", background: C.sectionBg }}>
+      <div style={{ display: "flex", alignItems: "center", padding: "6px 16px", minHeight: 48, background: "transparent" }}>
         <div style={{ display: "flex", flexDirection: "column", flex: 1, lineHeight: 1.2 }}>
           <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-            <span style={{ fontSize: 12, color: C.textMuted, fontFamily: C.font, fontWeight: 700, letterSpacing: "0.07em", textTransform: "uppercase" }}>
+            <span style={{ fontSize: 15, color: C.text, fontFamily: C.font, fontWeight: 600 }}>
               {label}
             </span>
             {layers.length > 0 && <span style={{ color: C.textMuted, fontWeight: 400 }}>{layers.length}</span>}
@@ -52,13 +53,13 @@ function ShadowPanelBase({
             {cssProperty}
           </span>
         </div>
-        <button onClick={addLayer} title={fmt(E.addItem, { label })} style={{ width: 20, height: 20, border: `1px solid ${C.border}`, borderRadius: 3, background: "none", color: C.textMuted, fontSize: 15, lineHeight: "18px", cursor: "pointer", padding: 0 }}>+</button>
+        <button onClick={addLayer} title={fmt(E.addItem, { label })} style={{ width: 28, height: 28, border: "none", borderRadius: 8, background: "none", color: C.textMuted, cursor: "pointer", padding: 0, display: "inline-flex", alignItems: "center", justifyContent: "center" }}><Icon name="plus" size={16} weight="bold" /></button>
       </div>
 
       {/* Shadow Presets bar for box shadow */}
       {type === "box" && (
         <div style={{ padding: "4px 8px", borderBottom: `1px solid ${C.border}`, display: "flex", gap: 3, alignItems: "center", background: "rgba(255,255,255,0.02)", flexWrap: "wrap" }}>
-          <span style={{ fontSize: 9, color: C.textMuted, textTransform: "uppercase", fontWeight: 600 }}>{E.shadowPresets}:</span>
+          <span style={{ fontSize: 11, color: C.textMuted, fontFamily: C.font, fontWeight: 600 }}>{E.shadowPresets}:</span>
           {shadowPresets.map((sp) => (
             <button
               key={sp.label}

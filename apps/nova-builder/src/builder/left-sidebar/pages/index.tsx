@@ -7,6 +7,7 @@ import { PageItem } from "./PageItem";
 import { FolderItem } from "./FolderItem";
 import { usePageCrud } from "./usePageCrud";
 import { NewPageForm } from "./NewPageForm";
+import { PanelHeader } from "../PanelHeader";
 import type { PageSeo } from "./usePageCrud";
 import { UI_VARS as C } from "@/lib/uiTheme";
 import { useI18n, fmt } from "@/lib/i18n";
@@ -28,13 +29,14 @@ const inputStyle: React.CSSProperties = {
 const headerAction: React.CSSProperties = {
   background: "none",
   border: `1px solid ${C.border}`,
-  borderRadius: 4,
+  borderRadius: 8,
   color: C.text,
-  fontSize: 12,
+  fontSize: 13,
   fontFamily: C.font,
   cursor: "pointer",
-  padding: "4px 8px",
-  minHeight: 28,
+  padding: "0 10px",
+  minHeight: 32,
+  whiteSpace: "nowrap",
 };
 
 export function PagesPanel() {
@@ -134,15 +136,12 @@ export function PagesPanel() {
   return (
     <div style={{ display: "flex", flexDirection: "column", overflow: "hidden", height: "100%" }}>
       {/* Header — the add actions sit here so the form opens right beneath the button */}
-      <div style={{ padding: "7px 10px 6px", borderBottom: `1px solid ${C.border}`, flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "space-between", gap: 8 }}>
-        <span style={{ fontSize: 12, fontFamily: C.font, color: C.textMuted, fontWeight: 700, letterSpacing: "0.06em", textTransform: "uppercase" }}>
-          {L.title}
-        </span>
+      <PanelHeader title={L.title}>
         <div style={{ display: "flex", gap: 4 }}>
           <button onClick={() => { setShowNewFolder(false); setShowNewPage(true); }} disabled={showNewPage} style={headerAction}>{L.addPage}</button>
           <button onClick={() => { setShowNewPage(false); setShowNewFolder(true); }} disabled={showNewFolder} style={headerAction}>{L.addFolder}</button>
         </div>
-      </div>
+      </PanelHeader>
 
       {showNewPage && (
         <NewPageForm

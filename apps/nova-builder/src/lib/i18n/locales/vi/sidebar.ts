@@ -66,6 +66,11 @@ export const viSidebar: I18nSidebarDictionary = {
     title: "Thư viện thành phần",
     search: "Tìm thành phần...",
     hint: "Nhấp để thêm bên dưới phần tử đang chọn, hoặc kéo thả vào trang.",
+    groups: { basics: "Thành phần cơ bản", interactive: "Biểu mẫu và điều hướng", more: "Khác" },
+    results: "Kết quả",
+    noResults: "Không có mục nào khớp với tìm kiếm.",
+    clearSearch: "Xóa tìm kiếm",
+    close: "Đóng",
     categories: {
       Inputs: "Nhập liệu",
       Navigation: "Điều hướng",

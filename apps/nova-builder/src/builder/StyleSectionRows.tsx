@@ -9,9 +9,12 @@ import { writeStyle, removeStyle } from "@/lib/styleInspectorWrite";
 import { UI_VARS as C } from "@/lib/uiTheme";
 import { useI18n, fmt } from "@/lib/i18n";
 import { componentName } from "@/lib/i18n/componentName";
+import { Icon } from "@/builder/icons";
 import { UnitInput, COMMON_UNITS } from "./controls/UnitInput";
 import { ColorControl } from "./controls/ColorControl";
 import { CollapsibleSection } from "./controls/CollapsibleSection";
+import { ToggleGroup } from "./controls/ToggleGroup";
+import { enumLabel, enumOptionsFor } from "./controls/enumOptions";
 
 type StyleSrc = { id: string; type: string; name?: string };
 
@@ -53,6 +56,16 @@ export function StyleValueEditor({
 
   if (value.type === "keyword") {
     const kv = value as KeywordValue;
+    const options = enumOptionsFor(decl.property, kv.value);
+    if (options) {
+      return (
+        <ToggleGroup
+          options={options.map((v) => ({ value: v, label: enumLabel(decl.property, v), title: v }))}
+          value={kv.value}
+          onChange={(v) => onWrite({ type: "keyword", value: v })}
+        />
+      );
+    }
     return (
       <input
         key={kv.value}
@@ -60,7 +73,7 @@ export function StyleValueEditor({
         defaultValue={kv.value}
         onBlur={(e) => onWrite({ type: "keyword", value: e.target.value })}
         onKeyDown={(e) => { if (e.key === "Enter") (e.target as HTMLInputElement).blur(); }}
-        style={{ width: "100%", padding: "1px 4px", background: C.inputBg, border: `1px solid ${C.border}`, borderRadius: 3, color: C.codeVal, fontFamily: C.fontMono, fontSize: 13, outline: "none", boxSizing: "border-box" }}
+        style={{ width: "100%", height: 32, padding: "0 8px", background: C.card, border: `1px solid ${C.border}`, borderRadius: 8, color: C.codeVal, fontFamily: C.fontMono, fontSize: 13, outline: "none", boxSizing: "border-box" }}
       />
     );
   }
@@ -134,15 +147,37 @@ export function EditablePropRow({
 
   const friendlyName = t.inspector.propNames[property] ?? property;
   const showCssHint = friendlyName !== property;
+  const asPills = decl.value.type === "keyword" && enumOptionsFor(property, (decl.value as KeywordValue).value) !== null;
+
+  if (asPills) {
+    return (
+      <tr data-property={property}>
+        <td colSpan={3} style={{ padding: "6px 16px 10px" }}>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 6 }}>
+            <span title={`${friendlyName} (${property})`} style={{ fontSize: 14, fontWeight: 500, color: isToken ? "#a78bfa" : C.text, fontFamily: C.font }}>{friendlyName}</span>
+            {removable && (
+              <button
+                onClick={() => removeStyle(instanceId, decl)}
+                title={t.inspector.resetValue ?? t.inspector.removeValue}
+                aria-label={`${t.inspector.resetValue ?? t.inspector.removeValue}: ${friendlyName}`}
+                style={{ border: "none", background: "none", color: C.textMuted, fontSize: 14, lineHeight: 1, cursor: "pointer", padding: "0 2px" }}
+              ><Icon name="reset" size={14} /></button>
+            )}
+          </div>
+          <StyleValueEditor decl={decl} onWrite={handleWrite} />
+        </td>
+      </tr>
+    );
+  }
 
   return (
     <tr data-property={property} style={{ verticalAlign: "middle" }}>
       <td
         title={`${friendlyName} (${property})`}
-        style={{ padding: "3px 4px 3px 12px", color: isToken ? "#a78bfa" : C.text, fontFamily: C.font, fontSize: 13, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", maxWidth: 0, width: "46%" }}
+        style={{ padding: "5px 4px 5px 16px", color: isToken ? "#a78bfa" : C.text, fontFamily: C.font, fontSize: 14, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", maxWidth: 0, width: "46%" }}
       >
         <div style={{ display: "flex", flexDirection: "column", minWidth: 0, lineHeight: 1.15 }}>
-          <span style={{ fontSize: 12, fontWeight: 500, color: isToken ? "#a78bfa" : C.text, overflow: "hidden", textOverflow: "ellipsis" }}>
+          <span style={{ fontSize: 14, fontWeight: 500, color: isToken ? "#a78bfa" : C.text, overflow: "hidden", textOverflow: "ellipsis" }}>
             {friendlyName}
             {isToken && (
               <span title={fmt(t.inspector.fromToken, { name: src?.name ?? "" })} style={{ marginLeft: 4, fontSize: 8, background: "rgba(124,58,237,0.2)", color: "#c4b5fd", borderRadius: 3, padding: "1px 4px", verticalAlign: "middle", fontFamily: C.font, letterSpacing: "0.05em", textTransform: "uppercase" }}>T{/* i18n-ignore — token badge */}</span>
@@ -195,7 +230,7 @@ export function EditablePropRow({
             title={t.inspector.resetValue ?? t.inspector.removeValue}
             aria-label={`${t.inspector.resetValue ?? t.inspector.removeValue}: ${friendlyName}`}
             style={{ border: "none", background: "none", color: C.textMuted, fontSize: 13, lineHeight: 1, cursor: "pointer", padding: "0 2px" }}
-          >↺</button>
+          ><Icon name="reset" size={14} /></button>
         )}
       </td>
     </tr>
@@ -243,8 +278,8 @@ export function InstanceHeader() {
   if (!instance) return null;
   const type = componentName(instance.component, t.componentNames);
   return (
-    <div style={{ padding: "8px 12px 6px", borderBottom: `1px solid ${C.border}`, flexShrink: 0 }}>
-      <div style={{ fontSize: 12, color: C.text, fontFamily: C.font, fontWeight: 600 }}>
+    <div style={{ padding: "14px 16px 12px", borderBottom: `1px solid ${C.border}`, flexShrink: 0 }}>
+      <div style={{ fontSize: 16, color: C.text, fontFamily: C.font, fontWeight: 700 }}>
         {(instance as { label?: string }).label || type}
       </div>
       <div title={instance.component} style={{ fontSize: 12, color: C.textMuted, fontFamily: C.font, marginTop: 2 }}>

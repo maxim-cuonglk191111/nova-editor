@@ -5,6 +5,8 @@ import { $instances } from "@/lib/data-stores";
 import { $selectedInstanceId, $selectedInstanceSelector, $multiSelectedInstanceIds } from "@/lib/nano-states";
 import { $canUndo, $canRedo, undo, redo } from "@/lib/history";
 import { useI18n, fmt } from "@/lib/i18n";
+import { UI_VARS as C, UI_SHAPE as S } from "@/lib/uiTheme";
+import { Icon } from "./icons";
 
 function buildAncestors(
   instanceId: string,
@@ -33,14 +35,15 @@ const btnBase: React.CSSProperties = {
   background: "none",
   border: "none",
   cursor: "pointer",
-  padding: "2px 6px",
-  borderRadius: 3,
-  fontSize: 13,
-  lineHeight: 1,
-  display: "flex",
+  width: 32,
+  height: 32,
+  borderRadius: S.radiusSm,
+  display: "inline-flex",
   alignItems: "center",
+  justifyContent: "center",
 };
 
+// The bar under the canvas: undo and redo, then the path from the page down to the selected element.
 export function Footer() {
   const { t } = useI18n();
   const selectedId = useStore($selectedInstanceId);
@@ -58,72 +61,61 @@ export function Footer() {
       style={{
         gridArea: "footer",
         height: 36,
-        background: "#0a0a14",
-        borderTop: "1px solid rgba(255,255,255,0.08)",
+        background: C.card,
+        borderTop: `1px solid ${C.border}`,
         display: "flex",
         alignItems: "center",
         padding: "0 8px",
         gap: 0,
         overflow: "hidden",
         flexShrink: 0,
+        fontFamily: C.font,
       }}
     >
-      {/* Undo / Redo buttons */}
       <button
         onClick={undo}
         disabled={!canUndo}
         title={t.chrome.undoTitle}
-        style={{
-          ...btnBase,
-          color: canUndo ? "rgba(255,255,255,0.7)" : "rgba(255,255,255,0.2)",
-          cursor: canUndo ? "pointer" : "default",
-          marginRight: 2,
-        }}
+        aria-label={t.chrome.undoTitle}
+        style={{ ...btnBase, color: canUndo ? C.text : C.muted, cursor: canUndo ? "pointer" : "default" }}
       >
-        ↩
+        <Icon name="undo" size={18} />
       </button>
       <button
         onClick={redo}
         disabled={!canRedo}
         title={t.chrome.redoTitle}
-        style={{
-          ...btnBase,
-          color: canRedo ? "rgba(255,255,255,0.7)" : "rgba(255,255,255,0.2)",
-          cursor: canRedo ? "pointer" : "default",
-          marginRight: 8,
-        }}
+        aria-label={t.chrome.redoTitle}
+        style={{ ...btnBase, color: canRedo ? C.text : C.muted, cursor: canRedo ? "pointer" : "default", marginRight: 8 }}
       >
-        ↪
+        <Icon name="redo" size={18} />
       </button>
 
-      {/* Divider */}
-      <div style={{ width: 1, height: 16, background: "rgba(255,255,255,0.1)", marginRight: 8, flexShrink: 0 }} />
+      <div style={{ width: 1, height: 16, background: C.border, marginRight: 8, flexShrink: 0 }} />
 
-      {/* Multi-select badge OR breadcrumb */}
       {isMultiSelect ? (
         <span
           style={{
             fontSize: 13,
-            color: "#c4b5fd",
-            background: "rgba(124,58,237,0.18)",
-            border: "1px solid rgba(124,58,237,0.35)",
-            borderRadius: 10,
-            padding: "1px 8px",
-            fontFamily: "system-ui, sans-serif",
+            color: C.accentText,
+            background: C.accentBg,
+            border: `1px solid ${C.accentBorder}`,
+            borderRadius: S.radiusPill,
+            padding: "2px 10px",
           }}
         >
           {fmt(t.chrome.multiSelected, { count: multiSelectedIds.length })}
         </span>
       ) : ancestors.length === 0 ? (
-        <span style={{ fontSize: 13, color: "rgba(255,255,255,0.3)" }}>
+        <span style={{ fontSize: 13, color: C.textMuted }}>
           {t.chrome.noSelection}
         </span>
       ) : (
         ancestors.map((item, i) => (
           <span key={item.id} style={{ display: "flex", alignItems: "center" }}>
             {i > 0 && (
-              <span style={{ color: "rgba(255,255,255,0.25)", margin: "0 4px", fontSize: 12 }}>
-                ›
+              <span style={{ color: C.muted, margin: "0 2px", display: "inline-flex" }}>
+                <Icon name="caretRight" size={12} weight="bold" />
               </span>
             )}
             <button
@@ -133,11 +125,11 @@ export function Footer() {
                 border: "none",
                 cursor: "pointer",
                 fontSize: 13,
-                color: i === ancestors.length - 1
-                  ? "rgba(255,255,255,0.85)"
-                  : "rgba(255,255,255,0.45)",
-                padding: "2px 4px",
-                borderRadius: 3,
+                fontFamily: C.font,
+                fontWeight: i === ancestors.length - 1 ? 600 : 400,
+                color: i === ancestors.length - 1 ? C.text : C.textMuted,
+                padding: "4px 6px",
+                borderRadius: S.radiusSm,
               }}
             >
               {item.label}
@@ -148,4 +140,3 @@ export function Footer() {
     </div>
   );
 }
-

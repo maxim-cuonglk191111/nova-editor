@@ -6,6 +6,7 @@ import { UI_VARS as C } from "@/lib/uiTheme";
 import { $instances, $props, $styles, $styleSourceSelections } from "@/lib/data-stores";
 import { compositionBreakpoints } from "@/lib/applyWSComposition";
 import { stillApplied } from "@/lib/aiChat/appliedChecks";
+import { Icon, type IconName } from "@/builder/icons";
 import { useI18n, fmt } from "@/lib/i18n";
 import type { AssistantMessage, ProposalLine } from "@/lib/aiChat/types";
 
@@ -18,7 +19,7 @@ type Props = {
   busy: boolean;
 };
 
-const ICON: Record<ProposalLine["kind"], string> = { text: "✎", style: "◐", prop: "⚙", remove: "✕", insert: "＋", replace: "⟳", page: "▤", site: "▤" };
+const ICON: Record<ProposalLine["kind"], IconName> = { text: "catTypography", style: "catDisplay", prop: "settings", remove: "trash", insert: "plus", replace: "replace", page: "templates", site: "templates" };
 
 /** `paddingTop` and `minWidth` read as "padding" and "width" to someone who is not a developer. */
 function groupOf(property: string): string {
@@ -76,7 +77,7 @@ export function ProposalCard({ message, onApply, onDiscard, onRestore, onHighlig
             title={line.full}
             style={{ display: "flex", gap: 8, padding: "6px 10px", fontSize: 13, lineHeight: 1.45, color: C.text, fontFamily: C.font, cursor: hoverable && line.ids.length ? "default" : undefined }}
           >
-            <span aria-hidden="true" style={{ color: C.accentText, width: 14, textAlign: "center", flexShrink: 0 }}>{ICON[line.kind]}</span>
+            <span style={{ color: C.accentText, width: 18, display: "inline-flex", justifyContent: "center", flexShrink: 0 }}><Icon name={ICON[line.kind]} size={16} weight="bold" /></span>
             <span style={{ overflowWrap: "anywhere" }}>{lineText(line)}</span>
           </li>
         ))}
@@ -97,7 +98,7 @@ export function ProposalCard({ message, onApply, onDiscard, onRestore, onHighlig
           {undone ? L.undone : message.status === "applied"
             ? message.result && message.result.skipped > 0
               ? fmt(L.applyPartial, message.result)
-              : `✓ ${L.appliedUndo}`
+              : L.appliedUndo
             : message.result && message.result.applied === 0 && message.result.skipped > 0 ? L.nothingApplied : L.discarded}
           {message.status === "applied" && message.snapshotId && (
             <button type="button" onClick={() => onRestore(message)} disabled={busy} data-testid="ai-restore" style={{ display: "block", marginTop: 6, padding: "3px 0", border: "none", background: "transparent", color: C.textMuted, fontSize: 12, fontFamily: C.font, textDecoration: "underline", cursor: "pointer" }}>

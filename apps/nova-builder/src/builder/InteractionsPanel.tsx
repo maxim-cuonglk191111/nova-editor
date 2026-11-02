@@ -1,4 +1,5 @@
 ﻿"use client";
+import { Icon } from "@/builder/icons";
 import { useState } from "react";
 import { useStore } from "@nanostores/react";
 import { nanoid } from "nanoid";
@@ -173,9 +174,7 @@ export function InteractionsPanel() {
             <button
               onClick={() => removeInteraction(def.id)}
               style={{ background: "none", border: "none", color: C.danger, cursor: "pointer", fontSize: 16, lineHeight: 1, padding: "1px 4px" }}
-            >
-              ×
-            </button>
+            ><Icon name="close" size={14} weight="bold" /></button>
           </div>
           <select
             style={selectStyle}

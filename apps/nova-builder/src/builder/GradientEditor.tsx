@@ -266,11 +266,11 @@ export function GradientPanel({ instanceId, currentCss }: GradientPanelProps) {
   return (
     <div style={{ borderBottom: `1px solid ${C.border}` }}>
       <div style={{
-        display: "flex", alignItems: "center", padding: "5px 12px", background: C.sectionBg,
+        display: "flex", alignItems: "center", padding: "6px 16px", minHeight: 48, background: "transparent",
       }}>
         <div style={{ display: "flex", flexDirection: "column", flex: 1, lineHeight: 1.2 }}>
           <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-            <span style={{ fontSize: 12, color: C.textMuted, fontFamily: C.font, fontWeight: 700, letterSpacing: "0.07em", textTransform: "uppercase" }}>
+            <span style={{ fontSize: 15, color: C.text, fontFamily: C.font, fontWeight: 600 }}>
               {E.gradient}
             </span>
             {gradients.length > 0 && (

@@ -1,4 +1,5 @@
 ﻿"use client";
+import { Icon } from "@/builder/icons";
 import { useState } from "react";
 import { useStore } from "@nanostores/react";
 import { $dataSources, $resources, $props, $projectMeta } from "@/lib/data-stores";
@@ -80,7 +81,7 @@ export function DataBindingPanel() {
                 onBlur={(e) => updateVariableValue(v.id, e.target.value)}
                 style={{ ...inputStyle, width: 90, fontFamily: C.mono, fontSize: 12 }}
               />
-              <button onClick={() => deleteVariable(v.id)} style={{ background: "none", border: "none", color: C.textMuted, cursor: "pointer", fontSize: 13 }}>×</button>
+              <button onClick={() => deleteVariable(v.id)} style={{ background: "none", border: "none", color: C.textMuted, cursor: "pointer", fontSize: 13 }}><Icon name="close" size={14} weight="bold" /></button>
             </div>
           ))}
         </div>
@@ -132,7 +133,7 @@ export function DataBindingPanel() {
                 >
                   {loading ? "…" : t.builder.resourceLoad}
                 </button>
-                <button onClick={() => deleteResource(r.id)} style={{ background: "none", border: "none", color: C.textMuted, cursor: "pointer", fontSize: 13 }}>×</button>
+                <button onClick={() => deleteResource(r.id)} style={{ background: "none", border: "none", color: C.textMuted, cursor: "pointer", fontSize: 13 }}><Icon name="close" size={14} weight="bold" /></button>
               </div>
             );
           })}

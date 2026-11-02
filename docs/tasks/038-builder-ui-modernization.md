@@ -1,6 +1,6 @@
 # Task 038 — Builder UI modernization (reference: Siteai), adapted to Nova's content and flow
 
-- **Status:** Open (spec only; no code until the owner approves this document)
+- **Status:** In progress — P0–P5 built on branch `feat/ui-modernization` (owner approved the top bar and asked for the rest of the reference look); P6 pass and the Tier 3 audit remain
 - **Filed:** 2026-11-02
 - **Owner:** Claude Code
 - **Severity:** Major (touches every panel of the builder; must not change behaviour)
@@ -50,7 +50,23 @@ New features from the reference (sitemap/wireframe stages, CMS, overlays, cursor
 - Light and dark both pass the a11y spec; touch targets and text size rules hold.
 - Self-score ≥ 9/10 on the rubric with the Tier 3 audit attached to `doc/VERIFIED.md`.
 
-## Open questions for the owner
+## Owner decisions (2026-11-02)
+1. Light by default (it already is: `$builderTheme` starts as "light"; there is no theme switch in the builder today, so "dark kept" means the DARK/ELDER palettes stay in `uiTheme.ts`). 2. Centred switch: Design · Preview. 3. The floating toolbar may replace the top-bar zoom once it works.
+
+## Progress
+- **P0** `scripts/ui-baseline.mjs` captures the demo builder (1440/1024) into `doc/screenshots/.temp/ui-baseline/` (before) and `ui-p3/` (after).
+- **P1** `lib/uiTheme.ts`: `primary`/`primaryHover`/`onPrimary`, `shadowSoft`/`shadowPop` in all three palettes (+ `UI_VARS`, CSS vars) and `UI_SHAPE` (radii 8/12/16, control 36/44, top bar 56).
+- **P2** Top bar 56px on a white surface: back + logo + project name; centred **Design | Preview ↗** switch (Preview still opens the tab, now via `topbar/usePreview.ts`); breakpoints as one pill group; zoom; Export/Tools (one **More** menu below 1280px); **Save** is the single filled primary button (dark green, white text AA); Generate = outline. Width classes `nb-hide-mid` (<1680) and `nb-hide-narrow` (<1280) in `globals.css`. Fixes the clipped Generate button at 1024px. Floating panels moved from top 52 to 64.
+- **P3** Rail 68px with a rounded active tile and readable labels (the "TEMPLATES" clip is gone); shared `PanelHeader` for Pages/Layers/Templates, same title style in Add; page rows as rounded cards; default panel width 260.
+- **P4** `builder/CanvasToolbar.tsx`: the floating pill at the bottom of the canvas (AI, Add, zoom −/%/+, fit). It replaces the top-bar zoom group (owner decision 3). The AI button shares `useToggleAIPanel` with the top bar (demo gate unchanged); Add opens the sidebar's Add tab through `$sidebarTabRequest`.
+- **P3b (Add)** `left-sidebar/components/`: search, then categories as rows (icon tile, name, count, chevron) in three groups (Page basics / Forms and navigation / More); the chosen category's preview cards open in a second column that **pushes** the canvas (it does not cover it), and the canvas re-fits when the column opens or closes. Wide screens open "Layout" at once; narrow ones start closed. Search lists every match in the second column. Cards keep click-to-insert and drag-to-drop. Split into `ComponentCard`, `CategoryList`, `index`.
+- **P5 (inspector)** `controls/CollapsibleSection` (sentence-case title, count, +/− sign from CSS), `controls/ToggleGroup` as a segmented control (also used by the state selector), `controls/enumOptions.ts`: properties that hold one of a few keywords (display, direction, wrap, align, justify, position, text align/transform/decoration, overflow, …) show as full-width pills under their label; a value outside the list keeps the text box, so no stored value is hidden. Right panel 304px wide, tabs 44px. Writes go through the same `writeStyle`.
+- **Owner feedback (2026-11-02) and what changed**: (1) the Add thumbnails no longer push the canvas: they float over it (`position: fixed`, anchored to the panel's right edge, closes on Esc / outside click, starts closed), so the canvas keeps its size; the refit-on-open logic was removed. (2) Icons: **Phosphor** (`@phosphor-icons/react`, MIT; not Lucide) through one module, `builder/icons.tsx` (named icons, bold/duotone/fill weights, `optimizePackageImports` in `next.config.mjs`). Rail, top bar, floating toolbar, Add categories, layers/pages trees, AI chat, inspector reset/close/+/−, dialogs, menus and the footer use it; the glyphs that lived inside translated strings (✦, ▾, →) are now real icons. (3) Whole-builder pass: light footer bar (undo/redo/breadcrumb with tokens), lighter canvas stage with a 12px page card and the shared elevation token, popups (History, Accessibility, Performance, AI content, menus, dialogs) on `--ui-shadow-pop` with 16px radii, shadow/gradient/transform/filter/transition/grid editors with 15px titles and icon "+" buttons instead of the uppercase grey bars.
+- **Deviations**: no project-name caret (nothing to open from it yet, so no false affordance); Add keeps its category list with preview cards (it already has search and thumbnails) instead of the Siteai row list; the top-bar zoom group is gone (P4).
+- **Not copied from the reference**: Siteai's alignment bar, Link / Position / Cursor groups and the Upgrade button (Nova has no such features or a different place for them); the inspector keeps Nova's own property groups.
+- **Selector note**: the breakpoint ⚙ keeps its accessible name; `builder-canvas-sync.spec.ts` looked for `input[type=number]`, which task 018 turned into text inputs, so the spec was already red; it now uses `input[inputmode=decimal]`.
+
+## Open questions for the owner (answered above)
 1. Light as the default theme (as the reference) with dark kept, or dark stays the default?
 2. The centred switch: which modes should it show? (Proposed: Design · Preview.)
 3. Is the bottom floating toolbar allowed to replace the zoom controls in the top bar once it works?

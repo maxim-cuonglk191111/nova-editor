@@ -65,6 +65,8 @@ const nextConfig = {
   // /canvas iframe (two overlapping circles over the canvas/footer) and polluted
   // visual QA screenshots (WS-PARITY-AUDIT §8b V-6). Dev-only; no prod effect.
   devIndicators: false,
+  // Phosphor ships ~1,500 icon modules: import only the ones that are used (faster dev compiles, smaller bundles).
+  experimental: { optimizePackageImports: ["@phosphor-icons/react"] },
   // Lint and type check run in CI (.github/workflows/ci.yml) on every PR and in the
   // local pre-push gate; repeating them inside the Workers Build cost ~30 s per deploy.
   eslint: { ignoreDuringBuilds: true },

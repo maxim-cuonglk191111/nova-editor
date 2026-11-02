@@ -1,4 +1,5 @@
 ﻿"use client";
+import { Icon } from "@/builder/icons";
 import { UI_VARS as C } from "@/lib/uiTheme";
 import { useI18n } from "@/lib/i18n";
 
@@ -115,7 +116,7 @@ function NumInput({ value, onChange }: { value: number; onChange: (n: number) =>
 
 function FieldLabel({ text }: { text: string }) {
   return (
-    <span style={{ fontSize: 9, color: C.textMuted, fontFamily: C.font, textTransform: "uppercase" as const, letterSpacing: "0.05em", display: "block", textAlign: "center" as const, marginBottom: 2 }}>
+    <span style={{ fontSize: 11, color: C.textMuted, fontFamily: C.font, display: "block", textAlign: "center" as const, marginBottom: 2 }}>
       {text}
     </span>
   );
@@ -159,7 +160,7 @@ export function ShadowLayerRow({ layer, type, onChange, onDelete }: LayerRowProp
             </button>
           </div>
         )}
-        <button onClick={onDelete} style={{ marginLeft: "auto", padding: "0 4px", height: 22, border: "none", background: "none", color: "rgba(248,113,113,0.6)", fontSize: 16, lineHeight: 1, cursor: "pointer", alignSelf: "flex-end" }} title={E.removeShadow}>×</button>
+        <button onClick={onDelete} style={{ marginLeft: "auto", padding: "0 4px", height: 22, border: "none", background: "none", color: "rgba(248,113,113,0.6)", fontSize: 16, lineHeight: 1, cursor: "pointer", alignSelf: "flex-end" }} title={E.removeShadow}><Icon name="close" size={14} weight="bold" /></button>
       </div>
     </div>
   );

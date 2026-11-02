@@ -1,3 +1,4 @@
+import { Icon } from "@/builder/icons";
 import { writeStyleProperty } from "@/lib/styleWriteHelper";
 import { UI_VARS as C } from "@/lib/uiTheme";
 import { useI18n, fmt } from "@/lib/i18n";
@@ -97,19 +98,8 @@ function TrackSection({
           onClick={() => updateTracks([...tracks, "1fr"])}
           disabled={autoRepeat}
           title={autoRepeat ? E.autoTracks : fmt(E.addTrack, { label: label.toLowerCase() })}
-          style={{
-            background: "none",
-            border: `1px solid ${C.border}`,
-            borderRadius: 3,
-            color: C.textMuted,
-            fontSize: 15,
-            width: 20,
-            height: 20,
-            cursor: "pointer",
-            lineHeight: "18px",
-            padding: 0,
-          }}
-        >+</button>
+style={{ width: 28, height: 28, border: "none", borderRadius: 8, background: "none", color: C.textMuted, cursor: "pointer", padding: 0, display: "inline-flex", alignItems: "center", justifyContent: "center" }}
+        ><Icon name="plus" size={16} weight="bold" /></button>
       </div>
       {autoRepeat && (
         <div style={{ fontSize: 11, color: C.textMuted, fontFamily: C.font, padding: "2px 0" }}>{E.autoTracks}</div>
@@ -197,10 +187,9 @@ export function GridContainerPanel({
 
   return (
     <div style={{ borderBottom: `1px solid ${C.border}` }}>
-      <div style={{ display: "flex", alignItems: "center", padding: "5px 12px", background: C.sectionBg }}>
+      <div style={{ display: "flex", alignItems: "center", padding: "6px 16px", minHeight: 48, background: "transparent" }}>
         <span style={{
-          fontSize: 12, color: C.textMuted, fontFamily: C.font,
-          fontWeight: 700, letterSpacing: "0.07em", textTransform: "uppercase", flex: 1,
+          fontSize: 15, color: C.text, fontFamily: C.font, fontWeight: 600, flex: 1,
         }}>
           {E.gridTracks}
           {(columns.length > 0 || rows.length > 0) && (
@@ -270,10 +259,9 @@ export function GridChildPanel({
 
   return (
     <div style={{ borderBottom: `1px solid ${C.border}` }}>
-      <div style={{ display: "flex", alignItems: "center", padding: "5px 12px", background: C.sectionBg }}>
+      <div style={{ display: "flex", alignItems: "center", padding: "6px 16px", minHeight: 48, background: "transparent" }}>
         <span style={{
-          fontSize: 12, color: C.textMuted, fontFamily: C.font,
-          fontWeight: 700, letterSpacing: "0.07em", textTransform: "uppercase",
+          fontSize: 15, color: C.text, fontFamily: C.font, fontWeight: 600,
         }}>
           {E.gridPlacement}
         </span>

@@ -29,7 +29,7 @@ test("builder style edit repaints the canvas (transaction sync + undo)", async (
 
   // Body is auto-selected on load; its SPACING section shows a padding row.
   const paddingInput = page
-    .locator('tr:has(td:has-text("padding")) input[type="number"]')
+    .locator('tr:has(td:has-text("padding")) input[inputmode="decimal"]')
     .first();
   await expect(paddingInput).toBeVisible({ timeout: 15_000 });
 
