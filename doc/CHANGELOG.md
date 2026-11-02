@@ -2,6 +2,20 @@
 
 ---
 
+## [25.19.0] — 2026-11-02
+
+### Task 038 — Builder redesign: top bar, rail, floating library, inspector, icons (Minor)
+
+- **Top bar** (56px, white): back, logo, project name; centred **Design | Preview** switch; screen sizes as one pill group; Export and Tools (one **More** menu below 1280px); **Save** is the single filled button. Nothing clips at 1024px any more.
+- **Floating canvas toolbar** at the bottom of the canvas: AI, Add, zoom out / % / in, fit. It replaces the zoom controls of the top bar.
+- **Add tab**: search, then categories as rows (icon, name, count) in three groups; the thumbnails of a category float over the canvas (the canvas never changes size) and keep click-to-insert and drag-to-drop.
+- **Inspector**: collapsible groups with a +/− sign; properties with a few choices (display, direction, wrap, align, justify, position, text align, …) are segmented pills; other values keep their text box. Right panel 304px.
+- **Everything else**: rounded rail with readable labels, one header style for the left panels, rounded page rows, light footer bar, softer stage and 12px page card, popups on one shadow, 15px titles in the shadow / gradient / transform / filter / transition / grid editors.
+- **Icons**: Phosphor (`@phosphor-icons/react`, MIT) through `builder/icons.tsx`; the symbols that were typed into translated strings are real icons now.
+- Specs updated for the new controls (top bar, right panel, demo parity, language); tokens added to `lib/uiTheme.ts` (`primary`, `shadowSoft`, `shadowPop`, `UI_SHAPE`).
+
+---
+
 ## [25.18.0] — 2026-11-02
 
 ### Task 040 — AI chat history in the database, with restore points (Minor)
