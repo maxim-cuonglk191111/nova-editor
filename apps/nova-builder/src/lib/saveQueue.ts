@@ -126,6 +126,7 @@ export const startSaveQueue = (
     }
   };
 
+  flushNow = flush;
   const interval = setInterval(() => void flush(), FLUSH_INTERVAL);
   signal.addEventListener("abort", () => clearInterval(interval));
   return { flush };
@@ -143,6 +144,14 @@ export const discardQueuedPatches = () => {
 let fullSaveInFlight = false;
 let patchInFlight: Promise<void> = Promise.resolve();
 let dropPending = () => {};
+let flushNow: () => Promise<void> = async () => {};
+
+/** Sends the queued edits now and waits until they have landed (a snapshot reads the saved copy). */
+export async function flushPendingSave(): Promise<void> {
+  await patchInFlight;
+  await flushNow();
+  await patchInFlight;
+}
 
 export async function withFullSaveLock<T>(save: () => Promise<T>): Promise<T> {
   fullSaveInFlight = true;

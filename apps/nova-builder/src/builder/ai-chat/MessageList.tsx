@@ -12,6 +12,7 @@ type Props = {
   messages: ChatMessage[];
   pending: Pending | null;
   onApply: (m: AssistantMessage) => void;
+  onRestore: (m: AssistantMessage) => void;
   onDiscard: (m: AssistantMessage) => void;
   onHighlight: (ids: string[] | null) => void;
   onRetry: () => void;
@@ -19,7 +20,7 @@ type Props = {
 
 const time = (at: number) => new Date(at).toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit" });
 
-export function MessageList({ messages, pending, onApply, onDiscard, onHighlight, onRetry }: Props) {
+export function MessageList({ messages, pending, onApply, onRestore, onDiscard, onHighlight, onRetry }: Props) {
   const L = useI18n().t.tools.aiChat;
   const A = useI18n().t.tools.ai;
   const end = useRef<HTMLDivElement>(null);
@@ -70,7 +71,7 @@ export function MessageList({ messages, pending, onApply, onDiscard, onHighlight
             ) : (
               <>
                 {m.text && <div style={{ color: C.text, fontSize: 13, lineHeight: 1.55, whiteSpace: "pre-wrap", overflowWrap: "anywhere", fontFamily: C.font }}>{m.text}</div>}
-                {m.kind === "proposal" && <ProposalCard message={m} onApply={onApply} onDiscard={onDiscard} onHighlight={onHighlight} busy={pending !== null} />}
+                {m.kind === "proposal" && <ProposalCard message={m} onApply={onApply} onDiscard={onDiscard} onRestore={onRestore} onHighlight={onHighlight} busy={pending !== null} />}
               </>
             )}
           </div>

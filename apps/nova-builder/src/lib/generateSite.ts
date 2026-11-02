@@ -19,6 +19,8 @@ type ComposeArgs = {
   pages: SitePage[];
   nameOf: (key: SitePageKey) => string;
   projectId: string | null;
+  /** The caller keeps its own history, so the server does not log these requests as a conversation. */
+  skipLog?: boolean;
   /** Called before each page is requested. `index` is 0-based. */
   onProgress?: (index: number, name: string) => void;
 };
@@ -60,7 +62,7 @@ export function pointNavLinksAtPages(composition: WSCompositionResult, pages: Si
 }
 
 /** Requests every page in order; stops at the first failure and returns what was built. */
-export async function composeSite({ prompt, pages, nameOf, projectId, onProgress }: ComposeArgs): Promise<SiteOutcome> {
+export async function composeSite({ prompt, pages, nameOf, projectId, skipLog, onProgress }: ComposeArgs): Promise<SiteOutcome> {
   const results: SiteResult[] = [];
   for (let i = 0; i < pages.length; i++) {
     const page = pages[i]!;
@@ -70,7 +72,7 @@ export async function composeSite({ prompt, pages, nameOf, projectId, onProgress
       const res = await fetch("/api/ai", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userMessage: buildPageMessage(prompt, page, pages, nameOf), projectId }),
+        body: JSON.stringify({ userMessage: buildPageMessage(prompt, page, pages, nameOf), projectId, ...(skipLog ? { skipLog: true } : {}) }),
       });
       const json = (await res.json().catch(() => ({}))) as { composition?: WSCompositionResult; error?: string };
       if (!res.ok || !json.composition) {
