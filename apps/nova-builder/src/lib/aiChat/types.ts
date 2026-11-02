@@ -3,6 +3,7 @@
 import type { EditOp } from "@studio/ai";
 import type { WSCompositionResult } from "@studio/ai";
 import type { SiteResult } from "@/lib/generateSite";
+import type { AppliedCheck } from "./appliedChecks";
 
 export type ChatScope = "element" | "section" | "page";
 
@@ -29,6 +30,8 @@ export type ProposalLine = {
   /** Instance ids this line touches: hovering the line outlines them on the canvas. */
   ids: string[];
   detail?: string;
+  /** The whole text when `label` or `detail` is shortened: shown on hover. */
+  full?: string;
 };
 
 /** What Apply does. Dropped once the proposal is applied or discarded (it can be large). */
@@ -58,6 +61,8 @@ export type AssistantMessage = {
   needsAccount?: boolean;
   /** Set when the proposal was applied: how many operations went through. */
   result?: { applied: number; skipped: number };
+  /** What Apply changed, in a few small checks: the card compares them with the document to notice an undo. */
+  checks?: AppliedCheck[];
 };
 
 export type ChatMessage = UserMessage | AssistantMessage;

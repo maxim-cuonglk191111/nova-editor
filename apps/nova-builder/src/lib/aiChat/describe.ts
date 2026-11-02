@@ -40,8 +40,8 @@ export function describeOps(ops: EditOp[], instances: Map<string, Instance>): Pr
       case "setStyle": merge("style", op.id, Object.keys(op.styles).join(", ")); break;
       case "setProp": merge("prop", op.id, op.name); break;
       case "remove": lines.push({ kind: "remove", count: 1, label: labelOf(instances, op.id), ids: [op.id] }); break;
-      case "insertSection": lines.push({ kind: "insert", count: 1, label: shorten(op.brief), ids: op.after ? [op.after] : [] }); break;
-      case "replaceSection": lines.push({ kind: "replace", count: 1, label: labelOf(instances, op.id), ids: [op.id], detail: shorten(op.brief) }); break;
+      case "insertSection": lines.push({ kind: "insert", count: 1, label: shorten(op.brief), ids: op.after ? [op.after] : [], full: op.brief }); break;
+      case "replaceSection": lines.push({ kind: "replace", count: 1, label: labelOf(instances, op.id), ids: [op.id], detail: shorten(op.brief), full: op.brief }); break;
     }
   }
   return lines;

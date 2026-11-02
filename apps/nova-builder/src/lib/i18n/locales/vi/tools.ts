@@ -84,6 +84,7 @@ export const viTools: I18nToolsDictionary = {
     apply: "Áp dụng",
     discard: "Bỏ",
     appliedUndo: "Đã áp dụng. Nhấn Ctrl+Z để hoàn tác.",
+    undone: "Đã hoàn tác. Nhấn Ctrl+Shift+Z để làm lại.",
     applyPartial: "Đã áp dụng {applied}, bỏ qua {skipped} thay đổi vì phần tử không còn. Nhấn Ctrl+Z để hoàn tác.",
     discarded: "Đã bỏ. Không có gì thay đổi.",
     nothingApplied: "Không áp dụng được: trang đã thay đổi từ lúc đó.",

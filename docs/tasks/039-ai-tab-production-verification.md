@@ -25,7 +25,7 @@
 | Seed module over the 400-line SOLID threshold (from the VyVy / Ovemo seeds) | split into `seed/builders.ts` and `seed/sites/*`, output verified identical |
 
 ## Found, not fixed (filed in task 041)
-- After Apply then Ctrl+Z the card still says "Applied".
+- ~~After Apply then Ctrl+Z the card still says "Applied".~~ Fixed in task 041 (item 1).
 - Whole-page generation: one run took 132 s and ended in `502 temporarily unavailable` while the free quota was busy; a run a minute later succeeded. Retry on the error card works.
 - The proposal line for a new section shows the model's brief cut at 80 characters.
 - At 1024 px the top bar overflows (the ✦ button is cut off); the AI tab itself stays usable. Part of task 038.

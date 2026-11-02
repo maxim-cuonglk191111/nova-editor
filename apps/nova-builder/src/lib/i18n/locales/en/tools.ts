@@ -84,6 +84,7 @@ export const enTools: I18nToolsDictionary = {
     apply: "Apply",
     discard: "Discard",
     appliedUndo: "Applied. Press Ctrl+Z to undo.",
+    undone: "Undone. Press Ctrl+Shift+Z to redo.",
     applyPartial: "Applied {applied}, skipped {skipped} that no longer exist. Press Ctrl+Z to undo.",
     discarded: "Discarded. Nothing changed.",
     nothingApplied: "Nothing could be applied: the page has changed since.",

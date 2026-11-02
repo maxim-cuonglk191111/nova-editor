@@ -1,7 +1,11 @@
 "use client";
 // The change list of an AI answer, with Apply / Discard. Hovering a line outlines the elements it
 // touches on the canvas. After the decision the card says what happened (and how to undo).
+import { useStore } from "@nanostores/react";
 import { UI_VARS as C } from "@/lib/uiTheme";
+import { $instances, $props, $styles, $styleSourceSelections } from "@/lib/data-stores";
+import { compositionBreakpoints } from "@/lib/applyWSComposition";
+import { stillApplied } from "@/lib/aiChat/appliedChecks";
 import { useI18n, fmt } from "@/lib/i18n";
 import type { AssistantMessage, ProposalLine } from "@/lib/aiChat/types";
 
@@ -47,7 +51,13 @@ export function ProposalCard({ message, onApply, onDiscard, onHighlight, busy }:
   const L = useI18n().t.tools.aiChat;
   const lineText = useLineText();
   const proposal = message.proposal;
+  // The document changes under the card (Ctrl+Z, Ctrl+Shift+Z): read it again to say what is true now.
+  const instances = useStore($instances);
+  const props = useStore($props);
+  const styles = useStore($styles);
+  const selections = useStore($styleSourceSelections);
   if (!proposal) return null;
+  const undone = message.status === "applied" && !stillApplied(message.checks, { instances, props, styles, styleSourceSelections: selections }, compositionBreakpoints().baseBpId);
   const pending = message.status === "pending";
   const hoverable = pending && proposal.lines.some((l) => l.ids.length > 0);
 
@@ -62,6 +72,7 @@ export function ProposalCard({ message, onApply, onDiscard, onHighlight, busy }:
             key={`${line.kind}-${i}`}
             onMouseEnter={() => hoverable && onHighlight(line.ids)}
             onMouseLeave={() => hoverable && onHighlight(null)}
+            title={line.full}
             style={{ display: "flex", gap: 8, padding: "6px 10px", fontSize: 13, lineHeight: 1.45, color: C.text, fontFamily: C.font, cursor: hoverable && line.ids.length ? "default" : undefined }}
           >
             <span aria-hidden="true" style={{ color: C.accentText, width: 14, textAlign: "center", flexShrink: 0 }}>{ICON[line.kind]}</span>
@@ -81,8 +92,8 @@ export function ProposalCard({ message, onApply, onDiscard, onHighlight, busy }:
           </button>
         </div>
       ) : (
-        <div role="status" style={{ padding: "7px 10px", borderTop: `1px solid ${C.border}`, fontSize: 12, fontFamily: C.font, color: message.status === "applied" ? "#6ee7b7" : C.textMuted }}>
-          {message.status === "applied"
+        <div role="status" data-undone={undone ? "true" : undefined} style={{ padding: "7px 10px", borderTop: `1px solid ${C.border}`, fontSize: 12, fontFamily: C.font, color: message.status === "applied" && !undone ? "#6ee7b7" : C.textMuted }}>
+          {undone ? L.undone : message.status === "applied"
             ? message.result && message.result.skipped > 0
               ? fmt(L.applyPartial, message.result)
               : `✓ ${L.appliedUndo}`

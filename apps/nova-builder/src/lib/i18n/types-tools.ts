@@ -76,6 +76,8 @@ export interface I18nAIChatDictionary {
   apply: string;
   discard: string;
   appliedUndo: string;
+  /** After Ctrl+Z: says the change was undone and how to redo it. */
+  undone: string;
   applyPartial: string;
   discarded: string;
   nothingApplied: string;

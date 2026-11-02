@@ -86,7 +86,12 @@ test("edit text and style of a section in one proposal: Apply, then Ctrl+Z", asy
   await expect(canvas.getByText(HEADING).first()).toBeVisible({ timeout: 15_000 });
   const back = await canvas.getByText(HEADING).first().evaluate((el) => getComputedStyle(el).color);
   expect(back).not.toBe("rgb(154, 52, 18)");
+  // the card notices the undo, and the redo
+  await expect(page.getByTestId("ai-proposal")).toContainText("Undone. Press Ctrl+Shift+Z to redo.");
   await page.screenshot({ path: `${SHOTS}/4-undone.png` });
+  await page.keyboard.press("Control+Shift+z");
+  await expect(canvas.getByText("Your website in minutes.").first()).toBeVisible({ timeout: 15_000 });
+  await expect(page.getByTestId("ai-proposal")).toContainText("Applied. Press Ctrl+Z to undo.");
 });
 
 test("remove a section: gone from the canvas, back with Ctrl+Z", async ({ page }) => {
@@ -118,6 +123,7 @@ test("replace a section in place, then insert a new one: one h1 stays", async ({
   await answer(page, [{ op: "insertSection", after: HERO_ID, brief: "Simple pricing", composition: section("ins", "Simple pricing", "Free and Pro.", "h1") }], "Added a pricing section.");
   await ask(page, "Add a pricing section after the hero");
   await expect(page.locator('[data-testid="ai-proposal"][data-status="pending"]').last()).toContainText("Add a section: Simple pricing");
+  await expect(page.locator('[data-testid="ai-proposal"][data-status="pending"]').last().locator("li")).toHaveAttribute("title", "Simple pricing"); // the full brief on hover
   await apply(page);
   await expect(canvas.getByText("Simple pricing").first()).toBeVisible({ timeout: 15_000 });
   // it sits between the hero and the replaced section, and the page still has one h1

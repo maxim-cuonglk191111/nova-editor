@@ -16,6 +16,7 @@ import { uid } from "@/lib/uid";
 import { buildEditContext, parentMap } from "./context";
 import { applyEditOps } from "./applyOps";
 import { describeOps } from "./describe";
+import { checksFor, checksForComposition } from "./appliedChecks";
 import { chatStore } from "./store";
 import type { AssistantMessage, ChatMessage, ChatScope, ChatThread, ProposalLine } from "./types";
 
@@ -276,11 +277,12 @@ export function useAIChat() {
     highlight(null);
     if (payload.type === "ops") {
       const result = applyEditOps(payload.ops);
-      chatStore.patch(th.id, message.id, { status: result.applied > 0 ? "applied" : "discarded", result, proposal: { lines: message.proposal!.lines } });
+      chatStore.patch(th.id, message.id, { status: result.applied > 0 ? "applied" : "discarded", result, checks: checksFor(payload.ops), proposal: { lines: message.proposal!.lines } });
     } else {
       if (payload.type === "page") applyWSComposition(payload.composition);
       else applySite(payload.results as SiteResult[]);
-      chatStore.patch(th.id, message.id, { status: "applied", result: { applied: 1, skipped: 0 }, proposal: { lines: message.proposal!.lines } });
+      const checks = payload.type === "page" ? checksForComposition(payload.composition) : (payload.results as SiteResult[]).flatMap((r) => checksForComposition(r.composition)).slice(0, 1);
+      chatStore.patch(th.id, message.id, { status: "applied", result: { applied: 1, skipped: 0 }, checks, proposal: { lines: message.proposal!.lines } });
     }
   }, [highlight]);
 
