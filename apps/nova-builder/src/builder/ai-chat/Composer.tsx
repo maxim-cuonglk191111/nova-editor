@@ -1,6 +1,7 @@
 "use client";
 // The input area of the AI tab: context chips, the multi-page notice, the text box with Send /
 // Stop, the model picker and "start over with a new page" (asks first).
+import { Icon } from "@/builder/icons";
 import { useState, type RefObject } from "react";
 import { UI_VARS as C } from "@/lib/uiTheme";
 import { useI18n } from "@/lib/i18n";
@@ -42,7 +43,7 @@ export function Composer({ chat, inputRef }: Props) {
         <div style={{ display: "flex" }}>
           <span style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "3px 4px 3px 9px", borderRadius: 999, border: `1px solid ${C.accentBorder}`, background: C.accentBg, color: C.accentText, fontSize: 12, fontFamily: C.font }}>
             {L.startOver}
-            <button type="button" onClick={() => setStartOver("idle")} aria-label={L.startOverNo} style={{ border: "none", background: "transparent", color: "inherit", cursor: "pointer", width: 18, height: 18, fontSize: 14, padding: 0 }}>×</button>
+            <button type="button" onClick={() => setStartOver("idle")} aria-label={L.startOverNo} style={{ border: "none", background: "transparent", color: "inherit", cursor: "pointer", width: 18, height: 18, padding: 0, display: "inline-flex", alignItems: "center", justifyContent: "center" }}><Icon name="close" size={12} weight="bold" /></button>
           </span>
         </div>
       )}

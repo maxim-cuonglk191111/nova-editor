@@ -7,6 +7,7 @@ import { UI_VARS as C, UI_SHAPE as S } from "@/lib/uiTheme";
 import { useI18n } from "@/lib/i18n";
 import { requestSidebarTab } from "./left-sidebar/sidebarTab";
 import { useToggleAIPanel } from "./useToggleAIPanel";
+import { Icon } from "./icons";
 
 const MIN_ZOOM = 0.1;
 const MAX_ZOOM = 3;
@@ -22,15 +23,15 @@ export function CanvasToolbar({ isDemo }: { isDemo?: boolean }) {
 
   return (
     <div role="toolbar" aria-label={t.chrome.canvasToolbar} style={{ gridArea: "main", alignSelf: "end", justifySelf: "center", marginBottom: 20, zIndex: 20, display: "flex", alignItems: "center", gap: 2, padding: 6, background: C.card, border: `1px solid ${C.border}`, borderRadius: S.radiusLg, boxShadow: C.shadowPop }}>
-      <button type="button" onClick={ai.toggle} title={t.chrome.generateWithAI} aria-label={t.chrome.generateWithAI} aria-pressed={ai.open} style={{ ...btn, background: ai.open ? C.accentBg : "transparent", color: C.accentText }}>✦</button>
-      <button type="button" onClick={() => requestSidebarTab("components")} title={t.chrome.canvasAdd} aria-label={t.chrome.canvasAdd} style={btn}>＋</button>
+      <button type="button" onClick={ai.toggle} title={t.chrome.canvasAi} aria-label={t.chrome.canvasAi} aria-pressed={ai.open} style={{ ...btn, background: ai.open ? C.accentBg : "transparent", color: C.accentText }}><Icon name="ai" size={22} weight="fill" /></button>
+      <button type="button" onClick={() => requestSidebarTab("components")} title={t.chrome.canvasAdd} aria-label={t.chrome.canvasAdd} style={btn}><Icon name="plus" size={22} weight="bold" /></button>
       {divider}
-      <button type="button" onClick={() => stepZoom(-0.1)} title={t.chrome.zoomOut} aria-label={t.chrome.zoomOut} style={btn}>−</button>
+      <button type="button" onClick={() => stepZoom(-0.1)} title={t.chrome.zoomOut} aria-label={t.chrome.zoomOut} style={btn}><Icon name="zoomOut" size={22} /></button>
       <button type="button" onClick={() => $canvasZoom.set(1)} title={t.chrome.zoomReset} style={{ ...btn, width: "auto", minWidth: 56, padding: "0 6px", fontSize: 14, fontWeight: zoom !== 1 ? 700 : 500, color: zoom !== 1 ? C.accentText : C.textMuted }}>
         {Math.round(zoom * 100)}%
       </button>
-      <button type="button" onClick={() => stepZoom(0.1)} title={t.chrome.zoomIn} aria-label={t.chrome.zoomIn} style={btn}>+</button>
-      <button type="button" onClick={() => $fitToWidthTrigger.set($fitToWidthTrigger.get() + 1)} title={t.chrome.zoomFit} aria-label={t.chrome.zoomFit} style={{ ...btn, fontSize: 16 }}>⊡</button>
+      <button type="button" onClick={() => stepZoom(0.1)} title={t.chrome.zoomIn} aria-label={t.chrome.zoomIn} style={btn}><Icon name="zoomIn" size={22} /></button>
+      <button type="button" onClick={() => $fitToWidthTrigger.set($fitToWidthTrigger.get() + 1)} title={t.chrome.zoomFit} aria-label={t.chrome.zoomFit} style={btn}><Icon name="fit" size={22} /></button>
     </div>
   );
 }

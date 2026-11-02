@@ -84,7 +84,7 @@ test("top bar", async ({ page, context }) => {
 
   let novaFile = "";
   await step("export: HTML and .nova", async () => {
-    await btn("Export ▾").click();
+    await btn("Export").click();
     await shot(page, "t07-export-menu");
     const html = await (await page.request.get(`/api/export/${id}`)).text();
     expect.soft(html, "HTML export has the hero heading").toContain("Experience the Soul of Da Lat");
@@ -106,7 +106,7 @@ test("top bar", async ({ page, context }) => {
     await page.keyboard.press("Enter");
     await expect.soft(h1).toHaveText("Changed before import");
     await waitSaved(page);
-    await btn("Export ▾").click();
+    await btn("Export").click();
     const chooser = page.waitForEvent("filechooser");
     await page.getByText("Import project (.nova)").click();
     const confirm = page.getByRole("button", { name: /^Import$/ });
@@ -121,19 +121,19 @@ test("top bar", async ({ page, context }) => {
   await step("tools menu panels", async () => {
     const items = [["AI Content Fill", "t10-ai-fill"], ["Accessibility", "t11-a11y"], ["⏱ History", "t13-history"], ["Grid Guides", "t14-grid"]] as const;
     for (const hidden of ["Performance", "CSS Preview"]) {
-      await btn("Tools ▾").click();
+      await btn("Tools").click();
       await expect.soft(page.getByText(hidden, { exact: true }), `${hidden} hidden (Tier C)`).toHaveCount(0);
-      await btn("Tools ▾").click();
+      await btn("Tools").click();
     }
     for (const [item, name] of items) {
-      await btn("Tools ▾").click();
+      await btn("Tools").click();
       if (item === "AI Content Fill") await shot(page, "t10a-tools-menu");
       if (item === "Accessibility") await expect.soft(page.getByRole("dialog", { name: /AI Content/i }), "previous panel closed").toHaveCount(0);
       await page.getByText(item, { exact: true }).first().click();
       await page.waitForTimeout(800);
       await shot(page, name);
       // Toggle it off again from the same menu.
-      await btn("Tools ▾").click();
+      await btn("Tools").click();
       await page.getByText(item, { exact: true }).first().click();
       await page.waitForTimeout(300);
     }
@@ -183,7 +183,7 @@ test("top bar", async ({ page, context }) => {
   await step("AI tab: start over with a new page; undo brings the old one back", async () => {
     // The ✦ button opens the AI tab of the left sidebar. The page has content, so a whole new page
     // is asked for with "Start over" (which asks first); a plain message would be an edit.
-    await btn("✦ Generate").click();
+    await btn("Generate").click();
     await shot(page, "t22-ai-panel");
     await page.getByTestId("ai-start-over").click();
     await page.getByRole("button", { name: "Yes, start over" }).click();

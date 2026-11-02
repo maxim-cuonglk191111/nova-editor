@@ -17,6 +17,7 @@ import { LogoIcon } from "@/components/LogoIcon";
 import { useI18n, fmt } from "@/lib/i18n";
 import { UI_VARS as C, UI_SHAPE as S } from "@/lib/uiTheme";
 import { ModeSwitch } from "./topbar/ModeSwitch";
+import { Icon } from "./icons";
 
 
 export function Topbar({ isDemo }: { isDemo?: boolean }) {
@@ -69,7 +70,7 @@ export function Topbar({ isDemo }: { isDemo?: boolean }) {
     <div style={{ gridArea: "topbar", height: S.topbar, background: C.card, borderBottom: `1px solid ${C.border}`, display: "flex", alignItems: "center", padding: "0 14px", gap: 10, fontFamily: C.font, flexShrink: 0, zIndex: 150 /* above the floating tool panels (100) so its menus open on top */ }}>
       {/* Left: back + site name */}
       <div style={{ display: "flex", alignItems: "center", gap: 6, minWidth: 0, flexShrink: 0 }}>
-        <button onClick={() => { if (!hasUnsavedWork() || confirm(t.chrome.leaveUnsaved)) router.push(isDemo ? "/" : "/projects"); }} title={isDemo ? t.builder.backToHome : t.builder.backToMySites} style={{ background: "none", border: "none", cursor: "pointer", color: C.textMuted, fontSize: 18, width: 36, height: 36, lineHeight: 1, borderRadius: S.radiusSm }}>←</button>
+        <button onClick={() => { if (!hasUnsavedWork() || confirm(t.chrome.leaveUnsaved)) router.push(isDemo ? "/" : "/projects"); }} title={isDemo ? t.builder.backToHome : t.builder.backToMySites} style={{ background: "none", border: "none", cursor: "pointer", color: C.textMuted, width: 36, height: 36, borderRadius: S.radiusSm, display: "inline-flex", alignItems: "center", justifyContent: "center" }}><Icon name="back" size={20} /></button>
         <button
           type="button"
           onClick={() => { if (!hasUnsavedWork() || confirm(t.chrome.leaveUnsaved)) router.push(isDemo ? "/" : "/projects"); }}
@@ -118,7 +119,7 @@ export function Topbar({ isDemo }: { isDemo?: boolean }) {
             whiteSpace: "nowrap",
           }}
         >
-          <span aria-hidden="true">⧉</span><span className="nb-hide-mid">{` ${t.commands.duplicate}`}</span>
+          <Icon name="copy" size={18} /><span className="nb-hide-mid">{` ${t.commands.duplicate}`}</span>
         </button>
         <button
           onClick={handleDelete}
@@ -140,7 +141,7 @@ export function Topbar({ isDemo }: { isDemo?: boolean }) {
             whiteSpace: "nowrap",
           }}
         >
-          <span aria-hidden="true">🗑</span><span className="nb-hide-mid">{` ${t.commands.delete}`}</span>
+          <Icon name="trash" size={18} /><span className="nb-hide-mid">{` ${t.commands.delete}`}</span>
         </button>
       </div>
 
@@ -152,7 +153,7 @@ export function Topbar({ isDemo }: { isDemo?: boolean }) {
         {sortedBreakpoints.map((bp) => (
           <BreakpointPill key={bp.id} bp={bp} active={bp.id === activeBreakpoint?.id} onClick={() => $selectedBreakpointId.set(bp.id)} />
         ))}
-        <button onClick={() => setBpManagerOpen((v) => !v)} title={t.builder.manageBreakpoints} style={{ background: bpManagerOpen ? C.accentBg : "none", border: "none", cursor: "pointer", color: bpManagerOpen ? C.accentText : C.textMuted, fontSize: 15, lineHeight: 1, width: S.control - 4, height: S.control - 4, borderRadius: S.radiusSm + 2, fontFamily: C.font, transition: "all 0.1s" }}>⚙</button>
+        <button onClick={() => setBpManagerOpen((v) => !v)} title={t.builder.manageBreakpoints} style={{ background: bpManagerOpen ? C.accentBg : "none", border: "none", cursor: "pointer", color: bpManagerOpen ? C.accentText : C.textMuted, display: "inline-flex", alignItems: "center", justifyContent: "center", width: S.control - 4, height: S.control - 4, borderRadius: S.radiusSm + 2, fontFamily: C.font, transition: "all 0.1s" }}><Icon name="settings" size={18} /></button>
         {bpManagerOpen && <BreakpointManager onClose={() => setBpManagerOpen(false)} />}
       </div>
 

@@ -1,4 +1,5 @@
 "use client";
+import { Icon } from "@/builder/icons";
 import { useEffect, useRef, useState } from "react";
 import { BUILT_IN_TEMPLATES, applyTemplate, type Template } from "@/lib/templates";
 import { buildBundle, insertBundle, type NovaBundle } from "@/lib/protocol/bundle";
@@ -82,8 +83,8 @@ const sectionLabel: React.CSSProperties = {
 };
 const btnStyle: React.CSSProperties = {
   flex: 1, padding: "7px 0", borderRadius: 6, border: `1px solid ${C.border}`,
-  background: "transparent", color: C.text, fontSize: 12, fontWeight: 600,
-  cursor: "pointer", fontFamily: C.font,
+  background: "transparent", color: C.text, fontSize: 13, fontWeight: 600,
+  cursor: "pointer", fontFamily: C.font, display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 6,
 };
 
 export function MarketplacePanel() {
@@ -148,8 +149,8 @@ export function MarketplacePanel() {
         {SHOW_COMMUNITY && (<>
         {/* Import / Export bundle */}
         <div style={{ display: "flex", gap: 6, marginBottom: 4 }}>
-          <button onClick={handleExport} style={btnStyle}>⬇ {t.builder.mktExport}</button>
-          <button onClick={() => fileInputRef.current?.click()} style={btnStyle}>⬆ {t.builder.mktImport}</button>
+          <button onClick={handleExport} style={btnStyle}><Icon name="download" size={16} /> {t.builder.mktExport}</button>
+          <button onClick={() => fileInputRef.current?.click()} style={btnStyle}><Icon name="upload" size={16} /> {t.builder.mktImport}</button>
           <input
             ref={fileInputRef}
             type="file"
@@ -162,7 +163,7 @@ export function MarketplacePanel() {
         {/* Publish current page */}
         {!publishOpen ? (
           <button onClick={() => setPublishOpen(true)} style={{ ...btnStyle, width: "100%", marginBottom: 4 }}>
-            ◈ {t.builder.mktPublishPage}
+            <Icon name="templates" size={16} /> {t.builder.mktPublishPage}
           </button>
         ) : (
           <div style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 10, padding: 12, marginBottom: 4 }}>

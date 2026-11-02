@@ -34,6 +34,13 @@ for (const size of [{ w: 1440, h: 900 }, { w: 1024, h: 768 }]) {
     await b.click(); await page.waitForTimeout(500);
     await shot(`left-${i++}-${name.toLowerCase().replace(/[^a-z0-9]+/g, "-").slice(0, 20)}`);
   }
+  // the Add tab with its first category open (the thumbnails float over the canvas)
+  if (rail[1]) {
+    await rail[1].b.click(); await page.waitForTimeout(300);
+    await page.locator("nav button").first().click(); await page.waitForTimeout(600);
+    await shot("add-flyout");
+    await page.keyboard.press("Escape");
+  }
   await canvas.locator("h1").first().click();
   await page.waitForTimeout(500);
   await shot("selected-heading");

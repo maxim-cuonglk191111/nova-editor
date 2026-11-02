@@ -1,4 +1,5 @@
 "use client";
+import { Icon } from "@/builder/icons";
 import { useRef, useEffect } from "react";
 import { useStore } from "@nanostores/react";
 import { $breakpoints, $styles, $styleSourceSelections } from "@/lib/data-stores";
@@ -139,7 +140,7 @@ export function BreakpointManager({ onClose }: { onClose: () => void }) {
         background: C.bg,
         border: `1px solid ${C.border}`,
         borderRadius: 6,
-        boxShadow: "0 8px 32px rgba(0,0,0,0.5)",
+        boxShadow: "var(--ui-shadow-pop, 0 8px 32px rgba(0,0,0,0.5))",
         padding: "10px 12px",
         minWidth: 440,
         fontFamily: C.font,
@@ -198,7 +199,7 @@ export function BreakpointManager({ onClose }: { onClose: () => void }) {
                 lineHeight: 1,
                 padding: "0 2px",
               }}
-            >×</button>
+            ><Icon name="close" size={14} weight="bold" /></button>
           </div>
           {/* Two-level hint: technical CSS media condition */}
           <div style={{ paddingLeft: 2, marginTop: 2 }}>

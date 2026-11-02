@@ -1,5 +1,6 @@
 "use client";
 
+import { Icon } from "@/builder/icons";
 import { useEffect, useState, useRef } from "react";
 import { UI_VARS as C } from "@/lib/uiTheme";
 import { useI18n, fmt } from "@/lib/i18n";
@@ -143,7 +144,7 @@ export function SaveProjectDialog({
     display: "flex",
     flexDirection: "column",
     gap: 16,
-    boxShadow: "0 24px 48px rgba(0,0,0,0.5)",
+    boxShadow: "var(--ui-shadow-pop, 0 24px 48px rgba(0,0,0,0.5))",
     color: C.text,
     fontFamily: C.font,
   };
@@ -224,7 +225,7 @@ export function SaveProjectDialog({
               onClick={onClose}
               style={{ background: "transparent", border: "none", color: C.textMuted, fontSize: 18, cursor: "pointer", lineHeight: 1 }}
             >
-              ×
+              <Icon name="close" size={18} />
             </button>
           )}
         </div>

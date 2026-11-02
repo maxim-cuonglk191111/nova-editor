@@ -1,4 +1,5 @@
 "use client";
+import { Icon } from "@/builder/icons";
 import { useStore } from "@nanostores/react";
 import {
   BoxShadowPanel,
@@ -132,7 +133,7 @@ function TokenChipsRow({ instanceId }: { instanceId: string }) {
                   marginLeft: 1,
                 }}
               >
-                ×
+                <Icon name="close" size={12} weight="bold" />
               </button>
             </span>
           ))}

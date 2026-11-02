@@ -53,7 +53,6 @@ import { Topbar } from "@/builder/Topbar";
 import { LeftSidebar } from "@/builder/left-sidebar";
 import { RightPanel } from "@/builder/RightPanel";
 import { CanvasToolbar } from "@/builder/CanvasToolbar";
-import { $addFlyoutOpen } from "@/builder/left-sidebar/sidebarTab";
 import { Footer } from "@/builder/Footer";
 import { AIContentPanel } from "@/builder/AIContentPanel";
 import { A11yPanel } from "@/builder/A11yPanel";
@@ -281,18 +280,6 @@ function BuilderPage() {
     });
   }, [fitToWidth]);
 
-  // The Add tab's thumbnail column pushes the canvas: fit the page again once the layout has settled
-  useEffect(() => {
-    let first = true;
-    let timer: ReturnType<typeof setTimeout> | undefined;
-    const off = $addFlyoutOpen.subscribe(() => {
-      if (first) { first = false; return; }
-      clearTimeout(timer);
-      timer = setTimeout(fitToWidth, 80);
-    });
-    return () => { off(); clearTimeout(timer); };
-  }, [fitToWidth]);
-
   // Auto-fit on breakpoint change or initial project load
   useEffect(() => {
     if (loadState !== "ready") return;
@@ -406,7 +393,7 @@ function BuilderPage() {
         }}
         style={{
           gridArea: "main",
-          background: builderTheme === "dark" ? "#0b0f19" : "#e5e7eb",
+          background: builderTheme === "dark" ? "#0b0f19" : "var(--ui-surface)",
           display: "flex",
           alignItems: "flex-start",
           justifyContent: "safe center",
@@ -460,8 +447,8 @@ function BuilderPage() {
                 marginBottom: canvasZoom > 1
                   ? `calc((100vh - 112px) * ${canvasZoom - 1} + 32px)`
                   : "0px",
-                boxShadow: "0 10px 30px -5px rgba(0, 0, 0, 0.15), 0 4px 10px -2px rgba(0, 0, 0, 0.08)",
-                borderRadius: 6,
+                boxShadow: "var(--ui-shadow-pop)",
+                borderRadius: 12,
                 overflow: "hidden",
                 background: "#ffffff",
                 transition: "transform 0.12s ease, width 0.2s ease",

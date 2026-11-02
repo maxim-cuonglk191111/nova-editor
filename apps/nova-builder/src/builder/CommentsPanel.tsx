@@ -1,4 +1,5 @@
 ﻿"use client";
+import { Icon } from "@/builder/icons";
 import { useState, useEffect, useCallback } from "react";
 import { useStore } from "@nanostores/react";
 import { $projectMeta } from "@/lib/data-stores";
@@ -116,7 +117,7 @@ export function CommentsPanel({ projectId }: { projectId: string }) {
               <button onClick={() => resolve(c.id, !c.resolved)} style={{ marginLeft: "auto", fontSize: 9, color: c.resolved ? "#6ee7b7" : C.textMuted, background: "none", border: "none", cursor: "pointer", padding: 0 }}>
                 {c.resolved ? L.unresolve : L.resolve}
               </button>
-              <button onClick={() => remove(c.id)} style={{ fontSize: 9, color: "rgba(239,68,68,0.6)", background: "none", border: "none", cursor: "pointer", padding: 0 }}>×</button>
+              <button onClick={() => remove(c.id)} style={{ fontSize: 9, color: "rgba(239,68,68,0.6)", background: "none", border: "none", cursor: "pointer", padding: 0 }}><Icon name="close" size={14} weight="bold" /></button>
             </div>
           </div>
         ))}

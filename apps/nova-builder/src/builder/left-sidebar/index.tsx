@@ -11,7 +11,8 @@ import { CustomCSSPanel } from "./custom-css";
 import { MarketplacePanel } from "./marketplace";
 import { AIChatPanel } from "@/builder/ai-chat/AIChatPanel";
 import { SymbolsPanel } from "./symbols";
-import { $sidebarTabRequest, $addFlyoutOpen, FLYOUT_WIDTH } from "./sidebarTab";
+import { $sidebarTabRequest } from "./sidebarTab";
+import { Icon, type IconName } from "@/builder/icons";
 import { useStore } from "@nanostores/react";
 import { $projectMeta } from "@/lib/data-stores";
 import { $aiPanelOpen } from "@/lib/nano-states";
@@ -57,7 +58,7 @@ function loadAiWidth(): number {
   return isNaN(n) ? AI_DEFAULT_WIDTH : Math.min(AI_MAX_WIDTH, Math.max(AI_MIN_WIDTH, n));
 }
 
-type TabItem = { id: TabId; label: string; short: string; icon: string };
+type TabItem = { id: TabId; label: string; short: string; icon: IconName };
 
 const RAIL_WIDTH = 68;
 
@@ -87,7 +88,7 @@ function TabIcon({ tab, isActive, onClick }: { tab: TabItem; isActive: boolean; 
         padding: 0,
       }}
     >
-      <span style={{ fontSize: 18, lineHeight: 1 }}>{tab.icon}</span>
+      <Icon name={tab.icon} size={24} weight={isActive ? "fill" : "regular"} />
       <span style={{ fontSize: 11, fontFamily: C.font, lineHeight: 1, fontWeight: 600, maxWidth: "100%", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
         {tab.short}
       </span>
@@ -106,17 +107,17 @@ export function LeftSidebar() {
   const startWidth = useRef(0);
 
   const tabs: TabItem[] = [
-    { id: "ai", label: t.tools.aiChat.title, short: t.tools.rail.ai, icon: "✦" },
-    { id: "components", label: t.builder.components, short: t.tools.rail.components, icon: "⊞" },
+    { id: "ai", label: t.tools.aiChat.title, short: t.tools.rail.ai, icon: "ai" },
+    { id: "components", label: t.builder.components, short: t.tools.rail.components, icon: "add" },
     // { id: "symbols",    label: t.builder.symbols,    short: "Sym",    icon: "◆" },
-    { id: "pages", label: t.builder.pages, short: t.tools.rail.pages, icon: "☰" },
-    { id: "navigator", label: t.builder.navigator, short: t.tools.rail.navigator, icon: "◫" },
-    { id: "assets", label: t.builder.assets, short: t.tools.rail.assets, icon: "⊡" },
+    { id: "pages", label: t.builder.pages, short: t.tools.rail.pages, icon: "pages" },
+    { id: "navigator", label: t.builder.navigator, short: t.tools.rail.navigator, icon: "layers" },
+    { id: "assets", label: t.builder.assets, short: t.tools.rail.assets, icon: "assets" },
     // Tier C (task 007): CSS variables and custom CSS work, but are developer
     // tools a first-time user cannot use without help. Hidden; saved values still render.
     // { id: "styles", label: t.builder.cssVars, short: t.tools.rail.styles, icon: "§" },
     // { id: "css", label: t.builder.customCss, short: t.tools.rail.css, icon: "♯" },
-    { id: "marketplace", label: t.builder.templates, short: t.tools.rail.marketplace, icon: "◈" },
+    { id: "marketplace", label: t.builder.templates, short: t.tools.rail.marketplace, icon: "templates" },
     // { id: "comments",   label: t.builder.comments,   short: "Chat",   icon: "💬" },
     // { id: "activity",   label: t.builder.activity,   short: "Log",    icon: "◎" },
   ];
@@ -190,9 +191,7 @@ export function LeftSidebar() {
     document.addEventListener("mouseup", onUp);
   }, [panelWidth, minWidth, maxWidth, setPanelWidth]);
 
-  const addFlyout = useStore($addFlyoutOpen) && activeTab === "components";
-  const extraWidth = addFlyout ? FLYOUT_WIDTH : 0;
-  const totalWidth = activeTab !== null ? RAIL_WIDTH + panelWidth + extraWidth : RAIL_WIDTH;
+  const totalWidth = activeTab !== null ? RAIL_WIDTH + panelWidth : RAIL_WIDTH;
 
   return (
     <div
@@ -237,7 +236,7 @@ export function LeftSidebar() {
       {activeTab !== null && (
         <div
           style={{
-            width: panelWidth + extraWidth,
+            width: panelWidth,
             overflow: "hidden",
             display: "flex",
             flexDirection: "column",

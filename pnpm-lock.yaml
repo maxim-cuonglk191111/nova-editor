@@ -44,6 +44,9 @@ importers:
       '@nanostores/react':
         specifier: ^0.8.0
         version: 0.8.4(nanostores@0.11.4)(react@18.3.1)
+      '@phosphor-icons/react':
+        specifier: ^2.1.10
+        version: 2.1.10(react-dom@18.3.1)(react@18.3.1)
       '@studio/ai':
         specifier: workspace:*
         version: link:../../packages/ai
@@ -3948,6 +3951,17 @@ packages:
 
   /@panva/hkdf@1.2.1:
     resolution: {integrity: sha512-6oclG6Y3PiDFcoyk8srjLfVKyMfVCKJ27JwNPViuXziFpmdz+MZnZN/aKY0JGXgYuO/VghU0jcOAZgWXZ1Dmrw==}
+    dev: false
+
+  /@phosphor-icons/react@2.1.10(react-dom@18.3.1)(react@18.3.1):
+    resolution: {integrity: sha512-vt8Tvq8GLjheAZZYa+YG/pW7HDbov8El/MANW8pOAz4eGxrwhnbfrQZq0Cp4q8zBEu8NIhHdnr+r8thnfRSNYA==}
+    engines: {node: '>=10'}
+    peerDependencies:
+      react: '>= 16.8'
+      react-dom: '>= 16.8'
+    dependencies:
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
     dev: false
 
   /@pinojs/redact@0.4.0:

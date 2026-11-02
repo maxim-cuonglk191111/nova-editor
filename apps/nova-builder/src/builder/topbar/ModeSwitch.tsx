@@ -4,6 +4,7 @@
 import { UI_VARS as C, UI_SHAPE as S } from "@/lib/uiTheme";
 import { useI18n } from "@/lib/i18n";
 import { usePreview } from "./usePreview";
+import { Icon } from "../icons";
 
 export function ModeSwitch({ isDemo }: { isDemo?: boolean }) {
   const { t } = useI18n();
@@ -16,7 +17,7 @@ export function ModeSwitch({ isDemo }: { isDemo?: boolean }) {
       </button>
       <button type="button" aria-pressed="false" onClick={openPreview} title={t.chrome.previewOpensTab} style={{ ...segment, background: "transparent", color: C.textMuted }}>
         {t.chrome.preview}
-        <span aria-hidden="true" style={{ fontSize: 12 }}>↗</span>
+        <Icon name="external" size={14} weight="bold" />
       </button>
     </div>
   );

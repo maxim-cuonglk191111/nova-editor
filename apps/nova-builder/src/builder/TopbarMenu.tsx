@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useRef } from "react";
 import { UI_VARS as C, UI_SHAPE as S } from "@/lib/uiTheme";
+import { Icon } from "./icons";
 
 export type TopbarMenuItem = {
   label: string;
@@ -55,6 +56,7 @@ export function TopbarMenu({ trigger, className, items, open, onToggle, onClose 
         }}
       >
         {trigger}
+        <Icon name="caretDown" size={12} weight="bold" />
       </button>
 
       {open && (

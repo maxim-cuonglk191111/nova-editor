@@ -1,5 +1,6 @@
 "use client";
 // Full-screen preview of an image asset.
+import { Icon } from "@/builder/icons";
 import { useRef, useState, useEffect, useCallback } from "react";
 import type { NovaAsset } from "@/lib/r2";
 import { useI18n } from "@/lib/i18n";
@@ -125,7 +126,7 @@ export function AssetLightbox({ asset, onClose }: { asset: NovaAsset; onClose: (
           onMouseLeave={(e) => { (e.currentTarget).style.background = "rgba(255,255,255,0.08)"; }}
           title={t.assets.closeEsc}
         >
-          ✕
+          <Icon name="close" size={18} weight="bold" />
         </button>
       </div>
 

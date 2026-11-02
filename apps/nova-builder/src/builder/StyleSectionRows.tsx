@@ -9,6 +9,7 @@ import { writeStyle, removeStyle } from "@/lib/styleInspectorWrite";
 import { UI_VARS as C } from "@/lib/uiTheme";
 import { useI18n, fmt } from "@/lib/i18n";
 import { componentName } from "@/lib/i18n/componentName";
+import { Icon } from "@/builder/icons";
 import { UnitInput, COMMON_UNITS } from "./controls/UnitInput";
 import { ColorControl } from "./controls/ColorControl";
 import { CollapsibleSection } from "./controls/CollapsibleSection";
@@ -160,7 +161,7 @@ export function EditablePropRow({
                 title={t.inspector.resetValue ?? t.inspector.removeValue}
                 aria-label={`${t.inspector.resetValue ?? t.inspector.removeValue}: ${friendlyName}`}
                 style={{ border: "none", background: "none", color: C.textMuted, fontSize: 14, lineHeight: 1, cursor: "pointer", padding: "0 2px" }}
-              >↺</button>
+              ><Icon name="reset" size={14} /></button>
             )}
           </div>
           <StyleValueEditor decl={decl} onWrite={handleWrite} />
@@ -229,7 +230,7 @@ export function EditablePropRow({
             title={t.inspector.resetValue ?? t.inspector.removeValue}
             aria-label={`${t.inspector.resetValue ?? t.inspector.removeValue}: ${friendlyName}`}
             style={{ border: "none", background: "none", color: C.textMuted, fontSize: 13, lineHeight: 1, cursor: "pointer", padding: "0 2px" }}
-          >↺</button>
+          ><Icon name="reset" size={14} /></button>
         )}
       </td>
     </tr>

@@ -1,4 +1,5 @@
 ﻿"use client";
+import { Icon } from "@/builder/icons";
 import { useState } from "react";
 import { UI_VARS as C } from "@/lib/uiTheme";
 import { useI18n } from "@/lib/i18n";
@@ -42,10 +43,10 @@ export function FolderItem({ name, isExpanded, handlers, children }: FolderItemP
           onClick={onToggle}
           style={{ background: "none", border: "none", color: C.textMuted, cursor: "pointer", fontSize: 9, padding: "0 4px 0 8px", flexShrink: 0 }}
         >
-          {isExpanded ? "▼" : "▶"}
+          <Icon name={isExpanded ? "caretDown" : "caretRight"} size={12} weight="bold" />
         </button>
 
-        <span style={{ fontSize: 12, marginRight: 4, color: C.textMuted }}>⊞</span>
+        <span style={{ marginRight: 6, color: C.textMuted, display: "inline-flex" }}><Icon name="folder" size={16} weight="duotone" /></span>
 
         {isEditing ? (
           <input
@@ -71,7 +72,7 @@ export function FolderItem({ name, isExpanded, handlers, children }: FolderItemP
             title={L.deleteFolder}
             style={{ position: "absolute", right: 6, background: "rgba(30,41,59,0.95)", border: "none", color: C.danger, cursor: "pointer", fontSize: 13, lineHeight: 1, padding: "1px 4px", borderRadius: 3 }}
           >
-            ×
+            <Icon name="close" size={12} weight="bold" />
           </button>
         )}
       </div>

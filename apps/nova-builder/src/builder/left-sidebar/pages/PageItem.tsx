@@ -1,4 +1,5 @@
 "use client";
+import { Icon } from "@/builder/icons";
 import { useState, useRef } from "react";
 import type { PageSeo } from "./usePageCrud";
 import { UI_VARS as C } from "@/lib/uiTheme";
@@ -175,9 +176,9 @@ export function PageItem({ page, siblings, status, handlers }: PageItemProps) {
 
         {(hovered || isActive) && (
           <div style={{ display: "flex", alignItems: "center", gap: 1, paddingRight: 4, flexShrink: 0 }}>
-            <button aria-label={L.renamePage} title={L.renamePage} onClick={(e) => { e.stopPropagation(); setIsEditing(true); }} style={actionStyle}>✎</button>
+            <button aria-label={L.renamePage} title={L.renamePage} onClick={(e) => { e.stopPropagation(); setIsEditing(true); }} style={actionStyle}><Icon name="edit" size={16} /></button>
             {!isHome && (
-              <button aria-label={L.setHomePage} title={L.setHomePage} onClick={(e) => { e.stopPropagation(); onSetHome(); }} style={actionStyle}>⌂</button>
+              <button aria-label={L.setHomePage} title={L.setHomePage} onClick={(e) => { e.stopPropagation(); onSetHome(); }} style={actionStyle}><Icon name="home" size={16} /></button>
             )}
             {isActive && (
               <button aria-label={L.seoSettings} title={L.seoSettings} onClick={(e) => { e.stopPropagation(); setSeoOpen(o => !o); }} style={{ ...actionStyle, fontSize: 11, color: seoOpen ? C.accent : C.textMuted }}>
@@ -185,7 +186,7 @@ export function PageItem({ page, siblings, status, handlers }: PageItemProps) {
               </button>
             )}
             {canDelete && (
-              <button aria-label={L.deletePage} title={L.deletePage} onClick={(e) => { e.stopPropagation(); onDelete(); }} style={{ ...actionStyle, color: C.danger, fontSize: 15 }}>×</button>
+              <button aria-label={L.deletePage} title={L.deletePage} onClick={(e) => { e.stopPropagation(); onDelete(); }} style={{ ...actionStyle, color: C.danger }}><Icon name="trash" size={16} /></button>
             )}
           </div>
         )}

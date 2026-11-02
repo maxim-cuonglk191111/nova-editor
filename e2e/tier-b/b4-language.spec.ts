@@ -64,7 +64,7 @@ test("B4 language toggle EN <-> VI persists", async ({ page, context }) => {
   // Builder in VI
   await page.goto(`/builder/${projectId}`);
   await canvasReady(page);
-  await expect(page.getByText("Công cụ ▾")).toBeVisible();
+  await expect(page.getByText("Công cụ", { exact: true })).toBeVisible();
   await expect(page.getByText("Giao diện CSS").first()).toBeVisible();
   await page.screenshot({ path: `${OUT}/b4-04-builder-vi.png` });
 
@@ -75,6 +75,6 @@ test("B4 language toggle EN <-> VI persists", async ({ page, context }) => {
   expect(await stored(page)).toBe("en");
   await page.goto(`/builder/${projectId}`);
   await canvasReady(page);
-  await expect(page.getByText("Tools ▾")).toBeVisible();
+  await expect(page.getByText("Tools", { exact: true })).toBeVisible();
   await page.screenshot({ path: `${OUT}/b4-05-builder-en.png` });
 });

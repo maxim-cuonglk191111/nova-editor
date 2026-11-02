@@ -345,6 +345,9 @@ html, body {
 }
 
 /* Inspector groups: the +/- sign follows the native <details> state. */
-.nb-section-sign::before { content: "+"; }
-details[open] > summary .nb-section-sign::before { content: "\2212"; }
+.nb-section-sign { display: inline-flex; }
+.nb-section-sign .nb-sign-minus { display: none; }
+details[open] > summary .nb-section-sign .nb-sign-minus { display: inline-flex; }
+details[open] > summary .nb-section-sign .nb-sign-plus { display: none; }
+.nb-section-sign .nb-sign-plus { display: inline-flex; }
 summary::-webkit-details-marker { display: none; }

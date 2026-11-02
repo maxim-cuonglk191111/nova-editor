@@ -2,6 +2,7 @@
 // The first column of the Add tab: the registry's categories as full-width rows (icon tile, name,
 // count, chevron), in three groups. Choosing a row opens its thumbnails in the second column.
 import { UI_VARS as C, UI_SHAPE as S } from "@/lib/uiTheme";
+import { CATEGORY_ICON, Icon } from "@/builder/icons";
 
 type Group = { id: "basics" | "interactive" | "more"; categories: string[] };
 
@@ -10,10 +11,6 @@ export const CATEGORY_GROUPS: Group[] = [
   { id: "interactive", categories: ["Inputs", "Navigation"] },
   { id: "more", categories: ["Feedback", "Overlay", "Advanced"] },
 ];
-
-const GLYPH: Record<string, string> = {
-  Layout: "▦", Typography: "Aa", Display: "◧", Inputs: "☑", Navigation: "⇢", Feedback: "◔", Overlay: "❐", Advanced: "⚙",
-};
 
 type Props = {
   counts: Record<string, number>;
@@ -42,12 +39,12 @@ export function CategoryList({ counts, selected, names, groupNames, onSelect }: 
                   onClick={() => onSelect(category)}
                   style={{ display: "flex", alignItems: "center", gap: 12, width: "100%", minHeight: 52, padding: "6px 12px 6px 8px", background: active ? C.accentBg : C.card, border: `1px solid ${active ? C.accentBorder : C.border}`, borderRadius: S.radiusMd, cursor: "pointer", fontFamily: C.font, textAlign: "left" }}
                 >
-                  <span aria-hidden="true" style={{ width: 36, height: 36, flexShrink: 0, display: "inline-flex", alignItems: "center", justifyContent: "center", borderRadius: S.radiusSm + 2, background: C.surface, border: `1px solid ${C.border}`, color: C.accentText, fontSize: 16, fontWeight: 700 }}>
-                    {GLYPH[category] ?? "◇"}
+                  <span aria-hidden="true" style={{ width: 36, height: 36, flexShrink: 0, display: "inline-flex", alignItems: "center", justifyContent: "center", borderRadius: S.radiusSm + 2, background: C.surface, border: `1px solid ${C.border}`, color: C.accentText }}>
+                    <Icon name={CATEGORY_ICON[category] ?? "catAdvanced"} size={22} weight="duotone" />
                   </span>
                   <span style={{ flex: 1, fontSize: 15, fontWeight: 600, color: C.text }}>{names[category] ?? category}</span>
                   <span style={{ fontSize: 12, color: C.textMuted }}>{counts[category]}</span>
-                  <span aria-hidden="true" style={{ fontSize: 16, color: C.textMuted }}>›</span>
+                  <Icon name="caretRight" size={16} weight="bold" color={C.textMuted} />
                 </button>
               );
             })}

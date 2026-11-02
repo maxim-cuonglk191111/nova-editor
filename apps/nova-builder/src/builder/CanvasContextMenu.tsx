@@ -170,7 +170,7 @@ export function CanvasContextMenu({ instanceId, x, y, onClose }: Props) {
         background: C.bg,
         border: `1px solid ${C.border}`,
         borderRadius: 7,
-        boxShadow: "0 8px 32px rgba(0,0,0,0.5)",
+        boxShadow: "var(--ui-shadow-pop, 0 8px 32px rgba(0,0,0,0.5))",
         zIndex: 9500,
         minWidth: menuWidth,
         padding: "4px 0",

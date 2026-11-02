@@ -43,6 +43,7 @@ import { DeployPanel } from "./DeployPanel";
 import { CollaboratorAvatars } from "./PresenceLayer";
 import { TopbarMenu, type TopbarMenuItem } from "./TopbarMenu";
 import { useToggleAIPanel } from "./useToggleAIPanel";
+import { Icon } from "./icons";
 import { exportProject } from "@/features/export/export-project";
 import { importProject } from "@/features/import/import-project";
 import { exportHtml } from "@/features/export-html/export-html";
@@ -97,7 +98,7 @@ function UnsavedChangesModal({ onConfirm, onClose }: { onConfirm: () => void; on
       <div style={{ width: 400, background: C.surface || "#1e293b", border: `1px solid ${C.border || "rgba(255,255,255,0.1)"}`, borderRadius: 14, padding: "28px 32px", display: "flex", flexDirection: "column", gap: 16, boxShadow: "0 24px 48px rgba(0,0,0,0.5)" }}>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
           <h2 style={{ margin: 0, fontSize: 18, fontWeight: 700, color: C.text || "#fff", fontFamily: C.font }}>{t.chrome.unsavedTitle}</h2>
-          <button onClick={onClose} style={{ background: "transparent", border: "none", color: C.textMuted || "rgba(255,255,255,0.5)", fontSize: 18, cursor: "pointer", lineHeight: 1 }}>×</button>
+          <button onClick={onClose} style={{ background: "transparent", border: "none", color: C.textMuted || "rgba(255,255,255,0.5)", fontSize: 18, cursor: "pointer", lineHeight: 1 }}><Icon name="close" size={14} weight="bold" /></button>
         </div>
 
         <p style={{ margin: 0, fontSize: 13, color: C.textMuted || "rgba(255,255,255,0.5)", fontFamily: C.font, lineHeight: 1.5 }}>
@@ -505,8 +506,9 @@ export function TopbarActions({ isDemo }: Props) {
         <button
           onClick={aiToggle.toggle}
           title={t.chrome.generateWithAI}
-          style={{ height: S.control, padding: "0 14px", borderRadius: S.radiusMd, border: `1px solid ${isAIPanelOpen ? C.accent : C.accentBorder}`, background: isAIPanelOpen ? C.accentBg : C.card, color: C.accentText, fontSize: 13, fontFamily: C.font, cursor: "pointer", fontWeight: 700, whiteSpace: "nowrap" }}
+          style={{ height: S.control, padding: "0 14px", borderRadius: S.radiusMd, border: `1px solid ${isAIPanelOpen ? C.accent : C.accentBorder}`, background: isAIPanelOpen ? C.accentBg : C.card, color: C.accentText, fontSize: 13, fontFamily: C.font, cursor: "pointer", fontWeight: 700, whiteSpace: "nowrap", display: "inline-flex", alignItems: "center", gap: 6 }}
         >
+          <Icon name="ai" size={16} weight="fill" />
           {t.builder.generate}
         </button>
 
@@ -526,9 +528,13 @@ export function TopbarActions({ isDemo }: Props) {
               cursor: "pointer",
               fontWeight: 700,
               whiteSpace: "nowrap",
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 6,
             }}
           >
             {t.builder.signUpFree}
+            <Icon name="arrowRight" size={16} weight="bold" />
           </button>
         )}
       </div>

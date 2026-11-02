@@ -9,6 +9,7 @@ export const viChrome: I18nChromeDictionary = {
   design: "Thiết kế",
   canvasToolbar: "Công cụ canvas",
   canvasAdd: "Thêm thành phần",
+  canvasAi: "Hỏi AI",
   modeSwitch: "Chế độ làm việc",
   previewOpensTab: "Mở bản xem trước trong tab mới",
   saving: "Đang lưu...",

@@ -9,6 +9,7 @@ export const enChrome: I18nChromeDictionary = {
   design: "Design",
   canvasToolbar: "Canvas tools",
   canvasAdd: "Add a component",
+  canvasAi: "Ask AI",
   modeSwitch: "Work mode",
   previewOpensTab: "Open the preview in a new tab",
   saving: "Saving...",

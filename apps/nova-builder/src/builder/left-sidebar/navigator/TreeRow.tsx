@@ -1,4 +1,5 @@
 ﻿"use client";
+import { Icon } from "@/builder/icons";
 import { useRef } from "react";
 import { UI_VARS as C } from "@/lib/uiTheme";
 import { useI18n } from "@/lib/i18n";
@@ -145,21 +146,20 @@ export function TreeRow({ node, depth, state, dnd, handlers }: TreeRowProps) {
             if (hasChildren) onToggle(node.id);
           }}
           style={{
-            width: 14,
-            height: 14,
-            display: "flex",
+            width: 18,
+            height: 18,
+            display: "inline-flex",
             alignItems: "center",
             justifyContent: "center",
             background: "none",
             border: "none",
             cursor: hasChildren ? "pointer" : "default",
             color: C.textMuted,
-            fontSize: 8,
             flexShrink: 0,
             padding: 0,
           }}
         >
-          {hasChildren ? (isExpanded ? "▼" : "▶") : ""}
+          {hasChildren ? <Icon name={isExpanded ? "caretDown" : "caretRight"} size={12} weight="bold" /> : null}
         </button>
 
         {isRenaming ? (

@@ -92,6 +92,8 @@ export interface I18nChromeDictionary {
   canvasToolbar: string;
   /** Tooltip of the + button of the floating toolbar (opens the Add tab). */
   canvasAdd: string;
+  /** Tooltip of the AI button of the floating toolbar. */
+  canvasAi: string;
   modeSwitch: string;
   previewOpensTab: string;
   saving: string;

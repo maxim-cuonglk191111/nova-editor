@@ -18,12 +18,12 @@ test.describe("Demo & Product UI Parity with Feature Gates (ADR-NB-022)", () => 
     await expect(iframe).toBeVisible({ timeout: 45_000 });
 
     // Back button
-    const backBtn = page.getByRole("button", { name: "←" });
+    const backBtn = page.locator(`button[title*="Back to" i], button[title*="Về trang" i]`).first();
     await expect(backBtn).toBeVisible({ timeout: 15_000 });
 
     // Breakpoint switcher & manager
     await expect(page.locator("button").filter({ hasText: /Desktop|Máy tính/i }).first()).toBeVisible();
-    await expect(page.getByRole("button", { name: "⚙" })).toBeVisible();
+    await expect(page.locator('button[title*="breakpoint" i], button[title*="điểm ngắt" i], button[title*="Quản lý" i]').first()).toBeVisible();
 
     // Zoom controls
     // Zoom fits the artboard to the viewport (task 015), so the label is a percentage, not always 100%.

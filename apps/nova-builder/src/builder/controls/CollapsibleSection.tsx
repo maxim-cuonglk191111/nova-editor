@@ -1,6 +1,7 @@
 "use client";
 // Shared collapsible panel section (MV2, ADR-NB-020): a native <details> whose header shows the
 // group name, an optional count and a +/− sign (the sign comes from CSS, so it follows `open`).
+import { Icon } from "@/builder/icons";
 import type { ReactNode } from "react";
 import { UI_VARS as C } from "@/lib/uiTheme";
 
@@ -40,7 +41,10 @@ export function CollapsibleSection({
             {badge}
           </span>
         )}
-        <span aria-hidden="true" className="nb-section-sign" style={{ marginLeft: badge === undefined ? "auto" : 4, width: 20, textAlign: "center", fontSize: 18, color: C.textMuted }} />
+        <span className="nb-section-sign" style={{ marginLeft: badge === undefined ? "auto" : 4, color: C.textMuted, alignItems: "center" }}>
+          <span className="nb-sign-plus"><Icon name="plus" size={16} weight="bold" /></span>
+          <span className="nb-sign-minus"><Icon name="minus" size={16} weight="bold" /></span>
+        </span>
       </summary>
       {children}
     </details>

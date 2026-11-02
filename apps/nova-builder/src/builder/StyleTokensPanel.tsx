@@ -1,4 +1,5 @@
 ﻿"use client";
+import { Icon } from "@/builder/icons";
 import { useState } from "react";
 import { useStore } from "@nanostores/react";
 import { nanoid } from "nanoid";
@@ -155,9 +156,7 @@ export function StyleTokensPanel() {
                 onClick={() => deleteToken(tok.id)}
                 title={L.deleteTitle}
                 style={{ background: "none", border: "none", color: C.danger, cursor: "pointer", fontSize: 14, lineHeight: 1, padding: "0 2px" }}
-              >
-                ×
-              </button>
+              ><Icon name="close" size={14} weight="bold" /></button>
             </div>
           );
         })}

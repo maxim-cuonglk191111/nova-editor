@@ -1,4 +1,5 @@
 ﻿"use client";
+import { Icon } from "@/builder/icons";
 import { useEffect, useState } from "react";
 import { UI_VARS as C } from "@/lib/uiTheme";
 import { useI18n, fmt, type I18nShortcutsDictionary } from "@/lib/i18n";
@@ -87,7 +88,7 @@ export function KeyboardShortcutsModal({ onClose }: { onClose: () => void }) {
       style={{ position: "fixed", inset: 0, background: C.overlay, display: "flex", alignItems: "center", justifyContent: "center", zIndex: 500, fontFamily: C.font }}
       onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
     >
-      <div style={{ background: C.bg, border: `1px solid ${C.border}`, borderRadius: 12, width: 520, maxHeight: "80vh", display: "flex", flexDirection: "column", boxShadow: "0 24px 64px rgba(0,0,0,0.6)", overflow: "hidden" }}>
+      <div style={{ background: C.bg, border: `1px solid ${C.border}`, borderRadius: 16, width: 520, maxHeight: "80vh", display: "flex", flexDirection: "column", boxShadow: "var(--ui-shadow-pop, 0 24px 64px rgba(0,0,0,0.6))", overflow: "hidden" }}>
         {/* Header */}
         <div style={{ padding: "16px 20px 12px", borderBottom: `1px solid ${C.border}`, display: "flex", alignItems: "center", gap: 10 }}>
           <span style={{ fontSize: 14, fontWeight: 700, color: C.text, flex: 1 }}>{S.title}</span>
@@ -103,7 +104,7 @@ export function KeyboardShortcutsModal({ onClose }: { onClose: () => void }) {
               color: C.text, fontSize: 13, fontFamily: C.font, outline: "none", width: 160,
             }}
           />
-          <button onClick={onClose} style={{ background: "none", border: "none", color: C.textMuted, cursor: "pointer", fontSize: 18, padding: "2px 6px", lineHeight: 1 }}>×</button>
+          <button onClick={onClose} style={{ background: "none", border: "none", color: C.textMuted, cursor: "pointer", fontSize: 18, padding: "2px 6px", lineHeight: 1 }}><Icon name="close" size={14} weight="bold" /></button>
         </div>
 
         {/* Shortcut list */}
