@@ -2,6 +2,18 @@
 
 ---
 
+## [25.22.0] — 2026-11-03
+
+### Task 038 — Builder look, batch 3: left-panel forms and cards (Minor)
+
+- **One form style** (`controls/formStyles.ts`): 38px white fields with 10px corners, a quiet label, one filled button and one quiet button. Used by the new-page form, the SEO form, the folder form and the publish form.
+- **Pages**: the new-page form sits on a soft card with roomy fields and a clear Create / Cancel pair; the SEO block is a rounded card with a real checkbox; folder rows are 14px with a roomier delete button.
+- **Templates**: cards are 16px rounded with a 48px icon tile, 15px names and a quiet purple "Use Template" button instead of three heavy filled ones; group labels are sentence case.
+- **Assets**: image and folder cards are 14px rounded; the hover actions are three white icon buttons (preview, insert, delete) instead of text chips.
+- **Keyboard shortcuts**: a 24px rounded modal, sentence-case group names, key chips in the regular font, a roomier search field.
+
+---
+
 ## [25.21.0] — 2026-11-03
 
 ### Task 038 — Builder look, batch 2: menus, breakpoints, Props and Settings, Layers (Minor)

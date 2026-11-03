@@ -1,4 +1,5 @@
 "use client";
+import { fieldStyle, areaStyle, labelStyle } from "@/builder/controls/formStyles";
 import { Icon } from "@/builder/icons";
 import { useState, useRef } from "react";
 import type { PageSeo } from "./usePageCrud";
@@ -7,18 +8,7 @@ import { useI18n } from "@/lib/i18n";
 import { pathIssue, normalizePagePath } from "./pagePathRules";
 
 
-const inputStyle: React.CSSProperties = {
-  width: "100%",
-  background: C.input,
-  border: `1px solid ${C.inputBorder}`,
-  borderRadius: 4,
-  color: C.text,
-  fontSize: 13,
-  fontFamily: C.font,
-  padding: "3px 6px",
-  outline: "none",
-  boxSizing: "border-box",
-};
+const inputStyle = fieldStyle;
 
 type PageData = {
   id: string;
@@ -193,13 +183,13 @@ export function PageItem({ page, siblings, status, handlers }: PageItemProps) {
       </div>
 
       {isActive && seoOpen && (
-        <div style={{ padding: "8px 10px 10px", background: "var(--ui-surface)", borderLeft: `2px solid ${C.activeBorder}`, display: "flex", flexDirection: "column", gap: 6 }}>
-          <div style={{ fontSize: 12, color: C.textMuted, fontFamily: C.font, textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 2 }}>
+        <div style={{ margin: "0 8px 8px", padding: 14, background: C.surface, border: `1px solid ${C.border}`, borderRadius: 12, display: "flex", flexDirection: "column", gap: 12 }}>
+          <div style={{ fontSize: 14, fontWeight: 700, color: C.text, fontFamily: C.font }}>
             {L.seoMeta}
           </div>
 
-          <label style={{ display: "flex", flexDirection: "column", gap: 2 }}>
-            <span style={{ fontSize: 12, color: C.textMuted, fontFamily: C.font }}>{L.browserTitle}</span>
+          <label style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+            <span style={labelStyle}>{L.browserTitle}</span>
             <input
               defaultValue={title ?? name}
               placeholder={name}
@@ -209,25 +199,25 @@ export function PageItem({ page, siblings, status, handlers }: PageItemProps) {
             />
           </label>
 
-          <label style={{ display: "flex", flexDirection: "column", gap: 2 }}>
-            <span style={{ fontSize: 12, color: C.textMuted, fontFamily: C.font }}>{L.metaDescription}</span>
+          <label style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+            <span style={labelStyle}>{L.metaDescription}</span>
             <textarea
               defaultValue={description ?? ""}
               placeholder={L.metaDescriptionPlaceholder}
-              rows={2}
+              rows={3}
               onBlur={(e) => onSeoChange({ description: e.target.value.trim() })}
-              style={{ ...inputStyle, resize: "vertical", fontFamily: C.font, lineHeight: "1.4" }}
+              style={areaStyle}
             />
           </label>
 
-          <label style={{ display: "flex", alignItems: "center", gap: 6, cursor: "pointer" }}>
+          <label style={{ display: "flex", alignItems: "center", gap: 10, cursor: "pointer" }}>
             <input
               type="checkbox"
               checked={!!noindex}
               onChange={(e) => onSeoChange({ noindex: e.target.checked })}
-              style={{ accentColor: C.accent, width: 12, height: 12 }}
+              style={{ accentColor: C.accent, width: 18, height: 18 }}
             />
-            <span style={{ fontSize: 13, color: C.text, fontFamily: C.font }}>{L.noindex}</span>
+            <span style={{ fontSize: 14, color: C.text, fontFamily: C.font }}>{L.noindex}</span>
           </label>
         </div>
       )}

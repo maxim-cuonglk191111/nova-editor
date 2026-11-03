@@ -1,4 +1,5 @@
 "use client";
+import { fieldStyle } from "@/builder/controls/formStyles";
 import { useState } from "react";
 import { useStore } from "@nanostores/react";
 import { $pages } from "@/lib/data-stores";
@@ -13,18 +14,7 @@ import { UI_VARS as C } from "@/lib/uiTheme";
 import { useI18n, fmt } from "@/lib/i18n";
 
 
-const inputStyle: React.CSSProperties = {
-  background: "var(--ui-hover-bg)",
-  border: "1px solid color-mix(in srgb, var(--ui-accent) 40%, transparent)",
-  borderRadius: 4,
-  color: C.text,
-  fontSize: 12,
-  fontFamily: C.font,
-  padding: "4px 7px",
-  outline: "none",
-  width: "100%",
-  boxSizing: "border-box",
-};
+const inputStyle = fieldStyle;
 
 const headerAction: React.CSSProperties = {
   background: "none",

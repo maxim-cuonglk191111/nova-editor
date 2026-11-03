@@ -53,9 +53,9 @@ function Key({ label }: { label: string }) {
   return (
     <span style={{
       display: "inline-flex", alignItems: "center", justifyContent: "center",
-      padding: "2px 7px", borderRadius: 4, minWidth: 24,
-      background: "var(--ui-hover-bg)", border: "1px solid var(--ui-border)",
-      color: C.textDim, fontSize: 12, fontFamily: "monospace", fontWeight: 600,
+      padding: "2px 9px", borderRadius: 8, minWidth: 28,
+      background: C.card, border: "1px solid var(--ui-border)",
+      color: C.text, fontSize: 13, fontFamily: C.font, fontWeight: 500,
       lineHeight: 1.6,
     }}>
       {label}
@@ -85,13 +85,13 @@ export function KeyboardShortcutsModal({ onClose }: { onClose: () => void }) {
 
   return (
     <div
-      style={{ position: "fixed", inset: 0, background: C.overlay, display: "flex", alignItems: "center", justifyContent: "center", zIndex: 500, fontFamily: C.font }}
+      style={{ position: "fixed", inset: 0, background: "rgba(17,17,17,0.42)", backdropFilter: "blur(4px)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 500, fontFamily: C.font }}
       onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
     >
-      <div style={{ background: C.bg, border: `1px solid ${C.border}`, borderRadius: 16, width: 520, maxHeight: "80vh", display: "flex", flexDirection: "column", boxShadow: "var(--ui-shadow-pop, 0 24px 64px rgba(0,0,0,0.6))", overflow: "hidden" }}>
+      <div style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 24, width: 560, maxHeight: "80vh", display: "flex", flexDirection: "column", boxShadow: "var(--ui-shadow-pop, 0 24px 64px rgba(0,0,0,0.6))", overflow: "hidden" }}>
         {/* Header */}
-        <div style={{ padding: "16px 20px 12px", borderBottom: `1px solid ${C.border}`, display: "flex", alignItems: "center", gap: 10 }}>
-          <span style={{ fontSize: 14, fontWeight: 700, color: C.text, flex: 1 }}>{S.title}</span>
+        <div style={{ padding: "18px 22px", borderBottom: `1px solid ${C.border}`, display: "flex", alignItems: "center", gap: 12 }}>
+          <span style={{ fontSize: 19, fontWeight: 700, letterSpacing: "-0.01em", color: C.text, flex: 1 }}>{S.title}</span>
           <input
             autoFocus
             type="text"
@@ -99,28 +99,28 @@ export function KeyboardShortcutsModal({ onClose }: { onClose: () => void }) {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             style={{
-              padding: "5px 10px", background: "var(--ui-hover-bg)",
-              border: `1px solid ${C.border}`, borderRadius: 6,
-              color: C.text, fontSize: 13, fontFamily: C.font, outline: "none", width: 160,
+              height: 38, padding: "0 12px", background: C.card,
+              border: `1px solid ${C.border}`, borderRadius: 10,
+              color: C.text, fontSize: 14, fontFamily: C.font, outline: "none", width: 180,
             }}
           />
           <button onClick={onClose} style={{ background: "none", border: "none", color: C.textMuted, cursor: "pointer", fontSize: 18, padding: "2px 6px", lineHeight: 1 }}><Icon name="close" size={14} weight="bold" /></button>
         </div>
 
         {/* Shortcut list */}
-        <div style={{ overflowY: "auto", padding: "12px 20px 20px" }}>
+        <div style={{ overflowY: "auto", padding: "14px 22px 22px" }}>
           {filtered.length === 0 && (
             <div style={{ color: C.textMuted, fontSize: 12, textAlign: "center", padding: "24px 0" }}>{fmt(S.noMatch, { query: search })}</div>
           )}
           {filtered.map((group) => (
             <div key={group.group} style={{ marginBottom: 18 }}>
-              <div style={{ fontSize: 12, fontWeight: 700, color: C.textMuted, letterSpacing: "0.06em", marginBottom: 8, textTransform: "uppercase" }}>
+              <div style={{ fontSize: 14, fontWeight: 600, color: C.textMuted, marginBottom: 10 }}>
                 {group.group}
               </div>
-              <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+              <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
                 {group.items.map((item) => (
                   <div key={item.label} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12 }}>
-                    <span style={{ fontSize: 12, color: C.textDim }}>{item.label}</span>
+                    <span style={{ fontSize: 14, color: C.textDim }}>{item.label}</span>
                     <div style={{ display: "flex", gap: 4, alignItems: "center", flexShrink: 0 }}>
                       {item.keys.map((k, i) => (
                         <span key={i} style={{ display: "flex", alignItems: "center", gap: 4 }}>
@@ -136,7 +136,7 @@ export function KeyboardShortcutsModal({ onClose }: { onClose: () => void }) {
           ))}
         </div>
 
-        <div style={{ padding: "10px 20px", borderTop: `1px solid ${C.border}`, fontSize: 12, color: C.textMuted, textAlign: "center" }}>
+        <div style={{ padding: "12px 22px", borderTop: `1px solid ${C.border}`, fontSize: 13, color: C.textMuted, textAlign: "center", background: C.surface }}>
           {S.hintBefore} <Key label="?" /> {S.hintAfter}
         </div>
       </div>

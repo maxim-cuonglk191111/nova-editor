@@ -2,6 +2,7 @@
 // "+ Page" form. The path follows the page name until the user edits it, stays disabled
 // while the name is empty, and is only validated after blur or a submit attempt — so the
 // form never opens with an error the user did not cause.
+import { fieldStyle, primaryButton, quietButton } from "@/builder/controls/formStyles";
 import { useRef, useState } from "react";
 import { toSlug } from "./usePageCrud";
 import { normalizePagePath, pathIssue } from "./pagePathRules";
@@ -14,18 +15,7 @@ type Props = {
   onCancel: () => void;
 };
 
-const field: React.CSSProperties = {
-  background: "var(--ui-hover-bg)",
-  border: "1px solid color-mix(in srgb, var(--ui-accent) 40%, transparent)",
-  borderRadius: 4,
-  color: C.text,
-  fontSize: 13,
-  fontFamily: C.font,
-  padding: "5px 8px",
-  outline: "none",
-  width: "100%",
-  boxSizing: "border-box",
-};
+const field = fieldStyle;
 
 export function NewPageForm({ existing, onCreate, onCancel }: Props) {
   const L = useI18n().t.sidebar.pages;
@@ -64,7 +54,7 @@ export function NewPageForm({ existing, onCreate, onCancel }: Props) {
   };
 
   return (
-    <div style={{ padding: "8px 10px", borderBottom: `1px solid ${C.border}`, display: "flex", flexDirection: "column", gap: 6, flexShrink: 0 }}>
+    <div style={{ padding: 14, borderBottom: `1px solid ${C.border}`, display: "flex", flexDirection: "column", gap: 10, flexShrink: 0, background: C.surface }}>
       <input autoFocus value={name} onChange={(e) => onNameChange(e.target.value)} placeholder={L.pageName} onKeyDown={onKey} style={field} />
       <input
         ref={pathRef}
@@ -77,32 +67,23 @@ export function NewPageForm({ existing, onCreate, onCancel }: Props) {
         onKeyDown={onKey}
         style={{
           ...field,
-          border: visibleMessage ? `1px solid ${C.danger}` : "1px solid rgba(255,255,255,0.1)",
+          border: visibleMessage ? `1px solid ${C.danger}` : field.border,
           color: visibleMessage ? C.danger : C.textMuted,
-          fontFamily: C.fontMono,
-          opacity: hasName ? 1 : 0.5,
+          opacity: hasName ? 1 : 0.55,
           cursor: hasName ? "text" : "not-allowed",
         }}
       />
-      {visibleMessage && <div role="alert" style={{ fontSize: 12, color: C.danger, fontFamily: C.font }}>{visibleMessage}</div>}
+      {visibleMessage && <div role="alert" style={{ fontSize: 13, color: C.danger, fontFamily: C.font }}>{visibleMessage}</div>}
       {path.includes("[") && !visibleMessage && (
-        <div style={{ fontSize: 11, color: C.accentText, fontFamily: C.font }}>
+        <div style={{ fontSize: 13, color: C.accentText, fontFamily: C.font }}>
           {L.pathParamHintBefore} <code style={{ fontFamily: C.fontMono }}>/[slug]</code> {L.pathParamHintAfter}
         </div>
       )}
-      <div style={{ display: "flex", gap: 6 }}>
-        <button
-          onClick={submit}
-          disabled={!hasName}
-          style={{
-            flex: 1, padding: "6px 0", background: "var(--ui-accent)", border: "1px solid var(--ui-accent)", borderRadius: 4,
-            color: "#ffffff", fontWeight: 600, fontSize: 13, fontFamily: C.font,
-            opacity: hasName ? 1 : 0.4, cursor: hasName ? "pointer" : "not-allowed",
-          }}
-        >
+      <div style={{ display: "flex", gap: 8 }}>
+        <button onClick={submit} disabled={!hasName} style={{ ...primaryButton(!hasName), flex: 1 }}>
           {L.create}
         </button>
-        <button onClick={onCancel} style={{ padding: "6px 12px", background: "none", border: "1px solid var(--ui-border)", borderRadius: 4, color: C.textMuted, fontSize: 13, fontFamily: C.font, cursor: "pointer" }}>
+        <button onClick={onCancel} style={quietButton}>
           {L.cancel}
         </button>
       </div>

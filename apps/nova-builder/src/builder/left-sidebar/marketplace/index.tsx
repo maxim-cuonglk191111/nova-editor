@@ -20,9 +20,9 @@ const SHOW_COMMUNITY = false;
 const cardStyle = (hovered: boolean): React.CSSProperties => ({
   background: hovered ? C.cardHover : C.card,
   border: `1px solid ${C.border}`,
-  borderRadius: 10,
-  padding: 14,
-  marginBottom: 10,
+  borderRadius: 16,
+  padding: 16,
+  marginBottom: 12,
   transition: "background 0.12s",
 });
 
@@ -38,13 +38,13 @@ function TemplateCard({ template, onUse }: { template: Template; onUse: (t: Temp
   return (
     <div onMouseEnter={() => setHovered(true)} onMouseLeave={() => setHovered(false)} style={cardStyle(hovered)}>
       <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 8 }}>
-        <span style={{ fontSize: 24, lineHeight: 1 }}>{template.previewIcon}</span>
+        <span style={{ width: 48, height: 48, borderRadius: 14, background: C.surface, border: `1px solid ${C.border}`, display: "inline-flex", alignItems: "center", justifyContent: "center", fontSize: 24, lineHeight: 1, flexShrink: 0 }}>{template.previewIcon}</span>
         <div style={{ flex: 1, minWidth: 0 }}>
-          <div style={{ fontSize: 12, fontWeight: 600, color: C.text, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{t.panels.builtInTemplates[template.id]?.name ?? template.name}</div>
-          <div style={{ fontSize: 12, color: C.textMuted, marginTop: 2, lineHeight: 1.4 }}>{t.panels.builtInTemplates[template.id]?.description ?? template.description}</div>
+          <div style={{ fontSize: 15, fontWeight: 600, color: C.text, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{t.panels.builtInTemplates[template.id]?.name ?? template.name}</div>
+          <div style={{ fontSize: 13, color: C.textMuted, marginTop: 3, lineHeight: 1.45 }}>{t.panels.builtInTemplates[template.id]?.description ?? template.description}</div>
         </div>
       </div>
-      <button onClick={handleUse} style={{ width: "100%", padding: "6px 0", borderRadius: 6, border: "none", background: applied ? C.success : C.accent, color: "#fff", fontSize: 13, fontWeight: 700, cursor: "pointer", fontFamily: C.font, transition: "background 0.2s" }}>
+      <button onClick={handleUse} style={{ width: "100%", height: 38, borderRadius: 10, border: `1px solid ${applied ? C.success : C.accentBorder}`, background: applied ? "rgba(5,150,105,0.1)" : C.accentBg, color: applied ? C.success : C.accentText, fontSize: 14, fontWeight: 700, cursor: "pointer", fontFamily: C.font, transition: "background 0.2s" }}>
         {applied ? t.panels.applied : t.panels.useTemplate}
       </button>
     </div>
@@ -78,11 +78,11 @@ function CommunityCard({ item, onInstall }: { item: MarketplaceItem; onInstall: 
 }
 
 const sectionLabel: React.CSSProperties = {
-  fontSize: 11, fontWeight: 700, color: C.textMuted, letterSpacing: "0.06em",
-  textTransform: "uppercase", margin: "14px 0 8px",
+  fontSize: 13, fontWeight: 600, color: C.textMuted,
+  margin: "18px 0 10px",
 };
 const btnStyle: React.CSSProperties = {
-  flex: 1, padding: "7px 0", borderRadius: 6, border: `1px solid ${C.border}`,
+  flex: 1, height: 38, borderRadius: 10, border: `1px solid ${C.border}`,
   background: "transparent", color: C.text, fontSize: 13, fontWeight: 600,
   cursor: "pointer", fontFamily: C.font, display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 6,
 };

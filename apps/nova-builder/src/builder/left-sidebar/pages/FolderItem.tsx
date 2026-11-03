@@ -60,7 +60,7 @@ export function FolderItem({ name, isExpanded, handlers, children }: FolderItemP
         ) : (
           <button
             onDoubleClick={(e) => { e.stopPropagation(); setIsEditing(true); }}
-            style={{ flex: 1, background: hovered ? C.hoverBg : "none", border: "none", color: C.text, fontSize: 12, fontFamily: C.font, cursor: "default", textAlign: "left", padding: "6px 4px", minWidth: 0 }}
+            style={{ flex: 1, background: hovered ? C.hoverBg : "none", border: "none", color: C.text, fontSize: 14, fontWeight: 500, fontFamily: C.font, cursor: "default", textAlign: "left", padding: "9px 4px", minWidth: 0 }}
           >
             {name}
           </button>
@@ -70,7 +70,7 @@ export function FolderItem({ name, isExpanded, handlers, children }: FolderItemP
           <button
             onClick={(e) => { e.stopPropagation(); onDelete(); }}
             title={L.deleteFolder}
-            style={{ position: "absolute", right: 6, background: "var(--ui-card)", border: "none", color: C.danger, cursor: "pointer", fontSize: 13, lineHeight: 1, padding: "1px 4px", borderRadius: 3 }}
+            style={{ position: "absolute", right: 8, width: 28, height: 28, background: "var(--ui-card)", border: "none", color: C.danger, cursor: "pointer", display: "inline-flex", alignItems: "center", justifyContent: "center", padding: 0, borderRadius: 8 }}
           >
             <Icon name="close" size={12} weight="bold" />
           </button>
