@@ -6,7 +6,7 @@ import type { NovaAsset } from "@/lib/r2";
 import { useI18n } from "@/lib/i18n";
 import { formatBytes, T, FontIcon } from "./assetShared";
 
-const overlayButton: React.CSSProperties = { width: 36, height: 36, borderRadius: 12, border: "none", background: "#ffffff", color: "#1f2937", cursor: "pointer", display: "inline-flex", alignItems: "center", justifyContent: "center", padding: 0, boxShadow: "0 2px 8px rgba(0,0,0,0.25)" };
+const overlayButton: React.CSSProperties = { width: 32, height: 32, borderRadius: 10, border: "none", background: "#ffffff", color: "#1f2937", cursor: "pointer", display: "inline-flex", alignItems: "center", justifyContent: "center", padding: 0, boxShadow: "0 2px 8px rgba(0,0,0,0.25)" };
 
 // ── AssetCard (image grid) ────────────────────────────────────────────────────
 
@@ -64,7 +64,7 @@ export function AssetCard({
         {shortName}
       </div>
       {hovered && (
-        <div style={{ position: "absolute", inset: 0, background: "rgba(17,17,17,0.5)", display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}>
+        <div style={{ position: "absolute", inset: 0, background: "rgba(17,17,17,0.5)", display: "flex", alignItems: "center", justifyContent: "center", gap: 6 }}>
           {isImage && (
             <button onClick={(e) => { e.stopPropagation(); onPreview(asset); }} title={t.assets.preview} aria-label={t.assets.preview} style={overlayButton}><Icon name="eye" size={18} /></button>
           )}

@@ -1,4 +1,6 @@
 "use client";
+import { SmallScreenNotice } from "@/builder/SmallScreenNotice";
+import { $inspectorOpen, $inspectorWidth, loadInspectorLayout } from "@/lib/inspectorLayout";
 import { ClientOnly } from "@/components/ClientOnly";
 
 // Builder page — 3-column CSS Grid layout mirroring Webstudio's chrome.
@@ -76,6 +78,8 @@ function BuilderPage() {
   const params = useParams<{ projectId: string }>();
   const projectId = params.projectId;
   const isDemo = projectId === "demo";
+  const inspectorOpen = useStore($inspectorOpen);
+  const inspectorWidth = useStore($inspectorWidth);
 
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const canvasAreaRef = useRef<HTMLDivElement>(null);
@@ -280,6 +284,20 @@ function BuilderPage() {
     });
   }, [fitToWidth]);
 
+  // Opening or closing the inspector changes the canvas room once: fit the page again (dragging does not).
+  useEffect(() => {
+    let first = true;
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    const off = $inspectorOpen.subscribe(() => {
+      if (first) { first = false; return; }
+      clearTimeout(timer);
+      timer = setTimeout(fitToWidth, 120);
+    });
+    return () => { off(); clearTimeout(timer); };
+  }, [fitToWidth]);
+
+  useEffect(() => loadInspectorLayout(), []);
+
   // Auto-fit on breakpoint change or initial project load
   useEffect(() => {
     if (loadState !== "ready") return;
@@ -368,7 +386,8 @@ function BuilderPage() {
         height: "100vh",
         overflow: "hidden",
         background: "var(--ui-card)",
-      }}
+        ["--nb-inspector" as string]: inspectorOpen ? `${inspectorWidth}px` : "0px",
+      } as React.CSSProperties}
     >
       {/* Topbar */}
       <Topbar isDemo={isDemo} />
@@ -514,6 +533,7 @@ function BuilderPage() {
 
       {/* Keyboard shortcuts modal — toggled by "?" key */}
       {shortcutsOpen && <KeyboardShortcutsModal onClose={() => setShortcutsOpen(false)} />}
+      <SmallScreenNotice isDemo={isDemo} />
 
       {/* Content-model warning toast (M5) */}
       <NestingToast />

@@ -7,6 +7,7 @@ import { UI_VARS as C, UI_SHAPE as S } from "@/lib/uiTheme";
 import { useI18n } from "@/lib/i18n";
 import { requestSidebarTab } from "./left-sidebar/sidebarTab";
 import { useToggleAIPanel } from "./useToggleAIPanel";
+import { $inspectorOpen } from "@/lib/inspectorLayout";
 import { Icon } from "./icons";
 
 const MIN_ZOOM = 0.1;
@@ -17,6 +18,7 @@ export function CanvasToolbar({ isDemo }: { isDemo?: boolean }) {
   const { t } = useI18n();
   const zoom = useStore($canvasZoom);
   const ai = useToggleAIPanel(isDemo);
+  const inspectorOpen = useStore($inspectorOpen);
 
   const btn = { width: S.controlLg - 4, height: S.controlLg - 4, border: "none", borderRadius: S.radiusMd, background: "transparent", color: C.text, fontSize: 18, fontFamily: C.font, cursor: "pointer", display: "inline-flex", alignItems: "center", justifyContent: "center", padding: 0 } as const;
   const divider = <span aria-hidden="true" style={{ width: 1, height: 24, background: C.border, margin: "0 4px" }} />;
@@ -32,6 +34,8 @@ export function CanvasToolbar({ isDemo }: { isDemo?: boolean }) {
       </button>
       <button type="button" onClick={() => stepZoom(0.1)} title={t.chrome.zoomIn} aria-label={t.chrome.zoomIn} style={btn}><Icon name="zoomIn" size={22} /></button>
       <button type="button" onClick={() => $fitToWidthTrigger.set($fitToWidthTrigger.get() + 1)} title={t.chrome.zoomFit} aria-label={t.chrome.zoomFit} style={btn}><Icon name="fit" size={22} /></button>
+      {divider}
+      <button type="button" onClick={() => $inspectorOpen.set(!$inspectorOpen.get())} title={t.chrome.toggleInspector} aria-label={t.chrome.toggleInspector} aria-pressed={inspectorOpen} style={{ ...btn, background: inspectorOpen ? C.accentBg : "transparent", color: inspectorOpen ? C.accentText : C.text }}><span style={{ display: "inline-flex", transform: "scaleX(-1)" }}><Icon name="inspector" size={22} weight={inspectorOpen ? "fill" : "regular"} /></span></button>
     </div>
   );
 }

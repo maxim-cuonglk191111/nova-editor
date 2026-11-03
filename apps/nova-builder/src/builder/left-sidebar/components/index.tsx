@@ -1,3 +1,5 @@
+import { requestSidebarTab } from "../sidebarTab";
+import { useNarrow } from "@/lib/useNarrow";
 import React, { useState, useMemo, useEffect, useLayoutEffect, useRef, useCallback } from "react";
 import { useDraggable, type DropTarget } from "./useDraggable";
 import { getRegistry } from "./ComponentRegistry";
@@ -60,14 +62,24 @@ export function ComponentsPanel() {
   // The card holds pointer capture during a drag, so releasing it fires a click on
   // the card too; that click must not insert a second copy.
   const lastDropAt = useRef(0);
+  // On a narrow screen the panel is a drawer over the canvas: after an insert it steps away so the result is visible.
+  const narrow = useNarrow();
   const dropInsert = useCallback((name: string, target: DropTarget) => {
     lastDropAt.current = Date.now();
     insertComponent(name, target);
+    if (window.innerWidth < 1280) requestSidebarTab("none");
   }, []);
   const clickInsert = (name: string) => {
-    if (Date.now() - lastDropAt.current > 500) insertComponent(name);
+    if (Date.now() - lastDropAt.current <= 500) return;
+    insertComponent(name);
+    if (narrow) requestSidebarTab("none");
   };
   const { isDragging, ghostPos, draggedComponent, startDrag } = useDraggable(dropInsert);
+  useEffect(() => {
+    if (!isDragging) return;
+    document.body.dataset.nbDragging = "1";
+    return () => { delete document.body.dataset.nbDragging; };
+  }, [isDragging]);
 
   const handleMouseDown = (e: React.MouseEvent, id: string) => {
     e.preventDefault();

@@ -51,7 +51,7 @@ test("B1 clone / delete / search projects", async ({ page }) => {
   const copyName = copy!.project_name ?? copy!.name!;
   await card(copyName).locator('button[title="Delete site"]').click();
   await page.screenshot({ path: `${OUT}/b1-06-delete-confirm.png` });
-  await page.getByRole("button", { name: /^delete$/i }).click();
+  await page.getByRole("button", { name: /^delete$/i }).last().click(); // the confirm button comes after the card actions
   await expect(page.locator('button[title="Delete site"]')).toHaveCount(2, { timeout: 30_000 });
   expect((await page.request.get(`/api/projects/${copy!.id}`)).status()).toBe(404);
   await page.reload();

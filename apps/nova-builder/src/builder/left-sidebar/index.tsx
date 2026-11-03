@@ -1,4 +1,5 @@
 ﻿"use client";
+import { useNarrow } from "@/lib/useNarrow";
 import { useState, useEffect, useRef, useCallback } from "react";
 import { Navigator } from "./navigator";
 import { PagesPanel } from "./pages";
@@ -62,6 +63,8 @@ function loadAiWidth(): number {
 type TabItem = { id: TabId; label: string; short: string; icon: IconName };
 
 const RAIL_WIDTH = 68;
+const HANDLE_IDLE = `linear-gradient(to left, ${C.border} 0, ${C.border} 1px, transparent 1px)`;
+const HANDLE_HOT = `linear-gradient(to right, transparent 3px, ${C.accentLight} 3px, ${C.accentLight} 5px, transparent 5px)`;
 
 function TabIcon({ tab, isActive, onClick }: { tab: TabItem; isActive: boolean; onClick: () => void }) {
   return (
@@ -148,7 +151,7 @@ export function LeftSidebar() {
   // Other parts of the builder (the floating canvas toolbar) can ask for a tab.
   useEffect(() => $sidebarTabRequest.listen((request) => {
     if (!request) return;
-    setActiveTab(request.tab);
+    setActiveTab(request.tab === "none" ? null : request.tab);
     $aiPanelOpen.set(false);
   }), []);
 
@@ -192,7 +195,9 @@ export function LeftSidebar() {
     document.addEventListener("mouseup", onUp);
   }, [panelWidth, minWidth, maxWidth, setPanelWidth]);
 
-  const totalWidth = activeTab !== null ? RAIL_WIDTH + panelWidth : RAIL_WIDTH;
+  const narrow = useNarrow();
+  // narrow: the panel floats over the canvas, so the grid cell holds the rail only
+  const totalWidth = activeTab !== null && !narrow ? RAIL_WIDTH + panelWidth : RAIL_WIDTH;
 
   return (
     <div
@@ -233,16 +238,13 @@ export function LeftSidebar() {
         ))}
       </div>
 
-      {/* Panel content */}
+      {/* Panel content: beside the canvas on wide screens, a drawer over it on narrow ones */}
       {activeTab !== null && (
         <div
-          style={{
-            width: panelWidth,
-            overflow: "hidden",
-            display: "flex",
-            flexDirection: "column",
-            flexShrink: 0,
-          }}
+          className={narrow ? "nb-drawer" : undefined}
+          style={narrow
+            ? { position: "fixed", left: RAIL_WIDTH, top: 56, bottom: 36, width: Math.min(panelWidth, window.innerWidth - RAIL_WIDTH - 24), zIndex: 60, background: C.bg, borderRight: `1px solid ${C.border}`, borderRadius: "0 16px 16px 0", boxShadow: C.shadowPop, overflow: "hidden", display: "flex", flexDirection: "column" }
+            : { width: panelWidth, overflow: "hidden", display: "flex", flexDirection: "column", flexShrink: 0, position: "relative" }}
         >
           {activeTab === "ai" && <AIChatPanel />}
           {activeTab === "navigator" && <Navigator />}
@@ -255,27 +257,16 @@ export function LeftSidebar() {
           {activeTab === "marketplace" && <MarketplacePanel />}
           {activeTab === "comments" && meta && <CommentsPanel projectId={meta.id} />}
           {activeTab === "activity" && meta && <ActivityPanel projectId={meta.id} />}
-        </div>
-      )}
 
-      {/* Resize handle: a hairline that lights up on hover; the grab area is wider than the line */}
-      {activeTab !== null && (
-        <div
-          onMouseDown={handleResizeMouseDown}
-          title={t.chrome.dragToResize}
-          style={{
-            position: "absolute",
-            right: 0,
-            top: 0,
-            bottom: 0,
-            width: 8,
-            cursor: "col-resize",
-            background: `linear-gradient(to right, transparent 4px, ${C.border} 4px, ${C.border} 5px, transparent 5px)`,
-            zIndex: 1,
-          }}
-          onMouseEnter={(e) => (e.currentTarget.style.background = `linear-gradient(to right, transparent 3px, ${C.accentLight} 3px, ${C.accentLight} 5px, transparent 5px)`)}
-          onMouseLeave={(e) => (e.currentTarget.style.background = `linear-gradient(to right, transparent 4px, ${C.border} 4px, ${C.border} 5px, transparent 5px)`)}
-        />
+          {/* Resize handle: a hairline that lights up on hover; the grab area is wider than the line */}
+          <div
+            onMouseDown={handleResizeMouseDown}
+            title={t.chrome.dragToResize}
+            style={{ position: "absolute", right: 0, top: 0, bottom: 0, width: 8, cursor: "col-resize", background: HANDLE_IDLE, zIndex: 1 }}
+            onMouseEnter={(e) => (e.currentTarget.style.background = HANDLE_HOT)}
+            onMouseLeave={(e) => (e.currentTarget.style.background = HANDLE_IDLE)}
+          />
+        </div>
       )}
     </div>
   );

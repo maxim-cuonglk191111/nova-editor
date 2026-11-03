@@ -3,7 +3,7 @@ import type { I18nDashboardDictionary } from "../../types-dashboard";
 export const viDashboard: I18nDashboardDictionary = {
   projects: {
     mySites: "Trang web của tôi",
-    upgrade: "⭐ Nâng cấp",
+    upgrade: "Nâng cấp",
     newSite: "Trang web mới",
     loadingSites: "Đang tải các trang web của bạn…",
     retry: "Thử lại",

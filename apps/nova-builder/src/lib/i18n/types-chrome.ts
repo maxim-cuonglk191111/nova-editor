@@ -94,6 +94,12 @@ export interface I18nChromeDictionary {
   canvasAdd: string;
   /** Tooltip of the AI button of the floating toolbar. */
   canvasAi: string;
+  /** Hides or shows the right panel (the inspector). */
+  toggleInspector: string;
+  /** Notice on phone-sized screens, where the builder has no room for its panels. */
+  smallScreenTitle: string;
+  smallScreenBody: string;
+  smallScreenContinue: string;
   modeSwitch: string;
   previewOpensTab: string;
   saving: string;

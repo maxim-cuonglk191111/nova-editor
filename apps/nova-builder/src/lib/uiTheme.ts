@@ -76,9 +76,9 @@ export const DARK = {
   inputBorder: "rgba(255,255,255,0.10)",
   input: "rgba(255,255,255,0.05)",
   // primary action (one per screen) and elevation
-  primary: "#34d399",
-  primaryHover: "#6ee7b7",
-  onPrimary: "#052e1f",
+  primary: "#8b5cf6",
+  primaryHover: "#7c3aed",
+  onPrimary: "#ffffff",
   shadowSoft: "0 1px 2px rgba(0,0,0,0.30), 0 4px 12px rgba(0,0,0,0.25)",
   shadowPop: "0 8px 32px rgba(0,0,0,0.50)",
 } as const;
@@ -135,8 +135,8 @@ export const ELDER = {
   muted: "rgba(255,255,255,0.50)",
   inputBorder: "rgba(255,255,255,0.20)",
   input: "rgba(255,255,255,0.08)",
-  primary: "#6ee7b7",
-  primaryHover: "#a7f3d0",
+  primary: "#a78bfa",
+  primaryHover: "#c4b5fd",
   onPrimary: "#000000",
   shadowSoft: "0 1px 2px rgba(0,0,0,0.40), 0 4px 12px rgba(0,0,0,0.35)",
   shadowPop: "0 8px 32px rgba(0,0,0,0.65)",

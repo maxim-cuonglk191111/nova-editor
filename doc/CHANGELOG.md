@@ -2,6 +2,18 @@
 
 ---
 
+## [25.23.0] — 2026-11-03
+
+### Task 038 — The 1024px layout, a closable and resizable inspector, dashboard (Minor)
+
+- **Inspector**: it can be hidden (the chevron at the end of its tabs, or the new button on the canvas toolbar) and resized by dragging its left edge (240-480px). Open or closed and the width are remembered per browser; the canvas refits when it is shown or hidden.
+- **1024px (below 1280px)**: the left panels are a drawer over the canvas instead of squeezing it, so opening one never resizes the page; the drawer steps aside while a component is dragged (the whole canvas takes the drop) and closes after an insert. A first visit opens with the canvas only, and the inspector starts at 272px.
+- **Phone-sized screens (below 700px)**: a notice says the builder needs room, with the way back and "Continue anyway", instead of a cut-off editor.
+- **Dark palette**: the primary button is purple (it was mint green); checked with the DARK values on the builder.
+- **Dashboard (`/projects`)**: new header (64px, crown Upgrade, deep-purple New Site), 18px-rounded site cards with a type-based placeholder, a roomy "New site" tile, labelled icon actions; the shared light tokens in `globals.css` now match the builder's palette, so the settings pages inherit the neutral surfaces. Settings: sentence-case labels, icon back arrows, the "Current plan" badge no longer wraps. Asset hover buttons fit narrow cards.
+
+---
+
 ## [25.22.1] — 2026-11-03
 
 ### Task 038 — Builder look: audit round 2 fixes (Patch)

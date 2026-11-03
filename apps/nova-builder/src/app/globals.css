@@ -95,46 +95,46 @@
 
 :root,
 [data-theme="light"] {
-  --ui-bg: #f8fafc;
+  --ui-bg: #ffffff;
   --ui-card: #ffffff;
-  --ui-surface: #f1f5f9;
-  --ui-section-bg: rgba(0,0,0,0.03);
-  --ui-input-bg: rgba(0,0,0,0.04);
+  --ui-surface: #f6f6f4;
+  --ui-section-bg: rgba(0,0,0,0.025);
+  --ui-input-bg: #f6f6f4;
   --ui-hover-bg: rgba(0,0,0,0.04);
-  --ui-card-hover: #f0f4ff;
-  --ui-border: rgba(0,0,0,0.10);
-  --ui-border-hover: rgba(0,0,0,0.18);
+  --ui-card-hover: #f3f6f3;
+  --ui-border: rgba(0,0,0,0.09);
+  --ui-border-hover: rgba(0,0,0,0.20);
   --ui-border-top: rgba(0,0,0,0.06);
   --ui-border-bottom: rgba(0,0,0,0.06);
-  --ui-text: #0f172a;
-  --ui-text-dim: rgba(0,0,0,0.75);
-  --ui-text-muted: rgba(0,0,0,0.55);
-  --ui-text-selected: #0f172a;
+  --ui-text: #111111;
+  --ui-text-dim: rgba(0,0,0,0.78);
+  --ui-text-muted: rgba(0,0,0,0.58);
+  --ui-text-selected: #111111;
   --ui-accent: #6d28d9;
   --ui-accent-hover: #5b21b6;
   --ui-accent-light: #7c3aed;
   --ui-accent-text: #5b21b6;
-  --ui-accent-border: rgba(109,40,217,0.40);
-  --ui-accent-bg: rgba(109,40,217,0.10);
+  --ui-accent-border: rgba(109,40,217,0.36);
+  --ui-accent-bg: rgba(109,40,217,0.09);
   --ui-success: #059669;
   --ui-danger: #dc2626;
   --ui-error: #dc2626;
   --ui-warning: #d97706;
   --ui-info: #2563eb;
   --ui-active-green: #10b981;
-  --ui-active: rgba(109,40,217,0.12);
-  --ui-active-border: rgba(109,40,217,0.60);
+  --ui-active: rgba(109,40,217,0.10);
+  --ui-active-border: rgba(109,40,217,0.55);
   --ui-active-text: #5b21b6;
-  --ui-bg-selected: rgba(109,40,217,0.12);
+  --ui-bg-selected: rgba(109,40,217,0.10);
   --ui-bg-hover: rgba(0,0,0,0.04);
-  --ui-bg-multi-selected: rgba(109,40,217,0.08);
+  --ui-bg-multi-selected: rgba(109,40,217,0.07);
   --ui-bg-drop-into: rgba(109,40,217,0.16);
   --ui-bg-inactive: rgba(0,0,0,0.02);
   --ui-drop-indicator: #6d28d9;
   --ui-tab-active: #5b21b6;
-  --ui-tab-inactive: rgba(0,0,0,0.45);
-  --ui-pill: rgba(0,0,0,0.06);
-  --ui-pill-hover: rgba(0,0,0,0.10);
+  --ui-tab-inactive: rgba(0,0,0,0.5);
+  --ui-pill: rgba(0,0,0,0.05);
+  --ui-pill-hover: rgba(0,0,0,0.09);
   --ui-pill-border: rgba(0,0,0,0.10);
   --ui-pill-text: #0f172a;
   --ui-code-key: #1d4ed8;
@@ -161,6 +161,11 @@
   --nova-input-bg: var(--ui-input-bg);
   --nova-hover-bg: var(--ui-hover-bg);
   --nova-overlay: var(--ui-overlay);
+  --ui-primary: #5b21b6;
+  --ui-primary-hover: #4c1d95;
+  --ui-on-primary: #ffffff;
+  --ui-shadow-soft: 0 1px 2px rgba(15,23,42,0.06), 0 4px 12px rgba(15,23,42,0.06);
+  --ui-shadow-pop: 0 12px 32px rgba(15,23,42,0.16), 0 2px 6px rgba(15,23,42,0.08);
 }
 
 /* ── Builder semantic tokens — elder (high-contrast, WCAG AA+) ────────────── */
@@ -373,3 +378,5 @@ summary::-webkit-details-marker { display: none; }
 /* The inspector is 304px wide, 272px on narrow screens; the grid and the floating panels follow. */
 .nb-root { --nb-inspector: 304px; }
 @media (max-width: 1279px) { .nb-root { --nb-inspector: 272px; } }
+/* While a component is dragged on a narrow screen, the left drawer steps aside so the whole canvas can take the drop. */
+body[data-nb-dragging="1"] .nb-drawer { opacity: 0; pointer-events: none; transition: opacity .1s ease; }

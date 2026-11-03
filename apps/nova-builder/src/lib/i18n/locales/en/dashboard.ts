@@ -3,7 +3,7 @@ import type { I18nDashboardDictionary } from "../../types-dashboard";
 export const enDashboard: I18nDashboardDictionary = {
   projects: {
     mySites: "My Sites",
-    upgrade: "⭐ Upgrade",
+    upgrade: "Upgrade",
     newSite: "New Site",
     loadingSites: "Loading your sites…",
     retry: "Retry",

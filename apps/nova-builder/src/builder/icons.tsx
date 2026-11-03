@@ -4,7 +4,7 @@
 // name, so changing the pack or one glyph is a one-line change here.
 import {
   AppWindow, ArrowLeft, ArrowRight, FolderSimplePlus, PaperPlaneRight, Stop,
-  ArrowBendLeftUp, BoundingBox, ClipboardText, Command as CommandIcon, ClockCounterClockwise, Crown as CrownIcon, FloppyDisk, Gauge, Package, RocketLaunch, Link as LinkIcon, PersonArmsSpread, Scissors, TextB, TextItalic, TextUnderline, ArrowUpRight, Bell, CaretDown, CaretRight, Check, CheckSquare, Compass, Copy,
+  ArrowBendLeftUp, BoundingBox, SidebarSimple, Browser, ChartLineUp, EnvelopeSimple, ClipboardText, Command as CommandIcon, ClockCounterClockwise, Crown as CrownIcon, FloppyDisk, Gauge, Package, RocketLaunch, Link as LinkIcon, PersonArmsSpread, Scissors, TextB, TextItalic, TextUnderline, ArrowUpRight, Bell, CaretDown, CaretRight, Check, CheckSquare, Compass, Copy,
   CornersOut, Database, DotsThree, Eye, FilePlus, Files, FolderSimple, GearSix, House, ImageSquare,
   Layout, Lightning, MagnifyingGlass, MagnifyingGlassMinus, MagnifyingGlassPlus, Minus, Palette,
   Pencil, Plus, Rows, Sparkle, SquaresFour, Stack, TextAa, Trash, UploadSimple, X,
@@ -31,6 +31,10 @@ const ICONS = {
   catAdvanced: Lightning,
   // actions and chrome
   back: ArrowLeft,
+  site: Browser,
+  analytics: ChartLineUp,
+  mail: EnvelopeSimple,
+  inspector: SidebarSimple,
   paste: ClipboardText,
   wrap: BoundingBox,
   parent: ArrowBendLeftUp,
