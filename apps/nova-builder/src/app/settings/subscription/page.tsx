@@ -1,4 +1,5 @@
 "use client";
+import { Icon } from "@/builder/icons";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { UI_VARS as C, FONT } from "@/lib/uiTheme";
@@ -52,8 +53,8 @@ function PlanCard({ plan, current, onPayVietQR }: {
         </div>
         {current && (
           <div style={{
-            background: "rgba(124,58,237,0.15)", border: "1px solid rgba(124,58,237,0.3)",
-            borderRadius: 20, padding: "2px 10px", fontSize: FONT.xs, color: C.accentText || "#a78bfa", fontWeight: 700
+            background: C.accentBg, border: `1px solid ${C.accentBorder}`, whiteSpace: "nowrap", flexShrink: 0,
+            borderRadius: 20, padding: "3px 12px", fontSize: FONT.xs, color: C.accentText, fontWeight: 700
           }}>
             {b.currentPlan}
           </div>
@@ -152,7 +153,7 @@ export default function SubscriptionPage() {
           <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
             <button onClick={() => router.push("/projects")} aria-label={b.back}
               style={{ background: "none", border: "none", color: C.textMuted, cursor: "pointer", fontSize: 18 }}>
-              ←
+              <Icon name="back" size={20} />
             </button>
             <h1 style={{ margin: 0, fontSize: 20, fontWeight: 700 }}>{b.subscriptionTitle}</h1>
           </div>

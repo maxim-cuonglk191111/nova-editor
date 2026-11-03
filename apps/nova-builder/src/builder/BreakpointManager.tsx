@@ -11,13 +11,14 @@ import { useI18n } from "@/lib/i18n";
 import { bpFriendlyName } from "./BreakpointPills";
 
 const inputSt: React.CSSProperties = {
-  background: C.inputBg,
+  background: C.card,
   border: `1px solid ${C.border}`,
-  borderRadius: 3,
+  borderRadius: 10,
   color: C.text,
   fontFamily: C.font,
-  fontSize: 13,
-  padding: "3px 6px",
+  fontSize: 14,
+  height: 36,
+  padding: "0 12px",
   outline: "none",
 };
 
@@ -137,30 +138,30 @@ export function BreakpointManager({ onClose }: { onClose: () => void }) {
         left: "50%",
         transform: "translateX(-50%)",
         zIndex: 200,
-        background: C.bg,
+        background: C.card,
         border: `1px solid ${C.border}`,
-        borderRadius: 6,
+        borderRadius: 16,
         boxShadow: "var(--ui-shadow-pop, 0 8px 32px rgba(0,0,0,0.5))",
-        padding: "10px 12px",
-        minWidth: 440,
+        padding: 18,
+        minWidth: 500,
         fontFamily: C.font,
       }}
     >
-      <div style={{ fontSize: 12, color: C.textMuted, fontWeight: 700, letterSpacing: "0.07em", textTransform: "uppercase", marginBottom: 8 }}>
+      <div style={{ fontSize: 17, color: C.text, fontWeight: 700, letterSpacing: "-0.01em", marginBottom: 12 }}>
         {B.title}
       </div>
 
       {/* Header row */}
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 100px 100px 24px", gap: 6, marginBottom: 4 }}>
-        <span style={{ fontSize: 9, color: C.textMuted, textTransform: "uppercase" }}>{B.label}</span>
-        <span style={{ fontSize: 9, color: C.textMuted, textTransform: "uppercase" }}>{B.min}</span>
-        <span style={{ fontSize: 9, color: C.textMuted, textTransform: "uppercase" }}>{B.max}</span>
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 110px 110px 32px", gap: 8, marginBottom: 6 }}>
+        <span style={{ fontSize: 13, color: C.textMuted, fontWeight: 500 }}>{B.label}</span>
+        <span style={{ fontSize: 13, color: C.textMuted, fontWeight: 500 }}>{B.min}</span>
+        <span style={{ fontSize: 13, color: C.textMuted, fontWeight: 500 }}>{B.max}</span>
         <span />
       </div>
 
       {sorted.map((bp) => (
-        <div key={bp.id} style={{ marginBottom: 6 }}>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 100px 100px 24px", gap: 6, alignItems: "center" }}>
+        <div key={bp.id} style={{ marginBottom: 10 }}>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 110px 110px 32px", gap: 8, alignItems: "center" }}>
             <input
               // Same name as the breakpoint buttons above (stored English defaults are shown translated).
               value={bpFriendlyName(bp, t.tools.breakpointPills)}
@@ -193,17 +194,21 @@ export function BreakpointManager({ onClose }: { onClose: () => void }) {
               style={{
                 background: "none",
                 border: "none",
-                color: isBase(bp) ? "rgba(255,255,255,0.1)" : C.danger,
+                color: isBase(bp) ? C.muted : C.danger,
                 cursor: isBase(bp) ? "default" : "pointer",
-                fontSize: 16,
-                lineHeight: 1,
-                padding: "0 2px",
+                width: 32,
+                height: 32,
+                borderRadius: 8,
+                display: "inline-flex",
+                alignItems: "center",
+                justifyContent: "center",
+                padding: 0,
               }}
             ><Icon name="close" size={14} weight="bold" /></button>
           </div>
           {/* Two-level hint: technical CSS media condition */}
           <div style={{ paddingLeft: 2, marginTop: 2 }}>
-            <span style={{ fontSize: 10, color: C.textMuted, fontFamily: C.fontMono, opacity: 0.65 }}>
+            <span style={{ fontSize: 12, color: C.textMuted, fontFamily: C.fontMono, opacity: 0.8 }}>
               {getMediaCondition(bp)}
             </span>
           </div>
@@ -211,23 +216,24 @@ export function BreakpointManager({ onClose }: { onClose: () => void }) {
       ))}
 
       {/* Device Presets quick bar */}
-      <div style={{ marginTop: 8, paddingTop: 6, borderTop: `1px solid ${C.border}` }}>
-        <div style={{ fontSize: 10, color: C.textMuted, marginBottom: 4, fontWeight: 600 }}>
+      <div style={{ marginTop: 12, paddingTop: 12, borderTop: `1px solid ${C.border}` }}>
+        <div style={{ fontSize: 13, color: C.textMuted, marginBottom: 8, fontWeight: 500 }}>
           {B.presets}:
         </div>
-        <div style={{ display: "flex", gap: 4, flexWrap: "wrap", marginBottom: 6 }}>
+        <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 10 }}>
           {devicePresets.map((dp) => (
             <button
               key={dp.key}
               onClick={() => addPresetBreakpoint(dp.label, dp.minWidth, dp.maxWidth)}
               title={`${dp.label} (${dp.query})`}
               style={{
-                padding: "2px 8px",
-                background: "var(--ui-hover-bg)",
+                height: 34,
+                padding: "0 12px",
+                background: C.card,
                 border: `1px solid ${C.border}`,
-                borderRadius: 4,
+                borderRadius: 10,
                 color: C.text,
-                fontSize: 11,
+                fontSize: 13,
                 fontFamily: C.font,
                 cursor: "pointer",
                 display: "flex",
@@ -236,7 +242,7 @@ export function BreakpointManager({ onClose }: { onClose: () => void }) {
               }}
             >
               <span>{dp.label}</span>
-              <span style={{ fontSize: 9, color: C.textMuted, fontFamily: C.fontMono }}>{dp.query}</span>
+              <span style={{ fontSize: 12, color: C.textMuted }}>{dp.query}</span>
             </button>
           ))}
         </div>
@@ -247,12 +253,13 @@ export function BreakpointManager({ onClose }: { onClose: () => void }) {
         style={{
           marginTop: 4,
           width: "100%",
-          padding: "4px 0",
-          background: "color-mix(in srgb, var(--ui-accent) 12%, transparent)",
-          border: `1px dashed color-mix(in srgb, var(--ui-accent) 40%, transparent)`,
-          borderRadius: 4,
+          height: 44,
+          background: C.accentBg,
+          border: `1px solid ${C.accentBorder}`,
+          borderRadius: 12,
           color: C.accentText,
-          fontSize: 13,
+          fontWeight: 600,
+          fontSize: 14,
           fontFamily: C.font,
           cursor: "pointer",
         }}

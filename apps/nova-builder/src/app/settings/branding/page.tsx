@@ -1,4 +1,5 @@
 ﻿"use client";
+import { Icon } from "@/builder/icons";
 import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { UI_VARS as C } from "@/lib/uiTheme";
@@ -53,7 +54,7 @@ export default function BrandingPage() {
         <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 28 }}>
           <button onClick={() => router.back()}
             style={{ background: "none", border: "none", color: C.textMuted, cursor: "pointer", fontSize: 18 }}>
-            ←
+            <Icon name="back" size={20} />
           </button>
           <h1 style={{ margin: 0, fontSize: 20, fontWeight: 700 }}>{B.title}</h1>
         </div>

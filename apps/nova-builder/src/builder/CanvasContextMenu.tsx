@@ -7,7 +7,8 @@ import { $instances } from "@/lib/data-stores";
 import { $selectedInstanceSelector, $clipboard } from "@/lib/nano-states";
 import { copyInstance, cutInstance, pasteClipboard, duplicateInstanceById, deleteInstanceById, shortcutLabel } from "./commands";
 import { useI18n } from "@/lib/i18n";
-import { UI_VARS as C } from "@/lib/uiTheme";
+import { UI_VARS as C, UI_SHAPE as S } from "@/lib/uiTheme";
+import { Icon, type IconName } from "./icons";
 
 
 const itemBase: React.CSSProperties = {
@@ -15,18 +16,21 @@ const itemBase: React.CSSProperties = {
   alignItems: "center",
   justifyContent: "space-between",
   width: "100%",
-  padding: "6px 14px",
+  minHeight: 38,
+  padding: "0 10px",
   background: "none",
   border: "none",
+  borderRadius: S.radiusSm + 2,
   color: C.text,
-  fontSize: 12,
+  fontSize: 14,
   fontFamily: C.font,
   textAlign: "left",
   cursor: "pointer",
   gap: 24,
 };
 
-function Item({ label, shortcut, danger, onClick }: {
+function Item({ icon, label, shortcut, danger, onClick }: {
+  icon: IconName;
   label: string;
   shortcut?: string;
   danger?: boolean;
@@ -39,14 +43,17 @@ function Item({ label, shortcut, danger, onClick }: {
       onMouseEnter={(e) => (e.currentTarget.style.background = C.hoverBg)}
       onMouseLeave={(e) => (e.currentTarget.style.background = "none")}
     >
-      <span>{label}</span>
-      {shortcut && <span style={{ fontSize: 12, fontFamily: C.fontMono, color: C.textMuted, flexShrink: 0 }}>{shortcut}</span>}
+      <span style={{ display: "inline-flex", alignItems: "center", gap: 10 }}>
+        <Icon name={icon} size={18} color={danger ? C.danger : C.textMuted} />
+        {label}
+      </span>
+      {shortcut && <kbd style={{ fontSize: 12, fontFamily: C.font, color: C.textMuted, background: C.surface, border: `1px solid ${C.border}`, borderRadius: 6, padding: "1px 7px", flexShrink: 0 }}>{shortcut}</kbd>}
     </button>
   );
 }
 
 function Separator() {
-  return <div style={{ height: 1, background: C.border, margin: "3px 0" }} />;
+  return <div style={{ height: 1, background: C.border, margin: "5px 4px" }} />;
 }
 
 type Props = {
@@ -153,8 +160,8 @@ export function CanvasContextMenu({ instanceId, x, y, onClose }: Props) {
 
   // Clamp position to viewport so menu never clips off-screen
   const hasClipboard = !!$clipboard.get();
-  const menuWidth = 200;
-  const menuHeight = 220;
+  const menuWidth = 260;
+  const menuHeight = 320;
   const clampedX = Math.min(x, window.innerWidth - menuWidth - 8);
   const clampedY = Math.min(y, window.innerHeight - menuHeight - 8);
 
@@ -169,23 +176,23 @@ export function CanvasContextMenu({ instanceId, x, y, onClose }: Props) {
         left: clampedX,
         background: C.bg,
         border: `1px solid ${C.border}`,
-        borderRadius: 7,
+        borderRadius: S.radiusMd + 2,
         boxShadow: "var(--ui-shadow-pop, 0 8px 32px rgba(0,0,0,0.5))",
         zIndex: 9500,
         minWidth: menuWidth,
-        padding: "4px 0",
+        padding: 6,
         fontFamily: C.font,
       }}
     >
-      <Item label={t.commands.copy} shortcut={shortcutLabel("mod+c")} onClick={handleCopy} />
-      <Item label={t.commands.cut} shortcut={shortcutLabel("mod+x")} onClick={handleCut} />
-      {hasClipboard && <Item label={t.commands.paste} shortcut={shortcutLabel("mod+v")} onClick={handlePaste} />}
+      <Item icon="copy" label={t.commands.copy} shortcut={shortcutLabel("mod+c")} onClick={handleCopy} />
+      <Item icon="crop" label={t.commands.cut} shortcut={shortcutLabel("mod+x")} onClick={handleCut} />
+      {hasClipboard && <Item icon="paste" label={t.commands.paste} shortcut={shortcutLabel("mod+v")} onClick={handlePaste} />}
       <Separator />
-      <Item label={t.commands.duplicate} shortcut={shortcutLabel("mod+d")} onClick={handleDuplicate} />
-      <Item label={t.commands.wrapInBox} onClick={handleWrapInBox} />
-      <Item label={t.commands.selectParent} onClick={handleSelectParent} />
+      <Item icon="copy" label={t.commands.duplicate} shortcut={shortcutLabel("mod+d")} onClick={handleDuplicate} />
+      <Item icon="wrap" label={t.commands.wrapInBox} onClick={handleWrapInBox} />
+      <Item icon="parent" label={t.commands.selectParent} onClick={handleSelectParent} />
       <Separator />
-      <Item label={t.commands.delete} shortcut="Del" danger onClick={handleDelete} />
+      <Item icon="trash" label={t.commands.delete} shortcut="Del" danger onClick={handleDelete} />
     </div>,
     document.body
   );

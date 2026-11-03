@@ -16,6 +16,11 @@ import { $instances } from "@/lib/data-stores";
 import { $selectedInstanceId, $cssPreviewOpen } from "@/lib/nano-states";
 import { UI_VARS as C, FONT } from "@/lib/uiTheme";
 import { useI18n } from "@/lib/i18n";
+import { $inspectorOpen, $inspectorWidth, clampInspectorWidth } from "@/lib/inspectorLayout";
+import { Icon } from "./icons";
+
+const HANDLE_IDLE = `linear-gradient(to right, ${C.border} 0, ${C.border} 1px, transparent 1px)`;
+const HANDLE_HOT = `linear-gradient(to right, transparent 2px, ${C.accentLight} 2px, ${C.accentLight} 4px, transparent 4px)`;
 
 type Tab = "style" | "settings" | "tokens" | "interact" | "props" | "seo" | "cookie" | "data" | "cms" | "css-preview";
 
@@ -42,10 +47,34 @@ export function RightPanel() {
     ...(cssPreviewOpen ? [{ id: "css-preview" as Tab, label: t.builder.cssPreview }] : []),
   ];
 
+  const open = useStore($inspectorOpen);
+  const width = useStore($inspectorWidth);
+
+  // Dragging the left edge changes the width; a cover keeps the canvas iframe from swallowing the pointer.
+  function startResize(e: React.MouseEvent) {
+    e.preventDefault();
+    const startX = e.clientX;
+    const startWidth = width;
+    const cover = document.createElement("div");
+    cover.style.cssText = "position:fixed;inset:0;z-index:99999;cursor:col-resize;";
+    document.body.appendChild(cover);
+    const onMove = (ev: MouseEvent) => $inspectorWidth.set(clampInspectorWidth(startWidth + (startX - ev.clientX)));
+    const onUp = () => {
+      cover.remove();
+      document.removeEventListener("mousemove", onMove);
+      document.removeEventListener("mouseup", onUp);
+    };
+    document.addEventListener("mousemove", onMove);
+    document.addEventListener("mouseup", onUp);
+  }
+
+  if (!open) return null;
+
   return (
     <div
       style={{
         gridArea: "right",
+        position: "relative",
         display: "flex",
         flexDirection: "column",
         background: C.card,
@@ -54,13 +83,14 @@ export function RightPanel() {
       }}
     >
       {/* Tab header — 3-column grid so all 9 labels stay readable at 280px (V-1) */}
+      <div style={{ display: "flex", alignItems: "stretch", borderBottom: `1px solid ${C.border}`, flexShrink: 0 }}>
       <div
         role="tablist"
         style={{
+          flex: 1,
+          minWidth: 0,
           display: "grid",
           gridTemplateColumns: "repeat(3, 1fr)",
-          borderBottom: `1px solid ${C.border}`,
-          flexShrink: 0,
         }}
       >
         {TAB_LABELS.map(({ id, label }) => (
@@ -92,6 +122,16 @@ export function RightPanel() {
           </button>
         ))}
       </div>
+        <button
+          type="button"
+          onClick={() => $inspectorOpen.set(false)}
+          title={t.chrome.toggleInspector}
+          aria-label={t.chrome.toggleInspector}
+          style={{ width: 44, flexShrink: 0, border: "none", borderLeft: `1px solid ${C.border}`, background: "transparent", color: C.textMuted, cursor: "pointer", display: "inline-flex", alignItems: "center", justifyContent: "center" }}
+        >
+          <Icon name="caretRight" size={16} weight="bold" />
+        </button>
+      </div>
 
       {/* Tab content */}
       <div style={{ flex: 1, overflow: "hidden" }}>
@@ -106,6 +146,13 @@ export function RightPanel() {
         {activeTab === "cookie" && <CookieBannerPanel />}
         {activeTab === "css-preview" && <CssPreviewPanel />}
       </div>
+      <div
+        onMouseDown={startResize}
+        title={t.chrome.dragToResize}
+        style={{ position: "absolute", left: 0, top: 0, bottom: 0, width: 8, cursor: "col-resize", zIndex: 2, background: HANDLE_IDLE }}
+        onMouseEnter={(e) => (e.currentTarget.style.background = HANDLE_HOT)}
+        onMouseLeave={(e) => (e.currentTarget.style.background = HANDLE_IDLE)}
+      />
     </div>
   );
 }

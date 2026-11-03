@@ -8,6 +8,7 @@ import { WelcomeCard } from "@/components/WelcomeCard";
 import { useI18n, fmt } from "@/lib/i18n";
 import { SiteCard, type Site } from "@/components/dashboard/SiteCard";
 import { UI_VARS as C } from "@/lib/uiTheme";
+import { Icon } from "@/builder/icons";
 import { UserDropdown } from "@/components/UserDropdown";
 import { showToast } from "@/lib/nano-states";
 import { DEMO_DRAFT_KEY } from "@/builder/hooks/useDemoDraftSync";
@@ -303,12 +304,12 @@ function SitesPage() {
   );
 
   return (
-    <div style={{ minHeight: "100vh", background: C.bg, fontFamily: C.font, color: C.text }}>
+    <div style={{ minHeight: "100vh", background: C.surface, fontFamily: C.font, color: C.text }}>
       {/* Header */}
-      <div style={{ borderBottom: `1px solid ${C.border}`, padding: "8px clamp(12px, 3vw, 28px)", minHeight: 54, boxSizing: "border-box", display: "flex", flexWrap: "wrap", alignItems: "center", gap: 10, background: C.bg }}>
-        <Link href="/" style={{ fontSize: 14, fontWeight: 800, color: C.accentLight, letterSpacing: "-0.02em" }}>Nova</Link>
-        <span style={{ color: "rgba(255,255,255,0.18)", fontSize: 14 }}>/</span>
-        <span style={{ fontSize: 13, color: C.text }}>{P.mySites}</span>
+      <div style={{ borderBottom: `1px solid ${C.border}`, padding: "10px clamp(16px, 3vw, 32px)", minHeight: 64, boxSizing: "border-box", display: "flex", flexWrap: "wrap", alignItems: "center", gap: 12, background: C.card }}>
+        <Link href="/" style={{ fontSize: 18, fontWeight: 800, color: C.accentText, letterSpacing: "-0.02em", textDecoration: "none" }}>Nova</Link>
+        <span style={{ width: 1, height: 22, background: C.border }} />
+        <span style={{ fontSize: 15, fontWeight: 600, color: C.text }}>{P.mySites}</span>
 
         {/* Search */}
         <div style={{ position: "relative", marginLeft: 8 }}>
@@ -317,12 +318,12 @@ function SitesPage() {
             onChange={(e) => setSearch(e.target.value)}
             placeholder={t.builder.searchSites}
             style={{
-              padding: "5px 10px 5px 30px", borderRadius: 7, border: `1px solid ${C.border}`,
-              background: "rgba(255,255,255,0.04)", color: C.text, fontSize: 13,
-              fontFamily: C.font, outline: "none", width: 180, maxWidth: "40vw",
+              height: 40, padding: "0 12px 0 38px", borderRadius: 12, border: `1px solid ${C.border}`,
+              background: C.surface, color: C.text, fontSize: 14,
+              fontFamily: C.font, outline: "none", width: 240, maxWidth: "40vw",
             }}
           />
-          <span style={{ position: "absolute", left: 9, top: "50%", transform: "translateY(-50%)", color: C.textMuted, fontSize: 12, pointerEvents: "none" }}>⌕</span>
+          <span style={{ position: "absolute", left: 12, top: "50%", transform: "translateY(-50%)", color: C.textMuted, pointerEvents: "none", display: "inline-flex" }}><Icon name="search" size={18} /></span>
         </div>
 
         <div style={{ flex: 1 }} />
@@ -332,16 +333,17 @@ function SitesPage() {
         {isFreeTier && (
           <Link
             href="/settings/subscription"
-            style={{ padding: "5px 14px", borderRadius: 7, border: "1px solid rgba(124,58,237,0.4)", background: "transparent", color: C.accentLight, fontSize: 13, fontFamily: C.font, fontWeight: 600, textDecoration: "none", display: "inline-flex", alignItems: "center", gap: 4 }}
+            style={{ height: 40, padding: "0 16px", borderRadius: 12, border: `1px solid ${C.accentBorder}`, background: C.card, color: C.accentText, fontSize: 14, fontFamily: C.font, fontWeight: 600, textDecoration: "none", display: "inline-flex", alignItems: "center", gap: 6 }}
           >
+            <Icon name="crown" size={16} weight="fill" />
             {P.upgrade}
           </Link>
         )}
         <button
           onClick={() => setShowCreate(true)}
-          style={{ padding: "7px 18px", borderRadius: 8, border: "none", background: C.accent, color: "#fff", fontSize: 13, fontFamily: C.font, fontWeight: 700, cursor: "pointer", display: "flex", alignItems: "center", gap: 5 }}
+          style={{ height: 40, padding: "0 18px", borderRadius: 12, border: "none", background: C.primary, color: C.onPrimary, fontSize: 14, fontFamily: C.font, fontWeight: 700, cursor: "pointer", display: "inline-flex", alignItems: "center", gap: 8 }}
         >
-          <span style={{ fontSize: 15, lineHeight: 1 }}>+</span> {P.newSite}
+          <Icon name="plus" size={16} weight="bold" /> {P.newSite}
         </button>
         <UserDropdown mode="dark" />
       </div>
@@ -406,17 +408,15 @@ function SitesPage() {
 
         {/* Site grid */}
         {!loading && !pageError && sites.length > 0 && (
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))", gap: 14 }}>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))", gap: 20 }}>
             {/* New site card — hidden when searching */}
             {!search && (
               <div
                 onClick={() => setShowCreate(true)}
-                style={{ background: "rgba(124,58,237,0.04)", border: `1px dashed rgba(124,58,237,0.2)`, borderRadius: 12, height: 220, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", cursor: "pointer", gap: 8, transition: "all 0.15s" }}
-                onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.background = "rgba(124,58,237,0.08)"; (e.currentTarget as HTMLElement).style.borderColor = "rgba(124,58,237,0.35)"; }}
-                onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.background = "rgba(124,58,237,0.04)"; (e.currentTarget as HTMLElement).style.borderColor = "rgba(124,58,237,0.2)"; }}
+                style={{ background: C.accentBg, border: `1.5px dashed ${C.accentBorder}`, borderRadius: 18, minHeight: 300, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 10, cursor: "pointer", color: C.accentText, transition: "background 0.15s" }}
               >
-                <span style={{ fontSize: 22, color: C.accentLight, opacity: 0.5 }}>+</span>
-                <span style={{ fontSize: 12, color: C.accentLight, fontWeight: 600, opacity: 0.6 }}>{P.newSite}</span>
+                <span style={{ width: 52, height: 52, borderRadius: 16, background: C.card, display: "inline-flex", alignItems: "center", justifyContent: "center", boxShadow: C.shadowSoft }}><Icon name="plus" size={24} weight="bold" /></span>
+                <span style={{ fontSize: 15, fontWeight: 600 }}>{P.newSite}</span>
               </div>
             )}
 

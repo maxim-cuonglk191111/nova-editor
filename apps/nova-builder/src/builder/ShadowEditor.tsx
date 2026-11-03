@@ -49,29 +49,27 @@ function ShadowPanelBase({
             </span>
             {layers.length > 0 && <span style={{ color: C.textMuted, fontWeight: 400 }}>{layers.length}</span>}
           </div>
-          <span style={{ fontSize: 10, color: C.textMuted, fontFamily: C.fontMono, opacity: 0.65 }}>
-            {cssProperty}
-          </span>
         </div>
         <button onClick={addLayer} title={fmt(E.addItem, { label })} style={{ width: 28, height: 28, border: "none", borderRadius: 8, background: "none", color: C.textMuted, cursor: "pointer", padding: 0, display: "inline-flex", alignItems: "center", justifyContent: "center" }}><Icon name="plus" size={16} weight="bold" /></button>
       </div>
 
       {/* Shadow Presets bar for box shadow */}
       {type === "box" && (
-        <div style={{ padding: "4px 8px", borderBottom: `1px solid ${C.border}`, display: "flex", gap: 3, alignItems: "center", background: "var(--ui-hover-bg)", flexWrap: "wrap" }}>
-          <span style={{ fontSize: 11, color: C.textMuted, fontFamily: C.font, fontWeight: 600 }}>{E.shadowPresets}:</span>
+        <div style={{ padding: "2px 16px 12px", display: "flex", gap: 6, alignItems: "center", flexWrap: "wrap" }}>
+          <span style={{ fontSize: 13, color: C.textMuted, fontFamily: C.font, fontWeight: 500 }}>{E.shadowPresets}</span>
           {shadowPresets.map((sp) => (
             <button
               key={sp.label}
               onClick={() => commit(sp.layers)}
               title={sp.label}
               style={{
-                padding: "1px 5px",
-                borderRadius: 3,
+                height: 28,
+                padding: "0 12px",
+                borderRadius: 999,
                 border: `1px solid ${C.border}`,
-                background: "transparent",
+                background: C.card,
                 color: C.text,
-                fontSize: 10,
+                fontSize: 13,
                 fontFamily: C.font,
                 cursor: "pointer",
               }}

@@ -249,11 +249,6 @@ export function PanelHeader({ label, subLabel, count, onAdd }: { label: string; 
           </span>
           {count > 0 && <span style={{ color: C.textMuted, fontWeight: 400 }}>{count}</span>}
         </div>
-        {subLabel && (
-          <span style={{ fontSize: 10, color: C.textMuted, fontFamily: C.fontMono, opacity: 0.65 }}>
-            {subLabel}
-          </span>
-        )}
       </div>
       <button
         onClick={onAdd}

@@ -37,6 +37,7 @@ export function StateSelector() {
         options={states}
         value={selected}
         onChange={(value) => $selectedState.set(value)}
+        fill={false}
       />
     </div>
   );

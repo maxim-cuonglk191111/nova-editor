@@ -5,7 +5,7 @@ export const viBilling: I18nBillingDictionary = {
   subscriptionTitle: "Gói dịch vụ",
   historyTitle: "Lịch sử giao dịch",
   loading: "Đang tải…",
-  creditsRemaining: "AI CREDITS CÒN LẠI",
+  creditsRemaining: "AI credits còn lại",
   topUpTitle: "Mua gói nạp thêm credits (VietQR)",
   topUp: "+ Nạp thêm",
   creditsLeft: "Còn {n}",

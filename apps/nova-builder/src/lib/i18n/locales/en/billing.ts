@@ -5,7 +5,7 @@ export const enBilling: I18nBillingDictionary = {
   subscriptionTitle: "Subscription",
   historyTitle: "Transaction history",
   loading: "Loading…",
-  creditsRemaining: "AI CREDITS REMAINING",
+  creditsRemaining: "AI credits remaining",
   topUpTitle: "Buy a credit top-up pack (VietQR)",
   topUp: "+ Top up",
   creditsLeft: "{n} left",

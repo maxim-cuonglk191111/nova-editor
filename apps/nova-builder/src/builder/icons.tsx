@@ -4,7 +4,7 @@
 // name, so changing the pack or one glyph is a one-line change here.
 import {
   AppWindow, ArrowLeft, ArrowRight, FolderSimplePlus, PaperPlaneRight, Stop,
-  ClockCounterClockwise, Crown as CrownIcon, FloppyDisk, Gauge, Package, RocketLaunch, Link as LinkIcon, PersonArmsSpread, Scissors, TextB, TextItalic, TextUnderline, ArrowUpRight, Bell, CaretDown, CaretRight, Check, CheckSquare, Compass, Copy,
+  ArrowBendLeftUp, BoundingBox, SidebarSimple, Browser, ChartLineUp, EnvelopeSimple, ClipboardText, Command as CommandIcon, ClockCounterClockwise, Crown as CrownIcon, FloppyDisk, Gauge, Package, RocketLaunch, Link as LinkIcon, PersonArmsSpread, Scissors, TextB, TextItalic, TextUnderline, ArrowUpRight, Bell, CaretDown, CaretRight, Check, CheckSquare, Compass, Copy,
   CornersOut, Database, DotsThree, Eye, FilePlus, Files, FolderSimple, GearSix, House, ImageSquare,
   Layout, Lightning, MagnifyingGlass, MagnifyingGlassMinus, MagnifyingGlassPlus, Minus, Palette,
   Pencil, Plus, Rows, Sparkle, SquaresFour, Stack, TextAa, Trash, UploadSimple, X,
@@ -31,6 +31,14 @@ const ICONS = {
   catAdvanced: Lightning,
   // actions and chrome
   back: ArrowLeft,
+  site: Browser,
+  analytics: ChartLineUp,
+  mail: EnvelopeSimple,
+  inspector: SidebarSimple,
+  paste: ClipboardText,
+  wrap: BoundingBox,
+  parent: ArrowBendLeftUp,
+  command: CommandIcon,
   floppy: FloppyDisk,
   package: Package,
   rocket: RocketLaunch,
@@ -84,6 +92,22 @@ export const CATEGORY_ICON: Record<string, IconName> = {
   Layout: "catLayout", Typography: "catTypography", Display: "catDisplay", Inputs: "catInputs",
   Navigation: "catNavigation", Feedback: "catFeedback", Overlay: "catOverlay", Advanced: "catAdvanced",
 };
+
+const TEXT = new Set(["Heading", "Paragraph", "Text", "Span", "Label", "Blockquote", "List", "ListItem", "Link", "RichTextLink"]);
+const MEDIA = new Set(["Image", "Video", "Picture", "Avatar", "Icon", "Svg", "Carousel"]);
+const FORM = new Set(["Button", "Input", "Textarea", "Select", "Checkbox", "Switch", "RadioGroup", "Form", "Slider", "Toggle", "ToggleGroup", "InputOTP", "Combobox"]);
+const NAV = new Set(["Navbar", "NavigationMenu", "Menu", "Tabs", "Breadcrumb", "Pagination", "Sidebar", "Menubar"]);
+
+/** The icon a Layers row shows for a component (the part after "shadcn:" decides). */
+export function componentIcon(component: string): IconName {
+  const name = component.split(":").pop() ?? component;
+  if (TEXT.has(name)) return "catTypography";
+  if (MEDIA.has(name)) return "assets";
+  if (FORM.has(name)) return "catInputs";
+  if (NAV.has(name)) return "catNavigation";
+  if (name === "Body" || name === "Box" || name === "Section" || name === "Container" || name === "Card" || name === "Row" || name.startsWith("Row") || name === "Grid" || name === "Flex") return "catLayout";
+  return "catDisplay";
+}
 
 export function Icon({ name, size = 20, weight = "regular", color }: { name: IconName; size?: number; weight?: IconWeight; color?: string }) {
   const Glyph = ICONS[name];

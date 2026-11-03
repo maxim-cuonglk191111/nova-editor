@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect, useRef, useMemo } from "react";
 import { createPortal } from "react-dom";
+import { Icon, type IconName } from "./icons";
 import { useStore } from "@nanostores/react";
 import { $commandPaletteOpen, $selectedPageId } from "@/lib/nano-states";
 import { $pages } from "@/lib/data-stores";
@@ -22,6 +23,8 @@ type CommandItem = {
   keywords: string[];
   action: () => void;
 };
+
+const GROUP_ICON: Record<"Pages" | "Components" | "Actions", IconName> = { Pages: "pages", Components: "add", Actions: "catAdvanced" };
 
 // ── Shared action helpers (read atoms at call-time, not at render) ────────────
 
@@ -170,25 +173,26 @@ export function CommandPalette() {
 
   return createPortal(
     <div
-      style={{ position: "fixed", inset: 0, zIndex: 9999, display: "flex", alignItems: "flex-start", justifyContent: "center", paddingTop: 80, background: C.overlay }}
+      style={{ position: "fixed", inset: 0, zIndex: 9999, display: "flex", alignItems: "flex-start", justifyContent: "center", paddingTop: 96, background: "rgba(17,17,17,0.42)", backdropFilter: "blur(3px)" }}
       onMouseDown={(e) => { if (e.target === e.currentTarget) closePalette(); }}
     >
-      <div style={{ width: 560, maxWidth: "90vw", background: C.bg, border: `1px solid ${C.border}`, borderRadius: 16, boxShadow: "var(--ui-shadow-pop, 0 24px 64px rgba(0,0,0,0.6))", overflow: "hidden", display: "flex", flexDirection: "column" }}>
+      <div style={{ width: 600, maxWidth: "90vw", background: C.card, border: `1px solid ${C.border}`, borderRadius: 20, boxShadow: "var(--ui-shadow-pop, 0 24px 64px rgba(0,0,0,0.6))", overflow: "hidden", display: "flex", flexDirection: "column" }}>
 
         {/* Search input */}
-        <div style={{ padding: "12px 14px", borderBottom: `1px solid ${C.border}` }}>
+        <div style={{ padding: "0 18px", minHeight: 60, display: "flex", alignItems: "center", gap: 12, borderBottom: `1px solid ${C.border}` }}>
+          <span style={{ display: "inline-flex", color: C.textMuted }}><Icon name="search" size={20} /></span>
           <input
             ref={inputRef}
             value={query}
             onChange={(e) => { setQuery(e.target.value); setActiveIdx(0); }}
             onKeyDown={onKeyDown}
             placeholder={t.chrome.palette.search}
-            style={{ width: "100%", background: "none", border: "none", outline: "none", color: C.text, fontSize: 15, fontFamily: C.font, caretColor: "var(--ui-accent)" }}
+            style={{ width: "100%", background: "none", border: "none", outline: "none", color: C.text, fontSize: 17, fontFamily: C.font, caretColor: "var(--ui-accent)" }}
           />
         </div>
 
         {/* Results */}
-        <div style={{ maxHeight: 360, overflowY: "auto" }}>
+        <div style={{ maxHeight: 400, overflowY: "auto", padding: "6px 8px 8px" }}>
           {flatItems.length === 0 && (
             <div style={{ padding: "20px 14px", color: C.textMuted, fontSize: 13, fontFamily: C.font }}>
               {fmt(t.chrome.palette.noResults, { query })}
@@ -202,7 +206,7 @@ export function CommandPalette() {
             return (
               <div key={group}>
                 {/* Group heading */}
-                <div style={{ padding: "8px 14px 4px", fontSize: 12, fontFamily: C.font, color: C.textMuted, textTransform: "uppercase", letterSpacing: "0.07em", fontWeight: 700 }}>
+                <div style={{ padding: "12px 10px 6px", fontSize: 13, fontFamily: C.font, color: C.textMuted, fontWeight: 600 }}>
                   {groupLabels[group]}
                 </div>
 
@@ -219,21 +223,26 @@ export function CommandPalette() {
                         display: "flex",
                         width: "100%",
                         alignItems: "center",
-                        padding: "8px 14px",
+                        minHeight: 44,
+                        padding: "0 10px",
                         background: isActive ? C.active : "none",
                         border: "none",
+                        borderRadius: 12,
                         cursor: "pointer",
                         textAlign: "left",
-                        gap: 8,
+                        gap: 12,
                       }}
                     >
-                      <span style={{ flex: 1, fontSize: 13, fontFamily: C.font, color: isActive ? C.activeText : C.text }}>
+                      <span style={{ width: 30, height: 30, borderRadius: 9, flexShrink: 0, display: "inline-flex", alignItems: "center", justifyContent: "center", background: isActive ? C.card : C.surface, color: isActive ? C.activeText : C.textMuted }}>
+                        <Icon name={GROUP_ICON[group]} size={17} weight={isActive ? "fill" : "regular"} />
+                      </span>
+                      <span style={{ flex: 1, fontSize: 15, fontFamily: C.font, color: isActive ? C.activeText : C.text, fontWeight: isActive ? 600 : 400 }}>
                         {item.label}
                       </span>
                       {item.shortcut && (
-                        <span style={{ fontSize: 13, fontFamily: C.fontMono, color: C.textMuted, flexShrink: 0 }}>
+                        <kbd style={{ fontSize: 12, fontFamily: C.font, color: C.textMuted, background: C.card, border: `1px solid ${C.border}`, borderRadius: 6, padding: "2px 8px", flexShrink: 0 }}>
                           {item.shortcut}
-                        </span>
+                        </kbd>
                       )}
                     </button>
                   );
@@ -244,10 +253,10 @@ export function CommandPalette() {
         </div>
 
         {/* Footer hint */}
-        <div style={{ padding: "6px 14px", borderTop: `1px solid ${C.border}`, display: "flex", gap: 14 }}>
+        <div style={{ padding: "10px 18px", borderTop: `1px solid ${C.border}`, display: "flex", gap: 18, background: C.surface }}>
           {[["↑↓", t.chrome.palette.navigate], ["↵", t.chrome.palette.select], ["Esc", t.chrome.palette.close]].map(([key, label]) => (
-            <span key={key} style={{ fontSize: 13, fontFamily: C.font, color: C.textMuted }}>
-              <span style={{ fontFamily: C.fontMono, color: C.text }}>{key}</span>{" "}{label}
+            <span key={key} style={{ fontSize: 13, fontFamily: C.font, color: C.textMuted, display: "inline-flex", alignItems: "center", gap: 6 }}>
+              <kbd style={{ fontFamily: C.font, color: C.text, background: C.card, border: `1px solid ${C.border}`, borderRadius: 6, padding: "1px 7px", fontSize: 12 }}>{key}</kbd>{label}
             </span>
           ))}
         </div>

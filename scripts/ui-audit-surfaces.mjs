@@ -60,18 +60,18 @@ await step("12-pages-seo", async () => {
   if (await seo.count()) await seo.click();
 });
 await step("13-layers-expanded", async () => {
-  await page.locator('button[aria-pressed]').nth(3).click();
+  await page.locator('button[aria-label="Layers"]').click();
   await canvas.locator("h1").first().click();
   await page.waitForTimeout(300);
 });
-await step("14-templates", async () => { await page.locator('button[aria-pressed]').nth(5).click(); });
+await step("14-templates", async () => { await page.locator('button[aria-label="Templates"]').click(); });
 
 // overlays
 await step("15-context-menu", async () => { await canvas.locator("h1").first().click({ button: "right" }); });
 await closeAll();
 await step("16-command-palette", async () => { await page.keyboard.press("Control+k"); });
 await closeAll();
-await step("17-shortcuts", async () => { await page.keyboard.press("Shift+/"); });
+await step("17-shortcuts", async () => { await page.mouse.click(700, 600); await page.keyboard.press("?"); });
 await closeAll();
 await step("18-canvas-selection", async () => { await canvas.locator("h1").first().click(); });
 await step("19-text-edit", async () => { await canvas.locator("h1").first().dblclick(); });

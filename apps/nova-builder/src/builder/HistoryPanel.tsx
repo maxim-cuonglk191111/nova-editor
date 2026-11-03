@@ -1,4 +1,5 @@
 ﻿"use client";
+import { EmptyState } from "./controls/EmptyState";
 import { FloatingPanel, panelPrimary, panelQuiet } from "./FloatingPanel";
 import { Icon } from "@/builder/icons";
 import { useState, useEffect, useCallback } from "react";
@@ -107,11 +108,9 @@ export function HistoryPanel() {
         )}
       </div>
       <div style={{ flex: 1, overflowY: "auto", padding: "8px 0" }}>
-        {loading && <div style={{ padding: "12px 14px", color: C.textMuted, fontSize: 13 }}>{L.loading}</div>}
+        {loading && <div style={{ padding: "20px 16px", color: C.textMuted, fontSize: 14, textAlign: "center" }}>{L.loading}</div>}
         {!loading && snapshots.length === 0 && (
-          <div style={{ padding: "16px 14px", color: C.textMuted, fontSize: 13, textAlign: "center" }}>
-            {L.empty}
-          </div>
+          <EmptyState icon="history" text={L.empty} />
         )}
         {snapshots.map((snap) => (
           <div key={snap.id} style={{ padding: "10px 16px", display: "flex", alignItems: "center", gap: 10, borderBottom: `1px solid ${C.border}` }}>

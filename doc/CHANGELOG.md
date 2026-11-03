@@ -2,6 +2,54 @@
 
 ---
 
+## [25.23.0] — 2026-11-03
+
+### Task 038 — The 1024px layout, a closable and resizable inspector, dashboard (Minor)
+
+- **Inspector**: it can be hidden (the chevron at the end of its tabs, or the new button on the canvas toolbar) and resized by dragging its left edge (240-480px). Open or closed and the width are remembered per browser; the canvas refits when it is shown or hidden.
+- **1024px (below 1280px)**: the left panels are a drawer over the canvas instead of squeezing it, so opening one never resizes the page; the drawer steps aside while a component is dragged (the whole canvas takes the drop) and closes after an insert. A first visit opens with the canvas only, and the inspector starts at 272px.
+- **Phone-sized screens (below 700px)**: a notice says the builder needs room, with the way back and "Continue anyway", instead of a cut-off editor.
+- **Dark palette**: the primary button is purple (it was mint green); checked with the DARK values on the builder.
+- **Dashboard (`/projects`)**: new header (64px, crown Upgrade, deep-purple New Site), 18px-rounded site cards with a type-based placeholder, a roomy "New site" tile, labelled icon actions; the shared light tokens in `globals.css` now match the builder's palette, so the settings pages inherit the neutral surfaces. Settings: sentence-case labels, icon back arrows, the "Current plan" badge no longer wraps. Asset hover buttons fit narrow cards.
+
+---
+
+## [25.22.1] — 2026-11-03
+
+### Task 038 — Builder look: audit round 2 fixes (Patch)
+
+- **Canvas overlays keep their size at any zoom**: the selection label and the duplicate / delete toolbar undo the page card's scale (`canvas/useParentZoom.ts`), so they stay readable at 60%; at the top edge the toolbar sits just inside the element instead of being cut off.
+- **Narrow screens**: the inspector is 272px below 1280px (one CSS variable drives the grid and the floating panels), and a first visit below 1280px opens with the canvas only, so the page is no longer squeezed to ~28%.
+- **Resize handle** between the panel and the canvas is a hairline that lights up on hover instead of a thick grey bar.
+- **Inspector**: state pills are free-standing chips (two rows instead of three, no grey track); shadow presets are calm chips; numbers use the regular font with tabular figures.
+- **History** shows an icon empty state.
+
+---
+
+## [25.22.0] — 2026-11-03
+
+### Task 038 — Builder look, batch 3: left-panel forms and cards (Minor)
+
+- **One form style** (`controls/formStyles.ts`): 38px white fields with 10px corners, a quiet label, one filled button and one quiet button. Used by the new-page form, the SEO form, the folder form and the publish form.
+- **Pages**: the new-page form sits on a soft card with roomy fields and a clear Create / Cancel pair; the SEO block is a rounded card with a real checkbox; folder rows are 14px with a roomier delete button.
+- **Templates**: cards are 16px rounded with a 48px icon tile, 15px names and a quiet purple "Use Template" button instead of three heavy filled ones; group labels are sentence case.
+- **Assets**: image and folder cards are 14px rounded; the hover actions are three white icon buttons (preview, insert, delete) instead of text chips.
+- **Keyboard shortcuts**: a 24px rounded modal, sentence-case group names, key chips in the regular font, a roomier search field.
+
+---
+
+## [25.21.0] — 2026-11-03
+
+### Task 038 — Builder look, batch 2: menus, breakpoints, Props and Settings, Layers (Minor)
+
+- **Command palette (Ctrl+K)**: search icon, 60px search row, rows with an icon tile per group, sentence-case group headings, shortcuts and footer hints as key chips. **Right-click menu**: an icon per action, 38px rows, key chips.
+- **Breakpoint manager**: 17px title, sentence-case column labels, 36px fields, roomy preset chips, one solid "Add breakpoint" button.
+- **Props and Settings tabs**: the same instance header as Style (16px name, muted type), sentence-case labels, regular-font content field (the monospace was for code, not for copy), an icon empty state, object-fit as one segmented control.
+- **Style tab**: the monospace CSS name under every label is gone (it stays in the tooltip); state pills keep their natural width and wrap from the left; the colour swatch is a proper 36x34 tile.
+- **Layers tree**: an icon per component type (text, media, form, navigation, layout), 34px rows with 10px corners, the type tag only on the selected row so names are no longer cut.
+
+---
+
 ## [25.20.0] — 2026-11-02
 
 ### Task 038 — Builder look and feel, second pass (Minor)

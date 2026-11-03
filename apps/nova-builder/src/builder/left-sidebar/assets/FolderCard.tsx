@@ -81,7 +81,7 @@ export function FolderCard({
       }}
       style={{
         display: "flex", alignItems: "center", gap: 10,
-        padding: "10px 14px", borderRadius: 10,
+        padding: "12px 14px", borderRadius: 14,
         background: dragOver ? T.accentLight : isActive ? T.accentLight : hovered ? T.cardHover : T.cardBg,
         border: `1.5px solid ${dragOver ? T.accent : isActive ? T.accentBorder : T.border}`,
         cursor: "pointer", transition: "all 0.15s",
@@ -89,21 +89,21 @@ export function FolderCard({
       }}
     >
       <div style={{
-        width: 38, height: 38, borderRadius: 8,
-        background: isActive ? "color-mix(in srgb, var(--ui-accent) 12%, transparent)" : "rgba(0,0,0,0.06)",
+        width: 42, height: 42, borderRadius: 12,
+        background: isActive ? "color-mix(in srgb, var(--ui-accent) 12%, transparent)" : T.surface,
         display: "flex", alignItems: "center", justifyContent: "center",
-        flexShrink: 0, color: isActive ? T.accent : "#888",
+        flexShrink: 0, color: isActive ? T.accent : T.textMuted,
       }}>
         <FolderIcon />
       </div>
       <div style={{ flex: 1, minWidth: 0 }}>
         <div style={{
-          fontSize: 13, fontWeight: 600, color: T.text,
+          fontSize: 15, fontWeight: 600, color: T.text,
           overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
         }}>
           {folder.name}
         </div>
-        <div style={{ fontSize: 11, color: T.textMuted, marginTop: 1 }}>
+        <div style={{ fontSize: 13, color: T.textMuted, marginTop: 2 }}>
           {fmt(assetCount === 1 ? t.assets.fileOne : t.assets.fileMany, { count: assetCount })}
         </div>
       </div>
@@ -112,13 +112,13 @@ export function FolderCard({
           onClick={(e) => { e.stopPropagation(); onDelete(); }}
           style={{
             position: "absolute", right: 8, top: 8,
-            background: "rgba(0,0,0,0.06)", border: "none", borderRadius: 4,
-            width: 20, height: 20, cursor: "pointer", display: "flex",
+            background: T.surface, border: "none", borderRadius: 8,
+            width: 28, height: 28, cursor: "pointer", display: "flex",
             alignItems: "center", justifyContent: "center", color: T.textMuted,
           }}
           title={t.assets.deleteFolder}
         >
-          <XIcon size={9} />
+          <XIcon size={14} />
         </button>
       )}
     </div>

@@ -11,14 +11,17 @@ export function ToggleGroup<V extends string>({
   value,
   onChange,
   mono = false,
+  fill = true,
 }: {
   options: ToggleOption<V>[];
   value: V;
   onChange: (value: V) => void;
   mono?: boolean;
+  /** Options share the row evenly (default); false lets each keep its own width and wrap from the left. */
+  fill?: boolean;
 }) {
   return (
-    <div style={{ display: "flex", flexWrap: "wrap", gap: 2, padding: 3, background: C.surface, border: `1px solid ${C.border}`, borderRadius: S.radiusMd }}>
+    <div style={fill ? { display: "flex", flexWrap: "wrap", gap: 2, padding: 3, background: C.surface, border: `1px solid ${C.border}`, borderRadius: S.radiusMd } : { display: "flex", flexWrap: "wrap", gap: 4 }}>
       {options.map((option) => {
         const active = value === option.value;
         return (
@@ -28,15 +31,15 @@ export function ToggleGroup<V extends string>({
             title={option.title}
             aria-pressed={active}
             style={{
-              flex: "1 1 auto",
-              padding: "0 10px",
-              minHeight: 30,
-              borderRadius: S.radiusSm + 1,
-              border: "none",
-              background: active ? C.card : "transparent",
-              boxShadow: active ? C.shadowSoft : "none",
-              color: active ? C.text : C.textMuted,
-              fontSize: FONT.sm,
+              flex: fill ? "1 1 auto" : "0 0 auto",
+              padding: fill ? "0 10px" : "0 11px",
+              minHeight: fill ? 30 : 28,
+              borderRadius: fill ? S.radiusSm + 1 : S.radiusPill,
+              border: fill ? "none" : `1px solid ${active ? C.accentBorder : C.border}`,
+              background: active ? (fill ? C.card : C.accentBg) : "transparent",
+              boxShadow: active && fill ? C.shadowSoft : "none",
+              color: active ? (fill ? C.text : C.accentText) : C.textMuted,
+              fontSize: fill ? FONT.sm : FONT.xs,
               fontFamily: mono ? C.fontMono : C.font,
               fontWeight: active ? 700 : 500,
               cursor: "pointer",
