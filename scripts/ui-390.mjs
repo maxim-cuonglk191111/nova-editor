@@ -7,7 +7,7 @@ const browser = await chromium.launch({ executablePath: "C:\\Program Files\\Goog
 const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, deviceScaleFactor: 2 });
 await ctx.addInitScript(() => { localStorage.setItem("nova_locale", "en"); localStorage.setItem("nova-coachmarks-seen", "1"); });
 const page = await ctx.newPage();
-await page.goto("http://localhost:3001/builder/demo");
+await page.goto(`${process.argv[3] ?? "http://localhost:3001"}/builder/demo`);
 await page.waitForTimeout(9000);
 await page.screenshot({ path: `${out}/m0-default.png` });
 const overflow = await page.evaluate(() => ({ sw: document.documentElement.scrollWidth, cw: document.documentElement.clientWidth }));

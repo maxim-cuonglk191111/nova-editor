@@ -1,5 +1,14 @@
 # Nova — Verified Feature Ledger
 
+## nova-builder / v25.23.0 — Builder redesign, 1024px layout (Task 038) (2026-11-03)
+
+| ID | Feature | Status | Visual Evidence |
+|---|---|---|---|
+| UI-1024 | Drawer over the canvas below 1280px, drop works with it open, inspector hide / resize / persist | 🟢 | scripts/ui-1024.mjs: 9/9 checks on the live demo (worker b1078ec5) |
+| UI-PHONE | Below 700px a notice replaces the cut-off editor | 🟢 | scripts/ui-390.mjs on the live demo |
+| UI-DARK | DARK palette on the builder readable, purple primary | 🟡 | scripts/ui-dark.mjs (no theme switch in the product yet) |
+| UI-DASH | Dashboard cards and header in the new look | 🟢 | tier-b/b1-projects spec, app-pages-audit screenshots |
+
 ## nova-builder / v25.19.0 — Builder redesign (Task 038) (2026-11-02)
 
 | ID | Feature | Status | Visual Evidence |

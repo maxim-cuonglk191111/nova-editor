@@ -1,6 +1,6 @@
 # Task 038 — Builder UI modernization (reference: Siteai), adapted to Nova's content and flow
 
-- **Status:** In progress — P0–P5 built on branch `feat/ui-modernization` (owner approved the top bar and asked for the rest of the reference look); P6 pass and the Tier 3 audit remain
+- **Status:** Done — deployed 2026-11-03 (worker version b1078ec5, package 25.23.0); the settings pages other than the dashboard got only the shared tokens and small fixes, a full restyle of them is open
 - **Filed:** 2026-11-02
 - **Owner:** Claude Code
 - **Severity:** Major (touches every panel of the builder; must not change behaviour)
