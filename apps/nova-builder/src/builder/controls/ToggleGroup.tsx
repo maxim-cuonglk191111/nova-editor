@@ -21,7 +21,7 @@ export function ToggleGroup<V extends string>({
   fill?: boolean;
 }) {
   return (
-    <div style={{ display: "flex", flexWrap: "wrap", gap: 2, padding: 3, background: C.surface, border: `1px solid ${C.border}`, borderRadius: S.radiusMd }}>
+    <div style={fill ? { display: "flex", flexWrap: "wrap", gap: 2, padding: 3, background: C.surface, border: `1px solid ${C.border}`, borderRadius: S.radiusMd } : { display: "flex", flexWrap: "wrap", gap: 4 }}>
       {options.map((option) => {
         const active = value === option.value;
         return (
@@ -32,14 +32,14 @@ export function ToggleGroup<V extends string>({
             aria-pressed={active}
             style={{
               flex: fill ? "1 1 auto" : "0 0 auto",
-              padding: "0 10px",
-              minHeight: 30,
-              borderRadius: S.radiusSm + 1,
-              border: "none",
-              background: active ? C.card : "transparent",
-              boxShadow: active ? C.shadowSoft : "none",
-              color: active ? C.text : C.textMuted,
-              fontSize: FONT.sm,
+              padding: fill ? "0 10px" : "0 11px",
+              minHeight: fill ? 30 : 28,
+              borderRadius: fill ? S.radiusSm + 1 : S.radiusPill,
+              border: fill ? "none" : `1px solid ${active ? C.accentBorder : C.border}`,
+              background: active ? (fill ? C.card : C.accentBg) : "transparent",
+              boxShadow: active && fill ? C.shadowSoft : "none",
+              color: active ? (fill ? C.text : C.accentText) : C.textMuted,
+              fontSize: fill ? FONT.sm : FONT.xs,
               fontFamily: mono ? C.fontMono : C.font,
               fontWeight: active ? 700 : 500,
               cursor: "pointer",

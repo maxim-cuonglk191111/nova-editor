@@ -362,7 +362,7 @@ function BuilderPage() {
           "topbar topbar topbar" 56px
           "left   main   right"  1fr
           "footer footer footer" 36px
-          / auto 1fr 304px
+          / auto 1fr var(--nb-inspector, 304px)
         `,
         width: "100vw",
         height: "100vh",

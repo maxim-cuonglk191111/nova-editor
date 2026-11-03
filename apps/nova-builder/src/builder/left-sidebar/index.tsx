@@ -35,11 +35,12 @@ const AI_MIN_WIDTH = 300;
 const AI_MAX_WIDTH = 560;
 const AI_DEFAULT_WIDTH = 380;
 
-function loadTab(): TabId {
+function loadTab(): TabId | null {
   if (typeof localStorage === "undefined") return "navigator";
   const saved = localStorage.getItem(TAB_KEY) as TabId | null;
   if (saved && TAB_IDS.includes(saved)) return saved;
-  return "navigator";
+  // First visit on a narrow screen: leave the canvas its room until a panel is asked for.
+  return window.innerWidth < 1280 ? null : "navigator";
 }
 
 function loadWidth(): number {
@@ -257,7 +258,7 @@ export function LeftSidebar() {
         </div>
       )}
 
-      {/* Resize handle — 4px right edge, only when a tab is open */}
+      {/* Resize handle: a hairline that lights up on hover; the grab area is wider than the line */}
       {activeTab !== null && (
         <div
           onMouseDown={handleResizeMouseDown}
@@ -267,14 +268,13 @@ export function LeftSidebar() {
             right: 0,
             top: 0,
             bottom: 0,
-            width: 6,
+            width: 8,
             cursor: "col-resize",
-            background: C.border,
+            background: `linear-gradient(to right, transparent 4px, ${C.border} 4px, ${C.border} 5px, transparent 5px)`,
             zIndex: 1,
-            transition: "background 0.15s",
           }}
-          onMouseEnter={(e) => (e.currentTarget.style.background = C.borderHover)}
-          onMouseLeave={(e) => (e.currentTarget.style.background = C.border)}
+          onMouseEnter={(e) => (e.currentTarget.style.background = `linear-gradient(to right, transparent 3px, ${C.accentLight} 3px, ${C.accentLight} 5px, transparent 5px)`)}
+          onMouseLeave={(e) => (e.currentTarget.style.background = `linear-gradient(to right, transparent 4px, ${C.border} 4px, ${C.border} 5px, transparent 5px)`)}
         />
       )}
     </div>

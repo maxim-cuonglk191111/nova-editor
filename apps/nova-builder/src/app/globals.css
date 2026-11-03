@@ -369,3 +369,7 @@ summary::-webkit-details-marker { display: none; }
 .nb-root *::-webkit-scrollbar-thumb { background: rgba(0, 0, 0, 0.14); border-radius: 10px; border: 3px solid transparent; background-clip: content-box; }
 .nb-root *::-webkit-scrollbar-thumb:hover { background: rgba(0, 0, 0, 0.26); background-clip: content-box; }
 @media (prefers-reduced-motion: reduce) { .nb-root * { transition: none !important; } }
+
+/* The inspector is 304px wide, 272px on narrow screens; the grid and the floating panels follow. */
+.nb-root { --nb-inspector: 304px; }
+@media (max-width: 1279px) { .nb-root { --nb-inspector: 272px; } }

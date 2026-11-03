@@ -2,6 +2,18 @@
 
 ---
 
+## [25.22.1] — 2026-11-03
+
+### Task 038 — Builder look: audit round 2 fixes (Patch)
+
+- **Canvas overlays keep their size at any zoom**: the selection label and the duplicate / delete toolbar undo the page card's scale (`canvas/useParentZoom.ts`), so they stay readable at 60%; at the top edge the toolbar sits just inside the element instead of being cut off.
+- **Narrow screens**: the inspector is 272px below 1280px (one CSS variable drives the grid and the floating panels), and a first visit below 1280px opens with the canvas only, so the page is no longer squeezed to ~28%.
+- **Resize handle** between the panel and the canvas is a hairline that lights up on hover instead of a thick grey bar.
+- **Inspector**: state pills are free-standing chips (two rows instead of three, no grey track); shadow presets are calm chips; numbers use the regular font with tabular figures.
+- **History** shows an icon empty state.
+
+---
+
 ## [25.22.0] — 2026-11-03
 
 ### Task 038 — Builder look, batch 3: left-panel forms and cards (Minor)

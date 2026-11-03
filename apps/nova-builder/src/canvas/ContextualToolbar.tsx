@@ -1,5 +1,6 @@
 "use client";
 
+import { useParentZoom } from "./useParentZoom";
 import { useI18n } from "@/lib/i18n";
 import { Icon } from "@/builder/icons";
 import type { Rect } from "./resizeMath";
@@ -18,6 +19,7 @@ export function ContextualToolbar({
   onCrop?: () => void;
 }) {
   const { t } = useI18n();
+  const zoom = useParentZoom();
 
   if (isRoot || !instanceId) return null;
 
@@ -40,8 +42,11 @@ export function ContextualToolbar({
       data-nova-contextual-toolbar=""
       style={{
         position: "fixed",
-        left: Math.max(8, box.left + box.width - 100),
-        top: Math.max(6, box.top - 44),
+        left: Math.max(8, box.left + box.width - 100 / zoom),
+        // above the element; when that would leave the page, just inside its top edge
+        top: box.top - 44 >= 6 ? box.top - 44 : box.top + 8,
+        transform: `scale(${1 / zoom})`,
+        transformOrigin: box.top - 44 >= 6 ? "left bottom" : "left top",
         display: "flex",
         alignItems: "center",
         gap: 2,

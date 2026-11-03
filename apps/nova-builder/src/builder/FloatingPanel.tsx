@@ -18,13 +18,11 @@ type Props = {
   children: ReactNode;
 };
 
-const INSPECTOR_WIDTH = 304;
-
 export function FloatingPanel({ label, title, icon, onClose, width = 380, place = "side", children }: Props) {
   const { t } = useI18n();
   const position = place === "center"
     ? { left: "50%", transform: "translateX(-50%)", maxWidth: "calc(100vw - 32px)" }
-    : { right: INSPECTOR_WIDTH + 12 };
+    : { right: "calc(var(--nb-inspector, 304px) + 12px)" };
   return (
     <div
       role="dialog"

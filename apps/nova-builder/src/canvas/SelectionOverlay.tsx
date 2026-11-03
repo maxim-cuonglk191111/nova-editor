@@ -9,6 +9,7 @@
 // Committing always postMessages to the builder which owns the write-path.
 "use client";
 
+import { useParentZoom } from "./useParentZoom";
 import { useEffect, useRef, useState } from "react";
 import { useStore } from "@nanostores/react";
 import { selectorIdAttribute } from "@webstudio-is/react-sdk";
@@ -174,6 +175,7 @@ type Drag = {
 // ── Component ────────────────────────────────────────────────────────────────
 
 export function SelectionOverlay() {
+  const zoom = useParentZoom();
   const selector = useStore($selectedInstanceSelector);
   const isPreview = useStore($isPreviewMode);
   const instances = useStore($instances);
@@ -521,6 +523,8 @@ export function SelectionOverlay() {
           position: "fixed",
           left: box.left,
           top: box.top - 26 >= 0 ? box.top - 26 : box.top + box.height + 4,
+          transform: `scale(${1 / zoom})`,
+          transformOrigin: box.top - 26 >= 0 ? "left bottom" : "left top",
           background: ACCENT,
           color: "#fff",
           font: "600 12px Inter, system-ui, sans-serif",
