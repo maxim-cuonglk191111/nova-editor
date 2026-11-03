@@ -2,6 +2,18 @@
 
 ---
 
+## [25.21.0] — 2026-11-03
+
+### Task 038 — Builder look, batch 2: menus, breakpoints, Props and Settings, Layers (Minor)
+
+- **Command palette (Ctrl+K)**: search icon, 60px search row, rows with an icon tile per group, sentence-case group headings, shortcuts and footer hints as key chips. **Right-click menu**: an icon per action, 38px rows, key chips.
+- **Breakpoint manager**: 17px title, sentence-case column labels, 36px fields, roomy preset chips, one solid "Add breakpoint" button.
+- **Props and Settings tabs**: the same instance header as Style (16px name, muted type), sentence-case labels, regular-font content field (the monospace was for code, not for copy), an icon empty state, object-fit as one segmented control.
+- **Style tab**: the monospace CSS name under every label is gone (it stays in the tooltip); state pills keep their natural width and wrap from the left; the colour swatch is a proper 36x34 tile.
+- **Layers tree**: an icon per component type (text, media, form, navigation, layout), 34px rows with 10px corners, the type tag only on the selected row so names are no longer cut.
+
+---
+
 ## [25.20.0] — 2026-11-02
 
 ### Task 038 — Builder look and feel, second pass (Minor)

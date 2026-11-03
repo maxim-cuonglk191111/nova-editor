@@ -11,11 +11,14 @@ export function ToggleGroup<V extends string>({
   value,
   onChange,
   mono = false,
+  fill = true,
 }: {
   options: ToggleOption<V>[];
   value: V;
   onChange: (value: V) => void;
   mono?: boolean;
+  /** Options share the row evenly (default); false lets each keep its own width and wrap from the left. */
+  fill?: boolean;
 }) {
   return (
     <div style={{ display: "flex", flexWrap: "wrap", gap: 2, padding: 3, background: C.surface, border: `1px solid ${C.border}`, borderRadius: S.radiusMd }}>
@@ -28,7 +31,7 @@ export function ToggleGroup<V extends string>({
             title={option.title}
             aria-pressed={active}
             style={{
-              flex: "1 1 auto",
+              flex: fill ? "1 1 auto" : "0 0 auto",
               padding: "0 10px",
               minHeight: 30,
               borderRadius: S.radiusSm + 1,

@@ -1,4 +1,7 @@
 "use client";
+import { ToggleGroup } from "./controls/ToggleGroup";
+import { EmptyState } from "./controls/EmptyState";
+import { InstanceHeader } from "./StyleSectionRows";
 import { useStore } from "@nanostores/react";
 import { $instances, $props, $styles, $styleSourceSelections, $breakpoints } from "@/lib/data-stores";
 import { $selectedInstanceId, $selectedBreakpoint } from "@/lib/nano-states";
@@ -60,8 +63,8 @@ const inputStyle: React.CSSProperties = {
   border: `1px solid ${C.inputBorder}`,
   borderRadius: 10,
   color: C.text,
-  fontSize: 13,
-  fontFamily: C.fontMono,
+  fontSize: 14,
+  fontFamily: C.font,
   padding: "8px 12px",
   width: "100%",
   boxSizing: "border-box",
@@ -69,12 +72,10 @@ const inputStyle: React.CSSProperties = {
 };
 
 const labelStyle: React.CSSProperties = {
-  fontSize: 11,
-  color: C.textMuted,
+  fontSize: 14,
+  color: C.text,
   fontFamily: C.font,
-  fontWeight: 600,
-  letterSpacing: "0.06em",
-  textTransform: "uppercase" as const,
+  fontWeight: 500,
 };
 
 // ── ObjectFit control (reads/writes CSS styles, not props) ──────────────────
@@ -121,32 +122,7 @@ function ObjectFitControl({ instanceId }: { instanceId: string }) {
   return (
     <div style={{ padding: "6px 14px", display: "flex", flexDirection: "column", gap: 6 }}>
       <label style={labelStyle}>{S.objectFit}</label>
-      <div style={{ display: "flex", gap: 4, flexWrap: "wrap" }}>
-        {OBJECT_FIT_VALUES.map((val) => {
-          const active = currentFit === val;
-          return (
-            <button
-              key={val}
-              onClick={() => setObjectFit(val)}
-              title={val}
-              style={{
-                padding: "5px 12px",
-                borderRadius: 10,
-                border: `1.5px solid ${active ? C.accent : C.border}`,
-                background: active ? "color-mix(in srgb, var(--ui-accent) 13%, transparent)" : C.input,
-                color: active ? C.accent : C.textMuted,
-                fontSize: 11,
-                fontWeight: active ? 700 : 400,
-                cursor: "pointer",
-                fontFamily: C.fontMono,
-                transition: "all 0.12s",
-              }}
-            >
-              {val}
-            </button>
-          );
-        })}
-      </div>
+      <ToggleGroup options={OBJECT_FIT_VALUES.map((v) => ({ value: v, label: v, title: v }))} value={currentFit as (typeof OBJECT_FIT_VALUES)[number]} onChange={setObjectFit} />
     </div>
   );
 }
@@ -202,15 +178,7 @@ export function SettingsPanel() {
 
   return (
     <div style={{ height: "100%", background: C.bg, display: "flex", flexDirection: "column", overflow: "hidden" }}>
-      {/* Header */}
-      <div style={{ padding: "10px 14px 8px", borderBottom: `1px solid ${C.border}`, flexShrink: 0 }}>
-        <div style={{ fontSize: 13, color: C.text, fontFamily: C.font, fontWeight: 700 }}>
-          {(instance as { label?: string }).label || componentName(component, t.componentNames)}
-        </div>
-        <div title={component} style={{ fontSize: 11, color: C.textMuted, marginTop: 2 }}>
-          {componentName(component, t.componentNames)}
-        </div>
-      </div>
+      <InstanceHeader />
 
       {/* Props list */}
       <div style={{ flex: 1, overflowY: "auto", padding: "10px 0 16px" }}>
@@ -218,9 +186,7 @@ export function SettingsPanel() {
         {isImage && <ObjectFitControl instanceId={instanceId} />}
 
         {instanceProps.length === 0 && !isImage ? (
-          <div style={{ padding: "8px 14px", fontSize: 13, color: C.textMuted, fontFamily: C.font }}>
-            {S.noProps}
-          </div>
+          <EmptyState icon="settings" text={S.noProps} />
         ) : (
           instanceProps.map((p) => {
             const label = S.propLabels[p.name] ?? t.inspector.props.propLabels[p.name] ?? p.name;
@@ -235,7 +201,7 @@ export function SettingsPanel() {
             return (
               <div
                 key={p.id}
-                style={{ padding: "6px 14px", display: "flex", flexDirection: "column", gap: 4 }}
+                style={{ padding: "8px 16px", display: "flex", flexDirection: "column", gap: 6 }}
               >
                 <label style={labelStyle} title={p.name}>{label}</label>
 

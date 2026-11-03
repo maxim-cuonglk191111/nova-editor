@@ -1,4 +1,6 @@
 "use client";
+import { EmptyState } from "./controls/EmptyState";
+import { InstanceHeader } from "./StyleSectionRows";
 import { useState, useEffect } from "react";
 import { useStore } from "@nanostores/react";
 import { $instances, $props, $dataSources } from "@/lib/data-stores";
@@ -409,8 +411,8 @@ function TextContentField({ instanceId, instance }: { instanceId: string; instan
   }
 
   return (
-    <div style={{ padding: "4px 12px 8px", borderBottom: `1px solid ${C.border}` }}>
-      <label style={{ fontSize: 13, color: C.text, fontWeight: 500, display: "block", marginBottom: 4 }}>
+    <div style={{ padding: "14px 16px 16px", borderBottom: `1px solid ${C.border}` }}>
+      <label style={{ fontSize: 14, color: C.text, fontWeight: 500, display: "block", marginBottom: 8 }}>
         {P.content}
       </label>
       <textarea
@@ -428,12 +430,12 @@ function TextContentField({ instanceId, instance }: { instanceId: string; instan
         }}
         style={{
           background: C.card, border: `1px solid ${C.inputBorder}`, borderRadius: 10,
-          color: C.text, fontSize: 13, fontFamily: C.fontMono,
-          padding: "8px 12px", width: "100%", boxSizing: "border-box" as const,
-          outline: "none", resize: "vertical", lineHeight: 1.5,
+          color: C.text, fontSize: 14, fontFamily: C.font,
+          padding: "10px 14px", width: "100%", boxSizing: "border-box" as const,
+          outline: "none", resize: "vertical", lineHeight: 1.55,
         }}
       />
-      <div style={{ fontSize: 11, color: C.textMuted, marginTop: 3 }}>
+      <div style={{ fontSize: 13, color: C.textMuted, marginTop: 8, lineHeight: 1.45 }}>
         {P.contentHint}
       </div>
     </div>
@@ -482,15 +484,7 @@ export function PropsEditorPanel() {
 
   return (
     <div style={{ display: "flex", flexDirection: "column", height: "100%", background: C.bg, overflow: "hidden" }}>
-      {/* Instance header */}
-      <div style={{ padding: "8px 12px 6px", borderBottom: `1px solid ${C.border}`, flexShrink: 0 }}>
-        <div style={{ fontSize: 16, color: C.text, fontWeight: 700 }}>
-          {(instance as { label?: string }).label || componentName(instance.component, names)}
-        </div>
-        <div title={instance.component} style={{ fontSize: 12, color: C.textMuted, marginTop: 2 }}>
-          {componentName(instance.component, names)}
-        </div>
-      </div>
+      <InstanceHeader />
 
       <div style={{ flex: 1, overflowY: "auto", padding: "8px 0" }}>
         {/* Inline text content editor — shown for text-capable components */}
@@ -501,7 +495,7 @@ export function PropsEditorPanel() {
         {/* Meta-defined props */}
         {metaKeys.length > 0 && (
           <>
-            <div style={{ padding: "4px 12px 2px", fontSize: 9, color: C.textMuted, letterSpacing: "0.08em", textTransform: "uppercase" }}>
+            <div style={{ padding: "14px 16px 4px", fontSize: 13, color: C.textMuted, fontWeight: 600 }}>
               {P.componentProps}
             </div>
             {metaKeys.map((key) => {
@@ -517,7 +511,7 @@ export function PropsEditorPanel() {
         {/* Ad-hoc props not in meta */}
         {instanceProps.length > 0 && (
           <>
-            <div style={{ padding: "8px 12px 2px", fontSize: 9, color: C.textMuted, letterSpacing: "0.08em", textTransform: "uppercase" }}>
+            <div style={{ padding: "16px 16px 4px", fontSize: 13, color: C.textMuted, fontWeight: 600 }}>
               {P.customProps}
             </div>
             {instanceProps.sort((a, b) => a.name.localeCompare(b.name)).map((p) => (
@@ -527,9 +521,7 @@ export function PropsEditorPanel() {
         )}
 
         {metaKeys.length === 0 && instanceProps.length === 0 && (
-          <div style={{ padding: "12px", fontSize: 13, color: C.textMuted, fontFamily: C.font }}>
-            {P.noProps}
-          </div>
+          <EmptyState icon="settings" text={P.noProps} />
         )}
       </div>
     </div>

@@ -280,9 +280,6 @@ export function GradientPanel({ instanceId, currentCss }: GradientPanelProps) {
               </span>
             )}
           </div>
-          <span style={{ fontSize: 10, color: C.textMuted, fontFamily: C.fontMono, opacity: 0.65 }}>
-            background-image
-          </span>
         </div>
         <button
           onClick={addGradient}

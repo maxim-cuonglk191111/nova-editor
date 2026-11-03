@@ -148,7 +148,7 @@ export const viInspector: I18nInspectorDictionary = {
     componentProps: "Thuộc tính thành phần",
     customProps: "Thuộc tính tùy chỉnh",
     noProps: "Thành phần này không có thuộc tính chỉnh sửa được.",
-    content: "NỘI DUNG",
+    content: "Nội dung",
     contentHint: "Enter để lưu · Shift+Enter để xuống dòng · nhấp đúp vào khung vẽ để soạn văn bản định dạng",
     defaultOption: "— mặc định —",
     pickFromLibrary: "Chọn từ thư viện",

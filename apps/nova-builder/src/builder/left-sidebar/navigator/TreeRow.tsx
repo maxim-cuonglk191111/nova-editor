@@ -1,5 +1,5 @@
 ﻿"use client";
-import { Icon } from "@/builder/icons";
+import { Icon, componentIcon } from "@/builder/icons";
 import { useRef } from "react";
 import { UI_VARS as C } from "@/lib/uiTheme";
 import { useI18n } from "@/lib/i18n";
@@ -85,10 +85,11 @@ export function TreeRow({ node, depth, state, dnd, handlers }: TreeRowProps) {
   const rowStyle: React.CSSProperties = {
     display: "flex",
     alignItems: "center",
-    gap: 3,
-    paddingLeft: 8 + depth * 14,
-    paddingRight: 6,
-    height: 26,
+    gap: 6,
+    margin: "1px 6px",
+    paddingLeft: 4 + depth * 16,
+    paddingRight: 8,
+    height: 34,
     cursor: "pointer",
     background: isSelected
       ? C.bgSelected
@@ -98,9 +99,9 @@ export function TreeRow({ node, depth, state, dnd, handlers }: TreeRowProps) {
       ? C.bgDropInto
       : "transparent",
     color: isSelected ? C.textSelected : C.text,
-    fontSize: 12,
+    fontSize: 14,
     fontFamily: C.font,
-    borderRadius: isDropInto ? 4 : 3,
+    borderRadius: 10,
     userSelect: "none",
     opacity: isDragging ? 0.4 : 1,
     position: "relative",
@@ -187,11 +188,14 @@ export function TreeRow({ node, depth, state, dnd, handlers }: TreeRowProps) {
             {/* Primary label; the component type shows as a muted tag only when
                 it differs — a "Body" label on a Body no longer reads "Body Body"
                 (WS-PARITY-AUDIT §8b V-7). */}
-            <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", flex: 1 }}>
+            <span style={{ display: "inline-flex", flexShrink: 0, color: isSelected ? C.accentText : C.textMuted }}>
+              <Icon name={componentIcon(node.component)} size={16} weight={isSelected ? "fill" : "regular"} />
+            </span>
+            <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", flex: 1, fontWeight: isSelected ? 600 : 400 }}>
               {label}
             </span>
-            {node.label && node.label !== node.component && node.label !== type && (
-              <span title={node.component} style={{ color: isSelected ? "rgba(196,181,253,0.7)" : C.textMuted, fontSize: 11, flexShrink: 0 }}>
+            {isSelected && node.label && node.label !== node.component && node.label !== type && (
+              <span title={node.component} style={{ color: C.textMuted, fontSize: 12, flexShrink: 0 }}>
                 {type}
               </span>
             )}

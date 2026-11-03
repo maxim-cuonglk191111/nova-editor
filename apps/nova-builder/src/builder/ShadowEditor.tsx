@@ -49,9 +49,6 @@ function ShadowPanelBase({
             </span>
             {layers.length > 0 && <span style={{ color: C.textMuted, fontWeight: 400 }}>{layers.length}</span>}
           </div>
-          <span style={{ fontSize: 10, color: C.textMuted, fontFamily: C.fontMono, opacity: 0.65 }}>
-            {cssProperty}
-          </span>
         </div>
         <button onClick={addLayer} title={fmt(E.addItem, { label })} style={{ width: 28, height: 28, border: "none", borderRadius: 8, background: "none", color: C.textMuted, cursor: "pointer", padding: 0, display: "inline-flex", alignItems: "center", justifyContent: "center" }}><Icon name="plus" size={16} weight="bold" /></button>
       </div>

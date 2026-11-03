@@ -148,7 +148,7 @@ export const enInspector: I18nInspectorDictionary = {
     componentProps: "Component props",
     customProps: "Custom props",
     noProps: "No editable props for this component.",
-    content: "CONTENT",
+    content: "Content",
     contentHint: "Enter to save · Shift+Enter for new line · double-click canvas to edit rich text",
     defaultOption: "— default —",
     pickFromLibrary: "Choose from library",

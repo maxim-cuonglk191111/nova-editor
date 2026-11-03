@@ -28,11 +28,11 @@ export function ColorControl({
           if (rgb) onCommit({ type: "rgb", ...rgb, alpha });
         }}
         style={{
-          width: 28,
-          height: 22,
-          padding: 0,
+          width: 36,
+          height: 34,
+          padding: 2,
           border: `1px solid ${C.border}`,
-          borderRadius: 3,
+          borderRadius: 10,
           background: "none",
           cursor: "pointer",
         }}

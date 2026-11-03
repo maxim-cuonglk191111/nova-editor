@@ -183,11 +183,6 @@ export function EditablePropRow({
               <span title={fmt(t.inspector.fromToken, { name: src?.name ?? "" })} style={{ marginLeft: 4, fontSize: 8, background: "color-mix(in srgb, var(--ui-accent) 20%, transparent)", color: "var(--ui-accent-text)", borderRadius: 3, padding: "1px 4px", verticalAlign: "middle", fontFamily: C.font, letterSpacing: "0.05em", textTransform: "uppercase" }}>T{/* i18n-ignore — token badge */}</span>
             )}
           </span>
-          {showCssHint && (
-            <span style={{ fontSize: 10, color: C.textMuted, fontFamily: C.fontMono, opacity: 0.65, overflow: "hidden", textOverflow: "ellipsis" }}>
-              {property}
-            </span>
-          )}
         </div>
       </td>
       <td style={{ padding: "3px 4px", width: "54%" }}>
